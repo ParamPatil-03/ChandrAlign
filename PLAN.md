@@ -4,7 +4,7 @@
 Organisation: ISRO / Department of Space · Theme: Space Technology · Category: Software
 
 > This file is the **single source of execution truth** for Claude Code and for all 3 team members.
-> Companion file: `FEATURES.csv` — the complete feature register (REQUIRED features first, then ADDED features), with owner, phase, module path and acceptance criteria per row.
+> Companion file: `FEATURES.csv` — the feature register: 85 capabilities in 9 sections, each with a plain-English description, owner, phase, task ID, code location and acceptance test (see §21).
 
 ---
 
@@ -1386,72 +1386,61 @@ PHASE 0 ─── contracts.py frozen ──────────────
 
 ## 21. `FEATURES.csv` — the feature register
 
-**117 rows, 15 columns. All 28 REQUIRED rows come first, then the 89 ADDED/INFRA rows.**
+**85 features, 15 columns, grouped into 9 sections in pipeline order.** Every row says in plain English what the feature does and why it exists, then who owns it, which task delivers it, where the code lives and the test that closes it.
 
-**Every row is provenance-audited via the `in_doc` column:**
+The register lists **capabilities only**. Documents, scripts and project activities are tracked by their task IDs in this file, not as feature rows: data download scripts + PRADAN runbook (P0-T04), local cache + manifest, benchmark tiers and runner (P1-T18, P2-T17), ablation runner (P3-T16), external-baseline comparison (P2-T20, P2-T21), demo runner (P3-T12), `JUDGE_QA.md`, `REPRODUCIBILITY.md`, `LICENSE_AUDIT.md`, `ARCHITECTURE.md`, CI, honesty test suite, mock-data factories (P0-T05) and optional ISIS3 integration.
 
-| `in_doc` | count | meaning |
-|---|---|---|
-| `PS` | 28 | stated in the SIH26166 problem statement |
-| `RESEARCH` | 79 | stated in `SIH26166_Deep_Technical_Research` |
-| `NOT-IN-DOC` | 10 | build infrastructure we added; **in neither document** |
+**Sections**
 
-The 10 `NOT-IN-DOC` rows are: local cache + checksum manifest (ADD-16), provenance manifest (ADD-63), before/after swipe (ADD-67), FastAPI backend (ADD-69), `ARCHITECTURE.md` (ADD-75), CI + pinned environment (ADD-76), honesty test suite (ADD-77), mock data factories (ADD-78), dependency licence checker (ADD-81), reuse-fallback safety net (ADD-83). None invents a *capability* — they are scaffolding around capabilities the documents do specify. **They are separated rather than deleted so the team can cut any of them without touching a document-sourced feature.** `grep ',NOT-IN-DOC,' FEATURES.csv` lists them.
+| Prefix | Section | Rows | Main owner |
+|---|---|---|---|
+| `DATA` | Data ingestion | 13 | Member A |
+| `GEO` | Geometry & physics | 7 | Member A |
+| `PREP` | Image preparation | 8 | Member A |
+| `MATCH` | Matching | 15 | Member B |
+| `ALIGN` | Filtering & alignment | 7 | Member B |
+| `PREC` | Precision | 6 | Member B |
+| `CHECK` | Trust & safety checks | 10 | Member B (C for failure log) |
+| `OUT` | Outputs | 10 | Member C |
+| `UI` | Interface | 9 | Member C |
 
-Rows now also record **`reuse`** in the description where a feature is satisfied by an existing library rather than hand-written (see §3.1). A `reuse` feature is not a smaller feature — its acceptance criterion shifts from "does it work" to "did we prove it works on real products".
+Features marked `*` in their name are the headline differentiators: the regime selector, the scale-bridging cascade, physics-based outlier filtering and the blank-image null test.
+
+**Columns**
 
 | Column | Meaning |
 |---|---|
-| `id` | `REQ-nn` (mandated by the problem statement) or `ADD-nn` (from the research document / infrastructure) |
-| `category` | `REQUIRED` \| `ADDED` \| `INFRA` |
-| `in_doc` | **provenance audit.** `PS` = stated in the problem statement · `RESEARCH` = stated in the deep technical research document · `NOT-IN-DOC` = ordinary build infrastructure we added, flagged so nothing masquerades as document-sourced |
-| `priority` | `P0` must ship · `P1` should ship · `P2` stretch |
-| `part` | `1` \| `2` \| `3` \| `1+2` \| `2+3` |
-| `owner` | Member A / B / C (or a pair) |
-| `phase` | phase number(s) from §8 |
-| `task_id` | the task(s) in this file that deliver it |
-| `module_path` | where the code lives |
+| `id` | section prefix + number, e.g. `DATA-01` |
+| `section` | one of the 9 sections above |
 | `feature` | short name |
-| `description` | what it does and why it exists |
-| `source` | PS clause or research section that justifies it |
-| `depends_on` | other feature IDs (or Phase-0 task IDs) |
-| `acceptance_criteria` | the test that closes it |
+| `what_it_does` | plain-English description of the capability |
+| `why_it_matters` | the problem it solves, with the failure-mode number from §15 where one applies |
+| `owner` | Member A / B / C, or a pair — matches the reassignments in §7 |
+| `priority` | `P0` must ship · `P1` should ship · `P2` stretch |
+| `phase` | phase number(s) from §8 |
+| `task_ids` | the task(s) in this file that deliver it |
+| `code_location` | module path(s) under `src/chandralign/` (or repo-root paths for `configs/`, `tests/`, `scripts/`, `ui/`, `third_party/`) |
+| `depends_on` | other feature `id`s that must exist first (`-` = none) |
+| `done_when` | the acceptance test that closes it |
+| `origin` | `Problem statement` · `Research` (the deep technical research document) · `Team addition` (our own scaffolding, in neither document) |
+| `old_ids` | the `REQ-nn` / `ADD-nn` IDs this row replaces, for traceability to older discussions |
 | `status` | `TODO` → `WIP` → `DONE` → `VERIFIED` (or `BLOCKED`) |
-
-**Distribution**
-
-| | count | | count |
-|---|---|---|---|
-| REQUIRED (PS) | 28 | Member A | 44 |
-| ADDED (research doc) | 79 | Member B | 50 |
-| INFRA (not in doc) | 10 | Member C | 26 |
-| | | *(shared features counted for both owners)* | |
-
-Before the reuse decisions the split was 37 / 59 / 21. Part 2 shed its entire matcher-adapter layer to `vismatch`; ground truth moved to A; metrics, failure logging, the ablation runner and external-validity reporting moved to C. B remains heaviest because B owns the four components that do not exist off the shelf — see the relief valve in §8.
-
-13 rows are marked **REUSE**, meaning an existing library satisfies them. Their acceptance criteria shift from *"does it work"* to *"did we prove it works on real products"*, which is the harder and more valuable question anyway.
 
 **Useful filters**
 
 ```bash
-# what does Member A do in Phase 2?
-awk -F',' 'NR==1||($5=="Member A" && $6~/2/)' FEATURES.csv
+# everything Member A owns
+grep ',Member A' FEATURES.csv
 
 # everything that must ship
 grep ',P0,' FEATURES.csv
 
-# the PS-mandated features only
-grep ',REQUIRED,' FEATURES.csv
-
-# everything traceable to the research document
-grep ',RESEARCH,' FEATURES.csv
-
-# what we added that is in NEITHER document (cut candidates)
-grep ',NOT-IN-DOC,' FEATURES.csv
+# one section
+grep '^GEO-' FEATURES.csv
 ```
 
-The register is regenerated by `scripts/gen_features.py`; edit the source lists there rather than hand-editing the CSV, so the two never drift apart.
+Edit `FEATURES.csv` directly, in the same PR as the code it describes. Never delete a row; mark it `BLOCKED` with a reason instead.
 
 ---
 
-*End of PLAN.md — see `FEATURES.csv` for the full feature register with per-row owner, phase, module and acceptance criteria.*
+*End of PLAN.md — see `FEATURES.csv` for the full feature register (§21 explains its columns).*
