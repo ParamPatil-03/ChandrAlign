@@ -1,0 +1,86 @@
+# Pipeline defaults. Owner: Member A (configs/), seeded by Member B for Part 2.
+# Every threshold here is a starting point to be TUNED BY THE ABLATION, not a
+# tuned result. None of these numbers is a measurement.
+
+# CHECK-10: while true, the licence gate refuses to construct any matcher on the
+# benchmark_only list in regimes.yaml. Only scripts/bench_external.py sets false.
+ship_mode: true
+
+device: auto            # auto | cpu | cuda
+
+matching:
+  max_num_keypoints: 2048
+  ratio_test: 0.80           # Lowe ratio; tightened adaptively on repetitive terrain
+  ratio_test_repetitive: 0.70
+  mutual_nn: true
+  # vismatch does its own RANSAC by default; we always disable it so our
+  # estimator owns the inlier mask and the scale sanity check (P2-T01).
+  skip_library_ransac: true
+
+estimate:
+  method: magsac             # magsac | ransac | usac_accurate
+  reproj_threshold_px: 3.0
+  max_iters: 10000
+  confidence: 0.9999
+  min_inliers: 12
+  # Failure mode #13: reject a transform whose estimated scale disagrees with
+  # the GSD ratio the instrument registry predicts.
+  scale_tolerance: 0.25
+
+uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
+  grid: 8                    # N x N cells
+  top_k_per_cell: 6
+  refill_empty_cells: true
+  refill_ratio_test: 0.90    # looser threshold, local to the empty cell only
+  delaunay_gap_warn_px: 120.0
+
+subpixel:                    # PREC-01..05
+  method: ncc_quadratic      # ncc_quadratic | phase_correlation | corner | lsq
+  ncc_window: 11
+  phase_upsample: 100
+  ecc_iterations: 50
+  ecc_eps: 1.0e-6
+
+tiers:                       # CHECK-07 confidence tiers
+  # The `low` row is the ACCEPT/REJECT boundary, so it is the only row derived
+  # from measurement rather than guessed. Fitted by grid search over 60 runs of
+  # scripts/bench_matchers.py (4 matchers x 5 illumination cases x seeds 3/11/29),
+  # scoring each run against the KNOWN synthetic transform. 45 combinations
+  # separated the 33 good runs from the 27 bad ones perfectly; these are the
+  # centre of that feasible region, not its edge, so there is margin either side.
+  #
+  #   signal     threshold   lowest GOOD run   headroom
+  #   inliers    8           12                4
+  #   ratio      0.325       0.4286            0.104
+  #   coverage   0.15        0.1719            0.022   <-- thinnest, see below
+  #
+  # Both signals are load-bearing and neither is redundant:
+  #   - 12 bad runs (xfeat/eloftr at +90deg and opposite Sun) have 34-105 inliers
+  #     and 0.28-0.52 coverage. ONLY the ratio catches them.
+  #   - 2 bad runs (aliked-lightglue, seed 29) have ratio 0.50-0.52.
+  #     ONLY the coverage catches them.
+  # A single-signal gate leaks one family or the other. That is the whole reason
+  # assess() is a conjunction (worst-of) rather than a score.
+  #
+  # HONEST LIMITS. These are fitted to SYNTHETIC imagery from one terrain
+  # generator, 4 matchers and 5 Sun geometries. Perfect separation on 60 runs is
+  # evidence for a starting point, not proof of a robust threshold. Coverage in
+  # particular has only a 0.031-wide feasible window (0.1406 < c <= 0.1719) and
+  # is the first value to re-derive on real Chandrayaan-2/LRO NAC pairs.
+  high:   {min_inliers: 100, min_inlier_ratio: 0.50,  min_coverage: 0.60}
+  medium: {min_inliers: 40,  min_inlier_ratio: 0.25,  min_coverage: 0.35}
+  low:    {min_inliers: 8,   min_inlier_ratio: 0.325, min_coverage: 0.15}
+  # `high` and `medium` are still UNVALIDATED guesses: the benchmark grades the
+  # accept/reject decision, so it cannot say whether a MEDIUM is really medium.
+  # Anything below `low`, or any failed control gate, is REJECTED (CHECK-08).
+
+gates:                       # CHECK-01..06 tolerances
+  null_max_inlier_ratio: 0.05      # a null test scoring above this means we are broken
+  perturbation_shift_px: 5.0
+  perturbation_tolerance_px: 1.5
+  identity_max_rmse_px: 0.25
+
+paths:
+  data_root: data
+  reports: reports
+  runs: runs

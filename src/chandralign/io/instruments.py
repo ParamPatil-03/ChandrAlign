@@ -2,11 +2,16 @@
 
     >>> detect_instrument("ch2_ohr_ncp_20240330T0035085365_d_img_d18.xml")
     'OHRC'
-    >>> round(gsd_ratio("OHRC", "IIRS"))
+    >>> round(scale_gap("OHRC", "IIRS"))
     320
 
 Settings live in configs/instruments.yaml. Nothing here guesses: an unrecognised
 product raises UnknownInstrumentError instead of falling back to a default camera.
+
+Two different scale numbers exist, deliberately named apart:
+    scale_gap(a, b)             coarser/finer, symmetric, always >= 1 (this module)
+    config.gsd_ratio(src, ref)  gsd(src)/gsd(ref), directional -- the scale a correct
+                                transform should recover (Part 2's scale check)
 """
 from __future__ import annotations
 
@@ -51,7 +56,10 @@ def _tuple_or_none(value):
 
 @lru_cache(maxsize=None)
 def load_registry(path: Path = DEFAULT_CONFIG) -> dict[str, InstrumentSpec]:
-    raw = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    # configs/instruments.yaml nests the cameras under `instruments:` alongside
+    # `pairings:`; a bare mapping of cameras is also accepted.
+    raw = raw.get("instruments", raw)
     expected = set(get_args(Instrument))
     if set(raw) != expected:
         raise ValueError(
@@ -110,12 +118,14 @@ def detect_instrument(product: str | Path) -> Instrument:
     raise UnknownInstrumentError(f"{stem!r} is ambiguous: matches {matches}")
 
 
-def gsd_ratio(a: str, b: str) -> float:
+def scale_gap(a: str, b: str) -> float:
     """How many times coarser the coarser camera is than the finer one (always >= 1).
 
-    Symmetric: gsd_ratio("OHRC", "IIRS") == gsd_ratio("IIRS", "OHRC") == 320.
-    Uses nominal registry GSDs; the regime selector and cascade use this for
-    pre-flight decisions (feature GEO-06), before any label has been read.
+    Symmetric: scale_gap("OHRC", "IIRS") == scale_gap("IIRS", "OHRC") == 320, exactly
+    as PLAN.md section 1.2 tabulates the pairings. Uses nominal registry GSDs; the
+    regime selector and cascade use this for pre-flight decisions (feature GEO-06),
+    before any label has been read. For the DIRECTIONAL scale a transform should
+    recover, use config.gsd_ratio(src, ref).
     """
     ga, gb = get_spec(a).gsd_m, get_spec(b).gsd_m
     return max(ga, gb) / min(ga, gb)
