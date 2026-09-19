@@ -17,6 +17,7 @@ dependencies = [
     "pyshp",        # PRADAN footprint shapefiles
     "shapely",      # footprints and overlap
     "pyproj",       # IAU 2015 Moon CRS and reprojection
+    "opencv-python-headless",   # CLAHE and image operations (Apache-2.0)
     "pyyaml",       # configs/
     "requests",     # data fetchers
 ]
@@ -26,7 +27,7 @@ dev = ["pytest", "pytest-cov"]
 # Added by the step that first needs them, so the base install stays light:
 #   geo:      rasterio, spiceypy                   (Part 1, Phase 2)
 #   prep:     phasepack, spectral, scikit-image     (Part 1, Phase 2)
-#   match:    torch, kornia, vismatch, opencv       (Part 2)
+#   match:    torch, kornia, vismatch               (Part 2)
 #   product:  fastapi, uvicorn, jinja2, matplotlib  (Part 3)
 
 [tool.setuptools.packages.find]

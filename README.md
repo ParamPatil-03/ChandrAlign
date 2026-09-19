@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 12, elevation maps and slope/aspect** (real DEM download in progress).
+> This README is updated after every completed step. Last update: **Step 13a, contrast preparation (CLAHE)**; Step 12's real DEM download still in progress.
 
 ---
 
@@ -28,9 +28,10 @@
 | 10 | Footprint overlap and pre-filter (rejects a pair before any matcher runs) | GEO-04 | ✅ |
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
 | 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ slope · 🟡 DEM reader done, real tiles downloading |
-| next | Image preparation (contrast, shadows, IIRS composite…) | PREP-* | ⏳ |
+| 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
+| next | 13b shadows · 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-04, 05, 06, 07, 08, 02, 03 | ⏳ |
 
-**Tests:** 212 passing, 2 skipped until the DEM download finishes (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 222 passing, 2 skipped until the DEM download finishes (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -127,7 +128,7 @@ global_pts = tile_to_global(tile_pts, plane.tile_origin)              # (x, y) t
 - **Points are `(x, y)` = `(column, row)`, as sub-pixel floats. `tile_origin` is `(row, col)`.** Use `tile_to_global` and `global_to_tile`; don't add offsets by hand.
 - `valid_mask` and `shadow_mask` are always **separate arrays** (the shared-mask bug is failure mode #19).
 - A multi-band product (IIRS) needs `band=`. Matching a whole cube is refused; the IIRS composite (PREP-06) will produce one plane.
-- **Normalisation is a per-tile min/max placeholder**, recorded as `"tile_minmax"` in `preprocess_chain`. Real radiometric preparation (CLAHE and more) arrives with PREP-01.
+- **Tiles come out with a per-tile min/max placeholder** (`"tile_minmax"`). Call `prepare_plane()` (PREP-01) before matching; it replaces that step.
 
 ### Sun angles and lighting difference (for the regime selector)
 
@@ -220,6 +221,17 @@ t = slope_aspect(patch)          # t.slope_deg, t.aspect_deg (direction the grou
 
 Heights are converted to metres from each label's `UNIT` (LOLA stores DN × 0.5 m, SLDEM stores km). The label's `OFFSET` is the Moon's reference radius and is deliberately **not** added. Aspect is NaN on flat ground and slope is NaN wherever the DEM has no height.
 
+### Contrast preparation (run on tiles before matching)
+
+```python
+from chandralign.preprocess.radiometric import prepare_plane
+
+ready = prepare_plane(plane)     # new ImagePlane; the input tile is not modified
+ready.preprocess_chain           # [..., 'stretch_p1-99', 'clahe_c2_t8x8']
+```
+
+A 1st–99th percentile stretch of the valid pixels, then CLAHE in 16 bits (so 16-bit sensors keep their precision). No-data pixels can't affect the result and come back as 0 with the same valid mask. Measured on real mid-strip tiles, local contrast rises ×2.1 (OHRC) to ×4.2 (SELENE), and the spread between cameras narrows from 2.7× to 1.7×. On the darkest OHRC area (sun 7.3° up) it rises ×3.4.
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -229,7 +241,7 @@ Heights are converted to metres from each label's `UNIT` (LOLA stores DN × 0.5 
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
 | Real elevation for our test region | LOLA / SLDEM tiles still downloading (~0.7 MB/s) | DATA-13 |
-| Shadow mask, CLAHE, phase congruency, IIRS composite | Not built yet | PREP-01…08 |
+| Shadow mask, phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02…08 |
 
 ---
 
