@@ -32,6 +32,15 @@
 
 ---
 
+## Measured accuracy
+
+Every completed step is checked against an **independent** reference (a different code path, the publisher's own checksums or statistics, or a Monte-Carlo estimate). Each check runs 10 times to prove repeatability.
+
+- **[`reports/accuracy.md`](reports/accuracy.md)**: per-step correct / total, errors and timing. Regenerate with `python scripts/accuracy_report.py`; never edit the numbers by hand.
+- **[`reports/test_repeats.md`](reports/test_repeats.md)**: the full test suite run 10 times back to back.
+
+---
+
 ## Setup
 
 ```bash
