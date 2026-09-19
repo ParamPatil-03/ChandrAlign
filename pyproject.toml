@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "chandralign"
 version = "0.1.0"
 description = "Multi-modal, sun-angle and scale-invariant registration of Chandrayaan-2 images against LRO and SELENE references (SIH26166)"
-readme = "PLAN.md"
+readme = "README.md"
 requires-python = ">=3.11"
 # Part 1 (data layer) dependencies. Every one is permissively licensed (PLAN.md 2.3).
 dependencies = [
