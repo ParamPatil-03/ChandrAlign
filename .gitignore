@@ -1,0 +1,21 @@
+# Data: downloaded products are never committed; the manifest is.
+data/*
+!data/manifest.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated
+reports/*.html
+runs/
+*.IMG
+*.img
+*.tif
+
+# Part 2 additions
+.pytest_cache/
+*.egg-info/
+.coverage
