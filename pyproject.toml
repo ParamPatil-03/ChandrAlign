@@ -33,4 +33,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+# Quick run by default. Full run, including the multi-GB checksum checks:
+#   pytest -m ""
+addopts = "-q -m 'not slow'"
+markers = [
+    "slow: reads whole multi-GB products (e.g. ISRO MD5 checks); run with -m slow or -m ''",
+]
