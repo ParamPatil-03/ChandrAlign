@@ -14,3 +14,10 @@ runs/
 *.IMG
 *.img
 *.tif
+
+# Packaging
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage

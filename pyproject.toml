@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chandralign"
+version = "0.1.0"
+description = "Multi-modal, sun-angle and scale-invariant registration of Chandrayaan-2 images against LRO and SELENE references (SIH26166)"
+readme = "PLAN.md"
+requires-python = ">=3.11"
+# Part 1 (data layer) dependencies. Every one is permissively licensed (PLAN.md 2.3).
+dependencies = [
+    "numpy",
+    "lxml",
+    "pds4_tools",   # PDS4 labels (NASA PDS Small Bodies Node)
+    "pvl",          # PDS3 / ODL labels
+    "pyshp",        # PRADAN footprint shapefiles
+    "shapely",      # footprints and overlap
+    "pyyaml",       # configs/
+    "requests",     # data fetchers
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov"]
+# Added by the step that first needs them, so the base install stays light:
+#   geo:      rasterio, pyproj, spiceypy           (Part 1, Phase 2)
+#   prep:     phasepack, spectral, scikit-image     (Part 1, Phase 2)
+#   match:    torch, kornia, vismatch, opencv       (Part 2)
+#   product:  fastapi, uvicorn, jinja2, matplotlib  (Part 3)
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
