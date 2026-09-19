@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 13a, contrast preparation (CLAHE)**; Step 12's real DEM download still in progress.
+> This README is updated after every completed step. Last update: **Step 13b, shadow detection** (waiting on a hand-drawn reference mask); Step 12's DEM download still in progress.
 
 ---
 
@@ -29,9 +29,10 @@
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
 | 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ slope · 🟡 DEM reader done, real tiles downloading |
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
-| next | 13b shadows · 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-04, 05, 06, 07, 08, 02, 03 | ⏳ |
+| 13b | Shadow detection → `shadow_mask` | PREP-04 | 🟡 built · plan's hand-drawn IoU check pending |
+| next | 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-05, 06, 07, 08, 02, 03 | ⏳ |
 
-**Tests:** 222 passing, 2 skipped until the DEM download finishes (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 231 passing, 3 skipped (2 wait for the DEM download, 1 for the hand-drawn shadow mask) (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -232,6 +233,18 @@ ready.preprocess_chain           # [..., 'stretch_p1-99', 'clahe_c2_t8x8']
 
 A 1st–99th percentile stretch of the valid pixels, then CLAHE in 16 bits (so 16-bit sensors keep their precision). No-data pixels can't affect the result and come back as 0 with the same valid mask. Measured on real mid-strip tiles, local contrast rises ×2.1 (OHRC) to ×4.2 (SELENE), and the spread between cameras narrows from 2.7× to 1.7×. On the darkest OHRC area (sun 7.3° up) it rises ×3.4.
 
+### Shadow mask
+
+```python
+from chandralign.preprocess.shadow_mask import with_shadow_mask
+
+plane = with_shadow_mask(read_tile(meta, window))   # run BEFORE prepare_plane (CLAHE is non-linear)
+ready = prepare_plane(plane)                         # the shadow mask is carried through
+ready.shadow_mask                                    # True = shadow: exclude from matching
+```
+
+Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors.
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -241,7 +254,7 @@ A 1st–99th percentile stretch of the valid pixels, then CLAHE in 16 bits (so 1
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
 | Real elevation for our test region | LOLA / SLDEM tiles still downloading (~0.7 MB/s) | DATA-13 |
-| Shadow mask, phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02…08 |
+| Phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02, 03, 05–08 |
 
 ---
 
