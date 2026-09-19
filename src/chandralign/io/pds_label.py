@@ -564,6 +564,46 @@ def read_pds3_image_info(lbl_path: str | Path) -> dict:
     return {k.lower(): _pvl_value(image[k]) for k in keys if k in image}
 
 
+@dataclass(frozen=True)
+class SpecialValues:
+    """Pixel values the label says are not real measurements."""
+    nodata: tuple[float, ...]       # missing / null / dummy / saturation codes
+    valid_min: Optional[float]
+    valid_max: Optional[float]
+    declared: bool                  # False = the label states none of these
+
+
+_PDS4_SPECIAL = ("missing_constant", "invalid_constant", "unknown_constant", "not_applicable_constant",
+                 "high_instrument_saturation", "high_representation_saturation",
+                 "low_instrument_saturation", "low_representation_saturation")
+_PDS3_SPECIAL = ("DUMMY", "NULL", "MISSING_CONSTANT", "LOW_REPR_SATURATION", "LOW_INSTR_SATURATION",
+                 "HIGH_REPR_SATURATION", "HIGH_INSTR_SATURATION")
+
+
+def read_special_values(label_path: str | Path) -> SpecialValues:
+    """No-data and saturation codes plus the valid range, exactly as the label states them.
+
+    Saturated pixels are listed with no-data: a clipped value is not a measurement
+    and must not be matched. A label that states nothing yields declared=False --
+    callers then treat only NaN/inf as invalid, rather than guessing a fill value.
+    """
+    label_path = Path(label_path)
+    if is_pds3(label_path):
+        image = _pvl_label(label_path)["IMAGE"]
+        codes = [_pvl_value(image[k]) for k in _PDS3_SPECIAL if k in image]
+        vmin = _pvl_value(image.get("VALID_MINIMUM"))
+        vmax = _pvl_value(image.get("VALID_MAXIMUM"))
+    else:
+        tree = _load_xml(label_path)
+        codes = [_float(tree, k, "Special_Constants") for k in _PDS4_SPECIAL]
+        vmin = _float(tree, "valid_minimum", "Special_Constants")
+        vmax = _float(tree, "valid_maximum", "Special_Constants")
+    nodata = tuple(sorted({float(c) for c in codes if c is not None}))
+    vmin = float(vmin) if vmin is not None else None
+    vmax = float(vmax) if vmax is not None else None
+    return SpecialValues(nodata, vmin, vmax, declared=bool(nodata) or vmin is not None or vmax is not None)
+
+
 def parse_label(label_path: str | Path, **kwargs) -> SceneMeta:
     """PDS3 or PDS4, decided by the label's content, not its file extension."""
     return parse_pds3(label_path) if is_pds3(label_path) else parse_pds4(label_path, **kwargs)
