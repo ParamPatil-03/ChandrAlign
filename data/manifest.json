@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-19T17:13:51+00:00",
+  "generated_utc": "2026-09-19T18:16:48+00:00",
   "root": "data/raw",
-  "file_count": 307,
-  "total_bytes": 11036499155,
+  "file_count": 309,
+  "total_bytes": 11036513017,
   "files": {
     "ch2/ch2_iir_nci_20240523T1600301891_d_img_d18.zip": {
       "size_bytes": 2755898510,
@@ -1204,6 +1204,10 @@
       "size_bytes": 13216,
       "sha256": "617b917899714c5e58a602e88f4e83441e8d4a4c0287ddac7fbf1c33aa698286"
     },
+    "lro/nac/nac.m102000149rc/ode_metadata.json": {
+      "size_bytes": 6604,
+      "sha256": "94b31b0b8af39a8145e7c38eb31c7e841974bfbfd7aac73d48236d81f9b222f1"
+    },
     "lro/nac/nac.m1417360906lc/M1417360906LC.IMG": {
       "size_bytes": 528929736,
       "sha256": "15cc6a38a4af970b8ee2f777d98dc9cddedb4b67f867d979a4a0cbf35d58bf44"
@@ -1215,6 +1219,10 @@
     "lro/nac/nac.m1417360906lc/M1417360906LC_PYR.XML": {
       "size_bytes": 1986,
       "sha256": "9cfb2702046e31161c5023b517c49f85a57e0cd550323dac70f244580d8bd7e5"
+    },
+    "lro/nac/nac.m1417360906lc/ode_metadata.json": {
+      "size_bytes": 7258,
+      "sha256": "9a86cb67667b94cda3d44a6a415b53d1de02ed2cad85d6910e14631751c853ff"
     },
     "selene/tc/TCO_MAP_02_N00E021S03E024SC.img": {
       "size_bytes": 301989888,

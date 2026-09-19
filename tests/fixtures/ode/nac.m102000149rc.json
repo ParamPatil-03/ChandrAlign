@@ -1,0 +1,109 @@
+{
+  "pdsid": "nac.m102000149rc",
+  "source": "ode_catalogue",
+  "query_url": "https://oderest.rsl.wustl.edu/live2/?query=product&target=moon&results=mf&output=JSON&pdsid=nac.m102000149rc",
+  "fetched_utc": "2026-09-19T18:14:41+00:00",
+  "record": {
+    "BB_georeferenced": "True",
+    "Center_georeferenced": "True",
+    "Center_latitude": "0.48",
+    "Center_longitude": "23.485",
+    "Comment": "TARGET OF OPPORTUNITY",
+    "Description": "Lunar Reconnaissance Orbiter Camera NAC CDR Product",
+    "Easternmost_longitude": "23.59",
+    "Emission_angle": "11.76",
+    "External_url": "https://data.lroc.im-ldi.com/lroc/view_lroc/LRO-L-LROC-3-CDR-V1.0/M102000149RC",
+    "FilesURL": "https://ode.rsl.wustl.edu/moon/productfiles.aspx?product_id=nac.m102000149rc&product_idGeo=31654010",
+    "Footprint_C0_geometry": "POLYGON ((23.59 1.5, 23.57 -0.54, 23.38 -0.54, 23.39 1.5, 23.59 1.5))",
+    "Footprint_geometry": "POLYGON ((23.59 1.5, 23.57 -0.54, 23.38 -0.54, 23.39 1.5, 23.59 1.5))",
+    "Footprint_GL_geometry": "POLYGON ((23.59 1.5, 23.57 -0.54, 23.38 -0.54, 23.39 1.5, 23.59 1.5))",
+    "Footprint_NP_geometry": "MULTIPOLYGON EMPTY",
+    "Footprint_souce": "PDS Archive Index Table",
+    "Footprint_SP_geometry": "MULTIPOLYGON EMPTY",
+    "Footprints_cross_meridian": "False",
+    "Incidence_angle": "79.75",
+    "LabelURL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1001/DATA/COM/2009193/NAC/M102000149RC.xml",
+    "Map_resolution": "1.181",
+    "Maximum_latitude": "1.5",
+    "Minimum_latitude": "-0.54",
+    "Observation_time": "2009-07-12T01:08:22.807Z",
+    "ODE_notes": {
+      "ODE_note": [
+        "NOTE: Product Type set by ODE",
+        "NOTE: Instrument Host Id set by ODE",
+        "NOTE: Instrument Id set by ODE",
+        "NOTE: Label keyword Orbit number value used for start orbit number value",
+        "NOTE: Label keyword Orbit number value used for stop orbit number value",
+        "NOTE: LROC map resolution updated from index table entry",
+        "NOTE: LROC emission angle updated from index table entry",
+        "NOTE: LROC incidence angle updated from index table entry",
+        "NOTE: LROC phase angle updated from index table entry",
+        "NOTE: LROC solar longitude updated from index table entry",
+        "NOTE: LROC solar distance updated from index table entry",
+        "NOTE: Observation time set to mid-point between start time and stop time",
+        "NOTE: Index Record:",
+        "\"LROLRC_1001\",\"    LRO-L-LROC-3-CDR-V1.0/LROLRC_1001/DATA/COM/2009193/NAC/M102000149RC.IMG\",\"LRO\",\"LROC\",\"nacr00000add\",\" M102000149RC\",\"        v1.9\",\" MOON\",  210, -12.142,\"                  COMMISSIONING\",\"                                                      TARGET OF OPPORTUNITY\",  0,\" 2009-07-12 01:08:01.742\",\" 2009-07-12 01:08:02.537\",\" 2009-07-12 01:08:43.077\",\" 1\",\"269053681:47185\",\" 269053682:33744\",\"  269053723:3618\",269053682,  33744,269053723,   3618,0.000772800,9.99999,\"RIGHT\", 188, 54,110,  3,\"  N/A\",999,999,\"                                   N/A\",99999,9999.99,999,9,0,0,0,   1.277,  17.415, -13.187,   6.408,9999.999,9999.999,9999.999,9999.999,9999.999,9999.999, 52224,5064,16,   1.18,  1.18,  1.181,11.76, 79.75, 91.51, 78.99,180.43,  0.30,303.73,  0.47, 24.21,152326038.3,169.63,  0.48, 23.48,  1.50, 23.59, -0.54, 23.57, -0.54, 23.38,  1.50, 23.39, 113.29,1850.52,\"A\",\"-X\"",
+        "NOTE: Product Comment set from Index file RATIONALE_DESC field",
+        "NOTE: Product Lat/Lon Footprint set from Index file  fields UPPER RIGHT to LOWER LEFT corner Point fields",
+        "NOTE: Product Center Lat/Lon set from footprint",
+        "NOTE: LROC location data updated from index table entry"
+      ]
+    },
+    "Phase_angle": "91.51",
+    "Pole_state": "none",
+    "Product_files": {
+      "Product_file": [
+        {
+          "Creation_date": "2013-09-10T18:39:25.000000Z",
+          "Description": "PRODUCT DATA FILE",
+          "FileName": "M102000149RC.IMG",
+          "KBytes": "528929",
+          "Type": "Product",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1001/DATA/COM/2009193/NAC/M102000149RC.IMG"
+        },
+        {
+          "Description": "PDS4 PRODUCT LABEL FILE",
+          "FileName": "M102000149RC.XML",
+          "KBytes": "13",
+          "Type": "Product",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1001/DATA/COM/2009193/NAC/M102000149RC.xml"
+        },
+        {
+          "Creation_date": "2023-03-13T14:01:47.920",
+          "Description": "PRODUCT KML FILE <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M102000149RC_XML.KML",
+          "KBytes": "3",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/kmlfiles/lro-l-lroc-3-cdr/lrolrc_1001/data/com/2009193/nac/M102000149RC_xml.kml"
+        },
+        {
+          "Creation_date": "2023-03-13T14:01:47.805",
+          "Description": "PRODUCT FOOTPRINT SHAPEFILES (TAR.GZ) <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M102000149RC_XML.TAR.GZ",
+          "KBytes": "3",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/shapefiles/lro-l-lroc-3-cdr/lrolrc_1001/data/com/2009193/nac/M102000149RC_xml.tar.gz"
+        },
+        {
+          "Creation_date": "2023-03-13T14:01:47.643",
+          "Description": "PRODUCT FOOTPRINT SHAPEFILES (ZIP) <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M102000149RC_XML.ZIP",
+          "KBytes": "17",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/shapefiles/lro-l-lroc-3-cdr/lrolrc_1001/data/com/2009193/nac/M102000149RC_xml.zip"
+        }
+      ]
+    },
+    "Product_name": "M102000149RC.IMG",
+    "ProductURL": "https://ode.rsl.wustl.edu/moon/indexproductpage.aspx?product_id=nac.m102000149rc&product_idGeo=31654010",
+    "Solar_distance": "152326038.3",
+    "Solar_longitude": "169.63",
+    "SpaceCraft_clock_start_count": "1/269053682:33744",
+    "SpaceCraft_clock_stop_count": "1/269053723:03618",
+    "Start_orbit_number": "210",
+    "Stop_orbit_number": "210",
+    "UTC_start_time": "2009-07-12T01:08:02.537000Z",
+    "UTC_stop_time": "2009-07-12T01:08:43.077000Z",
+    "Westernmost_longitude": "23.38"
+  }
+}

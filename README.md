@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 8, tiling. Gate A reached.**
+> This README is updated after every completed step. Last update: **Step 9, sun angles and lighting difference.**
 
 ---
 
@@ -24,9 +24,10 @@
 | 6 | SELENE PDS3 reader | DATA-02, DATA-08 | ✅ reader · 🟡 needs ≥3 TMC-2↔SELENE pairs |
 | 7 | LRO NAC reader | DATA-06 | ✅ |
 | 8 | Tiling → `ImagePlane` | DATA-11 | ✅ **Gate A** |
-| next | Elevation maps, sun/view geometry, footprints, projection, preprocessing | DATA-13, GEO-*, PREP-* | ⏳ |
+| 9 | Sun angles and lighting difference between two scenes (source of every value recorded) | GEO-01, DATA-12 | 🟡 scene level done · per-pixel layers with GEO-02 |
+| next | Footprint overlap, projection, elevation maps, slope/aspect, preprocessing | GEO-04, GEO-05, DATA-13, GEO-03, PREP-* | ⏳ |
 
-**Tests:** 130 passing (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 144 passing (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -59,9 +60,11 @@ Latitude −0.44 to +0.37, longitude 23.45 to 23.59. It's the one spot where all
 | `ch2_ohr_ncp_20240330T0035085365` | OHRC | 79,796 × 12,000, uint8 | 0.30 m | **7.3°** (near sunset) | PRADAN |
 | `ch2_tmc_nca_20250207T1102039417` | TMC-2 (aft) | 160,269 × 4,000, uint16 | 4.41 m | 44.0° | PRADAN |
 | `ch2_iir_nci_20240523T1600301891` | IIRS | 256 bands × 13,101 × 250, float32 | 97.15 m | 57.3° | PRADAN |
-| `M1417360906LC` | LRO NAC | 52,224 × 5,064, int16 | 0.5 m | *not in label* (ODE: incidence 7.7°) | NASA ODE |
-| `M102000149RC` | LRO NAC | 52,224 × 5,064, int16 | 0.5 m | *not in label* (ODE: incidence 79.8°) | NASA ODE |
+| `M1417360906LC` | LRO NAC | 52,224 × 5,064, int16 | 0.5 m | 82.3° (ODE catalogue; incidence 7.7°) | NASA ODE |
+| `M102000149RC` | LRO NAC | 52,224 × 5,064, int16 | 0.5 m | 10.3° (ODE catalogue; incidence 79.75°) | NASA ODE |
 | `TCO_MAP_02_N03E021N00E024SC` + `…N00E021S03E024SC` | SELENE TC ortho mosaic | 12,288 × 12,288, uint16 BE | 7.40 m | *mosaic, none* | JAXA DARTS |
+
+Each NAC folder also holds `ode_metadata.json`, NASA's catalogue record (angles and footprint) saved at download time so nothing depends on ODE being reachable later.
 
 Every product's pixels match the publisher's own MD5 checksum (NAC: both the whole-file and the pixels-only checksum). The SELENE tiles also reproduce JAXA's label statistics exactly.
 
@@ -113,11 +116,33 @@ global_pts = tile_to_global(tile_pts, plane.tile_origin)              # (x, y) t
 - A multi-band product (IIRS) needs `band=`. Matching a whole cube is refused; the IIRS composite (PREP-06) will produce one plane.
 - **Normalisation is a per-tile min/max placeholder**, recorded as `"tile_minmax"` in `preprocess_chain`. Real radiometric preparation (CLAHE and more) arrives with PREP-01.
 
+### Sun angles and lighting difference (for the regime selector)
+
+```python
+from chandralign.geometry.solar import scene_illumination, illumination_delta
+
+ill = scene_illumination(meta)            # picks up a saved ODE record next to the product
+ill.incidence_deg, ill.sun_elevation_deg  # 82.73, 7.27 for our OHRC
+ill.sources                               # {'incidence_deg': 'label', 'emission_deg': None, ...}
+
+d = illumination_delta(ohrc_meta, nac_meta)
+d['d_incidence_deg'], d['d_azimuth_deg']  # None where either side is unknown -- never 0
+d['max_incidence_deg'], d['complete']     # lower sun of the two; False if any angle is missing
+```
+
+Every value records where it came from: `"label"`, `"ode_catalogue"` or `None` (unknown). Label values always win; a catalogue value that disagrees with the label by more than 1° is listed in `ill.notes`.
+
+| Scene | Incidence | Sun direction | Emission / phase |
+|---|---|---|---|
+| CH-2 (all three) | label | label | **unknown** |
+| LRO NAC | ODE catalogue | **unknown** | ODE catalogue |
+| SELENE TC mosaic | **none** (many passes) | **none** | **none** |
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
 |---|---|---|
-| Sun / view angles for **NAC** | NASA's CDR labels carry **no geometry at all**. The ODE values are a catalogue, not label facts. | GEO-01/02 (SPICE or ODE, source recorded) |
+| **Sun direction (azimuth)** for NAC | Neither the labels nor ODE's product record have it | GEO-02 (SPICE) or the LROC index table |
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Corner lat/lon for **NAC** | Not in the label | GEO-01 / ODE footprint |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
@@ -135,7 +160,8 @@ Worth knowing before designing anything downstream:
 3. **CH-2 "refined" corners were adjusted against SELENE** (`reference_data_used = SELENE`). Using them would leak a reference into its own evaluation, so `corner_latlon` defaults to the **system-level** corners. `read_corner_sets()` returns both.
 4. **The SELENE TC ortho map is a mosaic:** no acquisition time, brightness normalised to a standard 30° sun, but shadows still from the original passes. It has no sun angle, and the reader claims none.
 5. **The OHRC scene is very dark** (sun 7.3° up). Mid-strip pixels only reach ~83 out of 255, so illumination handling isn't optional.
-6. **The NAC pair covers identical ground at incidence 7.7° vs 79.8°**, giving an illumination stress test from real data.
+6. **One OHRC scene gives both an easy pair and a stress pair.** OHRC vs NAC M102000149RC differ by only **3°** in incidence (Easy tier). OHRC vs NAC M1417360906LC differ by **75°** (illumination stress test). Same ground, real data.
+7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
 
 ---
 
