@@ -18,7 +18,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from .. import config
+from .. import compute, config
 from ..contracts import ImagePlane, MatchSet
 from . import filters
 
@@ -92,4 +92,8 @@ def match(src: ImagePlane, ref: ImagePlane, *, detector: str = "sift",
     ms.n_keypoints_ref = len(kp_ref)      # type: ignore[attr-defined]
     ms.orientation_peak = filters.orientation_consistency(  # type: ignore[attr-defined]
         kp_src, kp_ref, i_src, i_ref)
+    # Record the device this actually ran on, rather than letting a reader infer
+    # it from what the machine has available. OpenCV pip wheels carry no CUDA,
+    # so this path is cpu regardless of any GPU present.
+    ms.device = compute.classical_device()   # type: ignore[attr-defined]
     return ms

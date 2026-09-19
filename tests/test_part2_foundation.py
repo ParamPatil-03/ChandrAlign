@@ -251,3 +251,45 @@ def test_pairing_status_distinguishes_solved_from_open():
     assert config.pairing_status("OHRC", "NAC")["status"] == "solved"
     assert config.pairing_status("TMC2", "TC")["status"] == "open"
     assert config.pairing_status("OHRC", "IIRS")["status"] == "known_hard"
+
+
+# ---------------------------------------------------------------------------
+# Device provenance: what ran where
+# ---------------------------------------------------------------------------
+def test_classical_path_is_cpu_and_says_so():
+    """A GPU being present must never be reported as a GPU being used.
+
+    OpenCV's pip wheel is built without CUDA, so the classical path is CPU even
+    on this machine, which has a working RTX 4050 visible to torch.
+    """
+    from chandralign import compute
+    src, ref, _ = synth.make_pair(out_shape=(128, 128), n_craters=12, seed=1)
+    ms = classical.match(src, ref, detector="sift")
+    assert getattr(ms, "device", None) == "cpu"
+    assert compute.classical_device() == "cpu"
+
+
+def test_classical_path_never_imports_torch():
+    """Keeps the no-GPU fallback genuinely torch-free (risk R6)."""
+    import subprocess, sys as _sys
+    code = (
+        "import sys; sys.path.insert(0,'src');"
+        "from chandralign import synth;"
+        "from chandralign.matching import classical;"
+        "from chandralign.estimate import robust;"
+        "s,r,_=synth.make_pair(out_shape=(96,96),n_craters=8,seed=1);"
+        "m=classical.match(s,r,detector='sift');"
+        "robust.estimate(m.src_pts,m.ref_pts,expected_scale=1.0);"
+        "print('torch' in sys.modules)"
+    )
+    out = subprocess.run([_sys.executable, "-c", code], capture_output=True,
+                         text=True, cwd=".")
+    assert out.stdout.strip().endswith("False"), out.stdout + out.stderr
+
+
+def test_capability_is_not_confused_with_device_used():
+    """compute.provenance must keep the two separable."""
+    from chandralign import compute
+    prov = compute.provenance("cpu", stage="match")
+    assert prov["match_device"] == "cpu"
+    assert "capability" in prov and "note" in prov
