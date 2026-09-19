@@ -42,9 +42,36 @@ subpixel:                    # PREC-01..05
   ecc_eps: 1.0e-6
 
 tiers:                       # CHECK-07 confidence tiers
-  high:   {min_inliers: 100, min_inlier_ratio: 0.50, min_coverage: 0.60}
-  medium: {min_inliers: 40,  min_inlier_ratio: 0.25, min_coverage: 0.35}
-  low:    {min_inliers: 15,  min_inlier_ratio: 0.10, min_coverage: 0.15}
+  # The `low` row is the ACCEPT/REJECT boundary, so it is the only row derived
+  # from measurement rather than guessed. Fitted by grid search over 60 runs of
+  # scripts/bench_matchers.py (4 matchers x 5 illumination cases x seeds 3/11/29),
+  # scoring each run against the KNOWN synthetic transform. 45 combinations
+  # separated the 33 good runs from the 27 bad ones perfectly; these are the
+  # centre of that feasible region, not its edge, so there is margin either side.
+  #
+  #   signal     threshold   lowest GOOD run   headroom
+  #   inliers    8           12                4
+  #   ratio      0.325       0.4286            0.104
+  #   coverage   0.15        0.1719            0.022   <-- thinnest, see below
+  #
+  # Both signals are load-bearing and neither is redundant:
+  #   - 12 bad runs (xfeat/eloftr at +90deg and opposite Sun) have 34-105 inliers
+  #     and 0.28-0.52 coverage. ONLY the ratio catches them.
+  #   - 2 bad runs (aliked-lightglue, seed 29) have ratio 0.50-0.52.
+  #     ONLY the coverage catches them.
+  # A single-signal gate leaks one family or the other. That is the whole reason
+  # assess() is a conjunction (worst-of) rather than a score.
+  #
+  # HONEST LIMITS. These are fitted to SYNTHETIC imagery from one terrain
+  # generator, 4 matchers and 5 Sun geometries. Perfect separation on 60 runs is
+  # evidence for a starting point, not proof of a robust threshold. Coverage in
+  # particular has only a 0.031-wide feasible window (0.1406 < c <= 0.1719) and
+  # is the first value to re-derive on real Chandrayaan-2/LRO NAC pairs.
+  high:   {min_inliers: 100, min_inlier_ratio: 0.50,  min_coverage: 0.60}
+  medium: {min_inliers: 40,  min_inlier_ratio: 0.25,  min_coverage: 0.35}
+  low:    {min_inliers: 8,   min_inlier_ratio: 0.325, min_coverage: 0.15}
+  # `high` and `medium` are still UNVALIDATED guesses: the benchmark grades the
+  # accept/reject decision, so it cannot say whether a MEDIUM is really medium.
   # Anything below `low`, or any failed control gate, is REJECTED (CHECK-08).
 
 gates:                       # CHECK-01..06 tolerances
