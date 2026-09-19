@@ -1,0 +1,103 @@
+PDS_VERSION_ID            = "PDS3"
+
+/*** GENERAL DATA DESCRIPTION PARAMETERS ***/
+PRODUCT_VERSION_ID        = "V2.0"
+DATA_SET_ID               = "LRO-L-LOLA-4-GDR-V1.0"
+PRODUCT_ID                = "SLDEM2015_512_00N_30N_000_045_FLOAT"
+INSTRUMENT_HOST_NAME      = "LUNAR RECONNAISSANCE ORBITER"
+INSTRUMENT_NAME           = "LUNAR ORBITER LASER ALTIMETER"
+INSTRUMENT_ID             = "LOLA"
+MISSION_PHASE_NAME        = {"COMMISSIONING","NOMINAL MISSION","SCIENCE
+                              MISSION","EXTENDED SCIENCE MISSION"}
+TARGET_NAME               = MOON
+START_TIME                = 2009-07-13T17:33:17
+STOP_TIME                 = 2013-07-18T00:10:56
+PRODUCT_CREATION_TIME     = 2015-09-15T00:00:00
+PRODUCER_ID               = LRO_LOLA_TEAM
+PRODUCER_FULL_NAME        = "DAVID E. SMITH"
+PRODUCER_INSTITUTION_NAME = "GODDARD SPACE FLIGHT CENTER"
+DESCRIPTION               = "This data product is a rectangular subsection
+   (tile) of a lunar digital elevation model (DEM) covering latitudes 
+   equatorward of +/- 60 degrees at a horizontal resolution of 512 pixels
+   per degree (~60 meters at the equator).  The DEM uses data acquired by the
+   LOLA instrument through mission phase LRO_ES_09, which have been 
+   coregistered with Kaguya's SELENE terrain camera data.  LOLA data have been
+   geolocated using the gravity field GRGM900B derived using data from the 
+   GRAIL mission [ZUBERETAL2013,LEMOINEETAL2014].
+
+   The map is in the form of a binary table with 
+   one row for each  0.0019531250 degrees of latitude, pixel registered.
+   Map values are relative to a radius of 1737.4 km.
+
+   This label describes an IMG file in the form of a binary resampling 
+   to pixel registration.
+"
+
+OBJECT                    = UNCOMPRESSED_FILE
+FILE_NAME                 = "SLDEM2015_512_00N_30N_000_045_FLOAT.IMG"
+RECORD_TYPE               = FIXED_LENGTH
+FILE_RECORDS              = 15360
+RECORD_BYTES              = 92160
+^IMAGE                    = "SLDEM2015_512_00N_30N_000_045_FLOAT.IMG"
+
+
+  OBJECT                  = IMAGE
+    NAME                  = HEIGHT
+    DESCRIPTION           = "Each sample represents height relative to a
+      reference radius (OFFSET) and is generated using LOLA data
+      and Kaguya's SELENE Terrain Camera data as refined by the LOLA and 
+      TC teams, respectively."
+    LINES                 = 15360
+    LINE_SAMPLES          = 23040
+    MAXIMUM               = 3.466
+    MINIMUM               = -4.899
+    SAMPLE_TYPE           = PC_REAL
+    SAMPLE_BITS           = 32
+    UNIT                  = KILOMETER
+    SCALING_FACTOR        = 1
+    OFFSET                = 1737.4
+
+/* Conversion from Digital Number to HEIGHT (elevation in kilometers) is:  */
+/* HEIGHT = (DN * SCALING_FACTOR).                                         */
+/* The conversion from Digital Number to PLANETARY_RADIUS in meters is:    */
+/* PLANETARY_RADIUS = (DN * SCALING_FACTOR) + OFFSET                       */
+/* where OFFSET is the radius of a reference sphere.                       */
+/* The planetopotential TOPOGRAPHY is PLANETARY_RADIUS - GEOID_RADIUS,     */
+/* where GEOID_RADIUS is derived from a gravitational equipotential model. */
+/* By convention, the average GEOID_RADIUS at the equator is OFFSET.       */
+
+  END_OBJECT              = IMAGE
+END_OBJECT                = UNCOMPRESSED_FILE
+
+
+OBJECT                    = IMAGE_MAP_PROJECTION
+ ^DATA_SET_MAP_PROJECTION     = "DSMAP.CAT"
+ MAP_PROJECTION_TYPE          = "SIMPLE CYLINDRICAL"
+ MAP_RESOLUTION               = 512 <pix/deg>
+ A_AXIS_RADIUS                = 1737.4 <km>
+ B_AXIS_RADIUS                = 1737.4 <km>
+ C_AXIS_RADIUS                = 1737.4 <km>
+ FIRST_STANDARD_PARALLEL      = 'N/A'
+ SECOND_STANDARD_PARALLEL     = 'N/A'
+ POSITIVE_LONGITUDE_DIRECTION = "EAST"
+ CENTER_LATITUDE              = 0. <deg>
+ CENTER_LONGITUDE             = 180. <deg>
+ REFERENCE_LATITUDE           = 'N/A'
+ REFERENCE_LONGITUDE          = 'N/A'
+ LINE_FIRST_PIXEL             = 1
+ LINE_LAST_PIXEL              = 15360
+ SAMPLE_FIRST_PIXEL           = 1
+ SAMPLE_LAST_PIXEL            = 23040
+ MAP_PROJECTION_ROTATION      = 0.0
+ MAP_SCALE                    = 0.0592252938 <km/pix>
+ MAXIMUM_LATITUDE             = 30 <deg>
+ MINIMUM_LATITUDE             = 0 <deg>
+ WESTERNMOST_LONGITUDE        = 0 <deg>
+ EASTERNMOST_LONGITUDE        = 45 <deg>
+ LINE_PROJECTION_OFFSET       = 15359.5 <pix>
+ SAMPLE_PROJECTION_OFFSET     = 92159.5 <pix>
+ COORDINATE_SYSTEM_TYPE       = "BODY-FIXED ROTATING"
+ COORDINATE_SYSTEM_NAME       = "MEAN EARTH/POLAR AXIS OF DE421"
+END_OBJECT                    = IMAGE_MAP_PROJECTION
+
+END

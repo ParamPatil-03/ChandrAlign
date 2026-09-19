@@ -92,7 +92,9 @@ def test_map_model_reproduces_the_label_corners(meta):
 
 
 def test_map_model_convention_is_zero_based():
-    """1-based indexing (the textbook PDS3 reading) would miss the label corners by a full pixel."""
+    """Our 0-based form equals the PDS3 standard relation (which carries a +1 for 1-based
+    indices). Dropping that +1 -- feeding a 1-based index into our formula -- misses the
+    label corners by a full pixel."""
     model = geolocation_model(TC_N)
     lat_1based, _ = model.pixel_to_latlon(1, 1)
     assert abs(lat_1based - TC_N.corner_latlon[0][0]) == pytest.approx(1 / 4096)

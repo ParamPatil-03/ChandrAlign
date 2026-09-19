@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 11, Moon map projection and pixel geolocation.**
+> This README is updated after every completed step. Last update: **Step 12, elevation maps and slope/aspect** (real DEM download in progress).
 
 ---
 
@@ -27,9 +27,10 @@
 | 9 | Sun angles and lighting difference between two scenes (source of every value recorded) | GEO-01, DATA-12 | 🟡 scene level done · per-pixel layers with GEO-02 |
 | 10 | Footprint overlap and pre-filter (rejects a pair before any matcher runs) | GEO-04 | ✅ |
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
-| next | Elevation maps, slope/aspect, preprocessing | DATA-13, GEO-03, PREP-* | ⏳ |
+| 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ slope · 🟡 DEM reader done, real tiles downloading |
+| next | Image preparation (contrast, shadows, IIRS composite…) | PREP-* | ⏳ |
 
-**Tests:** 188 passing (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 212 passing, 2 skipped until the DEM download finishes (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -85,6 +86,7 @@ Every product's pixels match the publisher's own MD5 checksum (NAC: both the who
 |---|---|---|
 | Chandrayaan-2 (PRADAN) | Manual download, since SSO can't be scripted. Download the **calibrated** zips (`ncp` / `nca` / `nci`, not `nr*`), put them in `data/raw/ch2/`, and they get extracted to `data/raw/ch2/<camera>/products/<id>/`. | yes |
 | Footprints of every CH-2 product | `python scripts/ch2_footprints.py`, which reads the PRADAN shapefiles. It finds 18 OHRC scenes with TMC-2 + IIRS overlap. | – |
+| Elevation maps (LOLA, SLDEM2015) | `python scripts/fetch_dem.py --bbox <minlat maxlat minlon maxlon> --dem lola\|sldem2015 --download` (whole tiles, 0.9–1.4 GB each) | no |
 | LRO NAC / WAC | `python scripts/fetch_lro.py --scene <ch2_id> [--product NAC\|WAC] --ids <pdsid>…` | no |
 | SELENE TC | `python scripts/fetch_selene.py --scene <ch2_id> --download` | no |
 
@@ -199,6 +201,25 @@ x, y = to_map(lat, lon, crs)
 
 **Never evaluate a registration against SELENE using a model with `independent_of_references == False`.**
 
+### Elevation, slope and aspect
+
+```python
+from chandralign.io.dem import dem_patch, find_tiles
+from chandralign.geometry.dem_terrain import slope_aspect
+
+patch = dem_patch(find_tiles("data/raw/dem/lola"), bbox=(min_lat, max_lat, min_lon, max_lon))
+patch.heights_m                  # metres, north-up; tiles stitched across boundaries
+patch.sample(lat, lon)           # bilinear; NaN outside -- never extrapolated
+t = slope_aspect(patch)          # t.slope_deg, t.aspect_deg (direction the ground faces, 0 = N)
+```
+
+| DEM | Detail | Built from | Independent of our references? |
+|---|---|---|---|
+| LOLA `ldem_1024` | ~30 m (mostly interpolated between laser tracks) | laser altimetry | ✅ |
+| SLDEM2015 `_512` | ~59 m | LOLA **+ SELENE TC stereo** | ❌ (SELENE-derived) |
+
+Heights are converted to metres from each label's `UNIT` (LOLA stores DN × 0.5 m, SLDEM stores km). The label's `OFFSET` is the Moon's reference radius and is deliberately **not** added. Aspect is NaN on flat ground and slope is NaN wherever the DEM has no height.
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -207,7 +228,7 @@ x, y = to_map(lat, lon, crs)
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
-| Elevation maps, slope, aspect | Not fetched yet | DATA-13, GEO-03 |
+| Real elevation for our test region | LOLA / SLDEM tiles still downloading (~0.7 MB/s) | DATA-13 |
 | Shadow mask, CLAHE, phase congruency, IIRS composite | Not built yet | PREP-01…08 |
 
 ---
@@ -224,7 +245,7 @@ Worth knowing before designing anything downstream:
 6. **One OHRC scene gives both an easy pair and a stress pair.** OHRC vs NAC M102000149RC differ by only **3°** in incidence (Easy tier). OHRC vs NAC M1417360906LC differ by **75°** (illumination stress test). Same ground, real data.
 7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
 8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
-9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. The SELENE map convention is **0-based**; the textbook PDS3 1-based reading misses the label's own corners by a full pixel.
+9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
 

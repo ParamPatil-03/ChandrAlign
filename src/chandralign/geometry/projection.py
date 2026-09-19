@@ -217,8 +217,10 @@ class MapModel(_Model):
 
     lat = CENTER_LATITUDE  + (LINE_PROJECTION_OFFSET - row) / MAP_RESOLUTION
     lon = CENTER_LONGITUDE + (col - SAMPLE_PROJECTION_OFFSET) / MAP_RESOLUTION
-    with 0-based row/col -- the only convention that reproduces the label's own corner
-    coordinates (1-based is off by one pixel; tested).
+    with 0-based row/col. This is the PDS3 standard relation (SAMPLE =
+    SAMPLE_PROJECTION_OFFSET + MAP_RESOLUTION * (lon - CENTER_LONGITUDE) + 1, with
+    1-based samples) rewritten for 0-based indices. It reproduces the label's own
+    corner coordinates; dropping the standard formula's "+1" is off by one pixel (tested).
     """
     resolution_px_per_deg: float
     line_offset: float

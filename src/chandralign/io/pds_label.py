@@ -407,6 +407,36 @@ def _iso_utc(value) -> Optional[str]:
     return str(value)
 
 
+def _pds3_find(label, key: str):
+    """A top-level key, or the same key one level down inside a FILE-type object.
+
+    SELENE labels put IMAGE and ^IMAGE at the top level; LOLA nests them inside
+    OBJECT = UNCOMPRESSED_FILE. Both are valid PDS3.
+    """
+    if key in label:
+        return label[key]
+    for _, value in label.items():
+        if hasattr(value, "keys") and key in value:
+            return value[key]
+    return None
+
+
+def _resolve_file(parent: Path, name: str) -> Path:
+    """`name` in `parent`, matching case-insensitively when the exact name is absent.
+
+    PDS3 labels often say 'LDEM_..._IMG' while the archive serves 'ldem_....img';
+    Windows would not notice, Linux would fail to find the file.
+    """
+    exact = parent / name
+    if exact.exists():
+        return exact
+    lowered = name.lower()
+    for candidate in parent.iterdir() if parent.is_dir() else []:
+        if candidate.name.lower() == lowered:
+            return candidate
+    return exact
+
+
 def _pds3_image_offset(label, lbl_path: Path) -> tuple[Path, int]:
     """Resolve ^IMAGE to (pixel file, byte offset). Every PDS3 pointer form is handled:
 
@@ -416,9 +446,9 @@ def _pds3_image_offset(label, lbl_path: Path) -> tuple[Path, int]:
     ^IMAGE = ("x.img", 5)                record 5 of x.img
     ^IMAGE = ("x.img", 1 <BYTES>)        byte 1 of x.img
     """
-    if "^IMAGE" not in label:
+    pointer = _pds3_find(label, "^IMAGE")
+    if pointer is None:
         raise PdsParseError(f"{lbl_path.name}: no ^IMAGE pointer")
-    pointer = label["^IMAGE"]
     file_name, location = None, pointer
     if isinstance(pointer, (list, tuple)):
         file_name = pointer[0]
@@ -433,19 +463,19 @@ def _pds3_image_offset(label, lbl_path: Path) -> tuple[Path, int]:
     if units == "BYTES":
         offset = position - 1
     else:
-        record_bytes = _pvl_value(label.get("RECORD_BYTES"))
+        record_bytes = _pvl_value(_pds3_find(label, "RECORD_BYTES"))
         if not record_bytes:
             raise PdsParseError(f"{lbl_path.name}: ^IMAGE is a record number but RECORD_BYTES is missing")
         offset = (position - 1) * int(record_bytes)
 
-    raster = lbl_path.parent / file_name if file_name else lbl_path
+    raster = _resolve_file(lbl_path.parent, file_name) if file_name else lbl_path
     return raster, offset
 
 
 def _pds3_layout(lbl_path: Path, label) -> ArrayLayout:
-    if "IMAGE" not in label:
+    image = _pds3_find(label, "IMAGE")
+    if image is None:
         raise PdsParseError(f"{lbl_path.name}: no IMAGE object")
-    image = label["IMAGE"]
     try:
         lines, samples = int(image["LINES"]), int(image["LINE_SAMPLES"])
         sample_type = str(image["SAMPLE_TYPE"]).upper()
@@ -580,9 +610,9 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
 def read_pds3_image_info(lbl_path: str | Path) -> dict:
     """Value-handling fields from a PDS3 IMAGE object: no-data value, valid range,
     scaling to physical units, and the producer's own statistics (if stated)."""
-    image = _pvl_label(Path(lbl_path))["IMAGE"]
+    image = _pds3_find(_pvl_label(Path(lbl_path)), "IMAGE")
     keys = ("DUMMY", "VALID_MINIMUM", "VALID_MAXIMUM", "SCALING_FACTOR", "OFFSET",
-            "MINIMUM", "MAXIMUM", "AVERAGE", "STDEV", "IMAGE_VALUE_TYPE")
+            "MINIMUM", "MAXIMUM", "AVERAGE", "STDEV", "IMAGE_VALUE_TYPE", "UNIT")
     return {k.lower(): _pvl_value(image[k]) for k in keys if k in image}
 
 
@@ -611,7 +641,7 @@ def read_special_values(label_path: str | Path) -> SpecialValues:
     """
     label_path = Path(label_path)
     if is_pds3(label_path):
-        image = _pvl_label(label_path)["IMAGE"]
+        image = _pds3_find(_pvl_label(label_path), "IMAGE")
         codes = [_pvl_value(image[k]) for k in _PDS3_SPECIAL if k in image]
         vmin = _pvl_value(image.get("VALID_MINIMUM"))
         vmax = _pvl_value(image.get("VALID_MAXIMUM"))
