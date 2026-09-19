@@ -1,0 +1,1697 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?xml-model href="https://isda.issdc.gov.in/pds4/isda/v1/ch2_ldd_ISDA_1000.sch" schematypens="http://purl.oclc.org/dsdl/schematron" ?><Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1" xmlns:disp="http://pds.nasa.gov/pds4/disp/v1" xmlns:isda="https://isda.issdc.gov.in/pds4/isda/v1" xmlns:pds="http://pds.nasa.gov/pds4/pds/v1" xmlns:sp="http://pds.nasa.gov/pds4/sp/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pds.nasa.gov/pds4/pds/v1 http://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1B00.xsd                  http://pds.nasa.gov/pds4/disp/v1 http://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1301.xsd                 http://pds.nasa.gov/pds4/sp/v1 http://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1100.xsd           https://isda.issdc.gov.in/pds4/isda/v1 https://isda.issdc.gov.in/pds4/isda/v1/ch2_ldd_ISDA_1000.xsd">
+
+    <Identification_Area>
+        <logical_identifier>urn:isro:isda:ch2_cho.iir:data_calibrated:ch2_iir_nci_20240523t1600301891_d_img_d18</logical_identifier>
+        <version_id>1.0</version_id>
+        <title>Chandrayaan-2 Orbiter IIRS Experiment</title>
+        <information_model_version>1.11.0.0</information_model_version>
+        <product_class>Product_Observational</product_class>
+        <Modification_History>
+            <Modification_Detail>
+                <modification_date>2019-12-02</modification_date>
+                <version_id>1.0</version_id>
+                <description>PDS4 product label created by SAC Optical DP Team</description>
+            </Modification_Detail>
+        </Modification_History>
+    </Identification_Area>
+    <Observation_Area>
+        <Time_Coordinates>
+            <start_date_time>2024-05-23T16:00:30.1891Z</start_date_time>
+            <stop_date_time>2024-05-23T16:12:05.2280Z</stop_date_time>
+        </Time_Coordinates>
+        <Primary_Result_Summary>
+            <purpose>Science</purpose>
+	    <processing_level>Calibrated</processing_level>
+	</Primary_Result_Summary>
+        <Investigation_Area>
+            <name>Chandrayaan-2</name>
+            <type>Mission</type>
+            <Internal_Reference>
+                <lidvid_reference>urn:isro:isda:context:investigation:mission.chandrayaan2::1.0</lidvid_reference>
+                <reference_type>data_to_investigation</reference_type>
+            </Internal_Reference>
+        </Investigation_Area>
+        <Observing_System>
+            <Observing_System_Component>
+                <name>Chandrayaan 2 Orbiter</name>
+                <type>Spacecraft</type>
+                <description>
+                    Chandrayaan-2 Orbiter is an Orbiter craft under the Chandrayaan-2 Spacecraft 
+                    consists of various scientific instruments.
+                </description>
+            </Observing_System_Component>
+            <Observing_System_Component>
+                <name>imaging infrared spectrometer</name>
+                <type>Instrument</type>
+                <description>
+                    IIRS (Imaging InfraRed Spectrometer) is one of the scientific instrument hosted 
+                    on the Chandrayaan-2 Orbiter. The instrument is a grating based spectrometer 
+                    covering the spectral region between 0.8 um to 5.0 um.
+                </description>
+            </Observing_System_Component>
+        </Observing_System>
+        <Target_Identification>
+            <name>Moon</name>
+            <type>Satellite</type>
+            <description>Moon is a natural satellite of Earth</description>
+        </Target_Identification>
+	    
+        <Mission_Area>
+            <isda:Product_Parameters>
+                <isda:job_id>IIRXXD18CHO2116102NNNN24144172444838_V2_1</isda:job_id>
+                <isda:level0_dir_name>IIRXXD18CHO2116102NNNN24144172444838_V2_1</isda:level0_dir_name>
+                <isda:imaging_orbit_number>21160</isda:imaging_orbit_number>
+                <isda:dumping_orbit_number>21161</isda:dumping_orbit_number>
+                <isda:line_exposure_duration unit="ms">53.060</isda:line_exposure_duration>
+                <isda:gain>g2</isda:gain>
+                <isda:exposure>e1</isda:exposure>
+                <isda:exposure_duration unit="ms">1</isda:exposure_duration>
+                <isda:detector_temperature unit="K">88.970</isda:detector_temperature>
+                <isda:tertiary_mirror_temperature unit="degC">-39.677</isda:tertiary_mirror_temperature>
+                <isda:spectrometer_casing_temperature unit="degC">-41.218</isda:spectrometer_casing_temperature>
+                <isda:dewar_vw_temperature unit="degC">-47.352</isda:dewar_vw_temperature>
+                <isda:detector_pixel_width unit="micrometer">30</isda:detector_pixel_width>            
+                <isda:focal_length unit="mm">74.999</isda:focal_length>
+                <isda:reference_data_used>SELENE</isda:reference_data_used>
+                <isda:orbit_limb_direction>Descending</isda:orbit_limb_direction>
+                <isda:spacecraft_yaw_direction>False</isda:spacecraft_yaw_direction>
+                <isda:spacecraft_altitude unit="km">121.44</isda:spacecraft_altitude>
+                <isda:pixel_resolution unit="m/pixel">97.15</isda:pixel_resolution>
+                <isda:roll unit="deg">-0.003682</isda:roll>
+                <isda:pitch unit="deg">-0.097171</isda:pitch>
+                <isda:yaw unit="deg">-0.012608</isda:yaw>
+                <isda:sun_azimuth unit="deg">285.611693</isda:sun_azimuth>
+                <isda:sun_elevation unit="deg">57.317024</isda:sun_elevation>
+                <isda:solar_incidence unit="deg">32.682976</isda:solar_incidence>
+                <isda:projection>Selenographic</isda:projection>
+                <isda:area>Equatorial</isda:area>
+            </isda:Product_Parameters>
+            <isda:Geometry_Parameters>
+                <isda:System_Level_Coordinates>
+                    <isda:upper_left_latitude unit="deg">8.195483</isda:upper_left_latitude>
+                    <isda:upper_left_longitude unit="deg">23.771330</isda:upper_left_longitude>
+                    <isda:upper_right_latitude unit="deg">8.179012</isda:upper_right_latitude>
+                    <isda:upper_right_longitude unit="deg">24.604061</isda:upper_right_longitude>
+                    <isda:lower_left_latitude unit="deg">-26.147187</isda:lower_left_latitude>
+                    <isda:lower_left_longitude unit="deg">22.857987</isda:lower_left_longitude>
+                    <isda:lower_right_latitude unit="deg">-26.165032</isda:lower_right_latitude>
+                    <isda:lower_right_longitude unit="deg">23.750095</isda:lower_right_longitude>
+                </isda:System_Level_Coordinates>    
+                <isda:Refined_Corner_Coordinates>
+                    <isda:upper_left_latitude unit="deg">8.630172</isda:upper_left_latitude>
+                    <isda:upper_left_longitude unit="deg">23.791955</isda:upper_left_longitude>
+                    <isda:upper_right_latitude unit="deg">8.598529</isda:upper_right_latitude>
+                    <isda:upper_right_longitude unit="deg">24.637845</isda:upper_right_longitude>
+                    <isda:lower_left_latitude unit="deg">-25.739856</isda:lower_left_latitude>
+                    <isda:lower_left_longitude unit="deg">23.141592</isda:lower_left_longitude>
+                    <isda:lower_right_latitude unit="deg">-25.764375</isda:lower_right_latitude>
+                    <isda:lower_right_longitude unit="deg">24.045585</isda:lower_right_longitude>
+                </isda:Refined_Corner_Coordinates>
+            </isda:Geometry_Parameters>
+        </Mission_Area>
+    </Observation_Area>
+    <File_Area_Observational>
+        <File>
+            <file_name>ch2_iir_nci_20240523T1600301891_d_img_d18.qub</file_name>
+            <creation_date_time>2024-07-20T03:52:28</creation_date_time>
+            <file_size unit="byte">3353856000</file_size>
+            <md5_checksum>54395aed1efbce4d0a4a56a45e109714</md5_checksum>
+            <comment>
+                This File contains the radiance spectral image
+                md5_checksum is provided for ensuring data integrity when users are downloading the data.
+            </comment>
+        </File>
+        <Array_3D_Spectrum>
+            
+            
+            <name>IIRS Image Cube</name>
+            <local_identifier>SPECTRAL_QUBE_OBJECT</local_identifier>
+            <offset unit="byte">0</offset>
+            <axes>3</axes>
+            <axis_index_order>Last Index Fastest</axis_index_order>
+	      <description>
+               	The core of the image cube has 256 spectral bands.
+                Bands are stored sequentially in the cube.
+	      </description>
+	      <Element_Array>
+                <data_type>IEEE754LSBSingle</data_type>
+                <unit>µW/cm**2/sr/µm</unit>
+              </Element_Array>
+              <Axis_Array>
+                <axis_name>BAND</axis_name>
+                <elements>256</elements>
+                <sequence_number>1</sequence_number>            
+                <Band_Bin_Set>
+		
+                    <Band_Bin>
+                        <band_number>1</band_number>
+                        <band_width unit="nm">19.8</band_width>
+                        <center_wavelength unit="nm">712.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>2</band_number>
+                        <band_width unit="nm">19.9</band_width>
+                        <center_wavelength unit="nm">729.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>3</band_number>
+                        <band_width unit="nm">20.0</band_width>
+                        <center_wavelength unit="nm">746.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>4</band_number>
+                        <band_width unit="nm">20.1</band_width>
+                        <center_wavelength unit="nm">762.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>5</band_number>
+                        <band_width unit="nm">20.2</band_width>
+                        <center_wavelength unit="nm">779.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>6</band_number>
+                        <band_width unit="nm">20.3</band_width>
+                        <center_wavelength unit="nm">796.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>7</band_number>
+                        <band_width unit="nm">20.4</band_width>
+                        <center_wavelength unit="nm">813.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>8</band_number>
+                        <band_width unit="nm">20.4</band_width>
+                        <center_wavelength unit="nm">830.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>9</band_number>
+                        <band_width unit="nm">20.5</band_width>
+                        <center_wavelength unit="nm">847.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>10</band_number>
+                        <band_width unit="nm">20.5</band_width>
+                        <center_wavelength unit="nm">864.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>11</band_number>
+                        <band_width unit="nm">20.6</band_width>
+                        <center_wavelength unit="nm">880.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>12</band_number>
+                        <band_width unit="nm">20.6</band_width>
+                        <center_wavelength unit="nm">897.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>13</band_number>
+                        <band_width unit="nm">20.6</band_width>
+                        <center_wavelength unit="nm">914.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>14</band_number>
+                        <band_width unit="nm">20.7</band_width>
+                        <center_wavelength unit="nm">931.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>15</band_number>
+                        <band_width unit="nm">20.7</band_width>
+                        <center_wavelength unit="nm">948.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>16</band_number>
+                        <band_width unit="nm">20.8</band_width>
+                        <center_wavelength unit="nm">965.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>17</band_number>
+                        <band_width unit="nm">20.8</band_width>
+                        <center_wavelength unit="nm">982.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>18</band_number>
+                        <band_width unit="nm">20.9</band_width>
+                        <center_wavelength unit="nm">998.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>19</band_number>
+                        <band_width unit="nm">20.9</band_width>
+                        <center_wavelength unit="nm">1015.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>20</band_number>
+                        <band_width unit="nm">20.9</band_width>
+                        <center_wavelength unit="nm">1032.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>21</band_number>
+                        <band_width unit="nm">21.0</band_width>
+                        <center_wavelength unit="nm">1049.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>22</band_number>
+                        <band_width unit="nm">21.0</band_width>
+                        <center_wavelength unit="nm">1066.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>23</band_number>
+                        <band_width unit="nm">21.1</band_width>
+                        <center_wavelength unit="nm">1083.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>24</band_number>
+                        <band_width unit="nm">21.1</band_width>
+                        <center_wavelength unit="nm">1099.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>25</band_number>
+                        <band_width unit="nm">21.1</band_width>
+                        <center_wavelength unit="nm">1116.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>26</band_number>
+                        <band_width unit="nm">21.2</band_width>
+                        <center_wavelength unit="nm">1133.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>27</band_number>
+                        <band_width unit="nm">21.2</band_width>
+                        <center_wavelength unit="nm">1150.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>28</band_number>
+                        <band_width unit="nm">21.2</band_width>
+                        <center_wavelength unit="nm">1167.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>29</band_number>
+                        <band_width unit="nm">21.3</band_width>
+                        <center_wavelength unit="nm">1184.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>30</band_number>
+                        <band_width unit="nm">21.3</band_width>
+                        <center_wavelength unit="nm">1201.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>31</band_number>
+                        <band_width unit="nm">21.3</band_width>
+                        <center_wavelength unit="nm">1217.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>32</band_number>
+                        <band_width unit="nm">21.4</band_width>
+                        <center_wavelength unit="nm">1234.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>33</band_number>
+                        <band_width unit="nm">21.4</band_width>
+                        <center_wavelength unit="nm">1251.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>34</band_number>
+                        <band_width unit="nm">21.4</band_width>
+                        <center_wavelength unit="nm">1268.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>35</band_number>
+                        <band_width unit="nm">21.4</band_width>
+                        <center_wavelength unit="nm">1285.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>36</band_number>
+                        <band_width unit="nm">21.5</band_width>
+                        <center_wavelength unit="nm">1302.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>37</band_number>
+                        <band_width unit="nm">21.5</band_width>
+                        <center_wavelength unit="nm">1319.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>38</band_number>
+                        <band_width unit="nm">21.5</band_width>
+                        <center_wavelength unit="nm">1335.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>39</band_number>
+                        <band_width unit="nm">21.5</band_width>
+                        <center_wavelength unit="nm">1352.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>40</band_number>
+                        <band_width unit="nm">21.6</band_width>
+                        <center_wavelength unit="nm">1369.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>41</band_number>
+                        <band_width unit="nm">21.6</band_width>
+                        <center_wavelength unit="nm">1386.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>42</band_number>
+                        <band_width unit="nm">21.6</band_width>
+                        <center_wavelength unit="nm">1403.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>43</band_number>
+                        <band_width unit="nm">21.6</band_width>
+                        <center_wavelength unit="nm">1420.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>44</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">1437.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>45</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">1453.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>46</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">1470.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>47</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">1487.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>48</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">1504.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>49</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1521.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>50</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1538.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>51</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1555.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>52</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1571.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>53</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1588.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>54</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">1605.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>55</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1622.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>56</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1639.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>57</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1656.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>58</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1672.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>59</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1689.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>60</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1706.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>61</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1723.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>62</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">1740.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>63</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1757.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>64</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1774.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>65</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1790.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>66</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1807.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>67</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1824.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>68</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1841.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>69</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1858.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>70</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1875.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>71</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1892.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>72</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1908.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>73</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1925.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>74</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1942.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>75</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1959.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>76</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1976.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>77</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">1993.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>78</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2010.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>79</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2026.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>80</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2043.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>81</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2060.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>82</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2077.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>83</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2094.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>84</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2111.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>85</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2127.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>86</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2144.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>87</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2161.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>88</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2178.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>89</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2195.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>90</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2212.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>91</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">2229.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>92</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2245.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>93</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2262.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>94</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2279.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>95</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2296.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>96</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2313.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>97</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2330.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>98</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2347.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>99</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2363.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>100</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2380.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>101</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2397.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>102</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2414.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>103</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2431.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>104</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2448.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>105</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2465.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>106</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2481.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>107</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2498.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>108</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2515.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>109</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2532.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>110</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2549.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>111</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2566.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>112</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2582.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>113</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2599.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>114</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">2616.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>115</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2633.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>116</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2650.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>117</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2667.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>118</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2684.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>119</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2700.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>120</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2717.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>121</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2734.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>122</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2751.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>123</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2768.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>124</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2785.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>125</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2802.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>126</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2818.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>127</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2835.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>128</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">2852.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>129</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2869.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>130</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2886.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>131</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2903.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>132</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2920.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>133</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2936.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>134</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2953.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>135</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2970.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>136</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">2987.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>137</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3004.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>138</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3021.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>139</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3038.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>140</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3054.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>141</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3071.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>142</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3088.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>143</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3105.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>144</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3122.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>145</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3139.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>146</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3155.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>147</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3172.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>148</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3189.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>149</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3206.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>150</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3223.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>151</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3240.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>152</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3257.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>153</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3273.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>154</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3290.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>155</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3307.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>156</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3324.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>157</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3341.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>158</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3358.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>159</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3375.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>160</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3391.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>161</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3408.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>162</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3425.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>163</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3442.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>164</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3459.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>165</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3476.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>166</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3493.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>167</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3509.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>168</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3526.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>169</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3543.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>170</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3560.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>171</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3577.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>172</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3594.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>173</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3610.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>174</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3627.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>175</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3644.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>176</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3661.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>177</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3678.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>178</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3695.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>179</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3712.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>180</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3728.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>181</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3745.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>182</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3762.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>183</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3779.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>184</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3796.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>185</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3813.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>186</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3830.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>187</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3846.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>188</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3863.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>189</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3880.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>190</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3897.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>191</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3914.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>192</band_number>
+                        <band_width unit="nm">21.7</band_width>
+                        <center_wavelength unit="nm">3931.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>193</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3948.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>194</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3964.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>195</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3981.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>196</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">3998.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>197</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">4015.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>198</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">4032.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>199</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">4049.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>200</band_number>
+                        <band_width unit="nm">21.8</band_width>
+                        <center_wavelength unit="nm">4066.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>201</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4082.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>202</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4099.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>203</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4116.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>204</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4133.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>205</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4150.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>206</band_number>
+                        <band_width unit="nm">21.9</band_width>
+                        <center_wavelength unit="nm">4167.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>207</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4183.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>208</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4200.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>209</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4217.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>210</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4234.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>211</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4251.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>212</band_number>
+                        <band_width unit="nm">22.0</band_width>
+                        <center_wavelength unit="nm">4268.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>213</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">4285.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>214</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">4301.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>215</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">4318.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>216</band_number>
+                        <band_width unit="nm">22.1</band_width>
+                        <center_wavelength unit="nm">4335.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>217</band_number>
+                        <band_width unit="nm">22.2</band_width>
+                        <center_wavelength unit="nm">4352.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>218</band_number>
+                        <band_width unit="nm">22.2</band_width>
+                        <center_wavelength unit="nm">4369.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>219</band_number>
+                        <band_width unit="nm">22.2</band_width>
+                        <center_wavelength unit="nm">4386.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>220</band_number>
+                        <band_width unit="nm">22.2</band_width>
+                        <center_wavelength unit="nm">4403.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>221</band_number>
+                        <band_width unit="nm">22.3</band_width>
+                        <center_wavelength unit="nm">4419.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>222</band_number>
+                        <band_width unit="nm">22.3</band_width>
+                        <center_wavelength unit="nm">4436.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>223</band_number>
+                        <band_width unit="nm">22.3</band_width>
+                        <center_wavelength unit="nm">4453.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>224</band_number>
+                        <band_width unit="nm">22.4</band_width>
+                        <center_wavelength unit="nm">4470.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>225</band_number>
+                        <band_width unit="nm">22.4</band_width>
+                        <center_wavelength unit="nm">4487.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>226</band_number>
+                        <band_width unit="nm">22.4</band_width>
+                        <center_wavelength unit="nm">4504.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>227</band_number>
+                        <band_width unit="nm">22.4</band_width>
+                        <center_wavelength unit="nm">4521.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>228</band_number>
+                        <band_width unit="nm">22.5</band_width>
+                        <center_wavelength unit="nm">4537.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>229</band_number>
+                        <band_width unit="nm">22.5</band_width>
+                        <center_wavelength unit="nm">4554.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>230</band_number>
+                        <band_width unit="nm">22.5</band_width>
+                        <center_wavelength unit="nm">4571.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>231</band_number>
+                        <band_width unit="nm">22.6</band_width>
+                        <center_wavelength unit="nm">4588.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>232</band_number>
+                        <band_width unit="nm">22.6</band_width>
+                        <center_wavelength unit="nm">4605.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>233</band_number>
+                        <band_width unit="nm">22.7</band_width>
+                        <center_wavelength unit="nm">4622.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>234</band_number>
+                        <band_width unit="nm">22.7</band_width>
+                        <center_wavelength unit="nm">4638.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>235</band_number>
+                        <band_width unit="nm">22.7</band_width>
+                        <center_wavelength unit="nm">4655.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>236</band_number>
+                        <band_width unit="nm">22.8</band_width>
+                        <center_wavelength unit="nm">4672.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>237</band_number>
+                        <band_width unit="nm">22.8</band_width>
+                        <center_wavelength unit="nm">4689.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>238</band_number>
+                        <band_width unit="nm">22.8</band_width>
+                        <center_wavelength unit="nm">4706.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>239</band_number>
+                        <band_width unit="nm">22.9</band_width>
+                        <center_wavelength unit="nm">4723.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>240</band_number>
+                        <band_width unit="nm">22.9</band_width>
+                        <center_wavelength unit="nm">4740.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>241</band_number>
+                        <band_width unit="nm">23.0</band_width>
+                        <center_wavelength unit="nm">4756.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>242</band_number>
+                        <band_width unit="nm">23.0</band_width>
+                        <center_wavelength unit="nm">4773.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>243</band_number>
+                        <band_width unit="nm">23.1</band_width>
+                        <center_wavelength unit="nm">4790.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>244</band_number>
+                        <band_width unit="nm">23.1</band_width>
+                        <center_wavelength unit="nm">4807.5</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>245</band_number>
+                        <band_width unit="nm">23.2</band_width>
+                        <center_wavelength unit="nm">4824.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>246</band_number>
+                        <band_width unit="nm">23.2</band_width>
+                        <center_wavelength unit="nm">4841.2</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>247</band_number>
+                        <band_width unit="nm">23.3</band_width>
+                        <center_wavelength unit="nm">4858.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>248</band_number>
+                        <band_width unit="nm">23.3</band_width>
+                        <center_wavelength unit="nm">4874.9</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>249</band_number>
+                        <band_width unit="nm">23.4</band_width>
+                        <center_wavelength unit="nm">4891.7</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>250</band_number>
+                        <band_width unit="nm">23.4</band_width>
+                        <center_wavelength unit="nm">4908.6</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>251</band_number>
+                        <band_width unit="nm">23.5</band_width>
+                        <center_wavelength unit="nm">4925.4</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>252</band_number>
+                        <band_width unit="nm">23.5</band_width>
+                        <center_wavelength unit="nm">4942.3</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>253</band_number>
+                        <band_width unit="nm">23.6</band_width>
+                        <center_wavelength unit="nm">4959.1</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>254</band_number>
+                        <band_width unit="nm">23.6</band_width>
+                        <center_wavelength unit="nm">4976.0</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>255</band_number>
+                        <band_width unit="nm">23.7</band_width>
+                        <center_wavelength unit="nm">4992.8</center_wavelength>
+                    </Band_Bin>
+
+                    <Band_Bin>
+                        <band_number>256</band_number>
+                        <band_width unit="nm">23.8</band_width>
+                        <center_wavelength unit="nm">5009.7</center_wavelength>
+                    </Band_Bin>		
+                    
+		</Band_Bin_Set>
+                
+              </Axis_Array>
+              <Axis_Array>
+                <axis_name>LINE</axis_name>
+                <elements>13101</elements>
+                <sequence_number>2</sequence_number>
+              </Axis_Array>
+              <Axis_Array>
+                <axis_name>SAMPLE</axis_name>
+                <elements>250</elements>
+                <sequence_number>3</sequence_number>
+              </Axis_Array>
+        </Array_3D_Spectrum>
+    </File_Area_Observational>
+</Product_Observational>
