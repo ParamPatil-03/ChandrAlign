@@ -240,6 +240,66 @@ def check_overlap_accuracy(samples: int, rng):
              "monte_carlo_se_pp": round(se, 2)}, {})
 
 
+def check_geolocation(samples: int, rng):
+    """Pixel<->ground models vs the labels' own numbers; reprojection and inverse round trips."""
+    from chandralign.geometry.projection import (
+        from_map, geolocation_model, load_grid_model, scene_crs, surface_distance_m, to_map,
+    )
+    metas = {k: parse_label(v) for k, v in products().items()}
+    correct = total = 0
+
+    # SELENE map model must reproduce the corner coordinates written in each label.
+    for name in ("TC_N", "TC_S"):
+        m = metas[name]; model = geolocation_model(m); L, S = m.array_shape
+        for (r, c), want in zip([(0, 0), (0, S - 1), (L - 1, S - 1), (L - 1, 0)], m.corner_latlon):
+            lat, lon = model.pixel_to_latlon(r, c)
+            total += 1; correct += abs(lat - want[0]) < 1e-6 and abs(lon - want[1]) < 1e-6
+
+    shift_m, grid_nodes, inverse_ok, inverse_n = {}, 0, 0, 0
+    for name in ("OHRC", "TMC2", "IIRS"):
+        m = metas[name]
+        grid = load_grid_model(m)
+        raw = np.loadtxt(grid_path_of(m), delimiter=",", skiprows=1)
+        raw = raw[~np.all(raw == 0.0, axis=1)]
+        lat, lon = grid.pixel_to_latlon(raw[:, 3], raw[:, 2])
+        ok = (np.abs(lat - raw[:, 1]) < 1e-9) & (np.abs(lon - raw[:, 0]) < 1e-9)
+        total += len(ok); correct += int(ok.sum()); grid_nodes += len(ok)
+        # inverse (ground -> pixel) on random pixels, both models
+        L, S = m.array_shape
+        rows, cols = rng.uniform(0, L - 1, samples), rng.uniform(0, S - 1, samples)
+        for model in (grid, geolocation_model(m)):
+            r2, c2 = model.latlon_to_pixel(*model.pixel_to_latlon(rows, cols))
+            good = (np.abs(r2 - rows) < 1e-6) & (np.abs(c2 - cols) < 1e-6)
+            inverse_ok += int(good.sum()); inverse_n += len(good)
+        # how far the reference-independent model is from ISRO's refined grid
+        ind = geolocation_model(m)
+        shift_m[name] = round(float(np.median(surface_distance_m(*grid.pixel_to_latlon(rows, cols),
+                                                                   *ind.pixel_to_latlon(rows, cols)))), 1)
+    total += inverse_n; correct += inverse_ok
+
+    # map projection round trip of random points around each scene
+    worst = 0.0
+    for m in metas.values():
+        if not m.corner_latlon:
+            continue
+        lat0 = float(np.mean([c[0] for c in m.corner_latlon])); lon0 = float(np.mean([c[1] for c in m.corner_latlon]))
+        lat = lat0 + rng.uniform(-2, 2, samples); lon = lon0 + rng.uniform(-2, 2, samples)
+        crs = scene_crs(lat0, lon0)
+        lat2, lon2 = from_map(*to_map(lat, lon, crs), crs)
+        err = np.maximum(np.abs(lat2 - lat), np.abs(lon2 - lon))
+        worst = max(worst, float(err.max()))
+        total += samples; correct += int((err < 1e-6).sum())
+
+    return ({"correct": int(correct), "total": int(total), "grid_nodes_checked": grid_nodes,
+             "reprojection_max_error_deg": float(f"{worst:.3g}"),
+             "median_m_independent_vs_refined": shift_m}, {})
+
+
+def grid_path_of(meta):
+    from chandralign.geometry.projection import grid_path
+    return grid_path(meta)
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -249,6 +309,8 @@ CHECKS = [
     ("8", "Tiling", "Grid covers every pixel of every product; point round-trip error", check_tiling),
     ("9", "Sun geometry", "Incidence vs 90 - elevation (two label fields); azimuth maths", check_sun_consistency),
     ("10", "Footprint overlap", "check_overlap vs area-weighted Monte-Carlo, all 11 real pairs", check_overlap_accuracy),
+    ("11", "Geolocation / projection", "SELENE corners vs label; every ISRO grid node; ground->pixel inverse; "
+     "map round trip", check_geolocation),
 ]
 
 
