@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 9, sun angles and lighting difference.**
+> This README is updated after every completed step. Last update: **Step 10, footprint overlap pre-filter.**
 
 ---
 
@@ -25,9 +25,10 @@
 | 7 | LRO NAC reader | DATA-06 | ✅ |
 | 8 | Tiling → `ImagePlane` | DATA-11 | ✅ **Gate A** |
 | 9 | Sun angles and lighting difference between two scenes (source of every value recorded) | GEO-01, DATA-12 | 🟡 scene level done · per-pixel layers with GEO-02 |
-| next | Footprint overlap, projection, elevation maps, slope/aspect, preprocessing | GEO-04, GEO-05, DATA-13, GEO-03, PREP-* | ⏳ |
+| 10 | Footprint overlap and pre-filter (rejects a pair before any matcher runs) | GEO-04 | ✅ |
+| next | Lunar projection, elevation maps, slope/aspect, preprocessing | GEO-05, DATA-13, GEO-03, PREP-* | ⏳ |
 
-**Tests:** 144 passing (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 162 passing (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -138,6 +139,32 @@ Every value records where it came from: `"label"`, `"ode_catalogue"` or `None` (
 | LRO NAC | ODE catalogue | **unknown** | ODE catalogue |
 | SELENE TC mosaic | **none** (many passes) | **none** | **none** |
 
+### Do two products show the same ground? (run this before matching)
+
+```python
+from chandralign.geometry.footprint import check_overlap, run_if_overlapping
+
+c = check_overlap(src_meta, ref_meta, min_overlap=0.10)
+c.ok, c.reason, c.overlap_km2, c.fraction_of_smaller
+
+run_if_overlapping(src_meta, ref_meta, my_matcher)   # raises InsufficientOverlapError, matcher never called
+```
+
+Outlines come from label corners (CH-2, SELENE) or the saved ODE record (NAC), recorded in `Footprint.source`. Areas are equal-area km², correct at any latitude. A pair passes when the overlap covers at least `min_overlap` of the **smaller** footprint.
+
+**Overlaps of the pairs we hold** (system-level CH-2 corners):
+
+| Pair | Overlap (share of smaller) | |
+|---|---|---|
+| OHRC ↔ TMC-2 | 100% | OHRC lies inside the TMC-2 strip |
+| OHRC ↔ NAC M102000149RC | 92% | Easy tier: similar sun |
+| OHRC ↔ NAC M1417360906LC | 21% | stress pair: sun 75° apart |
+| OHRC ↔ SELENE TC (north / south tile) | 45% / 54% | |
+| TMC-2 ↔ NAC M1417360906LC | 99% | |
+| TMC-2 ↔ SELENE TC (north / south tile) | 22% / 12% | the headline pairing |
+| OHRC ↔ IIRS | 27%, but **0% with ISRO's refined corners** | see finding 8 |
+| NAC M1417360906LC ↔ SELENE TC north | 0% → rejected | |
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -162,6 +189,7 @@ Worth knowing before designing anything downstream:
 5. **The OHRC scene is very dark** (sun 7.3° up). Mid-strip pixels only reach ~83 out of 255, so illumination handling isn't optional.
 6. **One OHRC scene gives both an easy pair and a stress pair.** OHRC vs NAC M102000149RC differ by only **3°** in incidence (Easy tier). OHRC vs NAC M1417360906LC differ by **75°** (illumination stress test). Same ground, real data.
 7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
+8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
 
 ---
 
