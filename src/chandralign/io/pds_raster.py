@@ -145,6 +145,53 @@ def verify_raster(meta_or_label: Union[SceneMeta, str, Path], check_md5: bool = 
     return report
 
 
+def check_attached_pds3_header(meta_or_label: Union[SceneMeta, str, Path], check_md5: bool = False) -> dict:
+    """Cross-check a PDS3 header embedded at the front of the pixel file against the PDS4 label.
+
+    LRO NAC products carry both: the PDS4 XML and the original PDS3 label inside
+    the .IMG. They must agree on where the pixels start, their type and shape. With
+    check_md5, the header's own MD5 -- which covers the pixel bytes only, unlike the
+    PDS4 checksum over the whole file -- is verified as well.
+    """
+    from chandralign.io.pds_label import _pvl_label, is_pds3
+
+    pds4 = _layout(meta_or_label)
+    if not is_pds3(pds4.raster_path):
+        raise RasterIntegrityError(f"{pds4.raster_path.name} has no attached PDS3 header")
+    pds3 = read_array_layout(pds4.raster_path)
+
+    problems = []
+    if pds3.offset_bytes != pds4.offset_bytes:
+        problems.append(f"pixel offset {pds3.offset_bytes} vs PDS4 {pds4.offset_bytes}")
+    if pds3.dtype != pds4.dtype:
+        problems.append(f"dtype {pds3.dtype} vs PDS4 {pds4.dtype}")
+    if pds3.shape != pds4.shape or [a.lower() for a in pds3.axis_names] != [a.lower() for a in pds4.axis_names]:
+        problems.append(f"shape {pds3.axis_names}{pds3.shape} vs PDS4 {pds4.axis_names}{pds4.shape}")
+    if problems:
+        raise RasterIntegrityError(f"{pds4.raster_path.name}: attached PDS3 header disagrees: " + "; ".join(problems))
+
+    report = {"file": pds4.raster_path.name, "layout_agrees": True, "pixel_md5_checked": False}
+    if check_md5:
+        declared = str(_pvl_label(pds4.raster_path)["IMAGE"].get("MD5_CHECKSUM") or "").strip('"').lower()
+        if not declared:
+            raise RasterIntegrityError(f"{pds4.raster_path.name}: attached header declares no MD5_CHECKSUM")
+        n_bytes = int(np.prod(pds4.shape)) * np.dtype(pds4.dtype).itemsize
+        h = hashlib.md5()
+        with pds4.raster_path.open("rb") as fh:
+            fh.seek(pds4.offset_bytes)
+            remaining = n_bytes
+            while remaining:
+                block = fh.read(min(1 << 24, remaining))
+                if not block:
+                    raise RasterIntegrityError(f"{pds4.raster_path.name}: file ends before the pixel data does")
+                h.update(block)
+                remaining -= len(block)
+        if h.hexdigest() != declared:
+            raise RasterIntegrityError(f"{pds4.raster_path.name}: pixel md5 {h.hexdigest()} != header {declared}")
+        report["pixel_md5_checked"] = True
+    return report
+
+
 _ENVI_DTYPES = {1: "u1", 2: "i2", 3: "i4", 4: "f4", 5: "f8", 12: "u2", 13: "u4"}
 _ENVI_AXES = {"bsq": ("band", "line", "sample"), "bil": ("line", "band", "sample"),
               "bip": ("line", "sample", "band")}

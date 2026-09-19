@@ -12,6 +12,9 @@ the anti-stub test on real labels on any machine, without the multi-GB pixel fil
 | `ch2_iir_nci_20240523T1600301891_d_img_d18.xml` | IIRS |
 | `TCO_MAP_02_N03E021N00E024SC.lbl` | SELENE TC (PDS3) |
 | `TCO_MAP_02_N00E021S03E024SC.lbl` | SELENE TC (PDS3) |
+| `M1417360906LC.XML` | LRO NAC (PDS4) |
+| `M102000149RC.XML` | LRO NAC (PDS4) |
+| `M1417360906LC_attached_header.lbl` | first 5064 bytes of `M1417360906LC.IMG`: its embedded PDS3 header |
 
 Data courtesy of ISRO / ISSDC, Chandrayaan-2 mission, via PRADAN
 (https://pradan.issdc.gov.in), used for non-profit scientific purposes.
@@ -19,3 +22,6 @@ Do not edit these files: tests compare parsed values against their exact content
 
 The SELENE labels are from JAXA DARTS (https://data.darts.isas.jaxa.jp/pub/pds3/),
 SELENE/Kaguya Terrain Camera ortho map v2.0, data courtesy of JAXA.
+
+The LRO NAC labels are from NASA's PDS (LROC CDR, via the PDS Orbital Data Explorer),
+Lunar Reconnaissance Orbiter Camera, NASA / Arizona State University.

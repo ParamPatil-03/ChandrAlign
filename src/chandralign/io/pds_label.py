@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -205,6 +206,15 @@ def read_corner_sets(xml_path: str | Path) -> dict[str, list[tuple[float, float]
     return sets
 
 
+def _wavelength_range(tree) -> Optional[tuple[float, float]]:
+    """(min, max) nm from a stated centre wavelength and bandwidth, if the label has both."""
+    centre = _float(tree, "center_filter_wavelength")
+    width = _float(tree, "bandwidth")
+    if centre is None or width is None:
+        return None
+    return (centre - width / 2.0, centre + width / 2.0)
+
+
 # ----------------------------------------------------------------------------- main entry
 
 def parse_pds4(xml_path: str | Path, corners: str = "system") -> SceneMeta:
@@ -265,10 +275,12 @@ def parse_pds4(xml_path: str | Path, corners: str = "system") -> SceneMeta:
     verified["sub_solar_azimuth_deg"] = sun_azimuth is not None
     verified["solar_incidence_deg"] = incidence is not None
     verified["acquisition_utc"] = start is not None
-    # Not present in any CH-2 label we hold; computed later from geometry (GEO-02).
+    # Not present in any CH-2 or LRO label we hold; computed later from geometry (GEO-02).
     verified["emission_deg"] = verified["phase_deg"] = False
-    # Only described in prose in CH-2 labels; the value comes from the registry.
-    verified["wavelength_nm"] = False
+    # LRO states centre + bandwidth (img: namespace); CH-2 only describes it in prose,
+    # so CH-2 falls back to the registry value, marked unverified.
+    wavelength = _wavelength_range(tree)
+    verified["wavelength_nm"] = wavelength is not None
 
     verified["raster_path"] = True          # the label's File/file_name
 
@@ -278,7 +290,7 @@ def parse_pds4(xml_path: str | Path, corners: str = "system") -> SceneMeta:
         mission=mission,
         gsd_m=gsd,
         n_bands=n_bands,
-        wavelength_nm=spec.wavelength_nm,
+        wavelength_nm=wavelength or spec.wavelength_nm,
         array_shape=(lines, samples),
         dtype=layout.dtype,
         corner_latlon=corner_latlon,
@@ -317,9 +329,11 @@ _PDS3_STORAGE = {
     "SAMPLE_INTERLEAVED": ("LINE", "SAMPLE", "BAND"),
 }
 _PDS3_MISSIONS = {"selene": "SELENE", "kaguya": "SELENE", "lunar reconnaissance orbiter": "LRO"}
+# INSTRUMENT_ID values that name a camera family rather than one camera.
+_PDS3_INSTRUMENT_IDS = {"LROC": {"NAC", "WAC"}}
 
 
-_ODL_END = re.compile(rb"(?m)^END[ \t]*\r?$")
+_ODL_END = re.compile(rb"(?m)^END[ \t\r]*$")   # tolerate CR / CRCRLF line endings
 _MAX_LABEL_BYTES = 1 << 20
 
 
@@ -355,6 +369,20 @@ def _pvl_number(block, key) -> Optional[float]:
         return None
     value = _pvl_value(block[key])
     return None if value is None else float(value)
+
+
+def _iso_utc(value) -> Optional[str]:
+    """PDS3 times (UTC by definition) as ISO-8601 with a trailing Z, matching PDS4 labels.
+
+    pvl turns them into datetime objects, whose str() is '2022-09-09 11:07:18+00:00'.
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        if value.tzinfo is not None:
+            value = value.astimezone(timezone.utc).replace(tzinfo=None)
+        return value.isoformat(timespec="microseconds") + "Z"
+    return str(value)
 
 
 def _pds3_image_offset(label, lbl_path: Path) -> tuple[Path, int]:
@@ -456,7 +484,7 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
     except UnknownInstrumentError as exc:
         raise PdsParseError(f"{lbl_path.name}: {exc}") from exc
     declared = _pvl_value(label.get("INSTRUMENT_ID"))
-    if declared is not None and str(declared).upper() != instrument:
+    if declared is not None and instrument not in _PDS3_INSTRUMENT_IDS.get(str(declared).upper(), {str(declared).upper()}):
         raise PdsParseError(
             f"{lbl_path.name}: product ID says {instrument} but INSTRUMENT_ID says {declared}"
         )
@@ -500,7 +528,10 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
     verified["solar_incidence_deg"] = incidence is not None
     verified["emission_deg"] = emission is not None
     verified["phase_deg"] = phase is not None
-    verified["wavelength_nm"] = False
+    centre = _pvl_number(label, "CENTER_FILTER_WAVELENGTH")
+    width = _pvl_number(label, "BANDWIDTH")
+    wavelength = (centre - width / 2.0, centre + width / 2.0) if centre is not None and width is not None else None
+    verified["wavelength_nm"] = wavelength is not None
     verified["raster_path"] = True
 
     return SceneMeta(
@@ -509,7 +540,7 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
         mission=mission,
         gsd_m=gsd,
         n_bands=n_bands,
-        wavelength_nm=spec.wavelength_nm,
+        wavelength_nm=wavelength or spec.wavelength_nm,
         array_shape=(lines, samples),
         dtype=layout.dtype,
         corner_latlon=corners,
@@ -517,7 +548,7 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
         solar_incidence_deg=incidence,
         emission_deg=emission,
         phase_deg=phase,
-        acquisition_utc=str(start) if start is not None else None,
+        acquisition_utc=_iso_utc(start),
         label_path=lbl_path,
         raster_path=layout.raster_path,
         label_fields_verified=verified,
