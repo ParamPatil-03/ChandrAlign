@@ -1,0 +1,108 @@
+# Regime routing for the matcher selector (MATCH-09 / P2-T10).
+#
+# WHY ROUTE INSTEAD OF PICKING ONE MODEL
+# The evidence is genuinely regime-dependent and does not generalise:
+#   - SuperGlue-class methods won on real lunar POLAR data where SIFT/AKAZE degraded
+#     (arXiv:2509.04775, the only paper benchmarking on real Chandrayaan-2 imagery).
+#   - An independent 2025 SAR-optical benchmark (MultiResSAR) found classical RIFT
+#     beating the best deep method at HIGH RESOLUTION.
+# Neither result transfers wholesale to the other's conditions, so we route on
+# measured scene conditions and let the ablation tune the thresholds.
+#
+# Owner: Member B. Read by matching/regime.py.
+
+# Matcher names are vismatch model names (71 available) unless marked vendored.
+#
+# LICENCE NOTE: the default is deliberately NOT superpoint-lightglue, even
+# though that is the best-known LightGlue pairing. LightGlue is Apache-2.0
+# including weights, but the SuperPoint DETECTOR it is usually paired with is
+# Magic Leap non-commercial, so the pair is not redistributable. ALIKED is
+# BSD-3, so aliked-lightglue gives us the same matcher with a clean detector.
+# The gate in matching/licence.py enforces this on model-name components.
+default_matcher: aliked-lightglue
+
+rules:
+  # Order matters: the first rule whose conditions all hold wins.
+
+  - regime: extreme_scale
+    when:
+      scale_ratio_gte: 4.0
+    action: cascade          # never match directly across a big GSD gap
+    reason: >
+      No matcher in the literature has documented evaluation at 100x+ scale
+      ratios, and two independent teams measured 0 inliers attempting direct
+      OHRC<->IIRS. Route to the staged cascade (MATCH-10) instead.
+
+  - regime: cross_modal
+    when:
+      cross_modality: true
+    candidates: [xoftr, minima, matchanything-eloftr, rift2]
+    reason: >
+      Panchromatic vs hyperspectral is a nonlinear, sometimes contrast-reversing
+      radiometric relationship. Candidates are BENCHMARKED, not assumed -- see
+      cross_modal_candidates below.
+
+  - regime: same_modal_polar
+    when:
+      any:
+        delta_incidence_gte: 30.0
+        incidence_gte: 70.0
+    matcher: aliked-lightglue
+    preprocess: [phase_congruency]
+    reason: >
+      Low sun / large illumination difference is where classical detectors are
+      documented to degrade. Phase congruency first, learned matcher second.
+
+  - regime: same_modal_normal
+    when: {}                 # fallback
+    matcher: aliked-lightglue
+
+# ---------------------------------------------------------------------------
+# Cross-modal candidates (MATCH-06)
+# ---------------------------------------------------------------------------
+# DECISION: all four are kept and benchmarked on the same tier. We do NOT drop
+# RIFT2 merely because vismatch ships newer learned cross-modal models. The
+# research found classical RIFT competitive at high resolution, which makes it
+# worth measuring; it also gives us a non-learned baseline that needs no weights
+# and cannot silently regress when a checkpoint changes. If the measured results
+# show RIFT2 is consistently inferior AND adds no baseline value, it comes out
+# of the shipped pipeline then -- on evidence, not on recency.
+cross_modal_candidates:
+  xoftr:
+    source: vismatch
+    kind: learned
+    note: cross-modal transformer (thermal/visible origin)
+  minima:
+    source: vismatch
+    kind: learned
+    note: cross-modality matching family; several variants available
+  matchanything-eloftr:
+    source: vismatch
+    kind: learned
+    note: trained for cross-modality generalisation
+  rift2:
+    source: vendored           # third_party/rift2, pinned SHA
+    kind: classical
+    note: >
+      Phase-congruency descriptor, no weights, no download. Classical baseline
+      for the cross-modal regime.
+
+# ---------------------------------------------------------------------------
+# Shipping candidates for the same-modality path (MATCH-03/04/05)
+# ---------------------------------------------------------------------------
+shippable_matchers:
+  - aliked-lightglue         # ALIKED BSD-3 + LightGlue Apache-2.0; default
+  - disk-lightglue
+  - eloftr
+  - xfeat                    # CPU-capable fallback
+  - sift-lightglue
+  - sift-nn                  # the documented classical floor (MATCH-01)
+
+# Benchmark-only. Never shipped: non-commercial licences (CHECK-10 blocks them
+# while ship_mode is true). Listed so the gate has an explicit denylist and so
+# bench_external.py knows what to compare against.
+benchmark_only_matchers:
+  - superglue                  # Magic Leap, non-commercial research only
+  - superpoint-lightglue       # LightGlue is clean, SuperPoint's weights are not
+  - minima-superpoint-lightglue
+  - r2d2                       # CC BY-NC-SA 3.0, share-alike

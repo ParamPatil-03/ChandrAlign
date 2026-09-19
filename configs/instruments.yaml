@@ -1,0 +1,82 @@
+# Instrument registry: GSD, spectral range, mission.
+#
+# OWNERSHIP NOTE: configs/ belongs to Member A (DATA-10, the instrument
+# registry). This file is SEEDED BY MEMBER B from PLAN.md section 1.4 because
+# the scale-consistency check (CHECK-05) and the cascade planner (MATCH-10)
+# cannot compute a GSD ratio without it. Member A should treat this as a
+# starting point and extend it (dtype, interleave, product-ID patterns, swath).
+# Values below are transcribed from the PLAN, not invented.
+
+instruments:
+  # --- Chandrayaan-2 source instruments ---
+  OHRC:
+    mission: CH2
+    gsd_m: 0.25
+    n_bands: 1
+    wavelength_nm: [500, 800]
+    modality: panchromatic
+    note: sharpest CH-2 camera; long narrow strips (e.g. 79796 x 12000 px)
+
+  TMC2:
+    mission: CH2
+    gsd_m: 5.0
+    n_bands: 1
+    wavelength_nm: [500, 850]
+    modality: panchromatic
+    note: >
+      Terrain Mapping Camera-2, stereo (3 look angles). A real product label
+      shows 4.43 m/px, so treat 5.0 as nominal and prefer the label value.
+
+  IIRS:
+    mission: CH2
+    gsd_m: 80.0
+    n_bands: 256
+    wavelength_nm: [800, 5000]
+    modality: hyperspectral
+    note: ~250-256 contiguous bands; never matched as a raw cube (see PREP IIRS composite)
+
+  # --- External reference instruments (the PS names these) ---
+  NAC:
+    mission: LRO
+    gsd_m: 0.5
+    n_bands: 1
+    wavelength_nm: [400, 750]
+    modality: panchromatic
+    note: primary named reference
+
+  WAC:
+    mission: LRO
+    gsd_m: 100.0
+    n_bands: 7
+    wavelength_nm: [320, 690]
+    modality: multiband
+
+  TC:
+    mission: SELENE
+    gsd_m: 10.0
+    n_bands: 1
+    wavelength_nm: [430, 850]
+    modality: panchromatic
+    note: >
+      Kaguya Terrain Camera, ~7.4-10 m/px. Best-matched reference for TMC-2
+      (~2:1) and the pairing with no prior art -- our headline target.
+
+  MI:
+    mission: SELENE
+    gsd_m: 20.0
+    n_bands: 9
+    wavelength_nm: [415, 1550]
+    modality: multiband
+    note: Multiband Imager, 20 m/px VIS and 62 m/px NIR
+
+# Pairings, with their status in the literature. Drives cascade planning and
+# tells the report which results are a credibility floor vs a novel claim.
+pairings:
+  OHRC-NAC:   {scale_ratio: 0.5,  status: solved,  note: "two independent sources"}
+  IIRS-WAC:   {scale_ratio: 0.8,  status: solved,  note: "two independent sources"}
+  TMC2-TC:    {scale_ratio: 0.5,  status: open,    note: "best-matched pair, zero prior art -- headline target"}
+  TMC2-NAC:   {scale_ratio: 10.0, status: open,    note: "best competitor measured 2.8% inlier ratio"}
+  IIRS-NAC:   {scale_ratio: 160.0, status: open}
+  OHRC-WAC:   {scale_ratio: 400.0, status: open,   note: "no published attempt"}
+  OHRC-IIRS:  {scale_ratio: 320.0, status: known_hard,
+               note: "two independent teams measured 0 inliers; cascade only, never direct"}
