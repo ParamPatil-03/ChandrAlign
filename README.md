@@ -29,7 +29,7 @@
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
 | next | Elevation maps, slope/aspect, preprocessing | DATA-13, GEO-03, PREP-* | ⏳ |
 
-**Tests:** 190 passing (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 188 passing (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
