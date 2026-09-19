@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-19T08:02:27+00:00",
+  "generated_utc": "2026-09-19T08:11:42+00:00",
   "root": "data/raw",
-  "file_count": 266,
-  "total_bytes": 86662555,
+  "file_count": 271,
+  "total_bytes": 1144550457,
   "files": {
     "ch2/iirs/bundle/iir/bundle_iir.xml": {
       "size_bytes": 4871,
@@ -1067,6 +1067,26 @@
     "ch2/tmc2/shapefiles/tmc2_s1_s14_v1_shape/ch2_tmc_raw_sp.shx": {
       "size_bytes": 9868,
       "sha256": "c9f2c0b8ba929ee1fc2fc7cf87ffada2bdb1d7670bab3a8029f38ab85b72804c"
+    },
+    "lro/nac/nac.m102000149rc/M102000149RC.IMG": {
+      "size_bytes": 528929736,
+      "sha256": "74046ad77b521f4e397fc39d0ebbfc06b45bef7bef09f6dc74f10288a3faafbb"
+    },
+    "lro/nac/nac.m102000149rc/M102000149RC.XML": {
+      "size_bytes": 13216,
+      "sha256": "617b917899714c5e58a602e88f4e83441e8d4a4c0287ddac7fbf1c33aa698286"
+    },
+    "lro/nac/nac.m1417360906lc/M1417360906LC.IMG": {
+      "size_bytes": 528929736,
+      "sha256": "15cc6a38a4af970b8ee2f777d98dc9cddedb4b67f867d979a4a0cbf35d58bf44"
+    },
+    "lro/nac/nac.m1417360906lc/M1417360906LC.XML": {
+      "size_bytes": 13228,
+      "sha256": "cdeb124bdec610223d8c6e9dd4e2d6639a771f99c3e4c4bc5b81ed99a3fd1397"
+    },
+    "lro/nac/nac.m1417360906lc/M1417360906LC_PYR.XML": {
+      "size_bytes": 1986,
+      "sha256": "9cfb2702046e31161c5023b517c49f85a57e0cd550323dac70f244580d8bd7e5"
     }
   }
 }
