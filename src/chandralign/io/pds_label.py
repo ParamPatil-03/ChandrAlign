@@ -19,6 +19,7 @@ there is no fallback to loading pixels with a generic image reader.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -161,8 +162,13 @@ def _layout(xml_path, *, file_name, offset, data_type, axis_names, shape, array_
 
 
 def read_array_layout(xml_path: str | Path) -> ArrayLayout:
-    """The pixel file's on-disk layout, from the label. pds4_tools first, lxml if it fails."""
+    """The pixel file's on-disk layout, from the label.
+
+    PDS3 labels go through pvl. PDS4 labels go through pds4_tools, or lxml if it fails.
+    """
     xml_path = Path(xml_path)
+    if is_pds3(xml_path):
+        return _pds3_layout(xml_path, _pvl_label(xml_path))
     tree = _load_xml(xml_path)  # fail fast, with our own error, on broken XML
     try:
         return _layout_from_pds4_tools(xml_path)
@@ -287,6 +293,246 @@ def parse_pds4(xml_path: str | Path, corners: str = "system") -> SceneMeta:
     )
 
 
+# ============================================================================= PDS3
+#
+# SELENE / Kaguya (and many older NASA products) use PDS3: a plain-text ODL label,
+# parsed with pvl. Pixels are read with the same memory-mapped window reader as
+# PDS4, using the layout below. planetaryimage is deliberately not used: it loads
+# the whole array into memory, so it cannot serve windowed reads, and its own
+# README calls it alpha quality (PLAN.md section 3.2).
+
+# (SAMPLE_TYPE, SAMPLE_BITS) -> numpy dtype. Byte order is explicit.
+_PDS3_KIND = {
+    "MSB_UNSIGNED_INTEGER": ">u", "UNSIGNED_INTEGER": ">u", "MAC_UNSIGNED_INTEGER": ">u",
+    "SUN_UNSIGNED_INTEGER": ">u", "LSB_UNSIGNED_INTEGER": "<u", "PC_UNSIGNED_INTEGER": "<u",
+    "VAX_UNSIGNED_INTEGER": "<u",
+    "MSB_INTEGER": ">i", "INTEGER": ">i", "MAC_INTEGER": ">i", "SUN_INTEGER": ">i",
+    "LSB_INTEGER": "<i", "PC_INTEGER": "<i", "VAX_INTEGER": "<i",
+    "IEEE_REAL": ">f", "REAL": ">f", "FLOAT": ">f", "MAC_REAL": ">f", "SUN_REAL": ">f",
+    "PC_REAL": "<f",
+}
+_PDS3_STORAGE = {
+    "BAND_SEQUENTIAL": ("BAND", "LINE", "SAMPLE"),
+    "LINE_INTERLEAVED": ("LINE", "BAND", "SAMPLE"),
+    "SAMPLE_INTERLEAVED": ("LINE", "SAMPLE", "BAND"),
+}
+_PDS3_MISSIONS = {"selene": "SELENE", "kaguya": "SELENE", "lunar reconnaissance orbiter": "LRO"}
+
+
+_ODL_END = re.compile(rb"(?m)^END[ \t]*\r?$")
+_MAX_LABEL_BYTES = 1 << 20
+
+
+def _pvl_label(lbl_path: Path):
+    """Parse an ODL label. Reads only the text up to END, so a label attached to the
+    front of a multi-GB image file never pulls the pixels into memory."""
+    import pvl
+
+    try:
+        with lbl_path.open("rb") as fh:
+            head = fh.read(_MAX_LABEL_BYTES)
+    except OSError as exc:
+        raise PdsParseError(f"{lbl_path.name}: cannot read ({exc})") from exc
+    end = _ODL_END.search(head)
+    if end is None:
+        raise PdsParseError(f"{lbl_path.name}: no END statement in the first {_MAX_LABEL_BYTES:,} bytes")
+    try:
+        return pvl.loads(head[: end.end()].decode("ascii", errors="replace"))
+    except (pvl.exceptions.LexerError, pvl.exceptions.ParseError, ValueError) as exc:
+        raise PdsParseError(f"{lbl_path.name}: not a readable PDS3 label ({exc})") from exc
+
+
+def _pvl_value(value):
+    """Strip pvl units: Quantity(3.0, 'deg') -> 3.0. 'UNK' / 'N/A' -> None."""
+    value = getattr(value, "value", value)
+    if isinstance(value, str) and value.strip().upper() in ("UNK", "N/A", "NULL", ""):
+        return None
+    return value
+
+
+def _pvl_number(block, key) -> Optional[float]:
+    if key not in block:
+        return None
+    value = _pvl_value(block[key])
+    return None if value is None else float(value)
+
+
+def _pds3_image_offset(label, lbl_path: Path) -> tuple[Path, int]:
+    """Resolve ^IMAGE to (pixel file, byte offset). Every PDS3 pointer form is handled:
+
+    ^IMAGE = 12                          record 12 of this file (1-based)
+    ^IMAGE = 1024 <BYTES>                byte 1024 of this file (1-based)
+    ^IMAGE = ("x.img")                   start of x.img
+    ^IMAGE = ("x.img", 5)                record 5 of x.img
+    ^IMAGE = ("x.img", 1 <BYTES>)        byte 1 of x.img
+    """
+    if "^IMAGE" not in label:
+        raise PdsParseError(f"{lbl_path.name}: no ^IMAGE pointer")
+    pointer = label["^IMAGE"]
+    file_name, location = None, pointer
+    if isinstance(pointer, (list, tuple)):
+        file_name = pointer[0]
+        location = pointer[1] if len(pointer) > 1 else 1
+    elif isinstance(pointer, str):
+        file_name, location = pointer, 1
+
+    units = str(getattr(location, "units", "") or "").upper()
+    position = int(getattr(location, "value", location))
+    if position < 1:
+        raise PdsParseError(f"{lbl_path.name}: ^IMAGE position must be >= 1, got {position}")
+    if units == "BYTES":
+        offset = position - 1
+    else:
+        record_bytes = _pvl_value(label.get("RECORD_BYTES"))
+        if not record_bytes:
+            raise PdsParseError(f"{lbl_path.name}: ^IMAGE is a record number but RECORD_BYTES is missing")
+        offset = (position - 1) * int(record_bytes)
+
+    raster = lbl_path.parent / file_name if file_name else lbl_path
+    return raster, offset
+
+
+def _pds3_layout(lbl_path: Path, label) -> ArrayLayout:
+    if "IMAGE" not in label:
+        raise PdsParseError(f"{lbl_path.name}: no IMAGE object")
+    image = label["IMAGE"]
+    try:
+        lines, samples = int(image["LINES"]), int(image["LINE_SAMPLES"])
+        sample_type = str(image["SAMPLE_TYPE"]).upper()
+        sample_bits = int(image["SAMPLE_BITS"])
+    except KeyError as exc:
+        raise PdsParseError(f"{lbl_path.name}: IMAGE object lacks {exc}") from exc
+    if sample_type not in _PDS3_KIND:
+        raise PdsParseError(f"{lbl_path.name}: unsupported SAMPLE_TYPE {sample_type!r}")
+    if sample_bits % 8:
+        raise PdsParseError(f"{lbl_path.name}: SAMPLE_BITS={sample_bits} is not whole bytes")
+    kind = _PDS3_KIND[sample_type]
+    dtype = np.dtype(("|" if sample_bits == 8 else kind[0]) + kind[1] + str(sample_bits // 8)).str
+
+    bands = int(_pvl_value(image.get("BANDS")) or 1)
+    if bands == 1:
+        axis_names, shape = ("LINE", "SAMPLE"), (lines, samples)
+    else:
+        storage = str(_pvl_value(image.get("BAND_STORAGE_TYPE")) or "BAND_SEQUENTIAL").upper()
+        if storage not in _PDS3_STORAGE:
+            raise PdsParseError(f"{lbl_path.name}: unsupported BAND_STORAGE_TYPE {storage!r}")
+        axis_names = _PDS3_STORAGE[storage]
+        sizes = {"BAND": bands, "LINE": lines, "SAMPLE": samples}
+        shape = tuple(sizes[a] for a in axis_names)
+
+    raster, offset = _pds3_image_offset(label, lbl_path)
+    return ArrayLayout(
+        raster_path=raster,
+        offset_bytes=offset,
+        dtype=dtype,
+        axis_names=axis_names,
+        shape=shape,
+        array_type="PDS3_IMAGE",
+        file_size_bytes=None,   # PDS3 labels do not declare it
+        md5=None,
+        parsed_with="pvl",
+    )
+
+
+def is_pds3(label_path: str | Path) -> bool:
+    """PDS3 labels are ODL text starting with PDS_VERSION_ID; PDS4 labels are XML."""
+    with Path(label_path).open("rb") as fh:
+        head = fh.read(64).lstrip()
+    return head.upper().startswith(b"PDS_VERSION_ID")
+
+
 def parse_pds3(lbl_path: str | Path) -> SceneMeta:
-    """PDS3 / ODL labels (SELENE). Implemented in Step 6 (DATA-02)."""
-    raise NotImplementedError("PDS3 reader lands in Step 6 (DATA-02)")
+    """Read a PDS3 (ODL) label into SceneMeta. Same honesty rule as parse_pds4."""
+    lbl_path = Path(lbl_path)
+    label = _pvl_label(lbl_path)
+    layout = _pds3_layout(lbl_path, label)
+    verified: dict[str, bool] = {}
+
+    product_id = _pvl_value(label.get("PRODUCT_ID"))
+    verified["product_id"] = product_id is not None
+    product_id = str(product_id or lbl_path.stem)
+    try:
+        instrument = detect_instrument(product_id)
+    except UnknownInstrumentError as exc:
+        raise PdsParseError(f"{lbl_path.name}: {exc}") from exc
+    declared = _pvl_value(label.get("INSTRUMENT_ID"))
+    if declared is not None and str(declared).upper() != instrument:
+        raise PdsParseError(
+            f"{lbl_path.name}: product ID says {instrument} but INSTRUMENT_ID says {declared}"
+        )
+    verified["instrument"] = True
+    spec = get_spec(instrument)
+
+    mission = _PDS3_MISSIONS.get(str(_pvl_value(label.get("MISSION_NAME")) or "").lower())
+    verified["mission"] = mission is not None
+    mission = mission or spec.mission
+
+    names = [a.lower() for a in layout.axis_names]
+    lines, samples = layout.shape[names.index("line")], layout.shape[names.index("sample")]
+    n_bands = layout.shape[names.index("band")] if "band" in names else 1
+    verified["array_shape"] = verified["dtype"] = verified["n_bands"] = True
+
+    projection = label.get("IMAGE_MAP_PROJECTION", {})
+    scale_km = _pvl_number(projection, "MAP_SCALE")
+    verified["gsd_m"] = scale_km is not None
+    gsd = scale_km * 1000.0 if scale_km is not None else spec.gsd_m
+
+    corners = []
+    for corner in ("UPPER_LEFT", "UPPER_RIGHT", "LOWER_RIGHT", "LOWER_LEFT"):   # clockwise
+        lat = _pvl_number(label, f"{corner}_LATITUDE")
+        lon = _pvl_number(label, f"{corner}_LONGITUDE")
+        if lat is None or lon is None:
+            corners = []
+            break
+        corners.append((lat, lon))
+    verified["corner_latlon"] = bool(corners)
+
+    # Mosaics (e.g. TC ortho maps) have START_TIME = UNK and no single sun position.
+    # They are photometrically normalised to STANDARD_GEOMETRY, but their shadows
+    # still come from the original passes, so we do NOT report that as a sun angle.
+    start = _pvl_value(label.get("START_TIME"))
+    sun_azimuth = _pvl_number(label, "SOLAR_AZIMUTH") if "SOLAR_AZIMUTH" in label else None
+    incidence = _pvl_number(label, "INCIDENCE_ANGLE") if "INCIDENCE_ANGLE" in label else None
+    emission = _pvl_number(label, "EMISSION_ANGLE") if "EMISSION_ANGLE" in label else None
+    phase = _pvl_number(label, "PHASE_ANGLE") if "PHASE_ANGLE" in label else None
+    verified["acquisition_utc"] = start is not None
+    verified["sub_solar_azimuth_deg"] = sun_azimuth is not None
+    verified["solar_incidence_deg"] = incidence is not None
+    verified["emission_deg"] = emission is not None
+    verified["phase_deg"] = phase is not None
+    verified["wavelength_nm"] = False
+    verified["raster_path"] = True
+
+    return SceneMeta(
+        product_id=product_id,
+        instrument=instrument,
+        mission=mission,
+        gsd_m=gsd,
+        n_bands=n_bands,
+        wavelength_nm=spec.wavelength_nm,
+        array_shape=(lines, samples),
+        dtype=layout.dtype,
+        corner_latlon=corners,
+        sub_solar_azimuth_deg=sun_azimuth,
+        solar_incidence_deg=incidence,
+        emission_deg=emission,
+        phase_deg=phase,
+        acquisition_utc=str(start) if start is not None else None,
+        label_path=lbl_path,
+        raster_path=layout.raster_path,
+        label_fields_verified=verified,
+    )
+
+
+def read_pds3_image_info(lbl_path: str | Path) -> dict:
+    """Value-handling fields from a PDS3 IMAGE object: no-data value, valid range,
+    scaling to physical units, and the producer's own statistics (if stated)."""
+    image = _pvl_label(Path(lbl_path))["IMAGE"]
+    keys = ("DUMMY", "VALID_MINIMUM", "VALID_MAXIMUM", "SCALING_FACTOR", "OFFSET",
+            "MINIMUM", "MAXIMUM", "AVERAGE", "STDEV", "IMAGE_VALUE_TYPE")
+    return {k.lower(): _pvl_value(image[k]) for k in keys if k in image}
+
+
+def parse_label(label_path: str | Path, **kwargs) -> SceneMeta:
+    """PDS3 or PDS4, decided by the label's content, not its file extension."""
+    return parse_pds3(label_path) if is_pds3(label_path) else parse_pds4(label_path, **kwargs)
