@@ -1,0 +1,1111 @@
+<title>Chandralign Feature Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#F4F5F7; --surface:#FFFFFF; --surface-2:#EEF0F3; --ink:#1A1F26; --muted:#56606D; --line:#DCE0E6;
+  --accent:#95600E; --accent-soft:#F6EBD8; --accent-ink:#6E4507;
+  --good:#23704A; --good-soft:#E1F1E7; --bad:#A63A26; --bad-soft:#F7E3DE; --warn:#8A6A00; --warn-soft:#F6EFCF;
+  --chip:#E7EAEE;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#161A20; --surface-2:#1C2129; --ink:#E5E8EC; --muted:#9BA4B0; --line:#2A3039;
+    --accent:#E2A646; --accent-soft:#2B2213; --accent-ink:#F0C47A;
+    --good:#6CC293; --good-soft:#16271E; --bad:#E7826D; --bad-soft:#2C1915; --warn:#D9BC4F; --warn-soft:#2A2511;
+    --chip:#232932;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#161A20; --surface-2:#1C2129; --ink:#E5E8EC; --muted:#9BA4B0; --line:#2A3039;
+  --accent:#E2A646; --accent-soft:#2B2213; --accent-ink:#F0C47A;
+  --good:#6CC293; --good-soft:#16271E; --bad:#E7826D; --bad-soft:#2C1915; --warn:#D9BC4F; --warn-soft:#2A2511;
+  --chip:#232932;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;padding-top:40px;max-height:100vh;overflow:auto;font-size:14px}
+nav.toc p{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+nav.toc a{display:block;padding:4px 8px;border-radius:4px;color:var(--muted);text-decoration:none}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--surface-2);color:var(--ink);outline:none}
+nav.toc .sub a{padding-left:20px;font-size:13px}
+main{min-width:0;padding-top:40px}
+header.top{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:8px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--f-head);font-weight:600;font-size:clamp(30px,4.4vw,44px);line-height:1.12;margin:10px 0 14px;text-wrap:balance}
+h2{font-family:var(--f-head);font-weight:600;font-size:28px;line-height:1.2;margin:0 0 12px;text-wrap:balance}
+h3{font-size:19px;font-weight:600;margin:28px 0 8px;text-wrap:balance}
+p,li{max-width:70ch}
+.lede{font-size:18px;color:var(--muted);max-width:66ch;margin:0}
+section{padding-top:48px;scroll-margin-top:12px}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+code{background:var(--chip);padding:1px 5px;border-radius:3px}
+a{color:var(--accent-ink)}
+.callout{background:var(--accent-soft);border-left:3px solid var(--accent);padding:14px 18px;margin:18px 0;border-radius:0 6px 6px 0}
+.callout p{margin:0}
+.callout p+p{margin-top:8px}
+.callout.plain{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--muted)}
+.tbl{overflow-x:auto;margin:14px 0 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:500}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.acc{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.neu{background:var(--chip);color:var(--muted)}
+.glossary{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:14px}
+.glossary div{background:var(--surface);padding:12px 14px}
+.glossary dt{font-weight:600;font-size:15px}
+.glossary dd{margin:3px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+ol.pipe{list-style:none;padding:0;margin:18px 0 0;counter-reset:s;display:grid;gap:0}
+ol.pipe li{counter-increment:s;position:relative;padding:12px 0 12px 52px;border-left:2px solid var(--line);margin-left:16px;max-width:none}
+ol.pipe li::before{content:counter(s);position:absolute;left:-17px;top:10px;width:32px;height:32px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+ol.pipe li.star::before{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
+ol.pipe li b{display:block;font-size:16px}
+ol.pipe li span.ids{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+ol.pipe li.gate{padding-left:52px}
+.gate-line{font-family:var(--f-mono);font-size:12px;color:var(--accent-ink);letter-spacing:.04em}
+.toolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar input{flex:1 1 240px;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.toolbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.toolbar button{font:inherit;font-size:13px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer}
+.toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toolbar button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto}
+.fgroup h3{font-family:var(--f-head);font-size:22px;margin:40px 0 4px}
+.fgroup > p{margin:0 0 14px;color:var(--muted)}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:12px;scroll-margin-top:80px}
+.feat.star{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.fhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 10px;margin-bottom:10px}
+.fid{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.fname{font-weight:600;font-size:17.5px;flex:1 1 260px;text-wrap:balance}
+.fbody{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 16px;margin:0}
+.fbody dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.fbody dd{margin:0;font-size:15px}
+.fbody dd.say{font-style:italic;color:var(--ink)}
+.ffoot{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);display:grid;gap:3px}
+.ffoot span b{font-weight:500;color:var(--ink)}
+.qa{display:grid;gap:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin-top:12px}
+.qa div{padding:12px 16px;border-bottom:1px solid var(--line)}
+.qa div:last-child{border-bottom:0}
+.qa .q{font-weight:600;margin:0}
+.qa .q .mono{color:var(--muted);font-weight:400;margin-right:6px}
+.qa .a{margin:4px 0 0;color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.box h4{margin:0 0 6px;font-size:15px}
+.box ul{margin:0;padding-left:18px}
+.box li{font-size:14.5px}
+.empty{padding:20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  nav.toc{position:static;max-height:none;padding-top:24px}
+  nav.toc ol{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+  nav.toc .sub{display:none}
+  main{padding-top:16px}
+}
+@media (max-width:600px){
+  .fbody{grid-template-columns:1fr;gap:2px}
+  .fbody dd{margin-bottom:8px}
+  .two{grid-template-columns:1fr}
+  section{padding-top:36px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p>Contents</p>
+  <ol>
+    <li><a href="#start">1 · Start here</a></li>
+    <li><a href="#problem">2 · The problem, simply</a></li>
+    <li><a href="#cameras">3 · The cameras and the scale gap</a></li>
+    <li><a href="#existing">4 · What already exists</a></li>
+    <li><a href="#claim">5 · What we claim, and don't</a></li>
+    <li><a href="#pipeline">6 · How the pipeline flows</a></li>
+    <li><a href="#features">7 · Every feature, explained</a></li>
+    <li class="sub"><a href="#g-DATA">Data ingestion</a></li>
+    <li class="sub"><a href="#g-GEO">Geometry &amp; physics</a></li>
+    <li class="sub"><a href="#g-PREP">Image preparation</a></li>
+    <li class="sub"><a href="#g-MATCH">Matching</a></li>
+    <li class="sub"><a href="#g-ALIGN">Filtering &amp; alignment</a></li>
+    <li class="sub"><a href="#g-PREC">Precision</a></li>
+    <li class="sub"><a href="#g-CHECK">Trust &amp; safety checks</a></li>
+    <li class="sub"><a href="#g-OUT">Outputs</a></li>
+    <li class="sub"><a href="#g-UI">Interface</a></li>
+    <li><a href="#bench">8 · Benchmark &amp; ablation</a></li>
+    <li><a href="#failures">9 · The 20 failure modes</a></li>
+    <li><a href="#licence">10 · Licences &amp; data</a></li>
+    <li><a href="#qa">11 · Judge Q&amp;A</a></li>
+    <li><a href="#weak">12 · Honest weak spots</a></li>
+    <li><a href="#glossary">13 · Glossary</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <div class="eyebrow">SIH26166 · ISRO · Chandralign</div>
+  <h1>Chandralign: every feature, explained for judge Q&amp;A</h1>
+  <p class="lede">This guide covers what we are building, why each piece exists, how we are building it, and what already exists in the world. It uses plain language throughout, so anyone on the team can answer a judge's question with confidence.</p>
+</header>
+
+<section id="start">
+  <h2>1 · Start here</h2>
+  <p>This guide is built from two sources only: our <code>PLAN.md</code> and <code>FEATURES.csv</code> (what we build and how), and the <em>SIH26166 Deep Technical Research</em> report (what already exists: papers, competitors, tools, data). No other research was added.</p>
+  <div class="callout">
+    <p><strong>One rule before anything else: every feature is still a plan.</strong> All 85 rows in <code>FEATURES.csv</code> are marked <code>TODO</code>, and we have not measured any result yet. If a judge asks for a number we haven't measured, the answer is "we measure that at build time and report whatever it is." Never quote a published paper's number as our own. This is honesty rule H1/H5 and it is enforced by tests.</p>
+  </div>
+  <h3>How to read a feature card</h3>
+  <ul>
+    <li><strong>What it is:</strong> the feature in plain words.</li>
+    <li><strong>How we build it:</strong> the library, algorithm or method we use.</li>
+    <li><strong>What exists / why ours:</strong> what is already out there (from the research PDF), and why we still need this piece.</li>
+    <li><strong>Say this:</strong> a short line you can say to a judge.</li>
+    <li><strong>Proof it works:</strong> the acceptance test from <code>FEATURES.csv</code>. A feature is only "done" when this test passes.</li>
+  </ul>
+  <p>Badges: <span class="pill acc">★ our differentiator</span> marks the pieces nobody has built before. <span class="pill good">PS asks for this</span> marks features the problem statement asks for directly. <span class="pill bad">P0 must</span> <span class="pill warn">P1 should</span> <span class="pill neu">P2 stretch</span> show priority.</p>
+</section>
+
+<section id="problem">
+  <h2>2 · The problem, in simple words</h2>
+  <p><strong>Image registration</strong> means lining up two photos of the same place so that each point in one sits exactly on the same point in the other. The problem statement gives the two roles names:</p>
+  <ul>
+    <li><strong>Source image (moving):</strong> a Chandrayaan-2 photo from one of its three cameras (OHRC, TMC-2 or IIRS). We bend and shift this one.</li>
+    <li><strong>Reference image (fixed):</strong> a trusted outside photo of the same ground, from NASA's LRO (NAC or WAC cameras) or Japan's SELENE/Kaguya. It stays still.</li>
+  </ul>
+  <p>To line them up, we find the same spots in both images (<em>match points</em>), work out the mathematical shape change between them (the <em>transform</em>), then warp the source to fit the reference.</p>
+  <h3>Why this is hard on the Moon</h3>
+  <p>The problem statement names three challenges:</p>
+  <div class="two">
+    <div class="box"><h4>Sun angle (illumination)</h4><p class="muted" style="margin:0;font-size:14.5px">The Moon has no air, so shadows are pitch black and sharp. If the Sun is in a different place in the two photos, the same crater looks completely different. Near the poles the Sun is very low and shadows are huge.</p></div>
+    <div class="box"><h4>Scale (resolution)</h4><p class="muted" style="margin:0;font-size:14.5px">One OHRC pixel covers 0.25 m of ground. One IIRS pixel covers about 80 m, which is about 320 times bigger. A single IIRS pixel can hold a whole OHRC image's worth of detail.</p></div>
+    <div class="box"><h4>Sensor type (multimodal)</h4><p class="muted" style="margin:0;font-size:14.5px">OHRC and TMC-2 are black-and-white cameras. IIRS is an infrared spectrometer with about 250 colour bands. The same ground can have different brightness in each band.</p></div>
+    <div class="box"><h4>Viewpoint</h4><p class="muted" style="margin:0;font-size:14.5px">Different orbits and pushbroom cameras mean the images can be rotated and tilted relative to each other.</p></div>
+  </div>
+  <h3>What the problem statement wants delivered</h3>
+  <ul>
+    <li>A <strong>generic</strong> piece of software: one system for all cameras, not three hand-tuned ones.</li>
+    <li>A <strong>registered product</strong> (the aligned image) plus the <strong>corresponding match points</strong>.</li>
+    <li><strong>Sub-pixel accuracy</strong>: the error must be smaller than one pixel of the source image.</li>
+    <li>Match points <strong>spread evenly</strong> across the image, not bunched in one corner.</li>
+    <li><strong>Evaluation metrics</strong>, such as RMSE, inlier count and inlier ratio.</li>
+  </ul>
+  <div class="callout plain">
+    <p><strong>The key reading of the problem statement.</strong> Its own <em>Dataset</em> field lists Chandrayaan-2 OHRC, TMC-2 and IIRS as the source, and LRO NAC and SELENE images as the <em>reference</em>. It gives no link for matching the three Chandrayaan-2 cameras against each other. So our main target is Chandrayaan-2 against an <em>external</em> reference. Matching the cameras to each other is a useful tool we use along the way, not the main goal.</p>
+  </div>
+</section>
+
+<section id="cameras">
+  <h2>3 · The cameras and the scale gap</h2>
+  <p>GSD (ground sample distance) is how much ground one pixel covers. Smaller means sharper.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Camera</th><th>Mission</th><th>Role</th><th>GSD (m/pixel)</th><th>What it sees</th></tr></thead>
+    <tbody>
+      <tr><td><strong>OHRC</strong></td><td>Chandrayaan-2</td><td>Source</td><td class="num">0.25</td><td>Black-and-white (500–800 nm), very long narrow strips, e.g. 79,796 × 12,000 px</td></tr>
+      <tr><td><strong>TMC-2</strong></td><td>Chandrayaan-2</td><td>Source</td><td class="num">~5 (4.43 on a real label)</td><td>Black-and-white, 20 km wide, 3 viewing angles (stereo), up to 191,483 × 4,000 px</td></tr>
+      <tr><td><strong>IIRS</strong></td><td>Chandrayaan-2</td><td>Source</td><td class="num">~80</td><td>Infrared spectrometer, 0.8–5.0 µm, ~250–256 bands, 20 km wide</td></tr>
+      <tr><td><strong>LRO NAC</strong></td><td>NASA LRO</td><td>Reference</td><td class="num">0.5</td><td>Black-and-white, up to 104,448 × 5,000 px</td></tr>
+      <tr><td><strong>LRO WAC</strong></td><td>NASA LRO</td><td>Reference</td><td class="num">~100</td><td>Several colour bands</td></tr>
+      <tr><td><strong>SELENE TC</strong></td><td>JAXA Kaguya</td><td>Reference</td><td class="num">~7.4–10</td><td>Black-and-white stereo (PDS3 format)</td></tr>
+      <tr><td><strong>SELENE MI</strong></td><td>JAXA Kaguya</td><td>Reference</td><td class="num">~20–62</td><td>Multiband colour imager</td></tr>
+    </tbody>
+  </table></div>
+  <h3>The pairing map: what is solved and what is open</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Pair</th><th>Scale gap</th><th>Status</th><th>Evidence (from the research PDF)</th></tr></thead>
+    <tbody>
+      <tr><td>OHRC ↔ LRO NAC</td><td class="num">~2:1</td><td><span class="pill good">Solved</span></td><td>arXiv:2509.04775 and arXiv:2602.14993, sub-pixel to ~30 cm class</td></tr>
+      <tr><td>IIRS ↔ LRO WAC</td><td class="num">~1.25:1</td><td><span class="pill good">Solved</span></td><td>preprints.org SIFT paper (RMS &lt; 1 IIRS pixel, ~80 m) plus arXiv:2509.04775 §3.2</td></tr>
+      <tr><td><strong>TMC-2 ↔ SELENE TC</strong></td><td class="num">~2:1</td><td><span class="pill acc">Open · our headline</span></td><td>Zero prior art, even though it is the best-matched pair by resolution</td></tr>
+      <tr><td><strong>TMC-2 ↔ LRO NAC</strong></td><td class="num">~10:1</td><td><span class="pill acc">Open · our target</span></td><td>The key paper never mentions TMC-2. The best competitor (jaitus) got only a 2.8% inlier ratio, against 98.0% for OHRC↔NAC</td></tr>
+      <tr><td>IIRS ↔ LRO NAC</td><td class="num">~160:1</td><td><span class="pill warn">Open · stretch</span></td><td>No paper found</td></tr>
+      <tr><td>OHRC ↔ LRO WAC</td><td class="num">~333:1</td><td><span class="pill warn">Open · stretch</span></td><td>Nobody has published an attempt</td></tr>
+      <tr><td>OHRC ↔ IIRS</td><td class="num">~320:1</td><td><span class="pill bad">Known hard</span></td><td>Two separate teams (Fable98, Assassin29092005) got 0 inliers on real data</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Pattern to remember: the two solved pairs are the ones where both images have nearly the same resolution. The published papers deliberately picked easy scale ratios. Every pair with a large or awkward scale gap is still open.</p>
+</section>
+
+<section id="existing">
+  <h2>4 · What already exists</h2>
+  <p>Everything in this section comes from the research PDF.</p>
+
+  <h3>Published research</h3>
+  <ul>
+    <li><strong>arXiv:2509.04775</strong> (also IEEE INGARSS 2024) is the most important paper. It is the only one that compares SIFT, ASIFT, AKAZE, RIFT2 and SuperGlue on <em>real</em> Chandrayaan-2 data (OHRC↔NAC, IIRS↔WAC). <strong>SuperGlue gave the lowest error and the fastest runtime</strong> (0.57–0.92 px, equatorial to polar). The classical methods (SIFT, AKAZE) <strong>got worse specifically at the lunar poles</strong>. The paper never mentions TMC-2, and it doesn't test OHRC↔WAC, IIRS↔NAC or SELENE.</li>
+    <li><strong>preprints.org 2025 (SIFT-based IIRS registration)</strong> registers IIRS to LRO WAC with SIFT, with error below one IIRS pixel. It covers one pair with a classical method only.</li>
+    <li><strong>MultiResSAR (arXiv:2502.01002, 2025)</strong> is an Earth radar-optical benchmark that tested 16 algorithms. Classical <strong>RIFT beat the best deep method (66.5% vs 40.6%) at high resolution</strong>. This is why we don't say "AI always wins".</li>
+    <li><strong>Geo-LoFTR ablation</strong>: vanilla LoFTR fails almost completely at very low sun elevation (EL = 2°) on Mars-like terrain.</li>
+    <li><strong>Photoclinometry-assisted matching (Liu &amp; Wu 2020)</strong> and <strong>multiview shape-from-shading (Alexandrov &amp; Beyer 2018)</strong> use known sun geometry to help matching. They are 3D-reconstruction methods, not general 2D matchers.</li>
+    <li><strong>Crater-neighbourhood matching (Remote Sensing 2025)</strong> uses craters as landmarks that don't change with lighting. It has not been tested on Chandrayaan-2.</li>
+    <li><strong>Coarse-to-fine, 1×–50× resolution (Remote Sensing 2019)</strong> is the closest published method for big scale gaps, but it stops at 50×, not 320×.</li>
+    <li>No existing benchmark (HPatches, MegaDepth, IMC, SEN1-2, and others) fits lunar, multi-sensor data with public ground truth.</li>
+  </ul>
+
+  <h3>Competing teams (49 GitHub repos for this exact problem statement)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Team / repo</th><th>What they built</th><th>What it tells us</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">jaitus/sih26166-lunar-correspondence</td><td>Strongest overall: LoFTR plus a classical hybrid, live PDS ODE API. Already targets the external reference.</td><td>Measured TMC-2↔NAC at only a <strong>2.8% inlier ratio</strong> vs 98.0% for OHRC↔NAC. TMC-2 is the hard edge.</td></tr>
+      <tr><td class="mono">Assassin29092005/SIH2026</td><td>Real multi-source lunar data and a self-correcting "control gate" method</td><td>Found its own bug that produced <strong>fake 100% inlier rates from a shared zero-mask</strong>. Reports "IIRS fails entirely".</td></tr>
+      <tr><td class="mono">Fable98/chandrayaan2-crossmatch</td><td>Cross-instrument matching with phase-correlation refinement</td><td>OHRC↔TMC-2: 6–7 inliers, 0.99–1.83 px. IIRS: <strong>0 inliers</strong>.</td></tr>
+      <tr><td class="mono">Jackiechan2006/lunalign</td><td>Quadratic NCC peak fitting for sub-pixel accuracy</td><td>Evidence that the sub-pixel method works in practice.</td></tr>
+      <tr><td class="mono">itsmedarkvillain-sketch</td><td>Grid-based even spread of points, least-squares transform refinement</td><td>Evidence for our uniformity method.</td></tr>
+      <tr><td class="mono">Myparadox-creator/LunarRegX</td><td>"Lunar fine-tuned LoFTR"</td><td>Trained for only <strong>1 epoch</strong>. Overclaiming we must avoid (failure mode #20).</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>What the average team builds:</strong> SIFT, ORB or AKAZE, plus FLANN, RANSAC and a basic web UI, tested on synthetic or non-lunar images, with no PDS4 reading or a fake one. Grades across the 49 repos: ~25 have real working code, ~14 are partial, ~7 are README-only, and 3 are dead or empty.</p>
+
+  <h3>Existing tools, and why none of them solve this</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Tool</th><th>What it does</th><th>Why it doesn't solve this problem statement</th></tr></thead>
+    <tbody>
+      <tr><td>ENVI, ERDAS, PCI Geomatica, ArcGIS Pro</td><td>Commercial Earth-imagery co-registration</td><td>No lunar sensor models, no shadow or illumination handling, no hyperspectral-to-panchromatic workflow, paid</td></tr>
+      <tr><td>USGS ISIS3</td><td>Planetary image processing, control networks</td><td>Not a turnkey sub-pixel matcher. <code>spiceinit</code> is documented to fail on stock releases for OHRC.</td></tr>
+      <tr><td>NASA Ames Stereo Pipeline</td><td>Stereo DEMs; documented Chandrayaan-2 support</td><td>Builds DEMs, not general tie-point registration; no hyperspectral support</td></tr>
+      <tr><td>AROSICS</td><td>Open (Apache-2.0) sub-pixel co-registration</td><td>No lunar validation, no hyperspectral support. We run it as a baseline to compare against.</td></tr>
+      <tr><td>AFIDS-POMM (NASA JPL)</td><td>Co-registration that lists LRO NAC/WAC support</td><td>4 stars, untouched since April 2023, needs ISIS + SPICE + DEMs. We cite it only.</td></tr>
+      <tr><td>OpenCV, kornia</td><td>Low-level building blocks</td><td>Just primitives. No lunar illumination logic, no hyperspectral handling.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="claim">
+  <h2>5 · What we claim, and what we don't</h2>
+  <div class="callout">
+    <p><strong>Our claim, word for word:</strong> A generic, instrument-agnostic registration pipeline that registers any Chandrayaan-2 instrument against either named external reference. It is validated honestly on the two neglected axes, TMC-2 and SELENE, and it reproduces the two already-solved pairs (OHRC↔NAC, IIRS↔WAC) as a credibility floor.</p>
+  </div>
+  <p><strong>We do not claim a new matching algorithm.</strong> What is new is the <em>combination</em>, the <em>validation focus</em> and the <em>honesty discipline</em>:</p>
+  <ol>
+    <li>A <strong>real, tested PDS3/PDS4 reader</strong>, which is the part most competitors fake.</li>
+    <li><strong>Real TMC-2 and SELENE coverage</strong> using real downloaded products, not synthetic stand-ins.</li>
+    <li><strong>Automatic method selection plus physics-guided filtering</strong>: classical RIFT for different sensors, LightGlue for extreme lighting, and a step-by-step cascade across the 320:1 scale gap.</li>
+    <li><strong>Control-gated honest validation</strong>: null tests, confidence tiers and published failures.</li>
+  </ol>
+  <h3>What we deliberately don't build</h3>
+  <ul>
+    <li>Direct OHRC↔IIRS matching without steps in between. Two teams already failed at it.</li>
+    <li>A model "fine-tuned" for 1 epoch and marketed as fine-tuned.</li>
+    <li>SuperPoint, SuperGlue or R2D2 in the shipped software, because of their non-commercial licences.</li>
+    <li>Vanilla LoFTR for extreme low-sun images.</li>
+    <li>A beautiful README over thin code.</li>
+  </ul>
+</section>
+
+<section id="pipeline">
+  <h2>6 · How the pipeline flows</h2>
+  <p>One run goes through these stages in order. The feature IDs link each stage to the cards in section 7. Highlighted stages are our differentiators.</p>
+  <ol class="pipe">
+    <li><b>Read the real files</b>Read PDS4/PDS3 labels and pixels, detect the camera, cut the image into tiles. <span class="ids">DATA-01 … DATA-13</span></li>
+    <li><b>Work out the physics</b>Sun angles, terrain slope from elevation maps, ground overlap check, scale pre-check. <span class="ids">GEO-01 … GEO-07</span></li>
+    <li><b>Prepare the images</b>Contrast boost, phase-congruency transform, IIRS composite, shadow mask, terrain texture scores. <span class="ids">PREP-01 … PREP-08</span></li>
+    <li class="gate"><span class="gate-line">GATE A · a clean, geometry-tagged tile pair (ImagePlane) is handed over</span></li>
+    <li class="star"><b>Scale-bridging cascade</b>Cross large resolution gaps in steps (OHRC → TMC-2 → SELENE TC / IIRS → LRO), never in one jump. <span class="ids">MATCH-10, MATCH-11</span></li>
+    <li class="star"><b>Automatic matcher choice</b>Pick LightGlue, LoFTR, RIFT2 or the cascade based on lighting difference, scale and sensor type. <span class="ids">MATCH-01 … MATCH-09, MATCH-12 … MATCH-15</span></li>
+    <li><b>Fit the transform</b>MAGSAC++ throws away wrong matches, then affine, homography or TPS fits the shape. <span class="ids">ALIGN-01, ALIGN-02</span></li>
+    <li class="star"><b>Physics-based filtering</b>Reject matches that are physically impossible given terrain slope and sun angle. <span class="ids">ALIGN-03</span></li>
+    <li><b>Spread the points evenly</b>Grid top-k, refill empty cells, Delaunay coverage check. <span class="ids">ALIGN-04 … ALIGN-07</span></li>
+    <li><b>Sub-pixel refinement</b>NCC peak fit, phase correlation, cornerSubPix, ECC, least squares, and a self-test with a known shift. <span class="ids">PREC-01 … PREC-06</span></li>
+    <li class="star"><b>Control gates and confidence tier</b>Null tests, perturbation test, mask guard, scale check, then HIGH / MEDIUM / LOW / REJECTED. <span class="ids">CHECK-01 … CHECK-10</span></li>
+    <li class="gate"><span class="gate-line">GATE B · RegistrationResult is handed over</span></li>
+    <li><b>Deliver</b>GeoTIFF, CSV/GeoJSON match points, the four metrics, HTML report, provenance, CLI, API and web demo. <span class="ids">OUT-01 … OUT-10, UI-01 … UI-09</span></li>
+  </ol>
+  <p class="muted" style="margin-top:14px">The three handoff objects are fixed in <code>contracts.py</code>: <code>SceneMeta</code> (what the label said), <code>ImagePlane</code> (one ready-to-match tile) and <code>RegistrationResult</code> (matches, transform, metrics, gates, tier, failures). Every metric defaults to <code>None</code> ("not measured"), never a made-up value.</p>
+</section>
+
+<section id="features">
+  <h2>7 · Every feature, explained</h2>
+  <p>All 85 features from <code>FEATURES.csv</code>, grouped the same way. Type in the box to find a feature quickly during Q&amp;A prep. Try "shadow", "IIRS", "sub-pixel" or "licence".</p>
+  <div class="toolbar" role="search">
+    <label for="q" class="mono" style="position:absolute;left:-9999px">Search features</label>
+    <input id="q" type="search" placeholder="Search features, e.g. shadow, SELENE, RANSAC" autocomplete="off">
+    <button type="button" id="f-star" aria-pressed="false">★ differentiators only</button>
+    <button type="button" id="f-ps" aria-pressed="false">PS asks for it</button>
+    <span class="count" id="count"></span>
+  </div>
+  <div id="feat-root"></div>
+  <p id="noresults" class="empty" hidden>No feature matches that search. Try a shorter word.</p>
+</section>
+
+<section id="bench">
+  <h2>8 · Benchmark &amp; ablation: how we prove things</h2>
+  <p>No existing benchmark fits lunar, multi-sensor data with public ground truth, so we build our own four-tier benchmark.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Tier</th><th>Pair</th><th>Scale</th><th>Sun-angle difference</th><th>What it proves</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill good">Easy</span></td><td>OHRC ↔ LRO NAC, near the equator</td><td class="num">~2:1</td><td class="num">&lt; 20°</td><td>A sanity check. We should reproduce the published ~0.6 px class result.</td></tr>
+      <tr><td><span class="pill good">Medium</span></td><td>IIRS ↔ LRO WAC</td><td class="num">~1.25:1</td><td class="num">20–60°</td><td>A sanity check. We should reproduce the published sub-pixel result.</td></tr>
+      <tr><td><span class="pill acc">Hard</span></td><td>TMC-2 ↔ LRO NAC or TMC-2 ↔ SELENE TC</td><td class="num">10:1 / ~2:1</td><td class="num">60°+</td><td><strong>This tier is our contribution.</strong> Nobody has done it on real data.</td></tr>
+      <tr><td><span class="pill bad">Extreme</span></td><td>OHRC ↔ IIRS</td><td class="num">~320:1</td><td>any</td><td>Included to report the failure honestly, not to claim success.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Ground truth:</strong> we work out the true alignment two independent ways, from the label geometry and from a DEM (elevation map) re-projection. The disagreement between them is reported as the uncertainty. We never trust a single source.</p>
+  <h3>The six-stage ablation (does each piece actually help?)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Stage</th><th>What we add</th><th>What it tests</th></tr></thead>
+    <tbody>
+      <tr><td>Baseline</td><td>SIFT + RANSAC</td><td>The field's standard floor. Expected to degrade at the poles.</td></tr>
+      <tr><td>Exp 1</td><td>+ CLAHE / phase congruency</td><td>Does image preparation help? Results split equatorial vs polar.</td></tr>
+      <tr><td>Exp 2</td><td>+ learned matcher (LightGlue)</td><td>How much does AI help? Checked against the published SuperGlue-vs-SIFT gap.</td></tr>
+      <tr><td>Exp 3 ★</td><td>+ physics-based filter</td><td><strong>Our novel measurement.</strong> Inlier precision on repetitive crater fields.</td></tr>
+      <tr><td>Exp 4 ★</td><td>+ scale-bridging cascade</td><td>The difference between "0 inliers" and a working result on the Hard and Extreme tiers.</td></tr>
+      <tr><td>Exp 5</td><td>+ sub-pixel refinement</td><td>Error below one pixel, measured by known-shift recovery.</td></tr>
+      <tr><td>Final</td><td>Full system</td><td>Should beat every stage on Hard/Extreme and at least match published numbers on Easy/Medium.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">If a stage doesn't help, the report says so plainly. The ablation exists to test each piece, not to assume it works.</p>
+</section>
+
+<section id="failures">
+  <h2>9 · The 20 failure modes</h2>
+  <p>Every known way this can go wrong has an ID, a way to detect it, and a fix. When one happens during a run, its ID is written into the result (<code>failure_modes</code>).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>What goes wrong</th><th>How we catch it</th><th>What we do</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Flat, featureless terrain (mare)</td><td>Low texture score / too few keypoints</td><td>Switch to phase congruency (PREP-07)</td></tr>
+      <tr><td class="num">2</td><td>Deep shadows, crater interiors</td><td>Near-zero brightness, low variance</td><td>Shadow mask, low-confidence tier (PREP-04)</td></tr>
+      <tr><td class="num">3</td><td>Huge scale gap (~320:1)</td><td>Scale-ratio pre-check</td><td>Cascade, never direct (GEO-06, MATCH-10)</td></tr>
+      <tr><td class="num">4</td><td>Noisy IIRS bands</td><td>Per-band SNR</td><td>Drop noisy bands (PREP-05)</td></tr>
+      <tr><td class="num">5</td><td>Spectrometer vs camera mismatch</td><td>Known from prior work</td><td>Build a pan-like composite (PREP-06)</td></tr>
+      <tr><td class="num">6</td><td>Extreme rotation</td><td>Orientation histogram check</td><td>ASIFT-style simulation (MATCH-12)</td></tr>
+      <tr><td class="num">7</td><td>Images far apart (bad metadata)</td><td>Match count collapses</td><td>Widen search with a DEM/SPICE prior (MATCH-13)</td></tr>
+      <tr><td class="num">8</td><td>Wrong or stale label metadata</td><td>DEM cross-check</td><td>Never trust one source (GEO-07)</td></tr>
+      <tr><td class="num">9</td><td>Missing or wrong map projection</td><td>Projection-consistency check</td><td>Explicit reprojection (GEO-05)</td></tr>
+      <tr><td class="num">10</td><td>Images don't overlap</td><td>Footprint intersection</td><td>Reject before matching (GEO-04)</td></tr>
+      <tr><td class="num">11</td><td>Repetitive crater fields</td><td>Near-equal best/second-best matches</td><td>Stricter threshold, physics filter (MATCH-15, ALIGN-03)</td></tr>
+      <tr><td class="num">12</td><td>Wrong matches survive RANSAC</td><td>Low inlier count despite "success"</td><td>Confidence tiers (CHECK-07)</td></tr>
+      <tr><td class="num">13</td><td>Locked on at the wrong scale</td><td>Estimated vs expected scale</td><td>Scale consistency check (CHECK-05)</td></tr>
+      <tr><td class="num">14</td><td>Non-commercial licence leaks in</td><td>Licence audit in CI</td><td>Licence gate (CHECK-10)</td></tr>
+      <tr><td class="num">15</td><td>Fake PDS parser (generic image load)</td><td>Test asserts real label fields</td><td>Real parser (DATA-01)</td></tr>
+      <tr><td class="num">16</td><td>Classical methods fail at the poles</td><td>Sun elevation check</td><td>Route to the learned path (MATCH-09)</td></tr>
+      <tr><td class="num">17</td><td>LoFTR fails at very low sun</td><td>Same sun check</td><td>Never route LoFTR there (MATCH-04)</td></tr>
+      <tr><td class="num">18</td><td>ISIS/ASP tooling breaks</td><td>Build/CI failure</td><td>Pipeline works without ISIS</td></tr>
+      <tr><td class="num">19</td><td>Fake or inflated metrics</td><td>Null and perturbation tests</td><td>Control gates on every run (CHECK-01 … 06)</td></tr>
+      <tr><td class="num">20</td><td>Token "fine-tuning" oversold</td><td>Compare against training logs</td><td>We say "pretrained weights, no fine-tuning"</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="licence">
+  <h2>10 · Licences &amp; data</h2>
+  <h3>Licences: can ISRO legally reuse this?</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Component</th><th>Licence</th><th>In shipped software?</th></tr></thead>
+    <tbody>
+      <tr><td>PyTorch, OpenCV, GDAL, rasterio, kornia</td><td>BSD / MIT / Apache-2.0</td><td><span class="pill good">Yes</span></td></tr>
+      <tr><td>LightGlue (including weights)</td><td>Apache-2.0</td><td><span class="pill good">Yes, our default</span></td></tr>
+      <tr><td>XFeat, RoMa, D2-Net, ALIKE/ALIKED</td><td>Permissive</td><td><span class="pill good">Yes</span></td></tr>
+      <tr><td>AROSICS, ISIS3</td><td>Apache-2.0 / public domain</td><td><span class="pill good">Yes (baseline / optional)</span></td></tr>
+      <tr><td>SuperPoint / SuperGlue</td><td>Magic Leap, non-commercial only</td><td><span class="pill warn">Internal benchmark only</span></td></tr>
+      <tr><td>R2D2</td><td>CC BY-NC-SA 3.0</td><td><span class="pill bad">Never used</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Data sources we use (all free)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Source</th><th>What we get</th><th>Access</th></tr></thead>
+    <tbody>
+      <tr><td>PRADAN (ISRO ISSDC)</td><td>OHRC, TMC-2, IIRS in PDS4</td><td>Free for non-profit science; <strong>SSO login required</strong>, possibly with manual approval</td></tr>
+      <tr><td>LROC PDS Data Node</td><td>LRO NAC / WAC</td><td>No login, public domain</td></tr>
+      <tr><td>PDS Orbital Data Explorer (ODE)</td><td>Footprint search REST API</td><td>No login</td></tr>
+      <tr><td>JAXA DARTS</td><td>SELENE TC / MI in PDS3</td><td>No login, free</td></tr>
+      <tr><td>LOLA, SLDEM2015</td><td>Elevation maps, 118 m and 59 m (±60° latitude)</td><td>No login, public domain</td></tr>
+      <tr><td>USGS Astrogeology ARD (S3)</td><td>Kaguya TC cloud-optimised GeoTIFFs</td><td>No AWS account (<code>--no-sign-request</code>), CC0</td></tr>
+      <tr><td>NAIF SPICE kernels</td><td>Spacecraft position and pointing</td><td>No login</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Real product IDs we test against include <code>ch2_tmc_ncn_20231026T0943001971_d_img_d18</code> (TMC-2, 191,483 × 4,000, 4.43 m/px), <code>ch2_ohr_ncp_20211228T2209123959_d_img_d18</code> (OHRC, 79,796 × 12,000), <code>ch2_iir_nri_20231003T2152304115_d_img_d18</code> (IIRS) and <code>M1404744695RC.IMG</code> (LRO NAC).</p>
+</section>
+
+<section id="qa">
+  <h2>11 · Judge Q&amp;A: the 41 likely questions</h2>
+  <p>These are the questions from PLAN.md §14 and risk R14, answered in plain words. Say the evidence, not opinions.</p>
+  <div class="qa" id="qa-root"></div>
+</section>
+
+<section id="weak">
+  <h2>12 · Honest weak spots (know these before a judge finds them)</h2>
+  <ul>
+    <li><strong>Nothing is measured yet.</strong> All features are TODO. Any number we show must come from our own runs.</li>
+    <li><strong>The Hard tier may not work well.</strong> The best competitor reached 2.8% on TMC-2↔NAC. We report whatever we get; an honest weak number beats a fabricated strong one.</li>
+    <li><strong>The crowd is big.</strong> About 49 teams are on this problem statement (the research scores crowding 4/10). We differentiate on the parts that are still open, not on UI polish.</li>
+    <li><strong>The geodetic bridge (MATCH-11) is a hypothesis</strong>, not a proven method. Say so.</li>
+    <li><strong>Sun-angle fields in real OHRC/TMC-2 labels</strong> are confirmed at the documentation level, not yet checked byte by byte. That check is a build step.</li>
+    <li><strong>PRADAN login may be slow.</strong> We build first against no-login NASA/JAXA data and real committed label samples.</li>
+    <li><strong>ISIS3 is fragile</strong> for OHRC, so the pipeline is designed to work without it.</li>
+    <li><strong>"You just glued libraries together."</strong> That's true, and it's deliberate. See question 41.</li>
+    <li><strong>Explainability is partial.</strong> The classical/RIFT path is interpretable; the learned path is not, and we don't pretend otherwise.</li>
+  </ul>
+</section>
+
+<section id="glossary">
+  <h2>13 · Glossary</h2>
+  <dl class="glossary">
+    <div><dt>Registration</dt><dd>Lining up two images of the same place so the same points overlap.</dd></div>
+    <div><dt>Source / reference</dt><dd>Source = the image we move (Chandrayaan-2). Reference = the fixed trusted image (LRO / SELENE).</dd></div>
+    <div><dt>GSD</dt><dd>Ground sample distance: metres of ground per pixel. Smaller is sharper.</dd></div>
+    <div><dt>Scale ratio</dt><dd>How many times bigger one camera's pixel is than the other's, e.g. OHRC:IIRS ≈ 320.</dd></div>
+    <div><dt>Keypoint</dt><dd>A distinctive spot (a crater rim, a boulder corner) a matcher can find again.</dd></div>
+    <div><dt>Descriptor</dt><dd>A list of numbers describing what the area around a keypoint looks like.</dd></div>
+    <div><dt>Match / inlier / outlier</dt><dd>A match pairs a point in each image. An inlier is a correct match that fits the transform; an outlier is a wrong one.</dd></div>
+    <div><dt>Inlier ratio</dt><dd>Inliers ÷ all candidate matches, from 0 to 1. The quickest sign of how hard a pair is.</dd></div>
+    <div><dt>RMSE</dt><dd>Root mean square error: the average leftover distance of inliers after alignment, in pixels and metres.</dd></div>
+    <div><dt>Sub-pixel</dt><dd>Accuracy finer than one pixel, e.g. 0.3 px.</dd></div>
+    <div><dt>RANSAC / MAGSAC++</dt><dd>Fit the transform on random small groups of matches and keep the one most matches agree with. MAGSAC++ removes the hand-tuned threshold.</dd></div>
+    <div><dt>Affine / homography / TPS</dt><dd>Transform shapes: shift-rotate-scale-shear; plus perspective; plus smooth local bending.</dd></div>
+    <div><dt>PDS3 / PDS4</dt><dd>NASA's planetary data formats. PDS4 uses an XML label; PDS3 uses a text <code>.lbl</code> label.</dd></div>
+    <div><dt>Label</dt><dd>The metadata file describing an image: size, pixel type, location, sun angles, time.</dd></div>
+    <div><dt>Panchromatic / hyperspectral</dt><dd>Panchromatic = one black-and-white band. Hyperspectral = hundreds of narrow colour bands.</dd></div>
+    <div><dt>Incidence / emission / phase angle</dt><dd>Sun to ground; ground to camera; the angle sun–ground–camera. They describe the lighting and viewing.</dd></div>
+    <div><dt>DEM</dt><dd>Digital elevation model: a height map of the ground.</dd></div>
+    <div><dt>Slope / aspect</dt><dd>How steep the ground is, and which direction it faces.</dd></div>
+    <div><dt>SPICE</dt><dd>NASA's system for spacecraft position, pointing and sun position at any moment.</dd></div>
+    <div><dt>CLAHE</dt><dd>Contrast-limited adaptive histogram equalisation: boosts contrast region by region.</dd></div>
+    <div><dt>Phase congruency</dt><dd>An edge and structure map built from wave phase rather than brightness, so it survives lighting and sensor changes.</dd></div>
+    <div><dt>Footprint</dt><dd>The outline of the ground an image covers, from its corner lat/lon.</dd></div>
+    <div><dt>Regime</dt><dd>The situation type (normal light, polar light, cross-sensor, extreme scale) that decides which matcher runs.</dd></div>
+    <div><dt>Cascade</dt><dd>Crossing a big resolution gap in several smaller matching steps.</dd></div>
+    <div><dt>Control gate</dt><dd>A built-in test (e.g. matching a blank image) that must fail. If it "succeeds", the pipeline is broken.</dd></div>
+    <div><dt>ship_mode</dt><dd>A config switch, on by default, that blocks non-commercial models from the delivered software.</dd></div>
+  </dl>
+</section>
+</main>
+</div>
+
+<script>
+const GROUPS = [
+ {k:"DATA", name:"Data ingestion", blurb:"Getting real Chandrayaan-2, LRO and SELENE files open correctly, with every fact taken from the label. Everything later depends on this."},
+ {k:"GEO", name:"Geometry & physics", blurb:"Where the Sun was, what the terrain looks like, whether the images overlap, and how different their scales are."},
+ {k:"PREP", name:"Image preparation", blurb:"Cleaning and transforming images so the same ground looks alike despite lighting and sensor differences."},
+ {k:"MATCH", name:"Matching", blurb:"Finding the same points in both images, and choosing the right method for each situation."},
+ {k:"ALIGN", name:"Filtering & alignment", blurb:"Throwing out wrong matches, fitting the transform and spreading points evenly."},
+ {k:"PREC", name:"Precision", blurb:"Pushing the error below one pixel, and proving it."},
+ {k:"CHECK", name:"Trust & safety checks", blurb:"Built-in tests that stop the pipeline from reporting a fake success."},
+ {k:"OUT", name:"Outputs", blurb:"The deliverables the problem statement asks for: registered image, match points, metrics, report."},
+ {k:"UI", name:"Interface", blurb:"How people run it and see the results: command line, API and web demo."}
+];
+const F = [
+{id:"DATA-01",n:"PDS4 file reading (Chandrayaan-2 format)",p:"P0",ps:0,st:0,
+w:`Chandrayaan-2 data comes as a PDS4 product: a pixel file (.img) plus an XML "label" describing it (image size, pixel type, resolution, corner lat/lon, sun angles, capture time). This feature reads the label first, then reads the pixels exactly as the label says.`,
+h:`NASA's pds4_tools library reads the XML with lazy loading, so multi-GB files are never pulled into memory. ISRO adds mission-specific fields that pds4_tools may miss; for those we run a targeted lxml XPath lookup per field (~100 lines, not a whole parser). Every field genuinely read from the label is marked True in label_fields_verified. A missing required field raises PdsParseError. We never fall back to a generic image reader like cv2.imread.`,
+e:`The library exists. What doesn't exist is proof that it works on ISRO labels. The research found this is the part competitors most often fake: at least 2 competitor "PDS4 parsers" silently fall back to cv2.imread (failure mode #15).`,
+s:`"Our reader is tested on real OHRC, TMC-2 and IIRS labels. The test fails unless at least 6 fields provably came from the label, and a broken label raises an error instead of loading pixels blindly."`,
+d:`tests/test_pds_real.py passes on real OHRC, TMC-2 and IIRS labels with >=6 fields read from the label; a truncated label raises PdsParseError; a 1 KB window reads from a multi-GB file in <100 ms.`, c:`io/pds_label.py, io/pds_raster.py`},
+{id:"DATA-02",n:"PDS3 file reading (SELENE/Kaguya format)",p:"P0",ps:0,st:0,
+w:`Reads the older PDS3 format (.img pixels + .lbl text label) that SELENE/Kaguya uses. Gets image size, bits per pixel, pixel type, and where the pixels start inside the file (the ^IMAGE pointer).`,
+h:`The pvl library parses the label; it handles the ODL grammar, units like <DEG> and nested OBJECT = IMAGE blocks. For pixels we first try planetaryimage, and if it throws, we fall back to our own np.memmap reader that uses the pvl-parsed size, type and offset.`,
+e:`planetaryimage's own README calls it "alpha quality" and it has a known ^IMAGE bug on detached labels, so it is only an opportunistic first try. SELENE is one of the two references the problem statement names, and it only ships as PDS3.`,
+s:`"SELENE only exists in PDS3, so we read PDS3 properly. We have a tested fallback for when the popular library breaks."`,
+d:`A real SELENE TC label parses and its ^IMAGE offset lands on the pixel data; a test forces planetaryimage to fail and the memmap fallback still reads correctly.`, c:`io/pds_label.py, io/pds_raster.py`},
+{id:"DATA-03",n:"OHRC camera support",p:"P0",ps:1,st:0,
+w:`Handles OHRC, Chandrayaan-2's sharpest camera: 0.25 m per pixel, black-and-white (500–800 nm), very long narrow strips such as 79,796 × 12,000 px.`,
+h:`Uses the PDS4 reader (DATA-01) and the tiling (DATA-11). OHRC labels carry corner coordinates at two quality levels, and we capture both; they feed the ground truth (GEO-07).`,
+e:`OHRC ↔ LRO NAC is already solved in the literature (arXiv:2509.04775, arXiv:2602.14993). For us it is the Easy tier: we reproduce the published result to prove we're competent.`,
+s:`"OHRC against NAC is our credibility check: a known answer we must reproduce before anyone should trust our new results."`,
+d:`A real OHRC product (e.g. ch2_ohr_ncp_20211228T2209123959_d_img_d18) parses and a window of it reads correctly.`, c:`io/pds_label.py, io/pds_raster.py`},
+{id:"DATA-04",n:"TMC-2 camera support",p:"P0",ps:1,st:0,
+w:`Handles TMC-2 (Terrain Mapping Camera): ~5 m per pixel (4.43 m/px on a real label), 20 km wide, black-and-white, and it photographs each area from 3 angles. Products reach 191,483 × 4,000 px.`,
+h:`Same PDS4 reader plus tiling. We test on the real label ch2_tmc_ncn_20231026T0943001971_d_img_d18.xml (orbit 18569, 88.55 km altitude, ~1.5 GB).`,
+e:`TMC-2 is our main opportunity. The key paper (arXiv:2509.04775) never mentions TMC-2, no published work registers it against SELENE, and the best competitor got only a 2.8% inlier ratio against LRO NAC.`,
+s:`"TMC-2 is named in the problem statement title, yet the main research paper never mentions it. That's where we aim to be first."`,
+d:`A real TMC-2 label (191,483 × 4,000, 4.43 m/px) parses and a windowed read succeeds.`, c:`io/pds_label.py, io/pds_raster.py`},
+{id:"DATA-05",n:"IIRS hyperspectral support",p:"P0",ps:1,st:0,
+w:`Handles IIRS infrared spectrometer "cubes": ~80 m per pixel, ~250–256 colour bands from 0.8 to 5.0 µm. The bands can be stored band-by-band or interleaved (BSQ/BIL/BIP).`,
+h:`The spectral (SPy) library opens the ENVI .hdr file that IIRS ships with, handling all three interleave layouts and exposing wavelengths. GDAL is the fallback. The band count comes from the label.`,
+e:`IIRS looks nothing like a normal camera image, which makes it the hardest to match. IIRS ↔ WAC is solved (preprints.org SIFT paper); direct IIRS matching against high-resolution images failed for two teams.`,
+s:`"We read IIRS as a real multi-band cube and never treat it like an ordinary photo. That is the mistake that gave other teams 0 inliers."`,
+d:`A real IIRS .hdr/.xml parses; the band count comes from the label; both a single band and the full cube can be read.`, c:`io/pds_label.py, io/pds_raster.py`},
+{id:"DATA-06",n:"LRO NAC reference support",p:"P0",ps:1,st:0,
+w:`Loads NASA LRO Narrow Angle Camera images (0.5 m/pixel) as the fixed reference, into the same SceneMeta structure used for the Chandrayaan-2 source.`,
+h:`Reads PDS4 XML+IMG (EDR/CDR) or GeoTIFF (RDR). Test product: the real NAC image M1404744695RC.IMG, found through the ODE REST API.`,
+e:`NAC is the reference the problem statement names explicitly. Loading source and reference into one common structure means the rest of the pipeline doesn't care which camera is which, and that is what makes it "generic".`,
+s:`"Source and reference go into the same data structure, so no later code has camera-specific branches."`,
+d:`The real NAC product M1404744695RC.IMG loads into a SceneMeta with the same shape as a Chandrayaan-2 source.`, c:`io/reference.py`},
+{id:"DATA-07",n:"LRO WAC reference support",p:"P1",ps:1,st:0,
+w:`Loads LRO Wide Angle Camera images (~100 m/pixel, several colour bands) as a reference.`,
+h:`Same reference loader as NAC, normalised into SceneMeta.`,
+e:`WAC matches IIRS's resolution. IIRS ↔ WAC is our Medium tier, already solved by two published sources, so we use it as a second credibility check.`,
+s:`"WAC is the right-sized reference for IIRS. It's a known pairing we must reproduce."`,
+d:`A WAC product loads into SceneMeta and an IIRS ↔ WAC pair can be built.`, c:`io/reference.py`},
+{id:"DATA-08",n:"SELENE TC reference support",p:"P0",ps:1,st:0,
+w:`Loads SELENE/Kaguya Terrain Camera images (~7.4–10 m/pixel, PDS3) as a reference, and gathers real TMC-2 and SELENE TC images that cover the same ground.`,
+h:`The PDS3 reader (DATA-02) plus the reference loader. Data comes from JAXA DARTS (no login) and Kaguya ARD on S3 (no AWS account). We download at least 3 genuinely overlapping TMC-2 ↔ SELENE TC pairs and record their overlap.`,
+e:`TMC-2 ↔ SELENE TC (~2:1 scale) is the best-matched pair in the whole table, yet it has zero prior published attempts. It's our headline contribution. The work nobody else does is downloading and testing real products.`,
+s:`"TMC-2 and SELENE TC have almost the same resolution, the easiest pair on paper, and nobody has published it. We do it on real downloaded products."`,
+d:`A real SELENE TC .img + .lbl loads into SceneMeta; at least 3 genuinely overlapping TMC-2 ↔ SELENE TC pairs are downloaded with their overlap recorded.`, c:`io/pds_label.py, io/reference.py`},
+{id:"DATA-09",n:"SELENE MI reference support",p:"P2",ps:1,st:0,
+w:`Loads SELENE Multiband Imager images (~20–62 m/pixel, several colour bands) as a reference.`,
+h:`The PDS3 reader plus the reference loader, keeping band information.`,
+e:`A stretch goal. MI has never been tried against any Chandrayaan-2 camera.`,
+s:`"MI is a stretch goal. If we get to it, it's another first."`,
+d:`An MI product loads into SceneMeta with its band information.`, c:`io/reference.py`},
+{id:"DATA-10",n:"Automatic camera detection",p:"P0",ps:0,st:0,
+w:`Works out which of the 7 cameras a file came from using its product ID (ch2_ohr_*, ch2_tmc_*, ch2_iir_*, M*RC.IMG for NAC, …), then looks up that camera's resolution, bands and swath in configs/instruments.yaml. It also gives the resolution ratio between any two cameras (gsd_ratio).`,
+h:`A small registry loaded from YAML config. gsd_ratio('OHRC','IIRS') returns about 320. That ratio feeds the matcher routing (MATCH-09) and the cascade (MATCH-10).`,
+e:`This is what makes the pipeline "generic", as the problem statement asks. Every published paper is a hand-tuned, single-pair pipeline. Adding a new camera means a config entry, not new code.`,
+s:`"Camera facts live in config, not code. Adding a camera is a YAML edit, which is what 'generic' means in practice."`,
+d:`All 7 cameras resolve from real product IDs; gsd_ratio('OHRC','IIRS') is ~320.`, c:`configs/instruments.yaml, io/instruments.py`},
+{id:"DATA-11",n:"Large-image tiling",p:"P0",ps:0,st:0,
+w:`Cuts huge images into overlapping tiles (default 1024 px with 128 px overlap), skips mostly-empty tiles, and remembers where each tile sits so match points can be mapped back to full-image coordinates.`,
+h:`rasterio Window for the reads; our own tile-grid generator with overlap, empty-tile skip, tile_origin tracking, and tile_to_global() to map points back exactly. Tiles are generated lazily, so memory stays bounded.`,
+e:`Real products are far too big for any matcher in one go: TMC-2 191k × 4k, OHRC 80k × 12k, NAC 104k × 5k px. The research says tiling is mandatory, not optional.`,
+s:`"No matcher can take a 191,000-pixel-tall image, so we tile, and we map every match back to exact full-image coordinates."`,
+d:`Tiles of a 191k × 4k product are generated lazily with bounded memory; tile_to_global maps points back exactly.`, c:`io/tiling.py`},
+{id:"DATA-12",n:"Reference product search by location",p:"P1",ps:0,st:0,
+w:`Given a Chandrayaan-2 image's ground outline, asks NASA's PDS Orbital Data Explorer (ODE) web API which reference images cover the same ground. Free, no login.`,
+h:`A REST client for oderest.rsl.wustl.edu. It uses the footprint from GEO-04 as the search box.`,
+e:`Finding overlapping pairs by hand is slow and error-prone. ODE indexes LRO but not Chandrayaan-2, which is why we send it our own footprint. The strongest competitor (jaitus) also uses ODE.`,
+s:`"We don't hand-pick reference images. We ask NASA's API which ones cover the same ground."`,
+d:`Returns at least one real NAC product ID for a known lunar bounding box.`, c:`io/ode_client.py`},
+{id:"DATA-13",n:"DEM (elevation map) loading",p:"P0",ps:0,st:0,
+w:`Downloads and crops lunar elevation maps to a scene's ground area: LOLA (118 m/px, whole Moon), SLDEM2015 (59 m/px, within ±60° latitude) and Kaguya ARD from the public s3://astrogeo-ard bucket.`,
+h:`Windowed reads of cloud-optimised GeoTIFFs, reprojected and cropped to the scene footprint. The DEM source used is recorded.`,
+e:`Elevation is needed for slope/aspect (the physics filter, ALIGN-03) and for cross-checking the label metadata (GEO-07). The research lists all of these as free, verified sources.`,
+s:`"The height map is what lets us check matches against real terrain, not just against each other."`,
+d:`Returns an elevation array lined up with a given scene's ground area, with the DEM source recorded.`, c:`io/dem.py`},
+
+{id:"GEO-01",n:"Sun angle extraction",p:"P0",ps:0,st:0,
+w:`Reads each image's sun position (sun azimuth, incidence angle) from its label, and computes how different the lighting is between source and reference (illumination_delta: change in incidence, azimuth and phase).`,
+h:`Read from the label fields parsed by DATA-01/02. The illumination_delta function returns the three differences, which feed the matcher routing (MATCH-09).`,
+e:`Sun-angle change is the problem statement's #1 challenge. arXiv:2509.04775 shows classical methods fail specifically at the poles (low sun). Honest caveat: archive docs confirm these fields exist, but a byte-level check on a raw OHRC/TMC-2 label is still a build step.`,
+s:`"We read the actual sun angle for both images, and the size of the lighting difference decides which matcher we use."`,
+d:`On a real label, incidence and azimuth are read (not defaulted) and GeometryLayers.source == 'label'.`, c:`geometry/solar.py`},
+{id:"GEO-02",n:"Incidence / emission / phase angle calculation",p:"P0",ps:0,st:0,
+w:`Produces angles for every pixel: incidence (sun to ground), emission (ground to camera) and phase (sun–ground–camera).`,
+h:`Three sources in order: from the label where present; otherwise computed from SPICE spacecraft data with spiceypy (the same idea as ISIS3's phocube); otherwise interpolated from the image corners as a labelled approximation. GeometryLayers.source records which one ran. It works with ISIS3 not installed.`,
+e:`ISIS3 phocube does this, but ISIS is fragile for OHRC (spiceinit fails on stock releases), so it is optional. The physics filter needs angles per pixel, not one number per image.`,
+s:`"Every pixel gets sun and view angles, and we always record whether they came from the label, SPICE, or an approximation."`,
+d:`GeometryLayers holds the angle arrays with source set to 'label', 'spice' or 'derived'; works with ISIS3 not installed.`, c:`geometry/solar.py`},
+{id:"GEO-03",n:"Terrain slope & aspect mapping",p:"P0",ps:0,st:0,
+w:`For every elevation-map pixel, computes how steep the ground is (slope) and which way it faces (aspect).`,
+h:`gdaldem slope / gdaldem aspect, or richdem, behind one function so the backend can be swapped. We don't hand-code Horn's method.`,
+e:`Standard GIS maths. It is a direct input to our main new idea, the physics-based outlier filter (ALIGN-03).`,
+s:`"Slope and facing direction let us tell a sunlit slope from a flat plain, and reject matches that pair them."`,
+d:`Slope of a synthetic constant-gradient DEM equals the analytic value within 0.1°.`, c:`geometry/dem_terrain.py`},
+{id:"GEO-04",n:"Footprint overlap checking",p:"P0",ps:0,st:0,
+w:`Draws each image's ground outline from its corner lat/lon and measures how much the two overlap. Pairs below a minimum overlap are rejected before any matching runs.`,
+h:`shapely polygons from the corner coordinates; intersection area ÷ area gives the overlap fraction; below threshold, the pair is rejected with a clear reason and zero matcher calls.`,
+e:`Matching images that don't show the same ground wastes time and produces fake matches (failure mode #10).`,
+s:`"If two images don't cover the same ground, we stop before matching. We never 'find' matches between different places."`,
+d:`A non-overlapping pair is rejected with a clear reason and zero matcher calls.`, c:`geometry/footprint.py`},
+{id:"GEO-05",n:"Lunar map projection",p:"P0",ps:0,st:0,
+w:`Handles Moon coordinate systems (selenographic CRS) and performs an explicit reprojection step. Raw Chandrayaan-2 products carry only corner lat/lon with no map projection, so we never assume one.`,
+h:`pyproj for the lunar CRS (IAU_2015:30100 style) plus an explicit GDAL/rasterio reprojection.`,
+e:`A wrong or missing projection puts the output in the wrong place (failure mode #9). It's needed for a correct GeoTIFF and GeoJSON.`,
+s:`"Chandrayaan-2 raw files have no map projection, so we apply one explicitly and test the round trip."`,
+d:`Reprojecting a scene and back returns corner coordinates within 1e-6°.`, c:`geometry/projection.py`},
+{id:"GEO-06",n:"Scale-ratio pre-check",p:"P0",ps:0,st:0,
+w:`Before matching, compares the two cameras' resolution ratio with what each matcher is known to handle, and flags pairs that must go through the cascade (e.g. OHRC ↔ IIRS at ~320:1).`,
+h:`Uses gsd_ratio from DATA-10. Any ratio of 4 or more routes to the extreme_scale regime and the cascade.`,
+e:`The research found no matcher with documented results at 100×+ scale ratios, a field-wide gap. Direct attempts gave 0 inliers (failure mode #3).`,
+s:`"We check the scale gap first. Pairs too far apart never go to a matcher directly."`,
+d:`An OHRC ↔ IIRS request is flagged as extreme-scale before any matcher runs.`, c:`io/instruments.py, matching/regime.py`},
+{id:"GEO-07",n:"Metadata cross-validation against DEM",p:"P0",ps:0,st:0,
+w:`Works out the true alignment two independent ways, from the label geometry (using both OHRC corner-quality levels) and from a DEM re-projection, and reports how far apart they are as an uncertainty bound. This is our ground truth.`,
+h:`Label-derived transform plus DEM-derived transform (LOLA / SLDEM / Kaguya ARD), their disagreement recorded, and hand-verified points on a small held-out set.`,
+e:`No public ground truth exists for these pairs; every competitor with real numbers made its own. Labels can be wrong (failure mode #8), so we never trust a single source.`,
+s:`"There is no official answer key, so we build ours from two independent sources and publish how much they disagree."`,
+d:`Label-derived and DEM-derived transforms are reported together with their disagreement; a deliberately injected label error is caught.`, c:`evaluate/groundtruth.py`},
+
+{id:"PREP-01",n:"Contrast enhancement (CLAHE)",p:"P0",ps:0,st:0,
+w:`Boosts contrast region by region (contrast-limited adaptive histogram equalisation), stretches brightness, and scales pixels to floats between 0 and 1.`,
+h:`OpenCV CLAHE with a tunable clip limit and tile size, then a percentile stretch and normalisation to float32 0..1 (the format ImagePlane requires).`,
+e:`A standard technique and the first line of defence against lighting differences: dark and bright areas both show detail. It is Ablation Experiment 1.`,
+s:`"CLAHE brings out detail in both shadows and bright areas before matching."`,
+d:`CLAHE measurably raises local contrast in a shadowed crop; output is float32 in 0–1.`, c:`preprocess/radiometric.py`},
+{id:"PREP-02",n:"Phase congruency transform",p:"P0",ps:0,st:0,
+w:`Turns an image into a map of edges and structure based on wave phase instead of brightness, plus a "maximum-index map" that RIFT2 uses.`,
+h:`The phasepack library (phasecong / phasecongmono, with pyFFTW for speed). We only write the maximum-index map and caching on top. We pin phasepack specifically because the vendored RIFT2 is built on it.`,
+e:`This is the front end of the RIFT family, which is built to survive brightness differences between sensors. MultiResSAR found classical RIFT beating the best deep method at high resolution.`,
+s:`"Phase congruency sees structure, not brightness, so a crater edge looks the same under different sun or on a different sensor."`,
+d:`Phase-congruency maps of an image and a strongly gamma-shifted copy correlate >0.9, where raw pixel correlation is much lower.`, c:`preprocess/phase_congruency.py`},
+{id:"PREP-03",n:"Self-similarity (MIND) transform",p:"P1",ps:0,st:0,
+w:`Describes each pixel by how similar it is to its neighbours instead of by its brightness.`,
+h:`A MIND (Modality Independent Neighbourhood Descriptor) transform alongside the phase-congruency module.`,
+e:`MIND comes from medical imaging (CT/MRI) and is the concept behind later illumination-robust descriptors. Caveat from the research: it may struggle on very flat mare.`,
+s:`"MIND compares a pixel to its neighbours, so a black-and-white camera and an infrared spectrometer become comparable."`,
+d:`A synthetic cross-sensor pair matches better on the MIND version than on raw pixels.`, c:`preprocess/phase_congruency.py`},
+{id:"PREP-04",n:"Shadow detection & masking",p:"P0",ps:0,st:0,
+w:`Finds shadowed areas (near-zero brightness, little local variation, optionally checked against the sun angle) and marks them, so matching skips them or treats them as low-confidence.`,
+h:`Region-level intensity-variance check plus a near-zero threshold, cross-checked against incidence. Output is the shadow_mask in ImagePlane. Where a DEM and sun angle both exist, predicted shadow shapes can also assist matching (with ALIGN-03).`,
+e:`Shadows move with the sun, so matches inside them are usually wrong (failure mode #2). Precedent for using sun geometry to assist: photoclinometry-assisted matching (Liu & Wu 2020).`,
+s:`"Shadows move when the sun moves, so we mask them out instead of trusting matches inside them."`,
+d:`On a crater-interior crop the mask overlaps a hand-drawn mask with IoU > 0.7.`, c:`preprocess/shadow_mask.py`},
+{id:"PREP-05",n:"IIRS band quality scoring",p:"P0",ps:0,st:0,
+w:`Estimates signal-to-noise (SNR) for each IIRS band and drops the noisy ones.`,
+h:`Per-band SNR estimation on the cube; bands below a threshold are excluded and the chosen band list is logged.`,
+e:`Many IIRS bands are too noisy to find features in (failure mode #4).`,
+s:`"We score every IIRS band and only keep the clean ones."`,
+d:`Per-band SNR is computed on a real IIRS cube and the chosen band list is logged.`, c:`preprocess/iirs_composite.py`},
+{id:"PREP-06",n:"IIRS panchromatic composite synthesis",p:"P0",ps:0,st:0,
+w:`Blends the good IIRS bands into one black-and-white image that resembles what a normal camera would see.`,
+h:`A weighted composite over the high-SNR bands (from PREP-05), approximating a panchromatic response. The band list goes into preprocess_chain so it's traceable.`,
+e:`No single IIRS band looks like a camera image. Two separate teams (Fable98, Assassin29092005) got 0 inliers matching raw cubes (failure mode #5).`,
+s:`"We never match the raw 250-band cube. We first build a camera-like image from the clean bands."`,
+d:`The composite yields more keypoints than the best single band on a real IIRS cube; the band list is recorded in preprocess_chain.`, c:`preprocess/iirs_composite.py`},
+{id:"PREP-07",n:"Flat-terrain detection",p:"P0",ps:0,st:0,
+w:`Scores how much texture a tile has (gradient energy / entropy). A low score switches matching to the phase-congruency path.`,
+h:`texture_score is computed per tile and stored in ImagePlane; the matcher routing reads it.`,
+e:`Smooth mare plains have few features, so ordinary detectors find too few points (failure mode #1).`,
+s:`"On smooth plains we detect the lack of texture and switch to a method that doesn't need strong edges."`,
+d:`A flat mare crop scores low texture and triggers the fallback path.`, c:`preprocess/texture.py`},
+{id:"PREP-08",n:"Repetitive-terrain detection",p:"P0",ps:0,st:0,
+w:`Scores how self-similar a tile is (autocorrelation), e.g. a field of similar-looking craters. A high score makes matching stricter.`,
+h:`repetitiveness_score from the autocorrelation peak structure, stored in ImagePlane and used by adaptive thresholds (MATCH-15).`,
+e:`In repeating terrain one crater looks like another, which causes false matches (failure mode #11).`,
+s:`"When every crater looks the same, we notice and tighten the matching rules."`,
+d:`A crater-field crop scores high repetitiveness.`, c:`preprocess/texture.py`},
+
+{id:"MATCH-01",n:"SIFT baseline matching",p:"P0",ps:0,st:0,
+w:`Classic SIFT feature matching plus RANSAC. It is the floor every other method is measured against.`,
+h:`OpenCV SIFT or vismatch; our own ratio and mutual-nearest-neighbour filters (MATCH-14).`,
+e:`Every real lunar registration paper uses SIFT as the baseline. It is documented to fail at the lunar poles (arXiv:2509.04775). It is the Baseline stage of our ablation.`,
+s:`"SIFT is our honest starting point, the same baseline the published papers use, so our improvements are measurable."`,
+d:`Recovers a known synthetic homography to <1 px RMSE on the test fixture.`, c:`matching/adapter.py, matching/filters.py`},
+{id:"MATCH-02",n:"AKAZE / ORB / BRISK matching",p:"P1",ps:0,st:0,
+w:`Extra classical detectors, selectable in config, for comparison.`,
+h:`OpenCV implementations through the same adapter.`,
+e:`AKAZE is competitive with SIFT near the equator but also degrades at the poles; ORB has the weakest scale invariance and is included for completeness only.`,
+s:`"We compare several classical detectors instead of assuming one is best."`,
+d:`All three run and are selectable via config.`, c:`matching/adapter.py, configs/regimes.yaml`},
+{id:"MATCH-03",n:"LightGlue AI matching",p:"P0",ps:0,st:0,
+w:`A learned (AI) matcher and our shipped default. It runs on CPU or GPU.`,
+h:`Run through vismatch (one get_matcher(name) call; weights auto-download). Our ~60-line adapter converts ImagePlane to the input format, converts the output to MatchSet, routes through the licence gate, and sets skip_ransac=True so our own estimator does the geometry. Published speed (external, not ours): 44.2 ms/pair on GPU.`,
+e:`SuperGlue has the strongest lunar evidence, but its licence is non-commercial. LightGlue is its successor, Apache-2.0 including weights, and it beat SuperGlue on satellite stereo (arXiv:2405.06246). It has no lunar validation yet, which we measure ourselves.`,
+s:`"LightGlue is SuperGlue's faster successor, and it's licence-safe for ISRO. That's why it's our default."`,
+d:`Runs on CPU and GPU, returns a valid MatchSet, and beats SIFT on a synthetic lighting-shifted pair.`, c:`matching/adapter.py, configs/regimes.yaml`},
+{id:"MATCH-04",n:"LoFTR AI matching",p:"P1",ps:0,st:0,
+w:`A dense transformer matcher (LoFTR / EfficientLoFTR) that needs no keypoint detector. It is never used alone for extreme low-sun images.`,
+h:`Through vismatch; the regime selector only routes it to non-extreme lighting, or runs it on phase-congruency input.`,
+e:`Strong on low-texture ground, but documented to fail almost completely at very low sun elevation (Geo-LoFTR, EL=2°; failure mode #17).`,
+s:`"LoFTR is good on smooth ground, but we know it collapses in very low sun, so we never send it there."`,
+d:`Runs, and the regime selector only routes it to non-extreme lighting.`, c:`matching/adapter.py, configs/regimes.yaml`},
+{id:"MATCH-05",n:"XFeat lightweight matching",p:"P2",ps:0,st:0,
+w:`A small, fast matcher for machines with no GPU.`,
+h:`Through vismatch; Apache-2.0.`,
+e:`A safety net in case the demo laptop has no GPU (risk R6). XFeat is real-time capable on CPU.`,
+s:`"Even without a GPU, the full pipeline runs."`,
+d:`The full pipeline completes on CPU within the demo time budget.`, c:`matching/adapter.py, configs/regimes.yaml`},
+{id:"MATCH-06",n:"RIFT2 cross-modal matching",p:"P0",ps:0,st:0,
+w:`A matcher built for images from different sensor types. It works on phase-congruency maps.`,
+h:`RIFT2-python is vendored (copied) into third_party/rift2/ with attribution and a pinned commit SHA, because it has no tagged releases. matching/rift.py wraps it to MatchSet and feeds it PREP-02's maps. It is validated on a fixture before we trust it.`,
+e:`The research file said RIFT was MATLAB-only; a Python port now exists. RIFT handles non-linear brightness differences (camera vs spectrometer), and a 2025 benchmark found classical RIFT beating the best deep method at high resolution (66.5% vs 40.6%).`,
+s:`"For camera-vs-spectrometer we use RIFT2, a classical method built for different sensors that beat deep methods in a 2025 benchmark."`,
+d:`Beats SIFT by inlier ratio on a synthetic cross-sensor pair; the vendored SHA is recorded.`, c:`matching/rift.py, third_party/rift2/`},
+{id:"MATCH-07",n:"Mutual information scoring",p:"P1",ps:0,st:0,
+w:`A statistical score of how well two images line up, which works across sensor types. It is used to check alignment quality after registration, not to find matches.`,
+h:`Joint-histogram mutual information on the aligned pair.`,
+e:`The classical gold standard for cross-sensor similarity (precedent: Sentinel SAR/optical at 1.0–2.3 px). It has no scale or rotation invariance, so it is only a checking score.`,
+s:`"Mutual information gives us a quality score for cross-sensor results where no answer key exists."`,
+d:`MI on an aligned cross-sensor pair is higher than on a deliberately misaligned one.`, c:`matching/similarity.py`},
+{id:"MATCH-08",n:"Crater-structure matching",p:"P2",ps:0,st:0,
+w:`Detects craters and checks that the craters around each match form the same pattern in both images.`,
+h:`Crater detection plus a neighbourhood-consistency check. It does nothing when too few craters are found.`,
+e:`A lunar-specific idea: a 2025 crater-neighbourhood paper and several competitor repos use craters as lighting-robust landmarks. Earth matchers don't have this prior.`,
+s:`"Craters don't move with the sun. We use their layout to catch false matches RANSAC lets through."`,
+d:`Crater-neighbourhood checks reject matches RANSAC alone accepts on a repetitive-terrain subset.`, c:`matching/craters.py`},
+{id:"MATCH-09",n:"Automatic matcher routing (regime selector)",p:"P0",ps:0,st:1,
+w:`Picks the matcher automatically from the sun-angle difference, scale ratio and sensor types.`,
+h:`Rules in configs/regimes.yaml. Same sensor with Δincidence under 30° and scale under 4× gives LightGlue. Δincidence of 30° or more, or incidence above 70° (polar), gives LightGlue/LoFTR on phase-congruency input. Camera vs spectrometer gives RIFT2. Scale gap of 4× or more gives the cascade. The inputs come from GEO-01 and GEO-06, not from a hard-coded camera pair.`,
+e:`The evidence is genuinely mixed: SuperGlue-class wins at the lunar poles (arXiv:2509.04775), while classical RIFT wins at high resolution (MultiResSAR). No single matcher wins everywhere, so we route instead of hardcoding. No competitor does this.`,
+s:`"We don't pick 'the newest model'. The measured lighting and scale decide which method runs, because the evidence shows each wins in a different situation."`,
+d:`A polar-lighting pair routes to the polar path; an OHRC ↔ IIRS request routes to the cascade, never to a direct match.`, c:`matching/regime.py, configs/regimes.yaml`},
+{id:"MATCH-10",n:"Scale-bridging cascade",p:"P0",ps:0,st:1,
+w:`Crosses huge resolution gaps in steps instead of one jump: OHRC → TMC-2 (~20:1) → SELENE TC (~2:1) or IIRS (~16:1) → LRO NAC/WAC. It chains the transforms together and adds up the uncertainty from each step.`,
+h:`Plans a stage graph from GSD ratios, runs each hop, composes the transforms, and propagates error across hops, so a 3-hop chain never reports a 1-hop error bar. Per-step and total error are both reported.`,
+e:`No matcher is documented beyond 100× scale; the closest published method stops at 50×. Direct OHRC ↔ IIRS (~320:1) gave 0 inliers for two teams. Every real paper avoided big gaps by choosing matched pairs.`,
+s:`"Nobody can jump 320× in one step, so we take stepping stones, each within a range matchers handle, and report the error of the whole chain honestly."`,
+d:`A direct OHRC ↔ IIRS request is intercepted and routed via TMC-2; the chained transform on synthetic data matches the analytic result; per-step and total error are both reported.`, c:`matching/cascade.py`},
+{id:"MATCH-11",n:"Geodetic bridge mode",p:"P1",ps:0,st:0,
+w:`Aligns OHRC to LRO NAC first to pin down true Moon coordinates, then ties TMC-2 and IIRS into that frame through their known relationship to OHRC (same spacecraft, same orbit, near-same time).`,
+h:`A mode of the cascade. Its result is reported separately from direct registration.`,
+e:`OHRC ↔ NAC is the only pairing with strong repeated evidence, so it makes a good anchor. This is a design hypothesis from the research to be tested, not a proven method.`,
+s:`"We anchor on the one pair the world already trusts, then hang the others off it. We call this a hypothesis and test it."`,
+d:`Bridge mode runs and its result is reported separately from direct registration.`, c:`matching/cascade.py`},
+{id:"MATCH-12",n:"Extreme-rotation handling",p:"P1",ps:0,st:0,
+w:`Checks whether matched features agree on orientation before RANSAC. If the rotation is extreme, it simulates rotated and tilted views (ASIFT style) or switches to a rotation-invariant descriptor.`,
+h:`Orientation-histogram check, then ASIFT-style affine simulation or a rotation-invariant descriptor.`,
+e:`Different orbit tracks and pushbroom cameras cause large rotations (failure mode #6; the problem statement's viewpoint challenge). Precedent: a competitor repo uses ASIFT-style simulation.`,
+s:`"If the images are rotated a lot, we detect it and simulate rotated views instead of failing."`,
+d:`A 60°-rotated synthetic pair that plain SIFT fails on is recovered.`, c:`matching/filters.py`},
+{id:"MATCH-13",n:"Large-displacement search",p:"P1",ps:0,st:0,
+w:`When matches collapse because the images are further apart than expected, it widens the search using a rough position from the DEM/SPICE before fine matching.`,
+h:`Detect a match-count collapse, get a coarse geolocation prior from DEM/SPICE, then retry with a wider search.`,
+e:`Label position errors can put images hundreds of pixels apart (failure mode #7).`,
+s:`"If the label position is off by hundreds of pixels, we find the rough spot first, then match finely."`,
+d:`A pair with an injected 500 px position error still registers.`, c:`matching/filters.py`},
+{id:"MATCH-14",n:"Ratio test + nearest-neighbour filtering",p:"P0",ps:0,st:0,
+w:`Keeps a match only if its best candidate is clearly better than the second-best (Lowe's ratio test), and only if both points pick each other as best (mutual nearest neighbour).`,
+h:`Written in filters.py. Cheap and standard.`,
+e:`The cheapest robust filter, used by every competitor as a minimum. It removes most obviously ambiguous matches.`,
+s:`"Two quick checks remove ambiguous matches before the heavy maths."`,
+d:`Both filters reduce the outlier fraction on a fixture.`, c:`matching/filters.py`},
+{id:"MATCH-15",n:"Adaptive threshold tuning",p:"P0",ps:0,st:0,
+w:`Automatically tightens the ratio-test threshold in tiles with a high repetitiveness score.`,
+h:`Reads repetitiveness_score (PREP-08) and adjusts the Lowe ratio per tile. No library knows about our score, so this is our own code.`,
+e:`Repeating craters produce false matches that pass a normal threshold (failure mode #11).`,
+s:`"The matching rules get stricter automatically where the terrain repeats."`,
+d:`A crater-field crop scores high repetitiveness and receives a tightened threshold.`, c:`matching/filters.py`},
+
+{id:"ALIGN-01",n:"RANSAC / MAGSAC outlier rejection",p:"P0",ps:0,st:0,
+w:`Fits the transform between the images while ignoring wrong matches: it repeatedly tries small random subsets and keeps the model most matches agree with. MAGSAC++ removes the need to hand-tune the error threshold.`,
+h:`OpenCV cv2.findHomography with USAC_MAGSAC / USAC_ACCURATE.`,
+e:`RANSAC (1981) is the foundation; MAGSAC (CVPR 2019) removes the manual threshold. Even after filtering, many matches are wrong, and one bad match can wreck a plain fit.`,
+s:`"MAGSAC++ fits the alignment while ignoring wrong matches, without a hand-tuned threshold."`,
+d:`Recovers a known synthetic homography to <1 px RMSE; MAGSAC beats plain RANSAC with 70% outliers.`, c:`estimate/robust.py`},
+{id:"ALIGN-02",n:"Affine / homography / TPS transform models",p:"P0",ps:0,st:0,
+w:`Three transform shapes: affine (shift, rotate, scale, shear), homography (adds perspective) and TPS thin-plate spline (smooth local bending). It chooses between them based on how the leftover errors are spread.`,
+h:`OpenCV for affine/homography; cv2 TPS transformer or scipy RBFInterpolator for TPS. Our own logic picks the model from the residual structure.`,
+e:`Crater relief bends the image locally in ways one global transform can't fix. Most competitors use only a homography.`,
+s:`"Craters and hills bend the image locally, so we can use a flexible transform when a flat one leaves errors."`,
+d:`TPS reduces leftover error compared with a homography on a synthetic relief-distorted pair.`, c:`estimate/models.py`},
+{id:"ALIGN-03",n:"Physics-based outlier filtering",p:"P0",ps:0,st:1,
+w:`For every match, looks up terrain slope/aspect and sun/view angles at both ends. It throws out physically impossible matches (e.g. a steep sunlit slope matched to a flat shadowed plain) and down-weights doubtful ones before MAGSAC. It switches itself off, with a note, when no DEM is available.`,
+h:`Sample GEO-02 angles and GEO-03 slope/aspect at both endpoints, reject beyond a tolerance, reweight the survivors, and pass the weights into MAGSAC. It also uses DEM consistency to break ties in repetitive terrain. Where sun angle and a DEM both exist, predicted shadow shapes help matching.`,
+e:`This is our main new idea. RANSAC only checks that matches agree geometrically, not that they make physical sense. The research found precedents where geometry drives matching (photoclinometry, shape-from-shading) or only predicts it (crater-detectability studies), but no general runtime pipeline for cross-sensor lunar images.`,
+s:`"RANSAC asks whether matches agree with each other. We also ask whether a match is physically possible given the terrain and the sun. Nobody has published this as a general pipeline."`,
+d:`On a repetitive crater-field subset, false-positive inliers drop measurably compared with RANSAC alone, reported as inlier precision (Ablation Experiment 3).`, c:`estimate/geometry_filter.py, geometry/solar.py`},
+{id:"ALIGN-04",n:"Grid-based point distribution",p:"P0",ps:1,st:0,
+w:`Splits the image into an N × N grid and keeps only the top-k most confident matches in each cell.`,
+h:`Grid size adapts to image size and match density; top-k per cell by confidence.`,
+e:`The problem statement explicitly requires points spread evenly. This stops one dense cluster from dominating the fit. Precedent: itsmedarkvillain-sketch's grid enforcement.`,
+s:`"We cap matches per grid cell, so no single region dominates. That's the even spread the problem statement asks for."`,
+d:`Coverage of a deliberately clustered synthetic match set rises from <0.15 to >0.6; no cell holds more than k matches.`, c:`refine/uniformity.py`},
+{id:"ALIGN-05",n:"Empty-region refill pass",p:"P0",ps:0,st:0,
+w:`For grid cells left with zero matches, searches just that area again with a looser threshold.`,
+h:`A secondary pass restricted to each empty cell's local region.`,
+e:`Avoids the failure the problem statement illustrates: a dense cluster plus empty regions.`,
+s:`"Empty areas get a second, targeted search."`,
+d:`Coverage improves after the refill pass on a fixture with deliberately empty regions.`, c:`refine/uniformity.py`},
+{id:"ALIGN-06",n:"Delaunay coverage checking",p:"P1",ps:0,st:0,
+w:`Connects the final points into triangles and flags very large triangles as under-covered areas.`,
+h:`scipy.spatial.Delaunay; the largest gap is recorded as max_delaunay_gap_px.`,
+e:`A second, independent coverage check alongside grid occupancy.`,
+s:`"Big empty triangles show exactly where coverage is thin."`,
+d:`max_delaunay_gap_px is filled in and falls as spatial coverage rises on fixtures.`, c:`refine/uniformity.py`},
+{id:"ALIGN-07",n:"Farthest-point sampling",p:"P2",ps:0,st:0,
+w:`An alternative way to pick points: repeatedly choose the point furthest from those already chosen.`,
+h:`Selectable in config instead of the grid method.`,
+e:`Gives a comparison against the grid method.`,
+s:`"We compare two ways of spreading points instead of assuming one."`,
+d:`Selectable via config and compared against grid retention in the report.`, c:`refine/uniformity.py`},
+
+{id:"PREC-01",n:"NCC peak sub-pixel fitting",p:"P0",ps:1,st:0,
+w:`Around each matched pixel, computes normalised cross-correlation on a small grid and fits a parabola to find the true peak between pixels.`,
+h:`Our own ~40 lines: an NCC surface, then a quadratic fit and its peak.`,
+e:`The problem statement demands sub-pixel accuracy. Working precedent: Jackiechan2006/lunalign uses the same idea.`,
+s:`"We fit a curve to the correlation peak to locate each point between pixels."`,
+d:`Recovers a known sub-pixel shift to <0.1 px on the fixture.`, c:`refine/subpixel.py`},
+{id:"PREC-02",n:"Phase-correlation refinement",p:"P0",ps:0,st:0,
+w:`Estimates the remaining shift (and scale, via log-polar) in the frequency domain.`,
+h:`skimage.registration.phase_cross_correlation with upsample_factor=100; log-polar for the scale residual.`,
+e:`A second, independent sub-pixel method that also catches small scale errors. Precedent: Fable98's phase-correlation correction.`,
+s:`"A second independent sub-pixel method, working in the frequency domain."`,
+d:`The leftover shift after correction is smaller than before, measured on the fixture.`, c:`refine/subpixel.py`},
+{id:"PREC-03",n:"Corner sub-pixel refinement",p:"P1",ps:0,st:0,
+w:`Iteratively nudges each corner point to its exact sub-pixel position.`,
+h:`OpenCV cv2.cornerSubPix, straight from the library.`,
+e:`A third independent method for the comparison table. Precedent: khushihb's repo.`,
+s:`"A standard OpenCV refiner as a third comparison point."`,
+d:`Runs and appears in the sub-pixel method comparison table.`, c:`refine/subpixel.py`},
+{id:"PREC-04",n:"ECC illumination-robust refinement",p:"P1",ps:0,st:0,
+w:`Refines the alignment while compensating for brightness and contrast differences. It needs a rough alignment first, so it is used only for refinement.`,
+h:`OpenCV cv2.findTransformECC, started from the MAGSAC result.`,
+e:`ECC's brightness/contrast normalisation is built for exactly the lighting-variation challenge, but it needs a good start to converge.`,
+s:`"ECC polishes the alignment while ignoring brightness differences, once we're already close."`,
+d:`Reduces leftover error on a lighting-shifted pair that already has a rough alignment; fails gracefully when the start is poor.`, c:`refine/subpixel.py`},
+{id:"PREC-05",n:"Least-squares transform polishing",p:"P1",ps:0,st:0,
+w:`Refines the whole transform (the 8 homography parameters) instead of individual points.`,
+h:`scipy.optimize.least_squares over the 8 parameters.`,
+e:`A fourth method, working on the global transform. Precedent: itsmedarkvillain-sketch's subpixel.py.`,
+s:`"Beyond moving points, we also polish the whole transform at once."`,
+d:`Global RMSE decreases after refinement on real data.`, c:`refine/subpixel.py`},
+{id:"PREC-06",n:"Sub-pixel accuracy self-verification",p:"P0",ps:1,st:0,
+w:`Shifts a real Chandrayaan-2 image by a known fraction of a pixel, e.g. (0.37, −0.62), and measures how accurately the pipeline recovers that shift.`,
+h:`The known-shift fixture from tests/factories.py applied to real imagery; the result is stored in Metrics.subpixel_recovery_err_px. It is backed up by the DEM cross-check (GEO-07).`,
+e:`No public sub-pixel ground truth exists, so this is the honest way to prove the requirement. Two competitor teams (zorevedant, Assassin29092005) independently arrived at the same approach.`,
+s:`"We move a real image by exactly 0.37 and −0.62 pixels and measure how precisely we get that back. That proves sub-pixel, rather than just claiming it."`,
+d:`At least two of the four methods recover (0.37, −0.62) to <0.1 px, measured on real imagery.`, c:`refine/subpixel.py, tests/factories.py`},
+
+{id:"CHECK-01",n:"Blank-image null test",p:"P0",ps:0,st:1,
+w:`Matches a plain grey image against the reference. It must find almost no inliers.`,
+h:`Runs automatically on every benchmark execution; the result is stored in RegistrationResult.gates.`,
+e:`If this "succeeds", the pipeline is broken. A competitor (Assassin29092005) found a shared-mask bug that produced fake 100% inlier rates (failure mode #19). We build the check in from day one.`,
+s:`"Every run also matches a blank grey image. If that ever 'works', we know our numbers are fake. It's built in, not a one-off check."`,
+d:`Runs on every benchmark execution and is recorded in RegistrationResult.gates.`, c:`evaluate/control_gates.py`},
+{id:"CHECK-02",n:"Random-noise null test",p:"P0",ps:0,st:0,
+w:`Matches pure random noise against the reference. It must find almost no inliers.`,
+h:`Same gate framework as CHECK-01.`,
+e:`Same purpose as the blank test, but noise is textured and can fool naive matchers.`,
+s:`"Random noise must never produce matches, and we test that on every run."`,
+d:`Runs on every benchmark execution and is recorded in gates.`, c:`evaluate/control_gates.py`},
+{id:"CHECK-03",n:"Perturbation sensitivity test",p:"P0",ps:0,st:0,
+w:`Shifts the image by a known 5 px; the recovered transform must move by about 5 px, not 0 and not 50.`,
+h:`Gate framework; the result is recorded.`,
+e:`Catches a pipeline that ignores its input or is unstable.`,
+s:`"We nudge the input by 5 pixels and check that the answer moves by 5."`,
+d:`The result is recorded, and a deliberately broken pipeline fails it.`, c:`evaluate/control_gates.py`},
+{id:"CHECK-04",n:"Identity sanity check",p:"P0",ps:0,st:0,
+w:`Matches an image against itself: RMSE must be about 0 and inlier ratio about 1.`,
+h:`Gate framework.`,
+e:`Anything else means a basic bug.`,
+s:`"An image matched to itself must be perfect. If not, something basic is broken."`,
+d:`Runs on every benchmark execution and is recorded in gates.`, c:`evaluate/control_gates.py`},
+{id:"CHECK-05",n:"Scale consistency check",p:"P0",ps:0,st:0,
+w:`After fitting, compares the estimated scale with the scale expected from the two cameras' resolutions, and rejects the result if it's off by more than a set factor.`,
+h:`TransformModel stores scale_estimated and scale_expected (from gsd_ratio). It needs our instrument registry, so no library offers it.`,
+e:`Catches matches that locked on at the wrong scale (failure mode #13).`,
+s:`"We know the true scale from the camera specs, so a result at the wrong scale is rejected with a reason."`,
+d:`A deliberately wrong-scale match set is rejected with a named reason.`, c:`estimate/robust.py, evaluate/control_gates.py`},
+{id:"CHECK-06",n:"Shared-mask guard",p:"P0",ps:0,st:0,
+w:`Checks that the source and reference masks are separate objects in memory, not the same one by accident.`,
+h:`An identity check on the mask objects, run every time.`,
+e:`This exact bug faked a competitor's 100% inlier rate (failure mode #19).`,
+s:`"We guard against the exact bug that faked another team's 100% score."`,
+d:`Runs on every execution; deliberately shared masks fail it.`, c:`evaluate/control_gates.py`},
+{id:"CHECK-07",n:"Confidence tiers (HIGH / MEDIUM / LOW / REJECTED)",p:"P0",ps:0,st:0,
+w:`Grades every result from inlier count, inlier ratio, coverage and the control-gate results.`,
+h:`Thresholds in the pipeline runner. A "successful" RANSAC with too few inliers is tiered down. Known-hard regimes such as direct IIRS are flagged. A correct rejection still exits with code 0, because rejecting correctly is a valid result.`,
+e:`RANSAC can report "success" with very few real inliers (failure mode #12). Precedent: Assassin29092005's confidence gating. Most competitors report only successes.`,
+s:`"Every result gets a grade, and REJECTED with a reason is a correct answer, not a crash."`,
+d:`A deliberately impossible pair returns REJECTED with failure_modes filled in, and the pipeline still exits 0.`, c:`pipeline runner`},
+{id:"CHECK-08",n:"Quality gating (refuses to fake success)",p:"P0",ps:0,st:0,
+w:`The report refuses to render a result with no control-gate results, and a failed run is shown as REJECTED with its reason, never swapped for a quiet fallback.`,
+h:`report.py raises an error if gates is empty (honesty rules H3 and H4).`,
+e:`A run without checks is not a valid result.`,
+s:`"Our report literally cannot show a number unless the safety checks ran."`,
+d:`A mocked result with empty gates raises an error instead of rendering.`, c:`evaluate/control_gates.py, product/report.py`},
+{id:"CHECK-09",n:"Failure-mode detection & reporting",p:"P0",ps:0,st:0,
+w:`Keeps a register of the 20 known failure modes, each with a detection hook. Every failure seen at run time is tagged with its mode ID in RegistrationResult.failure_modes.`,
+h:`A logger plus docs/FAILURE_MODES.md. The pipeline raises IDs and the report shows them.`,
+e:`The 20 modes come from the research, based on real competitor failures and documented literature limits. Failures are named and explained instead of hidden.`,
+s:`"When something fails, it tells you which of 20 known failure types happened."`,
+d:`Each of the 20 modes has a detection hook or an explicit 'detected manually only' note.`, c:`evaluate/failure_log.py`},
+{id:"CHECK-10",n:"Licence gate (blocks non-commercial models from shipping)",p:"P0",ps:0,st:0,
+w:`With ship_mode: true (the default), non-commercial models (SuperPoint, SuperGlue) are blocked by name, and R2D2 is never used. SuperGlue runs only in the internal benchmark with ship_mode: false, writing to a folder excluded from the shipped bundle.`,
+h:`A name-level guard in matching/licence.py, which every get_matcher() call passes through (vismatch bundles 50+ matchers, including restricted ones). A CI script checks every installed package's licence and the vendored RIFT2 SHA; adding a GPL package fails the build.`,
+e:`SuperPoint/SuperGlue are Magic Leap non-commercial; R2D2 is CC BY-NC-SA. The research calls them "legally the worst choices" for a deliverable (failure mode #14).`,
+s:`"ISRO can legally reuse everything we ship. The restricted models are blocked by code, not by a promise."`,
+d:`tests/test_licence_gate.py proves superpoint-lightglue is blocked when ship_mode is true and available when false; adding a GPL package fails CI.`, c:`matching/licence.py, scripts/check_licences.py`},
+
+{id:"OUT-01",n:"Registered GeoTIFF export",p:"P0",ps:1,st:0,
+w:`Warps the source image into the reference's coordinates and saves it as a GeoTIFF with the correct geotransform and lunar CRS, plus a JSON sidecar holding both images' metadata, the transform and the metrics.`,
+h:`OpenCV warp for affine/homography, or a dense displacement field for TPS; rasterio/GDAL to write the GeoTIFF.`,
+e:`This is the "registered product" the problem statement asks for.`,
+s:`"The aligned image opens directly in QGIS, sitting exactly on the reference."`,
+d:`Opens in QGIS aligned to the reference; warping then inverse-warping returns within sub-pixel error.`, c:`product/warp.py`},
+{id:"OUT-02",n:"Match points → CSV",p:"P0",ps:1,st:0,
+w:`Writes matches.csv: source and reference pixel coordinates (sub-pixel floats, never rounded), lat/lon, confidence, inlier flag, method, regime, cascade stage and grid cell.`,
+h:`Our exporter from MatchSet.`,
+e:`The "corresponding match points" the problem statement asks for. Rounding would destroy the sub-pixel work.`,
+s:`"Every match point is exported with sub-pixel coordinates and records how it was found."`,
+d:`The CSV reads back into a MatchSet without precision loss.`, c:`product/matchpoints.py`},
+{id:"OUT-03",n:"Match points → GeoJSON",p:"P0",ps:1,st:0,
+w:`Writes matches.geojson: the match points in the reference frame with the same properties, ready to drop into QGIS.`,
+h:`GeoJSON writer with the lunar CRS.`,
+e:`Lets anyone view the match points on a map directly.`,
+s:`"Drag the file into QGIS and the match points appear on the Moon map."`,
+d:`Opens in QGIS with the correct lunar CRS.`, c:`product/matchpoints.py`},
+{id:"OUT-04",n:"RMSE metric",p:"P0",ps:1,st:0,
+w:`The average leftover error of the inlier matches after applying the transform, in pixels and in metres (pixels × resolution). If unmeasured, it is None.`,
+h:`evaluate/metrics.py computes rmse_px and rmse_m = rmse_px × gsd_m.`,
+e:`A metric the problem statement names. The published external floor on OHRC↔NAC: SuperGlue 0.57–0.92 px (shown tagged "external", never as ours).`,
+s:`"RMSE is reported in both pixels and metres, and it's always our own measurement, never a copied paper number."`,
+d:`rmse_px and rmse_m match a hand-calculated fixture.`, c:`evaluate/metrics.py`},
+{id:"OUT-05",n:"Inlier count metric",p:"P0",ps:1,st:0,
+w:`The number of matches that survive every filtering step.`,
+h:`The sum of the inlier mask.`,
+e:`A metric the problem statement names.`,
+s:`"How many matches survived every check."`,
+d:`inlier_count equals the sum of the inlier mask.`, c:`evaluate/metrics.py`},
+{id:"OUT-06",n:"Inlier ratio metric",p:"P0",ps:1,st:0,
+w:`Inliers divided by all candidate matches, between 0 and 1.`,
+h:`inlier_count ÷ total matches.`,
+e:`A metric the problem statement names, and the clearest sign of whether a pair is easy or hard (compare jaitus: 98.0% OHRC↔NAC vs 2.8% TMC-2↔NAC).`,
+s:`"The fraction of candidate matches that were right. It shows at a glance how hard a pair is."`,
+d:`inlier_ratio is in [0, 1] and equals inlier_count / total matches.`, c:`evaluate/metrics.py`},
+{id:"OUT-07",n:"Spatial coverage metric",p:"P0",ps:1,st:0,
+w:`The fraction of grid cells that contain at least one inlier.`,
+h:`Computed from the uniformity grid.`,
+e:`Shows with a number that the problem statement's even-spread requirement is met.`,
+s:`"We don't just say points are spread out. We give the percentage of the image they cover."`,
+d:`spatial_coverage is in [0, 1] and matches a hand-counted fixture.`, c:`evaluate/metrics.py`},
+{id:"OUT-08",n:"Runtime measurement",p:"P1",ps:0,st:0,
+w:`Measures our own end-to-end time, including tiling and preprocessing, separately from per-matcher time. Published speeds from papers are for planning only and never reported as ours.`,
+h:`Timers around the pipeline; runtime_s is recorded on every run.`,
+e:`Answers "how long does it take?" with a measured number instead of a copied paper figure.`,
+s:`"Our timing includes everything, tiling and all, and it's measured, not quoted."`,
+d:`runtime_s is measured on every run; end-to-end time is reported separately from matcher time.`, c:`evaluate/metrics.py`},
+{id:"OUT-09",n:"HTML evaluation report",p:"P0",ps:1,st:0,
+w:`One self-contained web page: inputs → path taken (regime, cascade stages) → the four problem-statement metrics → coverage figure → sub-pixel result → control-gate table → confidence tier → failure modes → provenance. Missing values show "not measured", and every number is tagged "measured" or "external".`,
+h:`Jinja2 template via product/report.py; make report generates it.`,
+e:`The "evaluation metric" output the problem statement asks for, in a form judges can read.`,
+s:`"One page tells the whole story of a run, and every number says whether we measured it or cited it."`,
+d:`make report produces a self-contained HTML file; it refuses to render with empty gates; every number carries a source tag.`, c:`product/report.py`},
+{id:"OUT-10",n:"Provenance record on every output",p:"P0",ps:0,st:0,
+w:`Every output records the input product IDs and checksums, config hash, package versions, git commit, UTC time, host/GPU and the ship_mode flag.`,
+h:`product/provenance.py writes it into every output.`,
+e:`Anyone can trace a number back to the exact inputs and code that produced it. It is the backbone of reproducibility (scripts/reproduce.sh).`,
+s:`"Every number can be traced back to the exact files, code version and settings that made it."`,
+d:`Two runs from the same commit and inputs produce identical records apart from the timestamp.`, c:`product/provenance.py`},
+
+{id:"UI-01",n:"Command-line tool",p:"P0",ps:1,st:0,
+w:`The chandralign command, with register, benchmark, ablate, report and demo subcommands.`,
+h:`cli.py; for example: chandralign register --src <ch2_product> --ref <reference_product> --out runs/<name> [--cpu].`,
+e:`The "software" the problem statement asks for.`,
+s:`"One command registers a pair and writes everything to a run folder."`,
+d:`--help documents every flag; register runs end to end and writes a run folder.`, c:`cli.py`},
+{id:"UI-02",n:"REST API",p:"P1",ps:0,st:0,
+w:`A FastAPI backend: POST /register (runs as a background job), GET /runs/{id}, GET /runs/{id}/assets/{name}, GET /pairs.`,
+h:`FastAPI + uvicorn; streams progress.`,
+e:`The backend the web interface talks to.`,
+s:`"The same pipeline is available over an API, so ISRO can plug it into other tools."`,
+d:`Returns a valid result for a curated pair within the configured timeout and streams progress.`, c:`api.py`},
+{id:"UI-03",n:"Web interface",p:"P0",ps:0,st:0,
+w:`Pick a curated pair or upload your own, watch the pipeline run, then see the results. It works fully offline from cached runs.`,
+h:`A static JS front end in ui/ on top of the API. We don't reuse image-matching-webui, because it can't show coverage, tiers, cascade path or REJECTED states.`,
+e:`The demo surface. We assume venue Wi-Fi will fail (risk R6).`,
+s:`"The demo runs fully offline, so it doesn't depend on the venue network."`,
+d:`The full flow works offline from cached runs.`, c:`ui/`},
+{id:"UI-04",n:"Side-by-side comparison view",p:"P0",ps:0,st:0,
+w:`Source and reference shown next to each other with the sun-angle difference labelled.`,
+h:`viz/sidebyside.py.`,
+e:`Makes the problem obvious in five seconds. The demo opens on it.`,
+s:`"Look: same ground, different sun. That's the problem in one picture."`,
+d:`Renders from both a mock and a real RegistrationResult.`, c:`viz/sidebyside.py`},
+{id:"UI-05",n:"Match overlay visualisation",p:"P0",ps:0,st:0,
+w:`Lines between matched points, with inliers and outliers in different colours.`,
+h:`Wraps vismatch's plot_matches.`,
+e:`Shows at a glance which matches the pipeline trusted.`,
+s:`"Green lines were trusted, red were rejected."`,
+d:`Renders, and the inlier/outlier counts in the figure match Metrics.`, c:`viz/match_plot.py`},
+{id:"UI-06",n:"Coverage heatmap",p:"P0",ps:0,st:0,
+w:`A grid showing how many matches landed in each cell.`,
+h:`viz/coverage_plot.py from the uniformity grid.`,
+e:`Shows the even-spread requirement being met instead of just claiming it.`,
+s:`"This heatmap is the proof that points are spread across the image."`,
+d:`The cell count equals the configured grid, and the occupied fraction equals Metrics.spatial_coverage.`, c:`viz/coverage_plot.py`},
+{id:"UI-07",n:"Before/after swipe view",p:"P1",ps:0,st:0,
+w:`A slider and checkerboard overlay comparing the images before and after alignment.`,
+h:`viz/swipe.py.`,
+e:`Makes the alignment quality visible: crater rims line up across the checkerboard seams.`,
+s:`"Slide across: before, the craters jump; after, they line up."`,
+d:`Renders in both the report and the web interface.`, c:`viz/swipe.py`},
+{id:"UI-08",n:"Live metrics display",p:"P0",ps:0,st:0,
+w:`While running, it shows which matcher and cascade path were chosen. When done, it shows metric cards (RMSE, inliers, inlier ratio, coverage) and a confidence-tier badge.`,
+h:`In ui/, reading from the API.`,
+e:`Lets judges watch the pipeline's decisions and results live.`,
+s:`"You can see the system decide which method to use, then the measured results."`,
+d:`Metric cards show the same values as the run's Metrics; missing values show 'not measured'.`, c:`ui/`},
+{id:"UI-09",n:"Rejection-reason display",p:"P0",ps:0,st:0,
+w:`A REJECTED run shows a clear "REJECTED – reason" panel with the failure modes that triggered it.`,
+h:`In ui/.`,
+e:`Hiding failures in the UI would undo honesty rule H3.`,
+s:`"When it can't align a pair, it tells you so, and why."`,
+d:`A REJECTED run renders the panel with its reason and failure modes, never an empty results screen.`, c:`ui/`}
+];
+
+const QA = [
+["Why isn't SIFT enough?","SIFT degrades specifically at the lunar poles in the only paper that tested it on real Chandrayaan-2 data (arXiv:2509.04775). We keep it as our baseline floor, not our main matcher."],
+["Why isn't LoFTR enough?","Vanilla LoFTR fails almost completely under extreme low sun (Geo-LoFTR, Mars-like terrain). We never route it to extreme lighting, and use it on phase-congruency input where it helps."],
+["Why do you need AI?","Not everywhere. A 2025 benchmark found classical RIFT beating the best deep method at high resolution. We route: AI where the evidence says it wins (polar light), classical where that wins (cross-sensor)."],
+["Why can't AROSICS solve this?","It's real and good at sub-pixel co-registration, but it has no lunar validation and no hyperspectral support. We actually run it as a comparison baseline instead of just dismissing it."],
+["Why can't ArcGIS solve this?","It's generic Earth-imagery co-registration, with no lunar sensor models and no illumination handling."],
+["Why can't USGS ISIS solve this?","It's the closest precedent, but spiceinit is documented to fail on stock releases for OHRC. It's an optional component for us, not a turnkey solution. Our pipeline works without it."],
+["Why can't OpenCV solve this?","OpenCV is the building blocks we (and everyone) use. It has no lunar lighting logic or hyperspectral handling on its own."],
+["What exactly is novel?","A generic pipeline validated on the two neglected axes (TMC-2, SELENE), which no publication or competitor demonstrates, plus physics-based outlier filtering, which has no general published precedent. The novelty is the combination and validation, not a new matching algorithm."],
+["What exactly is multimodal?","OHRC (black-and-white, 0.25 m), TMC-2 (black-and-white, ~5 m), IIRS (hyperspectral, ~80 m, ~250 bands) against LRO NAC/WAC (0.5–100 m) or SELENE (~7–62 m): five distinct sensor types across a ~320:1 scale range."],
+["How do you handle IIRS?","We build a camera-like composite from its clean bands first (PREP-05, PREP-06), then match with RIFT2 or via the cascade. Two teams got 0 inliers matching raw cubes."],
+["How do you handle spectral differences?","The band composite plus sensor-independent descriptors (phase congruency / RIFT, MIND), which are built for this."],
+["How do you handle sun-angle differences?","We read the sun angles from the labels, compute the difference, and let that choose the matcher. Low-sun cases go to the path with documented lunar evidence. CLAHE and phase congruency prepare the images."],
+["How do you handle shadows?","A shadow mask, plus, where a DEM and sun angle exist, predicted shadow geometry that helps matching (photoclinometry-style precedent)."],
+["How do you handle huge resolution differences?","A step-by-step cascade, never direct OHRC↔IIRS. Two independent teams got 0 inliers doing it directly."],
+["How do you get ground truth?","From label geometry cross-checked against an independent DEM re-projection, never a single source. No public ground truth exists for these pairs."],
+["How do you prove sub-pixel accuracy?","We shift a real image by a known fraction of a pixel and measure the recovery error, plus the DEM cross-check."],
+["How do you prevent false matches?","Ratio test, mutual nearest neighbour, MAGSAC++, the physics-based filter, stricter thresholds in repetitive terrain, plus confidence tiers."],
+["How do you guarantee spatial uniformity?","A grid with a top-k cap per cell, a refill pass for empty cells, and a reported coverage percentage."],
+["What if there are no keypoints?","Flat terrain is detected and routed to phase congruency. If it still fails, the result is marked low confidence, never a silent failure."],
+["What if the terrain is repetitive?","Detected by autocorrelation; stricter thresholds; DEM consistency breaks ties."],
+["What if the metadata is wrong?","The DEM cross-check catches it. We never trust one source."],
+["What if the overlap is small?","Footprint intersection rejects the pair before matching, and ODE finds better-overlapping references."],
+["How much GPU do you need?","~8 GB VRAM class, per the methods' own published benchmarks. The classical, LightGlue and XFeat paths run on CPU."],
+["Can it run on a laptop?","Yes, on CPU with LightGlue or XFeat. A GPU is preferred for speed."],
+["Can it process full-resolution images?","Yes, through tiling. Full NAC products reach 104,448 × 5,000 px, too big for any single pass."],
+["How long does it take?","Published matcher speeds (e.g. LightGlue 44.2 ms/pair) are external figures. Our end-to-end time, including tiling, is measured at build time and reported as measured."],
+["What data did you use?","PRADAN (OHRC, TMC-2, IIRS), the LROC PDS Data Node (NAC/WAC), JAXA DARTS (SELENE), and LOLA / SLDEM / Kaguya ARD for DEMs."],
+["Is the data actually free?","Yes. PRADAN needs an SSO login but is free for non-profit science; the NASA, JAXA and USGS sources need no login."],
+["What is the licence?","It is built entirely from Apache-2.0, MIT and BSD components. SuperPoint, SuperGlue and R2D2 are kept out of the shipped path by a code gate."],
+["Can ISRO legally use it?","Yes. Non-commercial models appear only in an internal benchmark excluded from the deliverable, which is a deliberate design choice."],
+["Can another team reproduce it?","Yes: REPRODUCIBILITY.md plus scripts/reproduce.sh, provenance on every output, and pinned dependencies."],
+["What happens outside your benchmark?","Honestly, we don't know for regimes outside our four tiers. We state that as a limitation."],
+["What is your baseline?","SIFT + RANSAC, the field's own convention."],
+["What is your ablation study?","Six stages: baseline, then adding illumination preparation, the learned matcher, the physics filter, the cascade and sub-pixel refinement, each isolated. A stage that doesn't help is reported as not helping."],
+["What is your biggest failure case?","Direct OHRC↔IIRS. It is mitigated by the cascade but not eliminated, and we report it openly as the Extreme tier."],
+["Why should ISRO use this?","It targets the problem statement's actual dataset (external references), on the two axes nobody has solved, with a licence ISRO can reuse."],
+["What happens when it fails?","You get a confidence tier (REJECTED with a reason and failure-mode IDs). Never a silent or fabricated success."],
+["Is it explainable?","Partly. The classical/RIFT path is interpretable; the learned path is not, and we don't overclaim."],
+["Will it work on future missions?","Probably, because the geometry layer uses standard SPICE/PDS metadata, not Chandrayaan-2-specific hacks. That's a reasonable expectation, not a verified claim."],
+["What makes this more than a hackathon demo?","Reproducibility, honest failure reporting tied to real observed failures, and a specific, checkable claim about what's new."],
+["Didn't you just glue libraries together?","Yes, deliberately. Reusing proven libraries (pds4_tools, vismatch, phasepack, OpenCV) frees our time for what doesn't exist: the regime selector, the cascade, the physics-based filter, uniformity enforcement, the control gates and the benchmark. Competitors lose credibility by shipping hand-rolled parsers that don't actually parse."]
+];
+
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const priLabel = {P0:["bad","P0 must"],P1:["warn","P1 should"],P2:["neu","P2 stretch"]};
+const root = document.getElementById("feat-root");
+let html = "";
+GROUPS.forEach(g=>{
+  const items = F.filter(f=>f.id.startsWith(g.k+"-"));
+  html += '<div class="fgroup" id="g-'+g.k+'" data-group="'+g.k+'"><h3>'+esc(g.name)+' <span class="mono muted" style="font-size:14px">· '+items.length+' features</span></h3><p>'+esc(g.blurb)+'</p>';
+  items.forEach(f=>{
+    const pr = priLabel[f.p] || priLabel.P1;
+    html += '<article class="feat'+(f.st?' star':'')+'" id="'+f.id+'" data-star="'+f.st+'" data-ps="'+f.ps+'">'
+      + '<div class="fhead"><span class="fid">'+f.id+'</span><span class="fname">'+esc(f.n)+'</span>'
+      + (f.st?'<span class="pill acc">★ our differentiator</span>':'')
+      + (f.ps?'<span class="pill good">PS asks for this</span>':'')
+      + '<span class="pill '+pr[0]+'">'+pr[1]+'</span></div>'
+      + '<dl class="fbody"><dt>What it is</dt><dd>'+esc(f.w)+'</dd>'
+      + '<dt>How we build it</dt><dd>'+esc(f.h)+'</dd>'
+      + '<dt>What exists / why ours</dt><dd>'+esc(f.e)+'</dd>'
+      + '<dt>Say this</dt><dd class="say">'+esc(f.s)+'</dd></dl>'
+      + '<div class="ffoot"><span><b>Proof it works:</b> '+esc(f.d)+'</span><span><b>Code:</b> <span class="mono">'+esc(f.c)+'</span></span></div>'
+      + '</article>';
+  });
+  html += '</div>';
+});
+root.innerHTML = html;
+
+const qaRoot = document.getElementById("qa-root");
+qaRoot.innerHTML = QA.map((x,i)=>'<div><p class="q"><span class="mono">Q'+(i+1)+'</span>'+esc(x[0])+'</p><p class="a">'+esc(x[1])+'</p></div>').join("");
+
+const q = document.getElementById("q"), bStar = document.getElementById("f-star"), bPs = document.getElementById("f-ps"), count = document.getElementById("count"), none = document.getElementById("noresults");
+function apply(){
+  const term = q.value.trim().toLowerCase();
+  const onlyStar = bStar.getAttribute("aria-pressed")==="true";
+  const onlyPs = bPs.getAttribute("aria-pressed")==="true";
+  let shown = 0;
+  document.querySelectorAll(".fgroup").forEach(g=>{
+    let gShown = 0;
+    g.querySelectorAll(".feat").forEach(a=>{
+      const ok = (!term || a.textContent.toLowerCase().includes(term)) && (!onlyStar || a.dataset.star==="1") && (!onlyPs || a.dataset.ps==="1");
+      a.hidden = !ok; if(ok){gShown++;shown++;}
+    });
+    g.hidden = gShown===0;
+  });
+  count.textContent = shown + " of " + F.length + " shown";
+  none.hidden = shown!==0;
+}
+q.addEventListener("input",apply);
+[bStar,bPs].forEach(b=>b.addEventListener("click",()=>{b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")==="true"?"false":"true");apply();}));
+apply();
+</script>
