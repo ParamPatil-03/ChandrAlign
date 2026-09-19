@@ -179,3 +179,19 @@ def test_real_sizes_match_label(key):
 def test_real_pixels_match_isro_md5(key):
     """Our copy is byte-identical to what ISRO published. Reads the whole file."""
     assert verify_raster(REAL[key], check_md5=True)["md5_checked"]
+
+
+@needs_real
+def test_real_single_pixel_reads_are_fast_after_first_read():
+    """Accuracy report found p95 ~230 ms when every call re-parsed the label; now cached."""
+    meta = parse_pds4(REAL["ch2_iir"])
+    rng = np.random.default_rng(0)
+    read_raster(meta, Window(0, 0, 1, 1), bands=0)                # first call parses the label
+    times = []
+    for _ in range(200):
+        r, c, b = int(rng.integers(13101)), int(rng.integers(250)), int(rng.integers(256))
+        t = time.perf_counter()
+        read_raster(meta, Window(r, c, 1, 1), bands=b)
+        times.append(time.perf_counter() - t)
+    assert np.percentile(times, 95) < 0.1
+

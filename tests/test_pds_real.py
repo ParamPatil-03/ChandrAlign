@@ -107,7 +107,9 @@ def test_lxml_fallback_gives_identical_layout(monkeypatch):
         raise RuntimeError("simulated pds4_tools rejection")
 
     monkeypatch.setattr(pds4_tools, "read", refuse)
+    pds_label.clear_layout_cache()          # otherwise the cached pds4_tools result is returned
     fallback = read_array_layout(TMC2)
+    pds_label.clear_layout_cache()
     assert fallback.parsed_with == "lxml"
     for attr in ("raster_path", "offset_bytes", "dtype", "axis_names", "shape", "file_size_bytes", "md5"):
         assert getattr(fallback, attr) == getattr(primary, attr), attr
@@ -159,3 +161,17 @@ def test_real_pixel_file_matches_label(label):
     layout = read_array_layout(label)
     assert meta.raster_path.exists()
     assert meta.raster_path.stat().st_size == layout.file_size_bytes
+
+
+def test_layout_cache_notices_an_edited_label(tmp_path):
+    """The cache is keyed on the label's size and modification time: an edit is re-read."""
+    import os, shutil
+    copy = tmp_path / OHRC.name
+    shutil.copy(OHRC, copy)
+    first = read_array_layout(copy)
+    assert read_array_layout(copy) is first                       # served from the cache
+    text = copy.read_text(encoding="utf-8").replace("<elements>12000</elements>", "<elements>11999</elements>")
+    copy.write_text(text, encoding="utf-8")
+    os.utime(copy, ns=(first_ns := copy.stat().st_mtime_ns + 10**9, first_ns))
+    assert read_array_layout(copy).shape == (79796, 11999)
+

@@ -22,6 +22,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -166,8 +167,29 @@ def read_array_layout(xml_path: str | Path) -> ArrayLayout:
     """The pixel file's on-disk layout, from the label.
 
     PDS3 labels go through pvl. PDS4 labels go through pds4_tools, or lxml if it fails.
+    Results are cached per label file and reused only while the file's size and
+    modification time are unchanged -- re-parsing a 77 kB IIRS label on every
+    single-pixel read cost up to ~230 ms.
     """
     xml_path = Path(xml_path)
+    try:
+        st = xml_path.stat()
+    except OSError as exc:
+        raise PdsParseError(f"{xml_path.name}: cannot read ({exc})") from exc
+    return _cached_layout(str(xml_path.resolve()), st.st_mtime_ns, st.st_size)
+
+
+def clear_layout_cache() -> None:
+    """Forget cached layouts (e.g. after swapping libraries in a test)."""
+    _cached_layout.cache_clear()
+
+
+@lru_cache(maxsize=256)
+def _cached_layout(path: str, mtime_ns: int, size: int) -> ArrayLayout:
+    return _read_array_layout_uncached(Path(path))
+
+
+def _read_array_layout_uncached(xml_path: Path) -> ArrayLayout:
     if is_pds3(xml_path):
         return _pds3_layout(xml_path, _pvl_label(xml_path))
     tree = _load_xml(xml_path)  # fail fast, with our own error, on broken XML
