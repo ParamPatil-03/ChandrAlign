@@ -1,0 +1,123 @@
+{
+  "pdsid": "nac.m1417360906lc",
+  "source": "ode_catalogue",
+  "query_url": "https://oderest.rsl.wustl.edu/live2/?query=product&target=moon&results=mf&output=JSON&pdsid=nac.m1417360906lc",
+  "fetched_utc": "2026-09-19T18:14:40+00:00",
+  "record": {
+    "BB_georeferenced": "True",
+    "Center_georeferenced": "True",
+    "Center_latitude": "-0.72",
+    "Center_longitude": "23.56",
+    "Comment": "TARGET OF OPPORTUNITY",
+    "Description": "Lunar Reconnaissance Orbiter Camera NAC CDR Product",
+    "Easternmost_longitude": "23.67",
+    "Emission_angle": "1.72",
+    "External_url": "https://data.lroc.im-ldi.com/lroc/view_lroc/LRO-L-LROC-3-CDR-V1.0/M1417360906LC",
+    "FilesURL": "https://ode.rsl.wustl.edu/moon/productfiles.aspx?product_id=nac.m1417360906lc&product_idGeo=28944413",
+    "Footprint_C0_geometry": "POLYGON ((23.57 -1.43, 23.67 -0.02, 23.55 -0.01, 23.44 -1.42, 23.57 -1.43))",
+    "Footprint_geometry": "POLYGON ((23.57 -1.43, 23.67 -0.02, 23.55 -0.01, 23.44 -1.42, 23.57 -1.43))",
+    "Footprint_GL_geometry": "POLYGON ((23.57 -1.43, 23.67 -0.02, 23.55 -0.01, 23.44 -1.42, 23.57 -1.43))",
+    "Footprint_NP_geometry": "MULTIPOLYGON EMPTY",
+    "Footprint_souce": "PDS Archive Index Table",
+    "Footprint_SP_geometry": "MULTIPOLYGON EMPTY",
+    "Footprints_cross_meridian": "False",
+    "Incidence_angle": "7.71",
+    "LabelURL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/DATA/ESM4/2022252/NAC/M1417360906LC.xml",
+    "Map_resolution": "0.787",
+    "Maximum_latitude": "-0.01",
+    "Minimum_latitude": "-1.43",
+    "Observation_time": "2022-09-09T11:07:32.269Z",
+    "ODE_notes": {
+      "ODE_note": [
+        "NOTE: Product Type set by ODE",
+        "NOTE: Instrument Host Id set by ODE",
+        "NOTE: Instrument Id set by ODE",
+        "NOTE: Label keyword Orbit number value used for start orbit number value",
+        "NOTE: Label keyword Orbit number value used for stop orbit number value",
+        "NOTE: LROC map resolution updated from index table entry",
+        "NOTE: LROC emission angle updated from index table entry",
+        "NOTE: LROC incidence angle updated from index table entry",
+        "NOTE: LROC phase angle updated from index table entry",
+        "NOTE: LROC solar longitude updated from index table entry",
+        "NOTE: LROC solar distance updated from index table entry",
+        "NOTE: Observation time set to mid-point between start time and stop time",
+        "NOTE: Index Record:",
+        "\"LROLRC_1052C\",\" LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/DATA/ESM4/2022252/NAC/M1417360906LC.IMG\",\"LRO\",\"LROC\",\"nacl002b08ee\",\"M1417360906LC\",\"        v1.9\",\" MOON\",59444,  -0.009,\"FOURTH EXTENDED SCIENCE MISSION\",\"                                                      TARGET OF OPPORTUNITY\",  0,\" 2022-09-09 11:07:18.182\",\" 2022-09-09 11:07:18.714\",\" 2022-09-09 11:07:45.824\",\" 1\",\" 684414438:9633\",\" 684414438:44470\",\" 684414465:51733\",684414438,  44470,684414465,  51733,0.000516800,9.99999,\" LEFT\", 200, 75,146,  7,\"  N/A\",999,999,\"                                   N/A\",99999,9999.99,999,9,3,1,0,  17.331,  21.402,  -5.759,  10.558,9999.999,9999.999,9999.999,9999.999,9999.999,9999.999, 52224,5064,16,   0.75,  0.82,  0.787, 1.72,  7.71,  9.40, 93.09,169.50,  1.31, 16.12, -0.72, 23.63,151036430.9,122.57, -0.72, 23.56, -1.43, 23.57, -0.02, 23.67, -0.01, 23.55, -1.42, 23.44,  75.38,1812.75,\"D\",\"+X\"",
+        "NOTE: Product Comment set from Index file RATIONALE_DESC field",
+        "NOTE: Product Lat/Lon Footprint set from Index file  fields UPPER RIGHT to LOWER LEFT corner Point fields",
+        "NOTE: Product Center Lat/Lon set from footprint",
+        "NOTE: LROC location data updated from index table entry"
+      ]
+    },
+    "Phase_angle": "9.4",
+    "Pole_state": "none",
+    "Product_files": {
+      "Product_file": [
+        {
+          "Creation_date": "2022-09-12T22:24:24.000000Z",
+          "Description": "PRODUCT DATA FILE",
+          "FileName": "M1417360906LC.IMG",
+          "KBytes": "528929",
+          "Type": "Product",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/DATA/ESM4/2022252/NAC/M1417360906LC.IMG"
+        },
+        {
+          "Description": "PDS4 PRODUCT LABEL FILE",
+          "FileName": "M1417360906LC.XML",
+          "KBytes": "13",
+          "Type": "Product",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/DATA/ESM4/2022252/NAC/M1417360906LC.xml"
+        },
+        {
+          "Description": "BROWSE IMAGE",
+          "FileName": "M1417360906LC_PYR.TIF",
+          "KBytes": "24001",
+          "Type": "Browse",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/EXTRAS/BROWSE/2022252/M1417360906LC_pyr.tif"
+        },
+        {
+          "Description": "BROWSE LABEL",
+          "FileName": "M1417360906LC_PYR.XML",
+          "KBytes": "2",
+          "Type": "Browse",
+          "URL": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-3-CDR-V1.0/LROLRC_1052C/EXTRAS/BROWSE/2022252/M1417360906LC_pyr.xml"
+        },
+        {
+          "Creation_date": "2023-01-27T05:01:16.249",
+          "Description": "PRODUCT KML FILE <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M1417360906LC_XML.KML",
+          "KBytes": "3",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/kmlfiles/lro-l-lroc-3-cdr/lrolrc_1052c/data/esm4/2022252/nac/M1417360906LC_xml.kml"
+        },
+        {
+          "Creation_date": "2023-01-27T05:01:16.157",
+          "Description": "PRODUCT FOOTPRINT SHAPEFILES (TAR.GZ) <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M1417360906LC_XML.TAR.GZ",
+          "KBytes": "3",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/shapefiles/lro-l-lroc-3-cdr/lrolrc_1052c/data/esm4/2022252/nac/M1417360906LC_xml.tar.gz"
+        },
+        {
+          "Creation_date": "2023-01-27T05:01:16.085",
+          "Description": "PRODUCT FOOTPRINT SHAPEFILES (ZIP) <A HREF=\"PAGEHELP/CONTENT/FREQUENTLY_ASKED_QUESTIONS/PRODUCT_FOOTPRINTS.HTM\" TARGET=\"_BLANK\">HELP</A>",
+          "FileName": "M1417360906LC_XML.ZIP",
+          "KBytes": "17",
+          "Type": "Derived",
+          "URL": "https://ode.rsl.wustl.edu/moon/datafile/shapefiles/lro-l-lroc-3-cdr/lrolrc_1052c/data/esm4/2022252/nac/M1417360906LC_xml.zip"
+        }
+      ]
+    },
+    "Product_name": "M1417360906LC.IMG",
+    "ProductURL": "https://ode.rsl.wustl.edu/moon/indexproductpage.aspx?product_id=nac.m1417360906lc&product_idGeo=28944413",
+    "Solar_distance": "151036430.9",
+    "Solar_longitude": "122.57",
+    "SpaceCraft_clock_start_count": "1/684414438:44470",
+    "SpaceCraft_clock_stop_count": "1/684414465:51733",
+    "Start_orbit_number": "59444",
+    "Stop_orbit_number": "59444",
+    "UTC_start_time": "2022-09-09T11:07:18.714000Z",
+    "UTC_stop_time": "2022-09-09T11:07:45.824000Z",
+    "Westernmost_longitude": "23.44"
+  }
+}

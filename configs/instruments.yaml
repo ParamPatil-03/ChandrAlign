@@ -1,0 +1,91 @@
+# Camera registry (feature DATA-10, tasks P0-T03 / P1-T04).
+#
+# Values come from PLAN.md section 1.2 only. Anything the plan does not state is
+# null and must be read from the product's own label, never filled with a guess.
+#
+#   gsd_m        nominal ground sample distance (metres per pixel). The value a
+#                real label reports wins over this one (e.g. TMC-2 labels say 4.43).
+#   gsd_range_m  [min, max] when the plan gives a range rather than one number.
+#   n_bands      null = "several", read the exact count from the label.
+#   id_patterns  regular expressions matched against the product ID / file name,
+#                case-insensitive. Checked in the order listed in this file.
+
+OHRC:
+  mission: CH2
+  role: source
+  kind: panchromatic pushbroom, TDI CCD
+  gsd_m: 0.25
+  gsd_range_m: null
+  n_bands: 1
+  wavelength_nm: [500, 800]
+  swath_km: null            # "narrow strip"
+  id_patterns: ['^ch2_ohr_']
+
+TMC2:
+  mission: CH2
+  role: source
+  kind: panchromatic pushbroom, 3 look angles (fore / nadir / aft)
+  gsd_m: 5.0
+  gsd_range_m: [4.43, 5.0]  # 4.43 on a real product label
+  n_bands: 1
+  wavelength_nm: null       # "panchromatic", range not given in the plan
+  swath_km: 20
+  id_patterns: ['^ch2_tmc_']
+
+IIRS:
+  mission: CH2
+  role: source
+  kind: hyperspectral pushbroom
+  gsd_m: 80.0
+  gsd_range_m: null
+  n_bands: 256              # plan says ~250-256; real label reads 256
+  wavelength_nm: [800, 5000]
+  swath_km: 20
+  id_patterns: ['^ch2_iir_']
+
+NAC:
+  mission: LRO
+  role: reference
+  kind: panchromatic
+  gsd_m: 0.5
+  gsd_range_m: null
+  n_bands: 1
+  wavelength_nm: null
+  swath_km: null
+  # M1417360906LC / M102000149RC, or ODE's "nac.m1417360906lc". L/R = left/right
+  # camera, then C (calibrated) or E (raw EDR).
+  id_patterns: ['^(nac\.)?m\d+[lr][ce]$']
+
+WAC:
+  mission: LRO
+  role: reference
+  kind: multiband
+  gsd_m: 100.0
+  gsd_range_m: null
+  n_bands: null
+  wavelength_nm: null
+  swath_km: null
+  # Not yet checked against a downloaded WAC product; verify when WAC is fetched.
+  id_patterns: ['^wac\.', '^m\d+[cm][ce]$']
+
+TC:
+  mission: SELENE
+  role: reference
+  kind: panchromatic stereo (Terrain Camera)
+  gsd_m: 10.0
+  gsd_range_m: [7.4, 10.0]  # ortho-map tiles are 7.4 m; native strips ~10 m
+  n_bands: 1
+  wavelength_nm: null
+  swath_km: null
+  id_patterns: ['^tc']
+
+MI:
+  mission: SELENE
+  role: reference
+  kind: multiband imager
+  gsd_m: 20.0
+  gsd_range_m: [20.0, 62.0]
+  n_bands: null
+  wavelength_nm: null
+  swath_km: null
+  id_patterns: ['^mi[_a-z]', '^m[vn][a-z]?_']

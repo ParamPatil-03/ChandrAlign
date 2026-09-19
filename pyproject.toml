@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chandralign"
+version = "0.1.0"
+description = "Multi-modal, sun-angle and scale-invariant registration of Chandrayaan-2 images against LRO and SELENE references (SIH26166)"
+readme = "README.md"
+requires-python = ">=3.11"
+# Part 1 (data layer) dependencies. Every one is permissively licensed (PLAN.md 2.3).
+dependencies = [
+    "numpy",
+    "lxml",
+    "pds4_tools",   # PDS4 labels (NASA PDS Small Bodies Node)
+    "pvl",          # PDS3 / ODL labels
+    "pyshp",        # PRADAN footprint shapefiles
+    "shapely",      # footprints and overlap
+    "pyproj",       # IAU 2015 Moon CRS and reprojection
+    "opencv-python-headless",   # CLAHE and image operations (Apache-2.0)
+    "pyyaml",       # configs/
+    "requests",     # data fetchers
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov"]
+# Added by the step that first needs them, so the base install stays light:
+#   geo:      rasterio, spiceypy                   (Part 1, Phase 2)
+#   prep:     phasepack, spectral, scikit-image     (Part 1, Phase 2)
+#   match:    torch, kornia, vismatch               (Part 2)
+#   product:  fastapi, uvicorn, jinja2, matplotlib  (Part 3)
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Quick run by default. Full run, including the multi-GB checksum checks:
+#   pytest -m ""
+addopts = "-q -m 'not slow'"
+markers = [
+    "slow: reads whole multi-GB products (e.g. ISRO MD5 checks); run with -m slow or -m ''",
+]

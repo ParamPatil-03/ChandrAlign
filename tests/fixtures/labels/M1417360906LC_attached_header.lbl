@@ -1,0 +1,102 @@
+PDS_VERSION_ID                     = PDS3
+
+/* FILE CHARACTERISTICS */
+RECORD_TYPE                        = FIXED_LENGTH
+RECORD_BYTES                       = 5064
+FILE_RECORDS                       = 104449
+LABEL_RECORDS                      = 1
+^IMAGE                             = 2
+
+/* DATA IDENTIFICATION */
+DATA_SET_ID                        = "LRO-L-LROC-3-CDR-V1.0"
+ORIGINAL_PRODUCT_ID                = nacl002b08ee
+PRODUCT_ID                         = M1417360906LC
+MISSION_NAME                       = "LUNAR RECONNAISSANCE ORBITER"
+MISSION_PHASE_NAME                 = "FOURTH EXTENDED SCIENCE MISSION"
+INSTRUMENT_HOST_NAME               = "LUNAR RECONNAISSANCE ORBITER"
+INSTRUMENT_HOST_ID                 = LRO
+INSTRUMENT_NAME                    = "LUNAR RECONNAISSANCE ORBITER CAMERA"
+INSTRUMENT_ID                      = LROC
+LRO:PREROLL_TIME                   = 2022-09-09T11:07:18.182
+START_TIME                         = 2022-09-09T11:07:18.714
+STOP_TIME                          = 2022-09-09T11:07:45.824
+LRO:SPACECRAFT_CLOCK_PREROLL_COUNT = "1/684414438:09633"
+SPACECRAFT_CLOCK_START_COUNT       = "1/684414438:44470"
+SPACECRAFT_CLOCK_STOP_COUNT        = "1/684414465:51733"
+ORBIT_NUMBER                       = 59444
+PRODUCER_ID                        = LRO_LROC_TEAM
+PRODUCT_CREATION_TIME              = 2022-09-12T15:24:24
+PRODUCER_INSTITUTION_NAME          = "ARIZONA STATE UNIVERSITY"
+PRODUCT_TYPE                       = CDR
+PRODUCT_VERSION_ID                 = "v1.9"
+UPLOAD_ID                          = "SC_2022252_0247_A_V01.txt"
+
+/* DATA DESCRIPTION */
+TARGET_NAME                        = "MOON"
+RATIONALE_DESC                     = "TARGET OF OPPORTUNITY"
+FRAME_ID                           = LEFT
+DATA_QUALITY_ID                    = "0"
+DATA_QUALITY_DESC                  = "The DATA_QUALITY_ID is set to an 8-bit
+                                      value that encodes the following data
+                                      quality information for the observation.
+                                      For each bit  a value of 0 means FALSE
+                                      and a value of 1 means TRUE. More
+                                      information about the data quality ID
+                                      can be found in the LROC EDR/CDR SIS,
+                                      section 3.3 'Label and Header
+                                      Descriptions'. Bit 1: Temperature of
+                                      focal plane array is out of bounds. Bit
+                                      2: Threshold for saturated pixels is
+                                      reached. Bit 3: Threshold for
+                                      under-saturated pixels is reached. Bit
+                                      4: Observation is missing telemetry
+                                      packets. Bit 5: SPICE information is bad
+                                      or missing. Bit 6: Observation or
+                                      housekeeping information is bad or
+                                      missing. Bit 7: Spare. Bit 8: Spare."
+
+/* ENVIRONMENT */
+LRO:TEMPERATURE_SCS                = 17.33 <degC>
+LRO:TEMPERATURE_FPA                = 21.40 <degC>
+LRO:TEMPERATURE_FPGA               = -5.76 <degC>
+LRO:TEMPERATURE_TELESCOPE          = 10.56 <degC>
+LRO:TEMPERATURE_SCS_RAW            = 2134
+LRO:TEMPERATURE_FPA_RAW            = 1944
+LRO:TEMPERATURE_FPGA_RAW           = 3182
+LRO:TEMPERATURE_TELESCOPE_RAW      = 2457
+
+/* IMAGING PARAMETERS */
+CROSSTRACK_SUMMING                 = 1
+BANDWIDTH                          = 300 <nm>
+CENTER_FILTER_WAVELENGTH           = 600 <nm>
+LINE_EXPOSURE_DURATION             = 0.516800 <ms>
+LRO:LINE_EXPOSURE_CODE             = 21
+LRO:DAC_RESET_LEVEL                = 200
+LRO:CHANNEL_A_OFFSET               = 75
+LRO:CHANNEL_B_OFFSET               = 146
+LRO:COMPAND_CODE                   = 3
+LRO:LINE_CODE                      = 51
+LRO:BTERM                          = (0, 16, 69, 103, 128)
+LRO:MTERM                          = (0.5, 0.25, 0.125, 0.0625, 0.03125)
+LRO:XTERM                          = (0, 64, 424, 536, 800)
+LRO:COMPRESSION_FLAG               = 1
+LRO:MODE                           = 7
+
+/* DATA OBJECT */
+OBJECT = IMAGE
+  LINES                 = 52224
+  LINE_SAMPLES          = 5064
+  SAMPLE_BITS           = 16
+  SAMPLE_TYPE           = LSB_INTEGER
+  SCALING_FACTOR        = 3.05185094759972e-05
+  VALID_MINIMUM         = -32752
+  NULL                  = -32768
+  LOW_REPR_SATURATION   = -32767
+  LOW_INSTR_SATURATION  = -32766
+  HIGH_INSTR_SATURATION = -32765
+  HIGH_REPR_SATURATION  = -32764
+  UNIT                  = "Scaled I/F"
+  MD5_CHECKSUM          = "d06d7dccf7db75a3713de1720059b938"
+END_OBJECT = IMAGE
+END
+                                                                                                                                                                                                                
