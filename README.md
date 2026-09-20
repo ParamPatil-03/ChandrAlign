@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 13b, shadow detection** (waiting on a hand-drawn reference mask); Step 12's DEM download still in progress.
+> This README is updated after every completed step. Last update: **Step 13e, phase congruency and MIND — Part 1 preprocessing is complete.**
 
 ---
 
@@ -27,12 +27,15 @@
 | 9 | Sun angles and lighting difference between two scenes (source of every value recorded) | GEO-01, DATA-12 | 🟡 scene level done · per-pixel layers with GEO-02 |
 | 10 | Footprint overlap and pre-filter (rejects a pair before any matcher runs) | GEO-04 | ✅ |
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
-| 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ slope · 🟡 DEM reader done, real tiles downloading |
+| 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ on real LOLA tiles |
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
-| 13b | Shadow detection → `shadow_mask` | PREP-04 | 🟡 built · plan's hand-drawn IoU check pending |
-| next | 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-05, 06, 07, 08, 02, 03 | ⏳ |
+| 13b | Shadow detection → `shadow_mask` | PREP-04 | ✅ IoU 0.894 vs a hand-traced mask (plan needs > 0.7) |
+| 13c | IIRS: score 256 bands, blend the good ones into one plane | PREP-05, PREP-06 | ✅ +43% repeatable features vs the best single band |
+| 13d | Terrain scores: how much real structure, and how many look-alikes | PREP-07, PREP-08 | ✅ |
+| 13e | Phase congruency + MIND: descriptions that survive the sun moving | PREP-02, PREP-03 | ✅ |
+| — | **Part 1 preprocessing complete.** Remaining Part 1: per-pixel geometry layers (GEO-02), ground truth (GEO-07), more pairs | GEO-02, GEO-07, DATA-08/12 | ⏳ |
 
-**Tests:** 231 passing, 3 skipped (2 wait for the DEM download, 1 for the hand-drawn shadow mask) (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 276 passing, 0 skipped (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -217,8 +220,10 @@ t = slope_aspect(patch)          # t.slope_deg, t.aspect_deg (direction the grou
 
 | DEM | Detail | Built from | Independent of our references? |
 |---|---|---|---|
-| LOLA `ldem_1024` | ~30 m (mostly interpolated between laser tracks) | laser altimetry | ✅ |
-| SLDEM2015 `_512` | ~59 m | LOLA **+ SELENE TC stereo** | ❌ (SELENE-derived) |
+| LOLA `ldem_1024` | ~30 m, but **mostly interpolated** between laser tracks, so slopes come out smoothed | laser altimetry | ✅ |
+| SLDEM2015 `_512` | ~59 m, with real stereo detail | LOLA **+ SELENE TC stereo** | ❌ (SELENE-derived) |
+
+**Measured over our test region:** the two agree on absolute height (median difference −0.41 m, typical scatter 3.7 m, worst 157 m on steep walls), but SLDEM shows **nearly twice the slope** (median 2.26° vs LOLA's 1.24°) because LOLA's grid is interpolated. So: **SLDEM for slope detail, LOLA whenever independence from SELENE matters.**
 
 Heights are converted to metres from each label's `UNIT` (LOLA stores DN × 0.5 m, SLDEM stores km). The label's `OFFSET` is the Moon's reference radius and is deliberately **not** added. Aspect is NaN on flat ground and slope is NaN wherever the DEM has no height.
 
@@ -243,7 +248,68 @@ ready = prepare_plane(plane)                         # the shadow mask is carrie
 ready.shadow_mask                                    # True = shadow: exclude from matching
 ```
 
-Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors.
+Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors. Against a mask **traced by hand** on that crop: **IoU 0.894**, 96.1% of pixels agree. Both kinds of disagreement trace to hand-drawing limits rather than detector error — pixels only the human marked have median brightness 25 DN (sunlit ground is 38, shadow is 4: brush overspill on a jagged edge), while pixels only the detector marked sit at 5 DN, the sensor's black floor.
+
+### IIRS: 256 bands → one image
+
+```python
+from chandralign.preprocess.iirs_composite import product_band_selection, iirs_composite_plane
+
+selection = product_band_selection(iirs_meta)      # score the bands ONCE per product
+plane = iirs_composite_plane(iirs_meta, window, selection)
+selection.bands, selection.rejected                # which bands, and why the others went
+plane.preprocess_chain[0]                          # 'iirs_composite_125of256_snr>=30_refl'
+```
+
+Every band is scored from the data (signal = median, noise = robust spread of a diagonal double difference). On our real cube **125 of 256 bands are kept**: 3 are dropped for dead pixels (bands 0–2, 9.7%/4.5%/1.6% dead), 20 for low SNR, and 108 for being past 3,000 nm, where the Moon's own **thermal glow** dominates and the image shows temperature rather than surface appearance. Kept bands are blended with inverse-variance weights.
+
+**Use one selection for the whole product.** If each tile scored its own bands, neighbouring tiles would be built from different data and stop being comparable.
+
+**Two things this is not:** it is not a panchromatic response (pan cameras see 400–800 nm, IIRS starts at 800 — there is no overlap; it is a spatial-structure proxy), and per-band wavelengths are **not in the label** — only the overall 800–5,000 nm range is stated, so band→wavelength is interpolated and marked approximate.
+
+### Terrain scores: is this tile matchable, and is it ambiguous?
+
+```python
+from chandralign.preprocess.texture import with_terrain_scores
+
+plane = with_terrain_scores(plane)
+plane.texture_score          # real structure, noise removed. Low -> featureless: use phase congruency, widen the search
+plane.repetitiveness_score   # share of features with a look-alike here. High -> tighten the ratio test. None = too few features
+```
+
+Measured on real OHRC crops (committed as fixtures):
+
+| Crop | texture | repetitiveness |
+|---|---|---|
+| crater field | **0.0115** | **0.107** |
+| featureless dark area | 0.0000 | 0.000 |
+| noise-dominated dark area | 0.0017 | 0.000 |
+
+**Texture measures structure, not noise.** A noise-dominated area has a large *raw* band-pass response; the score removes the part that noise explains (~89% for pure noise), so it reports almost nothing — which is the honest answer, because there is nothing there to match.
+
+**Repetitiveness is not autocorrelation.** Autocorrelation finds *periodic* layouts; real crater fields are scattered, and it gives them 0.111 against 0.118 for ordinary terrain — no separation. The score compares descriptors instead, so identical craters are flagged whether they sit on a grid (1.00) or scattered off it (0.47), while the same number of craters at *varied* sizes correctly scores ~0. **Too few features returns `None`, never 0.**
+
+### Surviving the sun: phase congruency and MIND
+
+```python
+from chandralign.preprocess.phase_congruency import phase_congruency_plane, phase_congruency, mind
+
+plane = phase_congruency_plane(plane)   # array becomes the structure map; chain records it
+pc = phase_congruency(tile)             # pc.energy (0..1) and pc.orientation_index — the MIM RIFT consumes
+descriptor = mind(tile)                 # (H, W, 8); multi-channel, so it does NOT fit ImagePlane.array
+```
+
+**Why this matters, measured on real lunar relief.** One LOLA/SLDEM patch rendered under the two sun geometries our own products have (OHRC: 7.3° up from the west; TMC-2: 44° up from the east):
+
+| | correlation between the two |
+|---|---|
+| raw brightness | **−0.96 — inverted** |
+| phase congruency | **+0.86** |
+| MIND | **+0.90** |
+
+A brightness-based matcher on that pair is not weakly informed, it is **actively misled**: slopes bright under one sun are dark under the other. Under contrast inversion (a different sensor) raw goes to −1.00 while both hold +1.00.
+
+**They fail on different things, so use both:** phase congruency holds a pure 90° azimuth change (+0.45 to +0.54) where MIND collapses (+0.02); MIND holds a strong gamma shift (+0.96) where phase congruency drops (+0.62). PC for the sun moving, MIND for a sensor responding differently. Phase congruency costs ~0.7 s per 512 px tile and is cached (554× on a repeat).
 
 ### What is NOT there yet (don't build on it)
 
@@ -253,8 +319,6 @@ Per image: the black level (1st percentile) and sunlit level (median) set a thre
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
-| Real elevation for our test region | LOLA / SLDEM tiles still downloading (~0.7 MB/s) | DATA-13 |
-| Phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02, 03, 05–08 |
 
 ---
 
@@ -270,6 +334,11 @@ Worth knowing before designing anything downstream:
 6. **One OHRC scene gives both an easy pair and a stress pair.** OHRC vs NAC M102000149RC differ by only **3°** in incidence (Easy tier). OHRC vs NAC M1417360906LC differ by **75°** (illumination stress test). Same ground, real data.
 7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
 8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
+10. **Real terrain under the OHRC scene** (LOLA, 29.6 m/px, stitched across the equator from two tiles): heights −1,905 to −1,585 m, 320 m of relief, no gaps. Slopes: median 1.2°, 95th percentile 5.4°, max 28°. The tile join is invisible — the height step across it (0.51 m) is smaller than the typical step elsewhere (0.58 m).
+11. **Raw keypoint count is a misleading quality measure.** On the IIRS cube the noisiest single band scores the *most* SIFT keypoints (1,413 at noise 0.048) while the quietest composite scores fewer (1,319 at 0.042) — SIFT fires on noise. Measured on pairs with independent noise, where only real features can match, the composite gives **+43%** more genuine matches (1,042 vs 727). PLAN.md P1-T14's keypoint-count acceptance wording is superseded for PREP-06; the change is recorded in FEATURES.csv.
+12. **LOLA and SLDEM agree on height but not on slope.** Median height difference −0.41 m (scatter 3.7 m), yet median slope 1.24° (LOLA) vs 2.26° (SLDEM). LOLA's 30 m grid is interpolated between laser tracks, so it understates roughness; SLDEM carries real SELENE stereo detail but is not independent of SELENE. Pick per purpose, and never judge a SELENE registration with SLDEM.
+13. **Three plan criteria did not survive measurement, and were replaced on evidence.** Raw keypoint count rewards noise (13c); autocorrelation misses real crater fields because they are scattered rather than periodic (13d); and a gamma shift barely dents raw-intensity correlation (+0.85 to +0.97, it is monotonic), so it cannot demonstrate illumination invariance (13e) — phase congruency actually scores *lower* than raw on it. Each replacement is recorded in FEATURES.csv with the measurement that justified it.
+14. **The sun moving does not weaken brightness matching, it inverts it.** On real relief under our own two sun geometries, raw brightness correlates **−0.96**. This is the single clearest statement of why the project exists.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---

@@ -212,3 +212,19 @@ def test_real_lola_and_sldem_agree_on_heights():
     sldem = dem_patch(_have(SLDEM_DIR), OHRC_BOX)
     diff = sldem.sample(*np.meshgrid(lola.lat[5:-5], lola.lon[5:-5], indexing="ij")) - lola.heights_m[5:-5, 5:-5]
     assert np.nanmedian(np.abs(diff)) < 50                    # metres; unit or offset errors give km
+
+
+@pytest.mark.skipif(len(_have(LOLA_DIR)) < 2, reason="LOLA tiles not downloaded")
+def test_real_tiles_join_without_a_seam():
+    """The OHRC box straddles the equator, where the two LOLA tiles meet.
+
+    A misaligned join would show as a height jump along that one row. The step
+    across the join must be no larger than the typical row-to-row step nearby.
+    """
+    patch = dem_patch(_have(LOLA_DIR), OHRC_BOX)
+    h = patch.heights_m
+    seam = int(np.argmin(np.abs(patch.lat)))                 # the row nearest latitude 0
+    assert 0 < seam < len(patch.lat) - 1
+    across_join = np.abs(h[seam + 1] - h[seam]).mean()
+    typical = np.abs(np.diff(h, axis=0)).mean()
+    assert across_join < 2 * typical

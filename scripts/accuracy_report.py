@@ -300,6 +300,114 @@ def grid_path_of(meta):
     return grid_path(meta)
 
 
+def check_shadow_iou(samples: int, rng):
+    """Detected shadows vs a mask traced BY HAND on a real OHRC crater crop (PREP-04)."""
+    import cv2
+    from chandralign.preprocess.shadow_mask import detect_shadows, mask_iou
+    crop_path = ROOT / "tests" / "fixtures" / "images" / "ohrc_shadow_crop.npy"
+    mask_path = ROOT / "tests" / "fixtures" / "images" / "ohrc_shadow_crop_mask.png"
+    if not mask_path.exists():
+        return {"correct": 0, "total": 0, "note": "no hand-drawn mask"}, {}
+    drawn = cv2.imread(str(mask_path), cv2.IMREAD_COLOR)
+    truth = (drawn[:, :, 2] > 200) & (drawn[:, :, 1] < 60) & (drawn[:, :, 0] < 60)
+    crop = np.load(crop_path).astype(float)
+    mask = detect_shadows(crop, np.ones(crop.shape, bool)).mask
+    agreed = int((mask == truth).sum())
+    # Where we disagree, is the pixel actually dark? Sunlit ground is ~38 DN, shadow ~4.
+    hand_only, code_only = truth & ~mask, mask & ~truth
+    return ({"correct": agreed, "total": int(truth.size),
+             "iou": round(mask_iou(mask, truth), 4),
+             "hand_only_median_DN": float(np.median(crop[hand_only])) if hand_only.any() else None,
+             "code_only_median_DN": float(np.median(crop[code_only])) if code_only.any() else None},
+            {})
+
+
+def check_iirs_composite(samples: int, rng):
+    """Repeatable features in the IIRS composite vs the best single band (PREP-06).
+
+    Two images of the same terrain with independent noise: only real features match.
+    """
+    import cv2
+    from chandralign.io.pds_raster import read_raster
+    from chandralign.preprocess.iirs_composite import product_band_selection
+    from chandralign.preprocess.radiometric import clahe, percentile_stretch
+
+    meta = parse_label(products()["IIRS"])
+    sel = product_band_selection(meta)
+    cube = read_raster(meta, Window(6000, 0, 256, 250)).astype(np.float64)
+    valid = np.ones(cube.shape[1:], bool)
+    sift, bf = cv2.SIFT_create(), cv2.BFMatcher()
+
+    def prep(img):
+        return (clahe(percentile_stretch(img.astype(np.float32), valid)[0], valid) * 255).astype(np.uint8)
+
+    def matches(a, b):
+        ka, da = sift.detectAndCompute(prep(a), None)
+        kb, db = sift.detectAndCompute(prep(b), None)
+        good = [m for m, n in bf.knnMatch(da, db, k=2) if m.distance < 0.75 * n.distance]
+        if len(good) < 8:
+            return len(ka), 0
+        pa = np.float32([ka[g.queryIdx].pt for g in good])
+        pb = np.float32([kb[g.trainIdx].pt for g in good])
+        _, inl = cv2.estimateAffinePartial2D(pa, pb, method=cv2.RANSAC, ransacReprojThreshold=1.0)
+        return len(ka), int(inl.sum())
+
+    best = max(sel.bands, key=lambda b: sel.snr[b])
+    kp_single, single = matches(cube[best], cube[best + 1])
+    blended = []
+    for half in (sel.bands[0::2], sel.bands[1::2]):
+        idx = list(half)
+        w = sel.snr[idx] ** 2
+        scaled = (cube[idx] - sel.signal[idx][:, None, None]) / sel.noise[idx][:, None, None]
+        blended.append((scaled * (w / w.sum())[:, None, None]).sum(0))
+    kp_comp, paired = matches(*blended)
+    return ({"correct": paired, "total": paired + single, "bands_kept": len(sel.bands),
+             "composite_matches": paired, "best_single_band_matches": single,
+             "raw_keypoints_composite": kp_comp, "raw_keypoints_single": kp_single}, {})
+
+
+def check_terrain_scores(samples: int, rng):
+    """Texture and repetitiveness on three real OHRC crops of known character (PREP-07/08)."""
+    from chandralign.preprocess.texture import terrain_scores
+    crops = ROOT / "tests" / "fixtures" / "images"
+    got = {}
+    for tag in ("crater_field", "smooth", "noisy_dark"):
+        img = np.load(crops / f"ohrc_{tag}.npy").astype(np.float64) / 255.0
+        s = terrain_scores(img)
+        got[tag] = {"texture": round(s.texture, 5), "raw": round(s.raw_structure, 5),
+                    "repetitive": round(s.repetitiveness, 3) if s.repetitiveness is not None else None}
+    # the three orderings that must hold for the scores to be useful at all
+    rep = lambda tag: got[tag]["repetitive"] or 0.0
+    checks = [got["crater_field"]["texture"] > 10 * max(got["smooth"]["texture"], 1e-4),
+              rep("crater_field") > 3 * max(rep("noisy_dark"), 0.01),
+              got["noisy_dark"]["texture"] < got["crater_field"]["texture"] / 5]
+    return {"correct": int(sum(checks)), "total": len(checks), **{k: v for k, v in got.items()}}, {}
+
+
+def check_illumination_invariance(samples: int, rng):
+    """What survives the sun moving, on real lunar relief (PREP-02/03).
+
+    One LOLA/SLDEM patch rendered under the two sun geometries our own products
+    have. Raw brightness INVERTS; the structural descriptions do not.
+    """
+    from chandralign.geometry.dem_terrain import hillshade, slope_aspect
+    from chandralign.io.dem import dem_patch, find_tiles
+    from chandralign.preprocess.phase_congruency import mind, phase_congruency
+
+    tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
+    patch = dem_patch(tiles, (-0.45, 0.38, 23.45, 23.60))
+    terrain = slope_aspect(patch)
+    a = hillshade(terrain, 269.8, 7.3)[3:-3, 3:-3]      # OHRC's sun
+    b = hillshade(terrain, 104.3, 44.0)[3:-3, 3:-3]     # TMC-2's sun
+    corr = lambda x, y: float(np.corrcoef(np.asarray(x).ravel(), np.asarray(y).ravel())[0, 1])
+    raw = corr(a, b)
+    pc = corr(phase_congruency(a).energy, phase_congruency(b).energy)
+    md = corr(mind(a), mind(b))
+    checks = [raw < 0.0, pc > 0.7, md > 0.7]
+    return ({"correct": int(sum(checks)), "total": len(checks), "raw_brightness": round(raw, 4),
+             "phase_congruency": round(pc, 4), "mind": round(md, 4)}, {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -311,6 +419,14 @@ CHECKS = [
     ("10", "Footprint overlap", "check_overlap vs area-weighted Monte-Carlo, all 11 real pairs", check_overlap_accuracy),
     ("11", "Geolocation / projection", "SELENE corners vs label; every ISRO grid node; ground->pixel inverse; "
      "map round trip", check_geolocation),
+("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
+     check_shadow_iou),
+    ("13c", "IIRS composite", "Repeatable features (independent-noise pair) vs the best single band",
+     check_iirs_composite),
+    ("13d", "Terrain scores", "Texture and repetitiveness on real crops of known character",
+     check_terrain_scores),
+    ("13e", "Illumination invariance", "Real relief under our two real suns: raw vs phase congruency vs MIND",
+     check_illumination_invariance),
 ]
 
 

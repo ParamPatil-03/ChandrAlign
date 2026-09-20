@@ -78,3 +78,28 @@ def slope_aspect(patch) -> Terrain:
     gx, gy = horn_gradients(patch.heights_m, dx_m, dy_m)
     slope, aspect = slope_aspect_from_gradients(gx, gy)
     return Terrain(slope, aspect, patch.source, patch.independent_of_references)
+
+
+def hillshade(terrain: Terrain, sun_azimuth_deg: float, sun_elevation_deg: float) -> np.ndarray:
+    """Lambertian shading of a slope/aspect pair under a given sun, in 0..1.
+
+    cos(incidence) for a surface of the given slope and aspect: 1 where the ground
+    faces the sun squarely, 0 where it turns away. This is how a camera would see
+    the terrain if the surface reflected equally in all directions -- enough to ask
+    what a descriptor does when the SUN moves and the GROUND does not.
+
+    It is a rendering aid for exactly that question, not a photometric model of the
+    Moon: it ignores opposition surge, roughness and albedo variation, and it does
+    not cast shadows (a slope turned away goes to zero, but it cannot be shaded by
+    a ridge somewhere else).
+    """
+    slope = np.radians(terrain.slope_deg)
+    aspect = np.radians(terrain.aspect_deg)
+    sun_zenith = np.radians(90.0 - sun_elevation_deg)
+    sun_azimuth = np.radians(sun_azimuth_deg)
+    cos_incidence = (np.cos(sun_zenith) * np.cos(slope)
+                     + np.sin(sun_zenith) * np.sin(slope) * np.cos(sun_azimuth - aspect))
+    # Flat ground has no aspect (NaN); it simply faces straight up.
+    flat = ~np.isfinite(aspect) & np.isfinite(slope)
+    cos_incidence = np.where(flat, np.cos(sun_zenith), cos_incidence)
+    return np.clip(cos_incidence, 0.0, 1.0)
