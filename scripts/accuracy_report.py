@@ -366,6 +366,24 @@ def check_iirs_composite(samples: int, rng):
              "raw_keypoints_composite": kp_comp, "raw_keypoints_single": kp_single}, {})
 
 
+def check_terrain_scores(samples: int, rng):
+    """Texture and repetitiveness on three real OHRC crops of known character (PREP-07/08)."""
+    from chandralign.preprocess.texture import terrain_scores
+    crops = ROOT / "tests" / "fixtures" / "images"
+    got = {}
+    for tag in ("crater_field", "smooth", "noisy_dark"):
+        img = np.load(crops / f"ohrc_{tag}.npy").astype(np.float64) / 255.0
+        s = terrain_scores(img)
+        got[tag] = {"texture": round(s.texture, 5), "raw": round(s.raw_structure, 5),
+                    "repetitive": round(s.repetitiveness, 3) if s.repetitiveness is not None else None}
+    # the three orderings that must hold for the scores to be useful at all
+    rep = lambda tag: got[tag]["repetitive"] or 0.0
+    checks = [got["crater_field"]["texture"] > 10 * max(got["smooth"]["texture"], 1e-4),
+              rep("crater_field") > 3 * max(rep("noisy_dark"), 0.01),
+              got["noisy_dark"]["texture"] < got["crater_field"]["texture"] / 5]
+    return {"correct": int(sum(checks)), "total": len(checks), **{k: v for k, v in got.items()}}, {}
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -381,6 +399,8 @@ CHECKS = [
      check_shadow_iou),
     ("13c", "IIRS composite", "Repeatable features (independent-noise pair) vs the best single band",
      check_iirs_composite),
+    ("13d", "Terrain scores", "Texture and repetitiveness on real crops of known character",
+     check_terrain_scores),
 ]
 
 

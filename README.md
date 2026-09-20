@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 13c, IIRS band quality and composite** (PREP-05, PREP-06).
+> This README is updated after every completed step. Last update: **Step 13d, flat- and repetitive-terrain scores** (PREP-07, PREP-08).
 
 ---
 
@@ -31,9 +31,10 @@
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
 | 13b | Shadow detection → `shadow_mask` | PREP-04 | ✅ IoU 0.894 vs a hand-traced mask (plan needs > 0.7) |
 | 13c | IIRS: score 256 bands, blend the good ones into one plane | PREP-05, PREP-06 | ✅ +43% repeatable features vs the best single band |
-| next | 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-07, 08, 02, 03 | ⏳ |
+| 13d | Terrain scores: how much real structure, and how many look-alikes | PREP-07, PREP-08 | ✅ |
+| next | 13e phase congruency, MIND (lighting-proof descriptors) | PREP-02, 03 | ⏳ |
 
-**Tests:** 249 passing, 0 skipped (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 264 passing, 0 skipped (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -265,6 +266,28 @@ Every band is scored from the data (signal = median, noise = robust spread of a 
 
 **Two things this is not:** it is not a panchromatic response (pan cameras see 400–800 nm, IIRS starts at 800 — there is no overlap; it is a spatial-structure proxy), and per-band wavelengths are **not in the label** — only the overall 800–5,000 nm range is stated, so band→wavelength is interpolated and marked approximate.
 
+### Terrain scores: is this tile matchable, and is it ambiguous?
+
+```python
+from chandralign.preprocess.texture import with_terrain_scores
+
+plane = with_terrain_scores(plane)
+plane.texture_score          # real structure, noise removed. Low -> featureless: use phase congruency, widen the search
+plane.repetitiveness_score   # share of features with a look-alike here. High -> tighten the ratio test. None = too few features
+```
+
+Measured on real OHRC crops (committed as fixtures):
+
+| Crop | texture | repetitiveness |
+|---|---|---|
+| crater field | **0.0115** | **0.107** |
+| featureless dark area | 0.0000 | 0.000 |
+| noise-dominated dark area | 0.0017 | 0.000 |
+
+**Texture measures structure, not noise.** A noise-dominated area has a large *raw* band-pass response; the score removes the part that noise explains (~89% for pure noise), so it reports almost nothing — which is the honest answer, because there is nothing there to match.
+
+**Repetitiveness is not autocorrelation.** Autocorrelation finds *periodic* layouts; real crater fields are scattered, and it gives them 0.111 against 0.118 for ordinary terrain — no separation. The score compares descriptors instead, so identical craters are flagged whether they sit on a grid (1.00) or scattered off it (0.47), while the same number of craters at *varied* sizes correctly scores ~0. **Too few features returns `None`, never 0.**
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -273,7 +296,7 @@ Every band is scored from the data (signal = median, noise = robust spread of a 
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
-| Phase congruency, MIND, terrain scores | Not built yet | PREP-02, 03, 07, 08 |
+| Phase congruency, MIND | Not built yet | PREP-02, 03 |
 
 ---
 
@@ -292,6 +315,7 @@ Worth knowing before designing anything downstream:
 10. **Real terrain under the OHRC scene** (LOLA, 29.6 m/px, stitched across the equator from two tiles): heights −1,905 to −1,585 m, 320 m of relief, no gaps. Slopes: median 1.2°, 95th percentile 5.4°, max 28°. The tile join is invisible — the height step across it (0.51 m) is smaller than the typical step elsewhere (0.58 m).
 11. **Raw keypoint count is a misleading quality measure.** On the IIRS cube the noisiest single band scores the *most* SIFT keypoints (1,413 at noise 0.048) while the quietest composite scores fewer (1,319 at 0.042) — SIFT fires on noise. Measured on pairs with independent noise, where only real features can match, the composite gives **+43%** more genuine matches (1,042 vs 727). PLAN.md P1-T14's keypoint-count acceptance wording is superseded for PREP-06; the change is recorded in FEATURES.csv.
 12. **LOLA and SLDEM agree on height but not on slope.** Median height difference −0.41 m (scatter 3.7 m), yet median slope 1.24° (LOLA) vs 2.26° (SLDEM). LOLA's 30 m grid is interpolated between laser tracks, so it understates roughness; SLDEM carries real SELENE stereo detail but is not independent of SELENE. Pick per purpose, and never judge a SELENE registration with SLDEM.
+13. **Two "obvious" quality measures are traps, both caught by measurement.** Raw keypoint count rewards noise (13c), and autocorrelation misses real crater fields because they are scattered rather than periodic (13d). In both cases the plan's proposed method was replaced with one validated against real data, and the change is recorded in FEATURES.csv.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
