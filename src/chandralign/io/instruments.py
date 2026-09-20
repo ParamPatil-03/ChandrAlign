@@ -129,3 +129,89 @@ def scale_gap(a: str, b: str) -> float:
     """
     ga, gb = get_spec(a).gsd_m, get_spec(b).gsd_m
     return max(ga, gb) / min(ga, gb)
+
+
+# ----------------------------------------------------------------------------- GEO-06: scale pre-check
+
+DEFAULT_CASCADE_RATIO = 4.0      # fallback if configs/regimes.yaml does not say
+
+
+@dataclass(frozen=True)
+class ScaleCheck:
+    """Whether two products may be matched directly, decided before any matcher runs."""
+    instrument_a: str
+    instrument_b: str
+    gsd_a_m: float
+    gsd_b_m: float
+    ratio: float                 # coarser / finer, always >= 1
+    threshold: float
+    extreme: bool                # True -> must go through the cascade (MATCH-10)
+    source: str                  # "label" | "nominal" | "mixed"
+    reason: str
+
+    @property
+    def route(self) -> str:
+        return "cascade" if self.extreme else "direct"
+
+
+def cascade_threshold(config_name: str = "regimes") -> float:
+    """The scale ratio at which routing switches to the cascade, from Member B's config.
+
+    Read rather than hard-coded so that when the ablation tunes the threshold, the
+    pre-check and the regime selector cannot drift apart.
+    """
+    from chandralign import config as _config
+    try:
+        rules = _config.load(config_name).get("rules", []) or []
+    except Exception:
+        return DEFAULT_CASCADE_RATIO
+    for rule in rules:
+        value = (rule.get("when") or {}).get("scale_ratio_gte")
+        if value is not None:
+            return float(value)
+    return DEFAULT_CASCADE_RATIO
+
+
+def _gsd_of(scene) -> tuple[str, float, str]:
+    """(instrument, gsd_m, source) from a SceneMeta, or from a bare instrument name."""
+    if isinstance(scene, str):
+        return scene, get_spec(scene).gsd_m, "nominal"
+    return str(scene.instrument), float(scene.gsd_m), "label"
+
+
+def scale_precheck(a, b, threshold: Optional[float] = None) -> ScaleCheck:
+    """Can these two be matched directly, or must they go through the cascade? (GEO-06)
+
+    Accepts SceneMeta objects or bare instrument names. A SceneMeta carries the GSD
+    the LABEL states, which is preferred, because the registry's nominal figures are
+    the mission's design values and our real products differ from them substantially:
+
+        OHRC   nominal 0.25   label  0.30 m   (20.0% out)
+        TMC-2  nominal 5.00   label  4.41 m   (11.8% out)
+        IIRS   nominal 80.0   label 97.15 m   (21.4% out)
+
+    MEASURED HONESTLY: across all 21 instrument pairings in the registry, using the
+    label GSD instead of the nominal one changes NO routing decision -- every ratio
+    sits far from the threshold. It still matters for two reasons. TMC-2 <-> MI is
+    nominally 4.00 against a threshold of 4.00, which is a knife-edge that a 20%
+    error could tip either way; with the label GSD it is 4.54 and no longer marginal.
+    And the reported ratio is what the cascade uses to plan its steps, so being 20%
+    wrong about it matters even when the yes/no answer does not change.
+
+    This runs on metadata alone -- no pixels are read -- so an OHRC <-> IIRS request
+    is refused before a matcher is ever constructed.
+    """
+    threshold = cascade_threshold() if threshold is None else float(threshold)
+    name_a, gsd_a, src_a = _gsd_of(a)
+    name_b, gsd_b, src_b = _gsd_of(b)
+    if gsd_a <= 0 or gsd_b <= 0:
+        raise ValueError(f"a GSD must be positive, got {gsd_a} and {gsd_b}")
+    ratio = max(gsd_a, gsd_b) / min(gsd_a, gsd_b)
+    extreme = ratio >= threshold
+    source = src_a if src_a == src_b else "mixed"
+    reason = (f"{name_a} {gsd_a:g} m vs {name_b} {gsd_b:g} m is {ratio:.2f}x, "
+              + (f"at or past the {threshold:g}x limit: no matcher has documented "
+                 "evaluation at this scale gap, so route to the cascade"
+                 if extreme else
+                 f"within the {threshold:g}x limit: direct matching is allowed"))
+    return ScaleCheck(name_a, name_b, gsd_a, gsd_b, ratio, threshold, extreme, source, reason)

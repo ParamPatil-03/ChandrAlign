@@ -408,6 +408,64 @@ def check_illumination_invariance(samples: int, rng):
              "phase_congruency": round(pc, 4), "mind": round(md, 4)}, {})
 
 
+
+def check_per_pixel_geometry(samples: int, rng):
+    """GEO-02: per-pixel angles, verified against geometry that holds by definition.
+
+    Three independent things have to be true at once, on all three real products:
+      * at the scene centre the derived incidence reproduces the LABEL's value
+      * the spherical triangle inequality holds at every pixel, so phase is never
+        outside |incidence - emission| .. incidence + emission
+      * emission is ~0 on the nadir column and larger at both swath edges
+    Also reports the spread a single scene-level angle hides, which is why GEO-02
+    exists: fine on OHRC, 8 degrees wrong at the ends of TMC-2 and IIRS.
+    """
+    from chandralign.geometry.solar import geometry_layers
+
+    correct = total = 0
+    spreads = {}
+    for name, label in ((k, v) for k, v in products().items() if k in ("OHRC", "TMC2", "IIRS")):
+        meta = parse_label(label)
+        n_rows, n_cols = meta.array_shape
+        rows = np.linspace(0, n_rows - 1, 41).astype(int)
+        cols = np.linspace(0, n_cols - 1, 41).astype(int)
+        g = geometry_layers(meta, rows, cols)
+        i, e, ph = g.incidence_deg, g.emission_deg, g.phase_deg
+
+        total += 3
+        correct += abs(float(i[20, 20]) - meta.solar_incidence_deg) < 0.15
+        correct += bool(np.all(ph <= i + e + 1e-6) and np.all(ph >= np.abs(i - e) - 1e-6))
+        correct += bool(e[:, 20].max() < 0.5 <= min(e[:, 0].mean(), e[:, -1].mean()))
+        spreads[name] = round(float(i.max() - i.min()), 3)
+    return ({"correct": correct, "total": total, "incidence_spread_deg": spreads}, {})
+
+
+
+def check_label_cross_validation(samples: int, rng):
+    """GEO-07: every label quantity recomputed by a route the label did not use.
+
+    Optics (pitch x altitude / focal length), corner geometry (scene size / pixel
+    count) and orbital mechanics (ground speed x line period) are three independent
+    chains. Counts how many of the available checks agree, and reports what was found:
+    OHRC's line-period UNIT is wrong by 1000x, IIRS is 2x2 binned, and the two ISRO
+    corner sets disagree by kilometres on the long strips.
+    """
+    from chandralign.evaluate.groundtruth import cross_validate
+
+    correct = total = 0
+    found = {}
+    for name, label in ((k, v) for k, v in products().items() if k in ("OHRC", "TMC2", "IIRS")):
+        report = cross_validate(parse_label(label))
+        total += len(report.checks)
+        correct += sum(1 for d in report.checks if d.agrees)
+        found[name] = {
+            "checks": len(report.checks),
+            "failed": [d.name for d in report.failures],
+            "corner_disagreement_m": round(report.corner_disagreement_m or 0.0, 1),
+        }
+    return ({"correct": correct, "total": total, "per_product": found}, {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -419,7 +477,9 @@ CHECKS = [
     ("10", "Footprint overlap", "check_overlap vs area-weighted Monte-Carlo, all 11 real pairs", check_overlap_accuracy),
     ("11", "Geolocation / projection", "SELENE corners vs label; every ISRO grid node; ground->pixel inverse; "
      "map round trip", check_geolocation),
-("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
+    ("12b", "Per-pixel sun/camera angles", "Label value at scene centre; spherical triangle inequality; nadir column vs swath edge", check_per_pixel_geometry),
+    ("12c", "Label cross-validation", "Optics, corner geometry and orbital mechanics vs what the label states. NOTE: the 2 disagreements are real defects FOUND in ISRO labels, not our errors", check_label_cross_validation),
+    ("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
      check_shadow_iou),
     ("13c", "IIRS composite", "Repeatable features (independent-noise pair) vs the best single band",
      check_iirs_composite),

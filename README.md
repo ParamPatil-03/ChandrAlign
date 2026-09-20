@@ -33,9 +33,12 @@
 | 13c | IIRS: score 256 bands, blend the good ones into one plane | PREP-05, PREP-06 | ✅ +43% repeatable features vs the best single band |
 | 13d | Terrain scores: how much real structure, and how many look-alikes | PREP-07, PREP-08 | ✅ |
 | 13e | Phase congruency + MIND: descriptions that survive the sun moving | PREP-02, PREP-03 | ✅ |
-| — | **Part 1 preprocessing complete.** Remaining Part 1: per-pixel geometry layers (GEO-02), ground truth (GEO-07), more pairs | GEO-02, GEO-07, DATA-08/12 | ⏳ |
+| 14 | Per-pixel sun and camera angles (incidence, emission, phase) | GEO-01, GEO-02 | ✅ derived on all 3 real products |
+| 15 | Scale pre-check: refuse an impossible pairing before matching | GEO-06 | ✅ OHRC↔IIRS = 323.8× → cascade |
+| 16 | Label cross-validation against independent physics | GEO-07 | ⚠️ metadata half done; DEM half needs Part 2's matcher |
+| — | Remaining Part 1: the DEM half of GEO-07, more TMC-2↔SELENE pairs | GEO-07, DATA-08/12 | ⏳ |
 
-**Tests:** 333 passing on `main` (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 376 passing on `main` (`pytest -m ""`), including checks on every real product we hold.
 One test skips: `test_adapter.py` needs the optional `learned` extra (torch), installed with `pip install -e ".[learned]"`.
 
 **Both parts are now in `main`** (merge `ba4142a`). Part 1 preprocessing and Member B's matching engine sit
@@ -159,6 +162,39 @@ Every value records where it came from: `"label"`, `"ode_catalogue"` or `None` (
 | CH-2 (all three) | label | label | **unknown** |
 | LRO NAC | ODE catalogue | **unknown** | ODE catalogue |
 | SELENE TC mosaic | **none** (many passes) | **none** | **none** |
+
+### Per-pixel sun and camera angles (GEO-02, for the physics filter)
+
+The table above is *scene-level*. A whole-product incidence is a fair description of
+OHRC and a poor one of TMC-2 and IIRS, because those strips are 800-1,000 km long and
+the incidence genuinely changes down them.
+
+```python
+import numpy as np
+from chandralign.geometry.solar import geometry_layers
+
+rows = np.linspace(0, meta.array_shape[0] - 1, 41).astype(int)   # subsample: strips are huge
+cols = np.linspace(0, meta.array_shape[1] - 1, 41).astype(int)
+g = geometry_layers(meta, rows, cols)
+
+g.source                      # "derived" -- NOT "label": no CH-2 label has angle backplanes
+g.incidence_deg               # sun angle from the vertical, per sampled pixel
+g.emission_deg                # camera angle from the vertical: ~0 on the nadir column
+g.phase_deg                   # sun-ground-camera angle
+```
+
+Measured spread across each real product, and why this feature exists:
+
+| Product | Ground covered | Incidence varies by | Label states |
+|---|---|---|---|
+| OHRC | 25 km | **0.14°** | 82.73° (fine) |
+| TMC-2 | 812 km | **7.80°** | 45.99° (~8° off at the ends) |
+| IIRS | 1,042 km | **8.30°** | 32.68° (same) |
+
+Derived from the sub-solar point, which the labelled `(incidence, azimuth)` pair fixes
+exactly — **no SPICE kernel and no ISIS3 needed**. `emission_deg` and `phase_deg` are
+**withheld (None)** rather than guessed when the label gives no spacecraft altitude, or
+when the roll exceeds 1° and the nadir-track assumption fails.
 
 ### Do two products show the same ground? (run this before matching)
 
@@ -343,6 +379,13 @@ Worth knowing before designing anything downstream:
 12. **LOLA and SLDEM agree on height but not on slope.** Median height difference −0.41 m (scatter 3.7 m), yet median slope 1.24° (LOLA) vs 2.26° (SLDEM). LOLA's 30 m grid is interpolated between laser tracks, so it understates roughness; SLDEM carries real SELENE stereo detail but is not independent of SELENE. Pick per purpose, and never judge a SELENE registration with SLDEM.
 13. **Three plan criteria did not survive measurement, and were replaced on evidence.** Raw keypoint count rewards noise (13c); autocorrelation misses real crater fields because they are scattered rather than periodic (13d); and a gamma shift barely dents raw-intensity correlation (+0.85 to +0.97, it is monotonic), so it cannot demonstrate illumination invariance (13e) — phase congruency actually scores *lower* than raw on it. Each replacement is recorded in FEATURES.csv with the measurement that justified it.
 14. **The sun moving does not weaken brightness matching, it inverts it.** On real relief under our own two sun geometries, raw brightness correlates **−0.96**. This is the single clearest statement of why the project exists.
+15. **One sun angle per product is honest for OHRC and wrong for the other two.** ISRO labels state a single incidence and azimuth for a whole product. Derived per pixel, incidence varies **0.14°** across OHRC (25 km of ground), **7.80°** across TMC-2 (812 km) and **8.30°** across IIRS (1,042 km). An 8° error matters to a physics-based outlier filter asked whether two patches can be the same ground — hence GEO-02.
+16. **No Chandrayaan-2 label carries angle backplanes.** Only `sun_azimuth`, `sun_elevation` and `solar_incidence`, one value each. The per-pixel layers are therefore **derived**, never read, and `GeometryLayers.source` says `"derived"` so nobody downstream mistakes them for label truth. This made GEO-01's original `done_when` (`source == "label"`) impossible to satisfy; it is corrected in FEATURES.csv.
+17. **Off-nadir emission needs the sphere, not flat ground.** For a pixel 5 km off track at 100 km altitude the correct zenith angle is **3.027°**; the flat approximation `atan(5/100)` gives **2.862°**. The Moon's radius is only ~17× the orbit altitude, so the curvature term is not negligible.
+18. **OHRC's label declares the wrong unit on its line period.** `line_exposure_duration` is tagged `unit="ms"` with a value of 205.320. Ground speed × 205.320 ms gives **312 m per line** where the corner geometry gives **0.309 m** — out by a factor of **1009**. Read as *microseconds* it agrees to 0.9%. TMC-2 (1.00×) and IIRS (1.01×) genuinely are in ms, so this is OHRC's label, not our reading. We do **not** silently correct it — `line_period_s` takes the declared unit at face value so the defect stays visible.
+19. **IIRS is 2×2 binned, and the factor is exact.** Its stated 97.15 m is **2.0000×** the 48.58 m its optics give. Exactness to four decimals is what identifies binning rather than an error.
+20. **Chandrayaan-2 pushbroom pixels are not square**, because along-track spacing is set by how far the spacecraft flies between lines, not by the optics: OHRC 0.300 × 0.309 m, TMC-2 4.41 × 5.065 m, **IIRS 97.15 × 79.52 m**. The registry's nominal 80 m for IIRS was the *along*-track figure. Assuming square IIRS pixels is a **22% scale error in one axis** — no matcher recovers from that.
+21. **ISRO's two corner sets disagree by kilometres on long strips.** `system` vs `refined`: OHRC **0 m** (its `reference_data_used` is `System`), TMC-2 **5,388 m**, IIRS **14,577 m**. This independently corroborates the step-11 figures (5,146 m / 13,295 m) by a different route, and it is a free uncertainty bound on the label.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
