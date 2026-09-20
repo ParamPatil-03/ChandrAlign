@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-19T18:16:48+00:00",
+  "generated_utc": "2026-09-20T08:55:59+00:00",
   "root": "data/raw",
-  "file_count": 309,
-  "total_bytes": 11036513017,
+  "file_count": 321,
+  "total_bytes": 15755170409,
   "files": {
     "ch2/ch2_iir_nci_20240523T1600301891_d_img_d18.zip": {
       "size_bytes": 2755898510,
@@ -1195,6 +1195,54 @@
     "ch2/tmc2/shapefiles/tmc2_s1_s14_v1_shape/ch2_tmc_raw_sp.shx": {
       "size_bytes": 9868,
       "sha256": "c9f2c0b8ba929ee1fc2fc7cf87ffada2bdb1d7670bab3a8029f38ab85b72804c"
+    },
+    "dem/lola/ldem_1024_00n_15n_000_030.img": {
+      "size_bytes": 943718400,
+      "sha256": "546dc2a295c93ccb7bfd05e93e8676b18d51df5db921d0e2bbc6fee35bd0e51c"
+    },
+    "dem/lola/ldem_1024_00n_15n_000_030.lbl": {
+      "size_bytes": 4474,
+      "sha256": "f12d3112054f9f01d24253ff784e3473c86af6f1dd3fd2582b1d16b6ec1680a1"
+    },
+    "dem/lola/ldem_1024_00n_15n_000_030.xml": {
+      "size_bytes": 11156,
+      "sha256": "47c5b3ea666cc501db5d51047ec96431c6c01ddfb456f9238dfb41fcef3e372f"
+    },
+    "dem/lola/ldem_1024_15s_00s_000_030.img": {
+      "size_bytes": 943718400,
+      "sha256": "752aab8ce0baa471dda067f5a41dc63529f38c64ac59bfe78902f3b3b8edad44"
+    },
+    "dem/lola/ldem_1024_15s_00s_000_030.lbl": {
+      "size_bytes": 4473,
+      "sha256": "2269ca7be5e6d94a46530628161903fbfb64a5041946cdb66972b8f593eafe10"
+    },
+    "dem/lola/ldem_1024_15s_00s_000_030.xml": {
+      "size_bytes": 11148,
+      "sha256": "120d21a7ea50eed5c3cbf5a23101ede097101f6d77d025fe97aaf125a6e81690"
+    },
+    "dem/sldem2015/sldem2015_512_00n_30n_000_045_float.img": {
+      "size_bytes": 1415577600,
+      "sha256": "9a3ce2afd311cef9a25e7e7f632a0c623a669c29e5da661d97698da1ef3532d7"
+    },
+    "dem/sldem2015/sldem2015_512_00n_30n_000_045_float.lbl": {
+      "size_bytes": 4692,
+      "sha256": "575e055a07344769d74546d3fdbc8c10c2704dd684eed17babc890429ee6412b"
+    },
+    "dem/sldem2015/sldem2015_512_00n_30n_000_045_float.xml": {
+      "size_bytes": 12384,
+      "sha256": "b4c38ff80a482f3b3124f8ea07dfd79d43369b94a93346d023909e52fdb3becc"
+    },
+    "dem/sldem2015/sldem2015_512_30s_00s_000_045_float.img": {
+      "size_bytes": 1415577600,
+      "sha256": "e2ad2d53282c06e50cb2e631bf57cc150d27de00388d3ef88d1aea981ccfac95"
+    },
+    "dem/sldem2015/sldem2015_512_30s_00s_000_045_float.lbl": {
+      "size_bytes": 4690,
+      "sha256": "e45ee8710b15cdcb2f9dad1c48b2bea2b377ea0a1cc2e6e24823d3e64b6998b6"
+    },
+    "dem/sldem2015/sldem2015_512_30s_00s_000_045_float.xml": {
+      "size_bytes": 12375,
+      "sha256": "b304e5881f691d2afd19c4227e7e96eb10a71b49a21a6a3ad8cc2d4586592953"
     },
     "lro/nac/nac.m102000149rc/M102000149RC.IMG": {
       "size_bytes": 528929736,

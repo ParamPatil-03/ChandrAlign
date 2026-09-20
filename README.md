@@ -33,7 +33,7 @@
 | 13c | IIRS: score 256 bands, blend the good ones into one plane | PREP-05, PREP-06 | ✅ +43% repeatable features vs the best single band |
 | next | 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-07, 08, 02, 03 | ⏳ |
 
-**Tests:** 248 passing, 1 skipped (the LOLA-vs-SLDEM cross-check needs the second SLDEM tile) (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 249 passing, 0 skipped (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -218,8 +218,10 @@ t = slope_aspect(patch)          # t.slope_deg, t.aspect_deg (direction the grou
 
 | DEM | Detail | Built from | Independent of our references? |
 |---|---|---|---|
-| LOLA `ldem_1024` | ~30 m (mostly interpolated between laser tracks) | laser altimetry | ✅ |
-| SLDEM2015 `_512` | ~59 m | LOLA **+ SELENE TC stereo** | ❌ (SELENE-derived) |
+| LOLA `ldem_1024` | ~30 m, but **mostly interpolated** between laser tracks, so slopes come out smoothed | laser altimetry | ✅ |
+| SLDEM2015 `_512` | ~59 m, with real stereo detail | LOLA **+ SELENE TC stereo** | ❌ (SELENE-derived) |
+
+**Measured over our test region:** the two agree on absolute height (median difference −0.41 m, typical scatter 3.7 m, worst 157 m on steep walls), but SLDEM shows **nearly twice the slope** (median 2.26° vs LOLA's 1.24°) because LOLA's grid is interpolated. So: **SLDEM for slope detail, LOLA whenever independence from SELENE matters.**
 
 Heights are converted to metres from each label's `UNIT` (LOLA stores DN × 0.5 m, SLDEM stores km). The label's `OFFSET` is the Moon's reference radius and is deliberately **not** added. Aspect is NaN on flat ground and slope is NaN wherever the DEM has no height.
 
@@ -271,7 +273,6 @@ Every band is scored from the data (signal = median, noise = robust spread of a 
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
-| LOLA-vs-SLDEM height comparison | second SLDEM tile still to download | DATA-13 cross-check |
 | Phase congruency, MIND, terrain scores | Not built yet | PREP-02, 03, 07, 08 |
 
 ---
@@ -290,6 +291,7 @@ Worth knowing before designing anything downstream:
 8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
 10. **Real terrain under the OHRC scene** (LOLA, 29.6 m/px, stitched across the equator from two tiles): heights −1,905 to −1,585 m, 320 m of relief, no gaps. Slopes: median 1.2°, 95th percentile 5.4°, max 28°. The tile join is invisible — the height step across it (0.51 m) is smaller than the typical step elsewhere (0.58 m).
 11. **Raw keypoint count is a misleading quality measure.** On the IIRS cube the noisiest single band scores the *most* SIFT keypoints (1,413 at noise 0.048) while the quietest composite scores fewer (1,319 at 0.042) — SIFT fires on noise. Measured on pairs with independent noise, where only real features can match, the composite gives **+43%** more genuine matches (1,042 vs 727). PLAN.md P1-T14's keypoint-count acceptance wording is superseded for PREP-06; the change is recorded in FEATURES.csv.
+12. **LOLA and SLDEM agree on height but not on slope.** Median height difference −0.41 m (scatter 3.7 m), yet median slope 1.24° (LOLA) vs 2.26° (SLDEM). LOLA's 30 m grid is interpolated between laser tracks, so it understates roughness; SLDEM carries real SELENE stereo detail but is not independent of SELENE. Pick per purpose, and never judge a SELENE registration with SLDEM.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
