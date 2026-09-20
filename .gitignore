@@ -1,6 +1,11 @@
-# Data: downloaded products are never committed; the manifest is.
+# Data: downloaded products are never committed; the small provenance files are.
+# registered_pairs.json records WHICH products overlap and by how much (DATA-08) --
+# a few KB that lets a teammate or a judge see the evidence without the 16 GB.
 data/*
 !data/manifest.json
+!data/pairs/
+data/pairs/*
+!data/pairs/registered_pairs.json
 
 # Python
 __pycache__/

@@ -1,0 +1,361 @@
+{
+  "generated_utc": "2026-09-20T15:24:28Z",
+  "min_overlap": 0.05,
+  "sources_checked": 3,
+  "references_checked": 5,
+  "pair_count": 14,
+  "headline_pairing": "TMC2<->TC",
+  "headline_pair_count": 3,
+  "pairs": [
+    {
+      "source": {
+        "product_id": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+        "instrument": "TMC2",
+        "mission": "CH2",
+        "gsd_m": 4.41,
+        "acquisition_utc": "2025-02-07T11:02:03.9417Z",
+        "label": "data\\raw\\ch2\\tmc2\\products\\ch2_tmc_nca_20250207T1102039417_d_img_d18\\data\\calibrated\\20250207\\ch2_tmc_nca_20250207T1102039417_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N09E021N06E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N09E021N06E024SC.lbl"
+      },
+      "pairing": "TMC2<->TC",
+      "scale_ratio": 1.679,
+      "overlap_km2": 1827.57,
+      "fraction_of_source": 0.1128,
+      "fraction_of_reference": 0.2228,
+      "fraction_of_smaller": 0.2228,
+      "reason": "overlap 22.3% of the smaller footprint (1827.57 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+        "instrument": "TMC2",
+        "mission": "CH2",
+        "gsd_m": 4.41,
+        "acquisition_utc": "2025-02-07T11:02:03.9417Z",
+        "label": "data\\raw\\ch2\\tmc2\\products\\ch2_tmc_nca_20250207T1102039417_d_img_d18\\data\\calibrated\\20250207\\ch2_tmc_nca_20250207T1102039417_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N03E021N00E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N03E021N00E024SC.lbl"
+      },
+      "pairing": "TMC2<->TC",
+      "scale_ratio": 1.679,
+      "overlap_km2": 1799.47,
+      "fraction_of_source": 0.111,
+      "fraction_of_reference": 0.2176,
+      "fraction_of_smaller": 0.2176,
+      "reason": "overlap 21.8% of the smaller footprint (1799.47 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+        "instrument": "TMC2",
+        "mission": "CH2",
+        "gsd_m": 4.41,
+        "acquisition_utc": "2025-02-07T11:02:03.9417Z",
+        "label": "data\\raw\\ch2\\tmc2\\products\\ch2_tmc_nca_20250207T1102039417_d_img_d18\\data\\calibrated\\20250207\\ch2_tmc_nca_20250207T1102039417_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N00E021S03E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N00E021S03E024SC.lbl"
+      },
+      "pairing": "TMC2<->TC",
+      "scale_ratio": 1.679,
+      "overlap_km2": 974.31,
+      "fraction_of_source": 0.0601,
+      "fraction_of_reference": 0.1178,
+      "fraction_of_smaller": 0.1178,
+      "reason": "overlap 11.8% of the smaller footprint (974.31 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+        "instrument": "IIRS",
+        "mission": "CH2",
+        "gsd_m": 97.15,
+        "acquisition_utc": "2024-05-23T16:00:30.1891Z",
+        "label": "data\\raw\\ch2\\iirs\\products\\ch2_iir_nci_20240523T1600301891_d_img_d18\\data\\calibrated\\20240523\\ch2_iir_nci_20240523T1600301891_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N00E021S03E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N00E021S03E024SC.lbl"
+      },
+      "pairing": "IIRS<->TC",
+      "scale_ratio": 13.123,
+      "overlap_km2": 1340.65,
+      "fraction_of_source": 0.0506,
+      "fraction_of_reference": 0.1621,
+      "fraction_of_smaller": 0.1621,
+      "reason": "overlap 16.2% of the smaller footprint (1340.65 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+        "instrument": "IIRS",
+        "mission": "CH2",
+        "gsd_m": 97.15,
+        "acquisition_utc": "2024-05-23T16:00:30.1891Z",
+        "label": "data\\raw\\ch2\\iirs\\products\\ch2_iir_nci_20240523T1600301891_d_img_d18\\data\\calibrated\\20240523\\ch2_iir_nci_20240523T1600301891_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N03E021N00E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N03E021N00E024SC.lbl"
+      },
+      "pairing": "IIRS<->TC",
+      "scale_ratio": 13.123,
+      "overlap_km2": 1120.73,
+      "fraction_of_source": 0.0423,
+      "fraction_of_reference": 0.1355,
+      "fraction_of_smaller": 0.1355,
+      "reason": "overlap 13.6% of the smaller footprint (1120.73 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+        "instrument": "IIRS",
+        "mission": "CH2",
+        "gsd_m": 97.15,
+        "acquisition_utc": "2024-05-23T16:00:30.1891Z",
+        "label": "data\\raw\\ch2\\iirs\\products\\ch2_iir_nci_20240523T1600301891_d_img_d18\\data\\calibrated\\20240523\\ch2_iir_nci_20240523T1600301891_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N09E021N06E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N09E021N06E024SC.lbl"
+      },
+      "pairing": "IIRS<->TC",
+      "scale_ratio": 13.123,
+      "overlap_km2": 515.57,
+      "fraction_of_source": 0.0195,
+      "fraction_of_reference": 0.0629,
+      "fraction_of_smaller": 0.0629,
+      "reason": "overlap 6.3% of the smaller footprint (515.57 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+        "instrument": "TMC2",
+        "mission": "CH2",
+        "gsd_m": 4.41,
+        "acquisition_utc": "2025-02-07T11:02:03.9417Z",
+        "label": "data\\raw\\ch2\\tmc2\\products\\ch2_tmc_nca_20250207T1102039417_d_img_d18\\data\\calibrated\\20250207\\ch2_tmc_nca_20250207T1102039417_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M102000149RC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2009-07-12T01:08:02.537000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m102000149rc\\M102000149RC.XML"
+      },
+      "pairing": "TMC2<->NAC",
+      "scale_ratio": 8.82,
+      "overlap_km2": 365.75,
+      "fraction_of_source": 0.0226,
+      "fraction_of_reference": 1.0,
+      "fraction_of_smaller": 1.0,
+      "reason": "overlap 100.0% of the smaller footprint (365.75 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+        "instrument": "TMC2",
+        "mission": "CH2",
+        "gsd_m": 4.41,
+        "acquisition_utc": "2025-02-07T11:02:03.9417Z",
+        "label": "data\\raw\\ch2\\tmc2\\products\\ch2_tmc_nca_20250207T1102039417_d_img_d18\\data\\calibrated\\20250207\\ch2_tmc_nca_20250207T1102039417_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M1417360906LC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2022-09-09T11:07:18.714000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m1417360906lc\\M1417360906LC.XML"
+      },
+      "pairing": "TMC2<->NAC",
+      "scale_ratio": 8.82,
+      "overlap_km2": 161.63,
+      "fraction_of_source": 0.01,
+      "fraction_of_reference": 0.9916,
+      "fraction_of_smaller": 0.9916,
+      "reason": "overlap 99.2% of the smaller footprint (161.63 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+        "instrument": "IIRS",
+        "mission": "CH2",
+        "gsd_m": 97.15,
+        "acquisition_utc": "2024-05-23T16:00:30.1891Z",
+        "label": "data\\raw\\ch2\\iirs\\products\\ch2_iir_nci_20240523T1600301891_d_img_d18\\data\\calibrated\\20240523\\ch2_iir_nci_20240523T1600301891_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M1417360906LC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2022-09-09T11:07:18.714000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m1417360906lc\\M1417360906LC.XML"
+      },
+      "pairing": "IIRS<->NAC",
+      "scale_ratio": 194.3,
+      "overlap_km2": 111.79,
+      "fraction_of_source": 0.0042,
+      "fraction_of_reference": 0.6858,
+      "fraction_of_smaller": 0.6858,
+      "reason": "overlap 68.6% of the smaller footprint (111.79 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_ohr_ncp_20240330T0035085365_d_img_d18",
+        "instrument": "OHRC",
+        "mission": "CH2",
+        "gsd_m": 0.3,
+        "acquisition_utc": "2024-03-30T00:35:08.5365Z",
+        "label": "data\\raw\\ch2\\ohrc\\products\\ch2_ohr_ncp_20240330T0035085365_d_img_d18\\data\\calibrated\\20240330\\ch2_ohr_ncp_20240330T0035085365_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M102000149RC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2009-07-12T01:08:02.537000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m102000149rc\\M102000149RC.XML"
+      },
+      "pairing": "OHRC<->NAC",
+      "scale_ratio": 1.667,
+      "overlap_km2": 83.19,
+      "fraction_of_source": 0.9202,
+      "fraction_of_reference": 0.2275,
+      "fraction_of_smaller": 0.9202,
+      "reason": "overlap 92.0% of the smaller footprint (83.19 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_ohr_ncp_20240330T0035085365_d_img_d18",
+        "instrument": "OHRC",
+        "mission": "CH2",
+        "gsd_m": 0.3,
+        "acquisition_utc": "2024-03-30T00:35:08.5365Z",
+        "label": "data\\raw\\ch2\\ohrc\\products\\ch2_ohr_ncp_20240330T0035085365_d_img_d18\\data\\calibrated\\20240330\\ch2_ohr_ncp_20240330T0035085365_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N00E021S03E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N00E021S03E024SC.lbl"
+      },
+      "pairing": "OHRC<->TC",
+      "scale_ratio": 24.677,
+      "overlap_km2": 49.2,
+      "fraction_of_source": 0.5442,
+      "fraction_of_reference": 0.0059,
+      "fraction_of_smaller": 0.5442,
+      "reason": "overlap 54.4% of the smaller footprint (49.20 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_ohr_ncp_20240330T0035085365_d_img_d18",
+        "instrument": "OHRC",
+        "mission": "CH2",
+        "gsd_m": 0.3,
+        "acquisition_utc": "2024-03-30T00:35:08.5365Z",
+        "label": "data\\raw\\ch2\\ohrc\\products\\ch2_ohr_ncp_20240330T0035085365_d_img_d18\\data\\calibrated\\20240330\\ch2_ohr_ncp_20240330T0035085365_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "TCO_MAP_02_N03E021N00E024SC",
+        "instrument": "TC",
+        "mission": "SELENE",
+        "gsd_m": 7.4031617246699,
+        "acquisition_utc": null,
+        "label": "data\\raw\\selene\\tc\\TCO_MAP_02_N03E021N00E024SC.lbl"
+      },
+      "pairing": "OHRC<->TC",
+      "scale_ratio": 24.677,
+      "overlap_km2": 41.18,
+      "fraction_of_source": 0.4555,
+      "fraction_of_reference": 0.005,
+      "fraction_of_smaller": 0.4555,
+      "reason": "overlap 45.5% of the smaller footprint (41.18 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+        "instrument": "IIRS",
+        "mission": "CH2",
+        "gsd_m": 97.15,
+        "acquisition_utc": "2024-05-23T16:00:30.1891Z",
+        "label": "data\\raw\\ch2\\iirs\\products\\ch2_iir_nci_20240523T1600301891_d_img_d18\\data\\calibrated\\20240523\\ch2_iir_nci_20240523T1600301891_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M102000149RC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2009-07-12T01:08:02.537000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m102000149rc\\M102000149RC.XML"
+      },
+      "pairing": "IIRS<->NAC",
+      "scale_ratio": 194.3,
+      "overlap_km2": 26.3,
+      "fraction_of_source": 0.001,
+      "fraction_of_reference": 0.0719,
+      "fraction_of_smaller": 0.0719,
+      "reason": "overlap 7.2% of the smaller footprint (26.30 km^2)"
+    },
+    {
+      "source": {
+        "product_id": "ch2_ohr_ncp_20240330T0035085365_d_img_d18",
+        "instrument": "OHRC",
+        "mission": "CH2",
+        "gsd_m": 0.3,
+        "acquisition_utc": "2024-03-30T00:35:08.5365Z",
+        "label": "data\\raw\\ch2\\ohrc\\products\\ch2_ohr_ncp_20240330T0035085365_d_img_d18\\data\\calibrated\\20240330\\ch2_ohr_ncp_20240330T0035085365_d_img_d18.xml"
+      },
+      "reference": {
+        "product_id": "M1417360906LC",
+        "instrument": "NAC",
+        "mission": "LRO",
+        "gsd_m": 0.5,
+        "acquisition_utc": "2022-09-09T11:07:18.714000Z",
+        "label": "data\\raw\\lro\\nac\\nac.m1417360906lc\\M1417360906LC.XML"
+      },
+      "pairing": "OHRC<->NAC",
+      "scale_ratio": 1.667,
+      "overlap_km2": 18.77,
+      "fraction_of_source": 0.2076,
+      "fraction_of_reference": 0.1152,
+      "fraction_of_smaller": 0.2076,
+      "reason": "overlap 20.8% of the smaller footprint (18.77 km^2)"
+    }
+  ]
+}
