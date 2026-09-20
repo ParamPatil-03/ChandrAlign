@@ -18,6 +18,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Optional
 
 import requests
 
@@ -100,6 +101,21 @@ def query(bbox: tuple[float, float, float, float], ptype: str, limit: int) -> li
     return results
 
 
+def _remote_size(url: str) -> Optional[int]:
+    """Bytes the server will actually send, or None if it will not say.
+
+    A HEAD costs nothing next to a 500 MB GET and is the only size either side
+    can agree on; catalogue metadata is a description of the file, not the file.
+    """
+    try:
+        h = requests.head(url, timeout=60, allow_redirects=True)
+        h.raise_for_status()
+        length = h.headers.get("Content-Length")
+        return int(length) if length is not None else None
+    except (requests.RequestException, ValueError):
+        return None
+
+
 def download(entry: dict, ptype: str) -> None:
     out_dir = ROOT / "data" / "raw" / "lro" / ptype.lower() / str(entry["product_id"])
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -107,34 +123,47 @@ def download(entry: dict, ptype: str) -> None:
         if not f["url"]:
             continue
         dest = out_dir / f["name"]
-        want = int(float(f["bytes"] or 0) * 1024)      # ODE reports KBytes
+
+        # SIZE TRUTH: the HTTP Content-Length of the actual transfer, never the
+        # ODE listing. ODE's "KBytes" field is kilobytes-of-1000, so reading it
+        # as 1024 overstates every file by exactly 1.024 and makes complete
+        # downloads look 2.4% short. Measured on two products:
+        #   M1417360906LC.IMG  ODE 541,623,296  vs  Content-Length 528,929,736
+        #   M1415013176LC.IMG  ODE 414,183,424  vs  Content-Length 404,476,872
+        # Both ratios are 1.0240 to four decimals.
+        want = _remote_size(f["url"])
 
         # Resume-safety: a file that merely EXISTS is not a file that finished.
         # An interrupted download leaves a short file behind, and skipping on
         # existence alone would hand that truncated product to the pipeline as
-        # if it were complete -- a silent data-corruption bug, not a slow path.
+        # if it were complete -- silent data corruption, not merely a slow path.
         if dest.exists():
             have = dest.stat().st_size
-            if want and abs(have - want) / want > 0.01:
+            if want is None:
+                print(f"    have {f['name']} (size unverified: no Content-Length)")
+                continue
+            if have != want:
                 print(f"    redo {f['name']} (have {have/1e6:.1f} MB of {want/1e6:.1f} MB)")
                 dest.unlink()
             else:
                 print(f"    have {f['name']}")
                 continue
 
-        print(f"    get  {f['name']} ({want / 1e6:.1f} MB)")
+        print(f"    get  {f['name']} ({(want or 0) / 1e6:.1f} MB)")
         # Download to a .part file and rename only on success, so an interrupted
-        # run can never leave something that looks finished.
+        # run can never leave behind something that looks finished.
         part = dest.with_suffix(dest.suffix + ".part")
         with requests.get(f["url"], stream=True, timeout=600) as r:
             r.raise_for_status()
+            declared = r.headers.get("Content-Length")
+            declared = int(declared) if declared is not None else want
             with part.open("wb") as fh:
                 for chunk in r.iter_content(1 << 20):
                     fh.write(chunk)
         got = part.stat().st_size
-        if want and abs(got - want) / want > 0.01:
+        if declared is not None and got != declared:
             part.unlink()
-            raise RuntimeError(f"{f['name']}: got {got} bytes, expected ~{want}")
+            raise RuntimeError(f"{f['name']}: got {got} bytes, server declared {declared}")
         part.replace(dest)
 
 
