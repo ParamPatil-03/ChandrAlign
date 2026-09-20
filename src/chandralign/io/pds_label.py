@@ -20,7 +20,7 @@ there is no fallback to loading pixels with a generic image reader.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -659,3 +659,55 @@ def read_special_values(label_path: str | Path) -> SpecialValues:
 def parse_label(label_path: str | Path, **kwargs) -> SceneMeta:
     """PDS3 or PDS4, decided by the label's content, not its file extension."""
     return parse_pds3(label_path) if is_pds3(label_path) else parse_pds4(label_path, **kwargs)
+
+
+# ----------------------------------------------------------------------------- viewing geometry
+
+@dataclass(frozen=True)
+class ViewingGeometry:
+    """Where the spacecraft was and how it was pointing, as the label states it.
+
+    These are SCENE-level values -- one per product -- and they are the only
+    spacecraft information Chandrayaan-2 labels carry. They are kept out of
+    SceneMeta because SceneMeta is a frozen contract shared by all three parts;
+    geometry/solar.py reads them directly for the per-pixel layers (GEO-02).
+
+    Every field is None when the label does not state it. Nothing is defaulted.
+    """
+    altitude_km: Optional[float]
+    focal_length_mm: Optional[float]
+    detector_pixel_width_um: Optional[float]
+    roll_deg: Optional[float]
+    pitch_deg: Optional[float]
+    yaw_deg: Optional[float]
+    orbit_limb_direction: Optional[str]      # "Ascending" | "Descending"
+    fields_verified: dict[str, bool] = field(default_factory=dict)
+
+
+_VIEWING_FIELDS = {
+    "altitude_km": "spacecraft_altitude",
+    "focal_length_mm": "focal_length",
+    "detector_pixel_width_um": "detector_pixel_width",
+    "roll_deg": "roll",
+    "pitch_deg": "pitch",
+    "yaw_deg": "yaw",
+}
+
+
+def read_viewing_geometry(label_path: str | Path) -> ViewingGeometry:
+    """Spacecraft altitude and pointing from a PDS4 label.
+
+    PDS3 labels (our LRO and SELENE references) do not carry these ISRO-specific
+    fields, so every value comes back None with fields_verified all False -- which
+    is the honest answer, not an error.
+    """
+    label_path = Path(label_path)
+    if is_pds3(label_path):
+        return ViewingGeometry(None, None, None, None, None, None, None,
+                               {name: False for name in _VIEWING_FIELDS})
+    tree = _load_xml(label_path)
+    values = {name: _float(tree, tag) for name, tag in _VIEWING_FIELDS.items()}
+    limb = _text(tree, "orbit_limb_direction")
+    return ViewingGeometry(orbit_limb_direction=limb,
+                           fields_verified={n: v is not None for n, v in values.items()},
+                           **values)
