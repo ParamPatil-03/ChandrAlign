@@ -24,6 +24,7 @@ from pathlib import Path
 
 from chandralign.geometry.footprint import check_overlap
 from chandralign.io.pds_label import parse_label
+from chandralign.io.reference import load_reference
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
@@ -73,6 +74,18 @@ def main() -> None:
     if not sources or not references:
         raise SystemExit(f"nothing to pair: {len(sources)} source(s), {len(references)} reference(s)")
 
+    # Whether each reference is actually LIT, measured from its raw pixels once.
+    # Two of our WAC products are night-side (ODE incidence 166 and 179 deg) and
+    # read ~0.000 reflectance; a pair against one of those is geometrically real and
+    # practically useless, so it is recorded and flagged rather than silently listed.
+    lit = {}
+    for path in find(REFERENCE_GLOBS):
+        try:
+            ref = load_reference(path)
+            lit[ref.meta.product_id] = ref.sunlit()
+        except Exception as exc:                       # noqa: BLE001 - reported, not hidden
+            print(f"  could not test illumination for {path.name}: {exc}")
+
     pairs = []
     for src in sources:
         for ref in references:
@@ -89,8 +102,11 @@ def main() -> None:
                 "fraction_of_reference": round(check.fraction_of_ref, 4),
                 "fraction_of_smaller": round(check.fraction_of_smaller, 4),
                 "reason": check.reason,
+                "reference_lit": lit.get(ref.product_id, {}).get("lit"),
+                "reference_incidence_deg": lit.get(ref.product_id, {}).get("incidence_deg"),
             })
 
+    usable = [p for p in pairs if p["reference_lit"] is not False]
     headline = [p for p in pairs if p["pairing"] == f"{HEADLINE[0]}<->{HEADLINE[1]}"]
     pairs.sort(key=lambda p: (p["pairing"] != f"{HEADLINE[0]}<->{HEADLINE[1]}",
                               -p["overlap_km2"]))
@@ -100,6 +116,8 @@ def main() -> None:
         "sources_checked": len(sources),
         "references_checked": len(references),
         "pair_count": len(pairs),
+        "usable_pair_count": len(usable),
+        "unlit_reference_pair_count": len(pairs) - len(usable),
         "headline_pairing": f"{HEADLINE[0]}<->{HEADLINE[1]}",
         "headline_pair_count": len(headline),
         "pairs": pairs,
@@ -110,7 +128,8 @@ def main() -> None:
     for p in pairs:
         print(f"  {p['pairing']:14} {p['source']['product_id'][:34]:34} x "
               f"{p['reference']['product_id'][:30]:30} "
-              f"{p['overlap_km2']:9.1f} km2  {p['fraction_of_smaller'] * 100:5.1f}% of the smaller")
+              f"{p['overlap_km2']:9.1f} km2  {p['fraction_of_smaller'] * 100:5.1f}% of the smaller"
+              f"{'' if p['reference_lit'] is not False else '   [UNLIT reference]'}")
 
     if not args.show:
         OUT.parent.mkdir(parents=True, exist_ok=True)

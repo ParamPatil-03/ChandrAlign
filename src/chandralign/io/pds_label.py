@@ -608,6 +608,16 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
             corners = []
             break
         corners.append((lat, lon))
+    if not corners:
+        # SELENE MI map tiles state no explicit corners, only the projection's own
+        # bounds. Those ARE label values, so the outline is still label-derived and
+        # not guessed; a tile is an axis-aligned box in its own projection.
+        north = _pvl_number(projection, "MAXIMUM_LATITUDE")
+        south = _pvl_number(projection, "MINIMUM_LATITUDE")
+        west = _pvl_number(projection, "WESTERNMOST_LONGITUDE")
+        east = _pvl_number(projection, "EASTERNMOST_LONGITUDE")
+        if None not in (north, south, west, east):
+            corners = [(north, west), (north, east), (south, east), (south, west)]
     verified["corner_latlon"] = bool(corners)
 
     # Mosaics (e.g. TC ortho maps) have START_TIME = UNK and no single sun position.
@@ -673,6 +683,42 @@ _PDS3_SPECIAL = ("DUMMY", "NULL", "MISSING_CONSTANT", "LOW_REPR_SATURATION", "LO
                  "HIGH_REPR_SATURATION", "HIGH_INSTR_SATURATION")
 
 
+
+def _hex_as_dtype(text: str, dtype: str) -> Optional[float]:
+    """A PDS4 special constant written as a raw BIT PATTERN, e.g. '0xFF7FFFFB'.
+
+    PDS4 permits either a decimal value or the hexadecimal bits of the value in the
+    array's own data type. LRO WAC CDR labels use the hex form, and reading it as an
+    integer gives 4287102971 where the real constant is -3.4028227e+38 -- so a reader
+    that does not reinterpret the bits does not mask the fill pixels at all.
+    """
+    try:
+        bits = int(text, 16)
+    except (TypeError, ValueError):
+        return None
+    width = np.dtype(dtype).itemsize
+    try:
+        raw = np.array([bits], dtype=f">u{width}" if dtype.startswith(">") else f"<u{width}")
+    except (TypeError, ValueError, OverflowError):
+        return None
+    return float(raw.view(np.dtype(dtype))[0])
+
+
+def _special_number(text, dtype: Optional[str]) -> Optional[float]:
+    """A special constant, decimal or hexadecimal bit pattern."""
+    if text is None:
+        return None
+    text = str(text).strip()
+    if text[:2].lower() == "0x":
+        if dtype is None:
+            return None
+        return _hex_as_dtype(text[2:], dtype)
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
 def read_special_values(label_path: str | Path) -> SpecialValues:
     """No-data and saturation codes plus the valid range, exactly as the label states them.
 
@@ -688,9 +734,15 @@ def read_special_values(label_path: str | Path) -> SpecialValues:
         vmax = _pvl_value(image.get("VALID_MAXIMUM"))
     else:
         tree = _load_xml(label_path)
-        codes = [_float(tree, k, "Special_Constants") for k in _PDS4_SPECIAL]
-        vmin = _float(tree, "valid_minimum", "Special_Constants")
-        vmax = _float(tree, "valid_maximum", "Special_Constants")
+        # The constants may be hex bit patterns of the ARRAY's own type, so the
+        # layout is read first to learn that type.
+        try:
+            dtype = read_array_layout(label_path).dtype
+        except PdsParseError:
+            dtype = None
+        codes = [_special_number(_text(tree, k, "Special_Constants"), dtype) for k in _PDS4_SPECIAL]
+        vmin = _special_number(_text(tree, "valid_minimum", "Special_Constants"), dtype)
+        vmax = _special_number(_text(tree, "valid_maximum", "Special_Constants"), dtype)
     nodata = tuple(sorted({float(c) for c in codes if c is not None}))
     vmin = float(vmin) if vmin is not None else None
     vmax = float(vmax) if vmax is not None else None

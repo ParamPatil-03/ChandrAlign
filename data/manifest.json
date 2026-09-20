@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-20T15:25:38+00:00",
+  "generated_utc": "2026-09-20T16:13:47+00:00",
   "root": "data/raw",
-  "file_count": 323,
-  "total_bytes": 16057163800,
+  "file_count": 337,
+  "total_bytes": 16158026414,
   "files": {
     "ch2/ch2_iir_nci_20240523T1600301891_d_img_d18.zip": {
       "size_bytes": 2755898510,
@@ -1271,6 +1271,62 @@
     "lro/nac/nac.m1417360906lc/ode_metadata.json": {
       "size_bytes": 7258,
       "sha256": "9a86cb67667b94cda3d44a6a415b53d1de02ed2cad85d6910e14631751c853ff"
+    },
+    "lro/wac/wac.m106698280mc/M106698280MC.IMG": {
+      "size_bytes": 2074624,
+      "sha256": "bcfb41ebb3149f94584e9facf893e97d8a368ed03219b563cf5708a1dfb17d2d"
+    },
+    "lro/wac/wac.m106698280mc/M106698280MC.XML": {
+      "size_bytes": 62501,
+      "sha256": "f28bcfec796cc0b83fd2fd18b51ab375dbb65f0e16d4391d147254e78ceef3bd"
+    },
+    "lro/wac/wac.m106698280mc/ode_metadata.json": {
+      "size_bytes": 6608,
+      "sha256": "3159073175202b43ba05c70a9d916fca84eb54013dfe1ad5b2b9b7a4d6421e9d"
+    },
+    "lro/wac/wac.m106705467mc/M106705467MC.IMG": {
+      "size_bytes": 2074624,
+      "sha256": "1062efd4f76ac916769fe2dcc0b365c907363b3a71fb45ef878cab6dbd79a6bd"
+    },
+    "lro/wac/wac.m106705467mc/M106705467MC.XML": {
+      "size_bytes": 62501,
+      "sha256": "ecf77f91ce7be3e8a686267f06bc8fa9dda003c50eacd1d30ee4afa1a4207eee"
+    },
+    "lro/wac/wac.m106705467mc/ode_metadata.json": {
+      "size_bytes": 6600,
+      "sha256": "0778eff98009a04cdd12237a5f7200b68f4e25dba5a4bc30a9a3e199211a13f6"
+    },
+    "lro/wac/wac.m107908070mc/M107908070MC.IMG": {
+      "size_bytes": 2074624,
+      "sha256": "386e06bf3b32c09fa1d5c69522229439faef1fc3b3681fc0692b18e84531e013"
+    },
+    "lro/wac/wac.m107908070mc/M107908070MC.XML": {
+      "size_bytes": 62503,
+      "sha256": "7d8b3a642f0868b16b8e9e12d677b3ec8f794df92e2c6f2c1822213727d0247e"
+    },
+    "lro/wac/wac.m107908070mc/ode_metadata.json": {
+      "size_bytes": 6615,
+      "sha256": "c3b7907f7598d7653cf1e95b10bb594775330285ae5369f1b3cf4bc9e0bff83f"
+    },
+    "lro/wac/wac.m171594275mc/M171594275MC.IMG": {
+      "size_bytes": 2074624,
+      "sha256": "78eea8412ca55082f8c44b81d15651d839c19d63c8a8dab75695c51cd945eddd"
+    },
+    "lro/wac/wac.m171594275mc/M171594275MC.XML": {
+      "size_bytes": 62500,
+      "sha256": "910af1955b157b90d578ea69dcfc037b21ebeeb67af141df5f57da89c0ee92e7"
+    },
+    "lro/wac/wac.m171594275mc/ode_metadata.json": {
+      "size_bytes": 7397,
+      "sha256": "1f1e77eb0aa58120a76ecec58403423325a46aa0d8108b70378bb536abeaa601"
+    },
+    "selene/mi/MI_MAP_03_N01E023N00E024SC.img": {
+      "size_bytes": 92274688,
+      "sha256": "6cdff063f3241b83169418cfb81b7f2b1e480d20b87fcfb396842beb2d9c4870"
+    },
+    "selene/mi/MI_MAP_03_N01E023N00E024SC.lbl": {
+      "size_bytes": 12205,
+      "sha256": "f3c302357f6a8ef8612e6d55da8cf33a6b99f8809b322e2125a2cd5eabccb8d6"
     },
     "selene/tc/TCO_MAP_02_N00E021S03E024SC.img": {
       "size_bytes": 301989888,

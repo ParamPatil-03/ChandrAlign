@@ -102,5 +102,21 @@ def test_the_other_pairings_are_recorded_too(doc):
     """The headline is TMC-2 <-> TC, but the file is the whole inventory."""
     pairings = {p["pairing"] for p in doc["pairs"]}
     assert "TMC2<->TC" in pairings
-    assert len(pairings) >= 4                     # OHRC/IIRS against NAC and TC as well
+    assert len(pairings) >= 8                     # all 3 CH-2 cameras x all 4 references
     assert doc["pair_count"] == len(doc["pairs"])
+
+
+def test_pairs_against_an_unlit_reference_are_flagged_not_hidden(doc):
+    """Two WAC products are night-side. A pair with one is geometrically real and
+    practically useless, so it stays in the file with reference_lit False."""
+    unlit = [p for p in doc["pairs"] if p["reference_lit"] is False]
+    assert unlit, "expected the night-side WAC pairs to be present and flagged"
+    for p in unlit:
+        assert p["reference_incidence_deg"] > 90.0      # the sun is below the horizon
+    assert doc["unlit_reference_pair_count"] == len(unlit)
+    assert doc["usable_pair_count"] == doc["pair_count"] - len(unlit)
+
+
+def test_no_headline_pair_uses_an_unlit_reference(doc):
+    """The claim we make is about usable pairs, so this must hold for TMC-2 <-> TC."""
+    assert all(p["reference_lit"] is not False for p in headline(doc))
