@@ -440,6 +440,32 @@ def check_per_pixel_geometry(samples: int, rng):
     return ({"correct": correct, "total": total, "incidence_spread_deg": spreads}, {})
 
 
+
+def check_label_cross_validation(samples: int, rng):
+    """GEO-07: every label quantity recomputed by a route the label did not use.
+
+    Optics (pitch x altitude / focal length), corner geometry (scene size / pixel
+    count) and orbital mechanics (ground speed x line period) are three independent
+    chains. Counts how many of the available checks agree, and reports what was found:
+    OHRC's line-period UNIT is wrong by 1000x, IIRS is 2x2 binned, and the two ISRO
+    corner sets disagree by kilometres on the long strips.
+    """
+    from chandralign.evaluate.groundtruth import cross_validate
+
+    correct = total = 0
+    found = {}
+    for name, label in ((k, v) for k, v in products().items() if k in ("OHRC", "TMC2", "IIRS")):
+        report = cross_validate(parse_label(label))
+        total += len(report.checks)
+        correct += sum(1 for d in report.checks if d.agrees)
+        found[name] = {
+            "checks": len(report.checks),
+            "failed": [d.name for d in report.failures],
+            "corner_disagreement_m": round(report.corner_disagreement_m or 0.0, 1),
+        }
+    return ({"correct": correct, "total": total, "per_product": found}, {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -452,6 +478,7 @@ CHECKS = [
     ("11", "Geolocation / projection", "SELENE corners vs label; every ISRO grid node; ground->pixel inverse; "
      "map round trip", check_geolocation),
     ("12b", "Per-pixel sun/camera angles", "Label value at scene centre; spherical triangle inequality; nadir column vs swath edge", check_per_pixel_geometry),
+    ("12c", "Label cross-validation", "Optics, corner geometry and orbital mechanics vs what the label states. NOTE: the 2 disagreements are real defects FOUND in ISRO labels, not our errors", check_label_cross_validation),
     ("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
      check_shadow_iou),
     ("13c", "IIRS composite", "Repeatable features (independent-noise pair) vs the best single band",

@@ -34,9 +34,11 @@
 | 13d | Terrain scores: how much real structure, and how many look-alikes | PREP-07, PREP-08 | ✅ |
 | 13e | Phase congruency + MIND: descriptions that survive the sun moving | PREP-02, PREP-03 | ✅ |
 | 14 | Per-pixel sun and camera angles (incidence, emission, phase) | GEO-01, GEO-02 | ✅ derived on all 3 real products |
-| — | Remaining Part 1: scale-ratio pre-check (GEO-06), ground truth (GEO-07), more pairs | GEO-06, GEO-07, DATA-08/12 | ⏳ |
+| 15 | Scale pre-check: refuse an impossible pairing before matching | GEO-06 | ✅ OHRC↔IIRS = 323.8× → cascade |
+| 16 | Label cross-validation against independent physics | GEO-07 | ⚠️ metadata half done; DEM half needs Part 2's matcher |
+| — | Remaining Part 1: the DEM half of GEO-07, more TMC-2↔SELENE pairs | GEO-07, DATA-08/12 | ⏳ |
 
-**Tests:** 348 passing on `main` (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 376 passing on `main` (`pytest -m ""`), including checks on every real product we hold.
 One test skips: `test_adapter.py` needs the optional `learned` extra (torch), installed with `pip install -e ".[learned]"`.
 
 **Both parts are now in `main`** (merge `ba4142a`). Part 1 preprocessing and Member B's matching engine sit
@@ -380,6 +382,10 @@ Worth knowing before designing anything downstream:
 15. **One sun angle per product is honest for OHRC and wrong for the other two.** ISRO labels state a single incidence and azimuth for a whole product. Derived per pixel, incidence varies **0.14°** across OHRC (25 km of ground), **7.80°** across TMC-2 (812 km) and **8.30°** across IIRS (1,042 km). An 8° error matters to a physics-based outlier filter asked whether two patches can be the same ground — hence GEO-02.
 16. **No Chandrayaan-2 label carries angle backplanes.** Only `sun_azimuth`, `sun_elevation` and `solar_incidence`, one value each. The per-pixel layers are therefore **derived**, never read, and `GeometryLayers.source` says `"derived"` so nobody downstream mistakes them for label truth. This made GEO-01's original `done_when` (`source == "label"`) impossible to satisfy; it is corrected in FEATURES.csv.
 17. **Off-nadir emission needs the sphere, not flat ground.** For a pixel 5 km off track at 100 km altitude the correct zenith angle is **3.027°**; the flat approximation `atan(5/100)` gives **2.862°**. The Moon's radius is only ~17× the orbit altitude, so the curvature term is not negligible.
+18. **OHRC's label declares the wrong unit on its line period.** `line_exposure_duration` is tagged `unit="ms"` with a value of 205.320. Ground speed × 205.320 ms gives **312 m per line** where the corner geometry gives **0.309 m** — out by a factor of **1009**. Read as *microseconds* it agrees to 0.9%. TMC-2 (1.00×) and IIRS (1.01×) genuinely are in ms, so this is OHRC's label, not our reading. We do **not** silently correct it — `line_period_s` takes the declared unit at face value so the defect stays visible.
+19. **IIRS is 2×2 binned, and the factor is exact.** Its stated 97.15 m is **2.0000×** the 48.58 m its optics give. Exactness to four decimals is what identifies binning rather than an error.
+20. **Chandrayaan-2 pushbroom pixels are not square**, because along-track spacing is set by how far the spacecraft flies between lines, not by the optics: OHRC 0.300 × 0.309 m, TMC-2 4.41 × 5.065 m, **IIRS 97.15 × 79.52 m**. The registry's nominal 80 m for IIRS was the *along*-track figure. Assuming square IIRS pixels is a **22% scale error in one axis** — no matcher recovers from that.
+21. **ISRO's two corner sets disagree by kilometres on long strips.** `system` vs `refined`: OHRC **0 m** (its `reference_data_used` is `System`), TMC-2 **5,388 m**, IIRS **14,577 m**. This independently corroborates the step-11 figures (5,146 m / 13,295 m) by a different route, and it is a free uncertainty bound on the label.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
