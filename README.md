@@ -35,7 +35,11 @@
 | 13e | Phase congruency + MIND: descriptions that survive the sun moving | PREP-02, PREP-03 | ✅ |
 | — | **Part 1 preprocessing complete.** Remaining Part 1: per-pixel geometry layers (GEO-02), ground truth (GEO-07), more pairs | GEO-02, GEO-07, DATA-08/12 | ⏳ |
 
-**Tests:** 276 passing, 0 skipped (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 333 passing on `main` (`pytest -m ""`), including checks on every real product we hold.
+One test skips: `test_adapter.py` needs the optional `learned` extra (torch), installed with `pip install -e ".[learned]"`.
+
+**Both parts are now in `main`** (merge `ba4142a`). Part 1 preprocessing and Member B's matching engine sit
+side by side, and the full suite passes together.
 
 ---
 
