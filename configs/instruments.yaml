@@ -1,91 +1,132 @@
-# Camera registry (feature DATA-10, tasks P0-T03 / P1-T04).
+# Camera registry (feature DATA-10, tasks P0-T03 / P1-T04). Owner: Member A.
 #
-# Values come from PLAN.md section 1.2 only. Anything the plan does not state is
-# null and must be read from the product's own label, never filled with a guess.
+# Merged from Member A's registry and Member B's seed (part2/matching-engine).
+# Structure is B's (`instruments:` + `pairings:`); fields are A's plus B's
+# `modality` and notes.
 #
-#   gsd_m        nominal ground sample distance (metres per pixel). The value a
-#                real label reports wins over this one (e.g. TMC-2 labels say 4.43).
+# SOURCING RULE: values come from PLAN.md section 1.2, or from a real product
+# label (marked "from label"). Anything neither source states is null and must
+# be read from the product's own label -- never filled with a plausible number.
+#
+#   gsd_m        nominal ground sample distance (m/px). A real label's value wins
+#                over this one (e.g. TMC-2 labels say 4.41, OHRC 0.30).
 #   gsd_range_m  [min, max] when the plan gives a range rather than one number.
 #   n_bands      null = "several", read the exact count from the label.
+#   modality     panchromatic | hyperspectral | multiband -- drives cross-modal routing.
 #   id_patterns  regular expressions matched against the product ID / file name,
-#                case-insensitive. Checked in the order listed in this file.
+#                case-insensitive, checked in the order listed here.
 
-OHRC:
-  mission: CH2
-  role: source
-  kind: panchromatic pushbroom, TDI CCD
-  gsd_m: 0.25
-  gsd_range_m: null
-  n_bands: 1
-  wavelength_nm: [500, 800]
-  swath_km: null            # "narrow strip"
-  id_patterns: ['^ch2_ohr_']
+instruments:
+  # --- Chandrayaan-2 source instruments ---
+  OHRC:
+    mission: CH2
+    role: source
+    modality: panchromatic
+    kind: panchromatic pushbroom, TDI CCD
+    gsd_m: 0.25
+    gsd_range_m: null
+    n_bands: 1
+    wavelength_nm: [500, 800]
+    swath_km: null            # "narrow strip"
+    id_patterns: ['^ch2_ohr_']
+    note: sharpest CH-2 camera; long narrow strips (e.g. 79796 x 12000 px)
 
-TMC2:
-  mission: CH2
-  role: source
-  kind: panchromatic pushbroom, 3 look angles (fore / nadir / aft)
-  gsd_m: 5.0
-  gsd_range_m: [4.43, 5.0]  # 4.43 on a real product label
-  n_bands: 1
-  wavelength_nm: null       # "panchromatic", range not given in the plan
-  swath_km: 20
-  id_patterns: ['^ch2_tmc_']
+  TMC2:
+    mission: CH2
+    role: source
+    modality: panchromatic
+    kind: panchromatic pushbroom, 3 look angles (fore / nadir / aft)
+    gsd_m: 5.0
+    gsd_range_m: [4.41, 5.0]  # 4.41 on our real product label
+    n_bands: 1
+    wavelength_nm: null       # the plan says "panchromatic" without a range
+    swath_km: 20
+    id_patterns: ['^ch2_tmc_']
+    note: Terrain Mapping Camera-2, stereo; treat 5.0 as nominal and prefer the label
 
-IIRS:
-  mission: CH2
-  role: source
-  kind: hyperspectral pushbroom
-  gsd_m: 80.0
-  gsd_range_m: null
-  n_bands: 256              # plan says ~250-256; real label reads 256
-  wavelength_nm: [800, 5000]
-  swath_km: 20
-  id_patterns: ['^ch2_iir_']
+  IIRS:
+    mission: CH2
+    role: source
+    modality: hyperspectral
+    kind: hyperspectral pushbroom
+    gsd_m: 80.0
+    gsd_range_m: null
+    n_bands: 256              # plan says ~250-256; real label reads 256
+    wavelength_nm: [800, 5000]
+    swath_km: 20
+    id_patterns: ['^ch2_iir_']
+    note: never matched as a raw cube -- use the panchromatic composite (PREP-06)
 
-NAC:
-  mission: LRO
-  role: reference
-  kind: panchromatic
-  gsd_m: 0.5
-  gsd_range_m: null
-  n_bands: 1
-  wavelength_nm: null
-  swath_km: null
-  # M1417360906LC / M102000149RC, or ODE's "nac.m1417360906lc". L/R = left/right
-  # camera, then C (calibrated) or E (raw EDR).
-  id_patterns: ['^(nac\.)?m\d+[lr][ce]$']
+  # --- External reference instruments (named by the problem statement) ---
+  NAC:
+    mission: LRO
+    role: reference
+    modality: panchromatic
+    kind: panchromatic
+    gsd_m: 0.5
+    gsd_range_m: null
+    n_bands: 1
+    wavelength_nm: [450, 750]   # from label: centre 600 nm, bandwidth 300 nm
+    swath_km: null
+    # M1417360906LC / M102000149RC, or ODE's "nac.m1417360906lc". L/R = left/right
+    # camera, then C (calibrated) or E (raw EDR).
+    id_patterns: ['^(nac\.)?m\d+[lr][ce]$']
+    note: primary named reference
 
-WAC:
-  mission: LRO
-  role: reference
-  kind: multiband
-  gsd_m: 100.0
-  gsd_range_m: null
-  n_bands: null
-  wavelength_nm: null
-  swath_km: null
-  # Not yet checked against a downloaded WAC product; verify when WAC is fetched.
-  id_patterns: ['^wac\.', '^m\d+[cm][ce]$']
+  WAC:
+    mission: LRO
+    role: reference
+    modality: multiband
+    kind: multiband
+    gsd_m: 100.0
+    gsd_range_m: null
+    n_bands: null             # not stated in PLAN.md; read from a real WAC label
+    wavelength_nm: null
+    swath_km: null
+    # Not yet checked against a downloaded WAC product; verify when WAC is fetched.
+    id_patterns: ['^wac\.', '^m\d+[cm][ce]$']
 
-TC:
-  mission: SELENE
-  role: reference
-  kind: panchromatic stereo (Terrain Camera)
-  gsd_m: 10.0
-  gsd_range_m: [7.4, 10.0]  # ortho-map tiles are 7.4 m; native strips ~10 m
-  n_bands: 1
-  wavelength_nm: null
-  swath_km: null
-  id_patterns: ['^tc']
+  TC:
+    mission: SELENE
+    role: reference
+    modality: panchromatic
+    kind: panchromatic stereo (Terrain Camera)
+    gsd_m: 10.0
+    gsd_range_m: [7.4, 10.0]  # ortho-map tiles are 7.4 m; native strips ~10 m
+    n_bands: 1
+    wavelength_nm: null
+    swath_km: null
+    id_patterns: ['^tc']
+    note: best-matched reference for TMC-2 (~2:1); zero prior art -- headline target
 
-MI:
-  mission: SELENE
-  role: reference
-  kind: multiband imager
-  gsd_m: 20.0
-  gsd_range_m: [20.0, 62.0]
-  n_bands: null
-  wavelength_nm: null
-  swath_km: null
-  id_patterns: ['^mi[_a-z]', '^m[vn][a-z]?_']
+  MI:
+    mission: SELENE
+    role: reference
+    modality: multiband
+    kind: multiband imager
+    gsd_m: 20.0
+    gsd_range_m: [20.0, 62.0]
+    n_bands: null             # not stated in PLAN.md; read from a real MI label
+    wavelength_nm: null
+    swath_km: null
+    id_patterns: ['^mi[_a-z]', '^m[vn][a-z]?_']
+    note: Multiband Imager, 20 m/px VIS and 62 m/px NIR
+
+# Pairings and their status in the literature (PLAN.md sections 1.2 and 1.3).
+# Drives cascade planning and tells the report which results are a credibility
+# floor and which are a novel claim.
+#
+# scale_gap is the SYMMETRIC ratio coarser/finer, always >= 1, exactly as the
+# plan tabulates it. The directional scale a transform should recover is
+# config.gsd_ratio(src, ref) = gsd(src)/gsd(ref). B's seed mixed the two
+# conventions in this table -- OHRC-NAC as 0.5 but OHRC-IIRS as 320 -- so it is
+# made uniform here.
+pairings:
+  OHRC-NAC:   {scale_gap: 2.0,   status: solved,     note: "two independent sources"}
+  IIRS-WAC:   {scale_gap: 1.25,  status: solved,     note: "two independent sources"}
+  TMC2-TC:    {scale_gap: 2.0,   status: open,       note: "best-matched pair, zero prior art -- headline target"}
+  TMC2-NAC:   {scale_gap: 10.0,  status: open,       note: "best competitor measured 2.8% inlier ratio"}
+  IIRS-NAC:   {scale_gap: 160.0, status: open}
+  OHRC-WAC:   {scale_gap: 400.0, status: open,       note: "no published attempt; the plan says ~333 from a ~83 m WAC figure"}
+  OHRC-IIRS:  {scale_gap: 320.0, status: known_hard,
+               note: "two independent teams measured 0 inliers; cascade only, never direct"}

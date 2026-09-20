@@ -1,4 +1,4 @@
-"""DATA-10 acceptance: all 7 cameras resolve from product IDs; gsd_ratio('OHRC','IIRS') ~= 320."""
+"""DATA-10 acceptance: all 7 cameras resolve from product IDs; scale_gap('OHRC','IIRS') ~= 320."""
 import json
 from pathlib import Path
 
@@ -8,7 +8,7 @@ from chandralign.io.instruments import (
     UnknownInstrumentError,
     detect_instrument,
     get_spec,
-    gsd_ratio,
+    scale_gap,
     load_registry,
 )
 
@@ -85,21 +85,21 @@ def test_every_image_product_in_manifest_is_recognised():
     ("IIRS", "NAC", 160.0),
     ("TMC2", "TMC2", 1.0),
 ])
-def test_gsd_ratio_matches_plan(a, b, expected):
-    assert gsd_ratio(a, b) == pytest.approx(expected)
-    assert gsd_ratio(b, a) == pytest.approx(expected)
+def test_scale_gap_matches_plan(a, b, expected):
+    assert scale_gap(a, b) == pytest.approx(expected)
+    assert scale_gap(b, a) == pytest.approx(expected)
 
 
-def test_gsd_ratio_rejects_unknown_camera():
+def test_scale_gap_rejects_unknown_camera():
     with pytest.raises(UnknownInstrumentError):
-        gsd_ratio("OHRC", "HUBBLE")
+        scale_gap("OHRC", "HUBBLE")
 
 
 def test_spec_values_come_from_plan():
     ohrc = get_spec("OHRC")
     assert ohrc.gsd_m == 0.25 and ohrc.wavelength_nm == (500.0, 800.0) and ohrc.mission == "CH2"
     assert get_spec("IIRS").n_bands == 256
-    assert get_spec("TMC2").gsd_range_m == (4.43, 5.0)
+    assert get_spec("TMC2").gsd_range_m == (4.41, 5.0)   # 4.41 on OUR label; PLAN quotes 4.43 from another product
     assert get_spec("MI").n_bands is None     # not stated in the plan -> read from label
 
 

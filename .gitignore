@@ -21,3 +21,6 @@ build/
 dist/
 .pytest_cache/
 .coverage
+
+# Part 2 additions
+.ipynb_checkpoints/
