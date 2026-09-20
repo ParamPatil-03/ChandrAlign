@@ -63,17 +63,26 @@ def test_every_image_product_in_manifest_is_recognised():
     folder_to_camera = {"ch2/ohrc": "OHRC", "ch2/tmc2": "TMC2", "ch2/iirs": "IIRS",
                         "lro/nac": "NAC", "selene/tc": "TC"}
     files = json.loads((ROOT / "data" / "manifest.json").read_text(encoding="utf-8"))["files"]
-    checked = 0
+    checked = dem_rasters = 0
     for rel in files:
         name = rel.rsplit("/", 1)[-1]
         is_image = ("_d_img_" in name and name.endswith((".img", ".qub"))) or \
                    name.upper().endswith(".IMG")
         if not is_image:
             continue
-        expected = next(cam for folder, cam in folder_to_camera.items() if rel.startswith(folder))
-        assert detect_instrument(name) == expected, rel
+        camera_folder = next((cam for folder, cam in folder_to_camera.items() if rel.startswith(folder)), None)
+        if camera_folder is None:
+            # Elevation maps are .img rasters too, but they come from no camera:
+            # detection must refuse them rather than guess one.
+            assert rel.startswith("dem/"), f"unexpected raster outside the camera and DEM folders: {rel}"
+            with pytest.raises(UnknownInstrumentError):
+                detect_instrument(name)
+            dem_rasters += 1
+            continue
+        assert detect_instrument(name) == camera_folder, rel
         checked += 1
     assert checked >= 7, f"expected >=7 image products in the manifest, found {checked}"
+    assert dem_rasters >= 2, f"expected the LOLA/SLDEM tiles in the manifest, found {dem_rasters}"
 
 
 @pytest.mark.parametrize("a, b, expected", [
