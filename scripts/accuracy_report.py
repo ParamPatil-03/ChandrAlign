@@ -384,6 +384,30 @@ def check_terrain_scores(samples: int, rng):
     return {"correct": int(sum(checks)), "total": len(checks), **{k: v for k, v in got.items()}}, {}
 
 
+def check_illumination_invariance(samples: int, rng):
+    """What survives the sun moving, on real lunar relief (PREP-02/03).
+
+    One LOLA/SLDEM patch rendered under the two sun geometries our own products
+    have. Raw brightness INVERTS; the structural descriptions do not.
+    """
+    from chandralign.geometry.dem_terrain import hillshade, slope_aspect
+    from chandralign.io.dem import dem_patch, find_tiles
+    from chandralign.preprocess.phase_congruency import mind, phase_congruency
+
+    tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
+    patch = dem_patch(tiles, (-0.45, 0.38, 23.45, 23.60))
+    terrain = slope_aspect(patch)
+    a = hillshade(terrain, 269.8, 7.3)[3:-3, 3:-3]      # OHRC's sun
+    b = hillshade(terrain, 104.3, 44.0)[3:-3, 3:-3]     # TMC-2's sun
+    corr = lambda x, y: float(np.corrcoef(np.asarray(x).ravel(), np.asarray(y).ravel())[0, 1])
+    raw = corr(a, b)
+    pc = corr(phase_congruency(a).energy, phase_congruency(b).energy)
+    md = corr(mind(a), mind(b))
+    checks = [raw < 0.0, pc > 0.7, md > 0.7]
+    return ({"correct": int(sum(checks)), "total": len(checks), "raw_brightness": round(raw, 4),
+             "phase_congruency": round(pc, 4), "mind": round(md, 4)}, {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -401,6 +425,8 @@ CHECKS = [
      check_iirs_composite),
     ("13d", "Terrain scores", "Texture and repetitiveness on real crops of known character",
      check_terrain_scores),
+    ("13e", "Illumination invariance", "Real relief under our two real suns: raw vs phase congruency vs MIND",
+     check_illumination_invariance),
 ]
 
 

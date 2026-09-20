@@ -18,12 +18,14 @@ dependencies = [
     "shapely",      # footprints and overlap
     "pyproj",       # IAU 2015 Moon CRS and reprojection
     "opencv-python-headless",   # CLAHE and image operations (Apache-2.0)
+    "phasepack",    # phase congruency (PLAN.md P1-T13 pins THIS package: RIFT2 is built on it)
     "pyyaml",       # configs/
     "requests",     # data fetchers
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov"]
+fast = ["pyfftw"]          # optional: ~2x faster phase congruency; phasepack falls back without it
 # Added by the step that first needs them, so the base install stays light:
 #   geo:      rasterio, spiceypy                   (Part 1, Phase 2)
 #   prep:     phasepack, spectral, scikit-image     (Part 1, Phase 2)
