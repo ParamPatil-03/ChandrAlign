@@ -61,7 +61,8 @@ def test_unknown_products_raise_instead_of_guessing(product):
 def test_every_image_product_in_manifest_is_recognised():
     """Every image product we actually hold resolves to the camera its folder says."""
     folder_to_camera = {"ch2/ohrc": "OHRC", "ch2/tmc2": "TMC2", "ch2/iirs": "IIRS",
-                        "lro/nac": "NAC", "selene/tc": "TC"}
+                        "lro/nac": "NAC", "lro/wac": "WAC",
+                        "selene/tc": "TC", "selene/mi": "MI"}
     files = json.loads((ROOT / "data" / "manifest.json").read_text(encoding="utf-8"))["files"]
     checked = dem_rasters = 0
     for rel in files:
@@ -82,6 +83,9 @@ def test_every_image_product_in_manifest_is_recognised():
         assert detect_instrument(name) == camera_folder, rel
         checked += 1
     assert checked >= 7, f"expected >=7 image products in the manifest, found {checked}"
+    # All seven cameras are now represented by products we actually hold.
+    assert len({cam for folder, cam in folder_to_camera.items()
+                if any(f.startswith(folder) for f in files)}) == 7
     assert dem_rasters >= 2, f"expected the LOLA/SLDEM tiles in the manifest, found {dem_rasters}"
 
 

@@ -263,3 +263,132 @@ def dem_coverage(meta: SceneMeta, tiles) -> dict:
         "filled_fraction": float(finite.mean()),
         "relief_m": float(np.nanmax(heights) - np.nanmin(heights)) if finite.any() else None,
     }
+
+
+# ----------------------------------------------------------------------------- GEO-07: the DEM half
+
+# Below this correlation between the image and the rendered relief, the phase
+# correlation peak is not a measurement of anything and no offset is reported.
+MIN_SHADING_CORRELATION = 0.35
+
+
+@dataclass(frozen=True)
+class DemRegistration:
+    """Where a DEM says an image sits, against where its label says it sits.
+
+    `offset_m` is None whenever `trustworthy` is False. A number here would be worse
+    than nothing: it would be read as an uncertainty bound on the label.
+    """
+    product_id: str
+    correlation: float
+    shift_px: Optional[tuple[float, float]]
+    offset_m: Optional[float]
+    dem_source: str
+    dem_independent_of_references: bool
+    slope_median_deg: float
+    trustworthy: bool
+    reason: str
+
+
+def render_relief(patch, sun_azimuth_deg: float, sun_elevation_deg: float) -> np.ndarray:
+    """What the DEM predicts this ground looks like under a given sun."""
+    from chandralign.geometry.dem_terrain import hillshade, slope_aspect
+
+    return hillshade(slope_aspect(patch), sun_azimuth_deg, sun_elevation_deg)
+
+
+def resample_to_dem_grid(meta: SceneMeta, window, patch, model=None) -> np.ndarray:
+    """An image window averaged onto the DEM's own grid; NaN where nothing landed.
+
+    A CH-2 image is far finer than any lunar DEM we hold (TMC-2 4.41 m against
+    SLDEM's ~59 m), so the image comes down to the DEM rather than the DEM being
+    invented upwards.
+    """
+    from chandralign.geometry.projection import geolocation_model
+    from chandralign.io.pds_raster import read_raster
+
+    if model is None:
+        model = geolocation_model(meta)
+    image = read_raster(meta, window).astype(np.float64)
+    rows = np.arange(window.row, window.row + window.height)
+    cols = np.arange(window.col, window.col + window.width)
+    rr, cc = np.meshgrid(rows, cols, indexing="ij")
+    lat, lon = model.pixel_to_latlon(rr, cc)
+
+    fr = np.rint((patch.lat[0] - lat) * patch.res_px_per_deg).astype(int)
+    fc = np.rint((lon - patch.lon[0]) * patch.res_px_per_deg).astype(int)
+    n_r, n_c = patch.heights_m.shape
+    inside = (fr >= 0) & (fr < n_r) & (fc >= 0) & (fc < n_c)
+    total = np.zeros((n_r, n_c))
+    count = np.zeros((n_r, n_c))
+    np.add.at(total, (fr[inside], fc[inside]), image[inside])
+    np.add.at(count, (fr[inside], fc[inside]), 1)
+    return np.where(count > 0, total / np.maximum(count, 1), np.nan)
+
+
+def _standardise(a: np.ndarray, valid: np.ndarray) -> np.ndarray:
+    filled = np.where(valid, a, np.nanmean(a[valid]))
+    return (filled - filled.mean()) / (filled.std() + 1e-12)
+
+
+def register_to_dem(meta: SceneMeta, window, patch, model=None,
+                    min_correlation: float = MIN_SHADING_CORRELATION) -> DemRegistration:
+    """Register an image against relief rendered from a DEM under its OWN sun (GEO-07).
+
+    The second, independent route to where an image sits: the label says one thing,
+    and the shape of the ground says another. Their disagreement is the uncertainty
+    bound GEO-07 exists to produce.
+
+    MEASURED ON OUR OWN DATA, and the answer is a refusal. The method itself is
+    sound -- injecting a known shift into a rendered scene recovers it exactly (see
+    tests) -- but a real TMC-2 window correlates with SLDEM-rendered relief at only
+    +0.14 on the roughest ground in the strip and about 0.00 elsewhere. Lunar mare
+    at ~2 degrees median slope has almost no shading contrast at 59 m, and what
+    variation TMC-2 does see there is albedo, which a Lambertian hillshade knows
+    nothing about. So there is no peak to trust, and none is reported.
+
+    That is the honest result, not a placeholder: it says the DEM route needs
+    either finer elevation data or genuinely rough ground, and it says so with the
+    number that decides it.
+    """
+    from chandralign.geometry.dem_terrain import slope_aspect
+    from chandralign.geometry.solar import scene_illumination
+    from skimage.registration import phase_cross_correlation
+
+    illumination = scene_illumination(meta)
+    if illumination.incidence_deg is None or illumination.sub_solar_azimuth_deg is None:
+        return DemRegistration(meta.product_id, float("nan"), None, None, patch.source,
+                               patch.independent_of_references, float("nan"), False,
+                               "no sun geometry: the relief cannot be rendered")
+
+    relief = render_relief(patch, illumination.sub_solar_azimuth_deg,
+                           90.0 - illumination.incidence_deg)
+    observed = resample_to_dem_grid(meta, window, patch, model)
+    valid = np.isfinite(observed) & np.isfinite(relief)
+    slope_median = float(np.nanmedian(slope_aspect(patch).slope_deg))
+    if valid.sum() < 100:
+        return DemRegistration(meta.product_id, float("nan"), None, None, patch.source,
+                               patch.independent_of_references, slope_median, False,
+                               f"only {int(valid.sum())} pixels overlap the DEM")
+
+    rows = valid.any(axis=1)
+    cols = valid.any(axis=0)
+    a = _standardise(observed[np.ix_(rows, cols)], valid[np.ix_(rows, cols)])
+    b = _standardise(relief[np.ix_(rows, cols)], valid[np.ix_(rows, cols)])
+    sub = valid[np.ix_(rows, cols)]
+    correlation = float(np.corrcoef(a[sub], b[sub])[0, 1])
+
+    if not np.isfinite(correlation) or abs(correlation) < min_correlation:
+        return DemRegistration(
+            meta.product_id, correlation, None, None, patch.source,
+            patch.independent_of_references, slope_median, False,
+            f"image and rendered relief correlate {correlation:+.3f}, below "
+            f"{min_correlation}: there is no peak to trust, so no offset is reported")
+
+    shift = phase_cross_correlation(b, a, upsample_factor=10, normalization=None)[0]
+    metres_per_pixel = MOON_RADIUS_M * np.pi / 180.0 / patch.res_px_per_deg
+    offset = float(np.hypot(*shift) * metres_per_pixel)
+    return DemRegistration(meta.product_id, correlation, (float(shift[0]), float(shift[1])),
+                           offset, patch.source, patch.independent_of_references,
+                           slope_median, True,
+                           f"registered at correlation {correlation:+.3f}")

@@ -230,3 +230,97 @@ def test_the_report_keeps_disagreements_rather_than_hiding_them():
     assert "agree" in text and "label" in text
     for d in report.checks:
         assert d.name in text
+
+
+# ----------------------------------------------------------------------------- the DEM half
+
+@pytest.mark.skipif(len(REAL_DEM) < 2, reason="SLDEM tiles not downloaded")
+class TestDemRegistration:
+    """GEO-07's second, independent route to where an image sits.
+
+    The outcome on our own data is a REFUSAL, and that is the finding: the method
+    works, the signal is not there. Both halves are pinned, because a refusal is
+    only honest if the thing refusing has been shown to work.
+    """
+
+    def patch(self):
+        from chandralign.io.dem import dem_patch
+        return dem_patch(REAL_DEM, (11.68, 12.47, 22.54, 23.32))
+
+    def test_the_method_recovers_a_shift_it_was_given(self):
+        """The control. Without this, 'no offset found' would mean nothing."""
+        from skimage.registration import phase_cross_correlation
+
+        from chandralign.evaluate.groundtruth import render_relief
+
+        relief = render_relief(self.patch(), 104.27, 44.0)
+        filled = np.nan_to_num(relief, nan=float(np.nanmean(relief)))
+        for dy, dx in ((7, -5), (20, 13)):
+            moved = np.roll(np.roll(filled, dy, axis=0), dx, axis=1)
+            shift = phase_cross_correlation(filled, moved, upsample_factor=10,
+                                            normalization=None)[0]
+            assert (int(shift[0]), int(shift[1])) == (-dy, -dx)
+
+    def test_real_tmc2_does_not_correlate_with_rendered_relief(self):
+        """The finding. Lunar mare at ~2 deg slope has almost no shading contrast at
+        59 m, and what TMC-2 does see there is albedo, which a Lambertian hillshade
+        knows nothing about."""
+        from chandralign.evaluate.groundtruth import register_to_dem
+        from chandralign.geometry.projection import geolocation_model
+        from chandralign.io.dem import dem_patch
+        from chandralign.io.pds_raster import Window
+
+        tmc2 = next(iter(ROOT.glob(
+            "data/raw/ch2/tmc2/products/*/data/calibrated/*/*_d_img_d18.xml")), None)
+        if tmc2 is None:
+            pytest.skip("TMC-2 product not downloaded")
+        meta = parse_label(tmc2)
+        model = geolocation_model(meta)
+        row, height = 102400, 8192                      # the roughest ground in the strip
+        lat, lon = model.pixel_to_latlon(np.array([row, row + height]),
+                                         np.array([0, meta.array_shape[1] - 1]))
+        patch = dem_patch(REAL_DEM, (float(lat.min()) - 0.03, float(lat.max()) + 0.03,
+                                     float(lon.min()) - 0.06, float(lon.max()) + 0.06))
+        result = register_to_dem(meta, Window(row, 0, height, meta.array_shape[1]),
+                                 patch, model)
+        assert abs(result.correlation) < 0.35
+        assert result.trustworthy is False
+        assert result.offset_m is None                  # NOT a number we could misread
+        assert result.shift_px is None
+        assert "no peak to trust" in result.reason
+        assert result.slope_median_deg > 0
+        assert result.dem_independent_of_references is False     # SLDEM uses SELENE
+
+    def test_a_scene_with_no_sun_geometry_refuses_before_rendering(self):
+        from chandralign.evaluate.groundtruth import register_to_dem
+        from chandralign.io.pds_raster import Window
+
+        m = replace(meta("OHRC"), solar_incidence_deg=None, sub_solar_azimuth_deg=None)
+        out = register_to_dem(m, Window(0, 0, 8, 8), self.patch())
+        assert out.trustworthy is False and out.offset_m is None
+        assert "sun geometry" in out.reason
+
+    def test_an_image_that_misses_the_dem_refuses(self):
+        from chandralign.evaluate.groundtruth import register_to_dem
+        from chandralign.geometry.projection import geolocation_model
+        from chandralign.io.pds_raster import Window
+
+        real = next(iter(ROOT.glob(
+            "data/raw/ch2/ohrc/products/*/data/calibrated/*/*_d_img_d18.xml")), None)
+        if real is None:
+            pytest.skip("OHRC product not downloaded")
+        m = parse_label(real)                           # sits near 0 deg, not 12 deg N
+        out = register_to_dem(m, Window(0, 0, 256, 256), self.patch(),
+                              geolocation_model(m))
+        assert out.trustworthy is False and out.offset_m is None
+        assert "overlap" in out.reason
+
+    def test_render_relief_is_bounded_and_shaped_like_the_patch(self):
+        from chandralign.evaluate.groundtruth import render_relief
+
+        patch = self.patch()
+        relief = render_relief(patch, 104.27, 44.0)
+        assert relief.shape == patch.heights_m.shape
+        finite = relief[np.isfinite(relief)]
+        assert finite.min() >= 0.0 and finite.max() <= 1.0
+        assert finite.std() > 0
