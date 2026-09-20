@@ -38,9 +38,12 @@
 | 16 | Label cross-validation against independent physics | GEO-07 | ⚠️ metadata half done; DEM half needs Part 2's matcher |
 | 17 | Reference search by location + all 7 cameras verified | DATA-10, DATA-12 | ✅ real ODE/DARTS product IDs |
 | 18 | Overlapping source↔reference pairs, overlap recorded | DATA-08 | ✅ 3 TMC-2↔TC pairs, 14 total |
-| — | Remaining Part 1: the DEM half of GEO-07 (needs Part 2's matcher) | GEO-07 | ⏳ |
+| 19 | WAC + SELENE MI references, one loader for all four | DATA-06/07/08/09 | ✅ |
+| 20 | Physics-based outlier filter (terrain must agree) | ALIGN-03 | ✅ rescues a 0-correct RANSAC fit |
+| 21 | DEM-route ground truth | GEO-07 | ✅ built + validated; **abstains** on our data, see finding 26 |
+| — | **All 29 Member A features are DONE.** | — | ✅ |
 
-**Tests:** 399 passing (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 431 passing (`pytest -m ""`), including checks on every real product we hold.
 One test skips: `test_adapter.py` needs the optional `learned` extra (torch), installed with `pip install -e ".[learned]"`.
 
 **Both parts are now in `main`** (merge `ba4142a`). Part 1 preprocessing and Member B's matching engine sit
@@ -422,6 +425,10 @@ Worth knowing before designing anything downstream:
 21. **ISRO's two corner sets disagree by kilometres on long strips.** `system` vs `refined`: OHRC **0 m** (its `reference_data_used` is `System`), TMC-2 **5,388 m**, IIRS **14,577 m**. This independently corroborates the step-11 figures (5,146 m / 13,295 m) by a different route, and it is a free uncertainty bound on the label.
 22. **The headline pairing has its evidence.** Three genuinely overlapping **TMC-2 ↔ SELENE TC** pairs — 1,827.6 / 1,799.5 / 974.3 km², against **three different** TC tiles so they are three pieces of ground, not one counted thrice. Scale ratio **1.679** (4.41 m vs 7.403 m). Full inventory: 14 pairs across 4 pairings in `data/pairs/registered_pairs.json`.
 23. **Our PDS3 reader assumed one filter wavelength; SELENE MI states nine.** The real MI label raised `TypeError`. Found only by fetching a real MI product — 9 bands, 404–1572 nm, **14.806 m/pixel** (not the 20 m nominal), with a 16 MB elevation backplane sitting *ahead* of the image in the same file.
+24. **WAC writes its no-data constants as hex bit patterns.** `0xFF7FFFFB` is not the integer 4,287,102,971 — reinterpreted as the array's own float32 it is **−3.4028227e+38**, exactly the fill value in the pixels. A reader that doesn't reinterpret the bits masks nothing at all.
+25. **RANSAC can return a confident, completely wrong answer.** On a 3.7%-precision match pool over real relief, RANSAC alone found **13 inliers, 0 of them correct, and reported success**. The terrain filter (ALIGN-03) removes those first and the fit becomes **24 inliers, all correct**. Across three pool qualities precision rose 0.037→0.104, 0.116→0.293, 0.304→0.585 — and **all 24 true matches survived every time**. Where RANSAC already succeeds the filter changes nothing: it is a rescue, not a polish.
+26. **The DEM route to ground truth does not work on lunar mare, and we say so.** Injecting a known shift into rendered relief recovers it exactly, so the method is sound — but real TMC-2 correlates **+0.135** with SLDEM-rendered relief on the roughest ground in the strip and **≈0.00** elsewhere. At ~2° median slope there is almost no shading contrast at 59 m, and what TMC-2 sees is albedo, which a Lambertian hillshade knows nothing about. `register_to_dem()` therefore **reports no offset** rather than a number that would be misread as an uncertainty bound.
+27. **Two of our four WAC products are night-side** (ODE incidence 166° and 179°, raw reflectance ≈0.000 against 0.037 for the sunlit pair over the same ground). The pair index flags them: 25 pairs, **22 usable**, 3 against an unlit reference.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
