@@ -393,6 +393,49 @@ def _pvl_number(block, key) -> Optional[float]:
     return None if value is None else float(value)
 
 
+
+def _pvl_numbers(block, key) -> list[float]:
+    """Every number under a key, whether the label states one or a sequence.
+
+    SELENE MI states nine CENTER_FILTER_WAVELENGTH values, one per band, where the
+    single-band products state one. A reader that assumes a scalar raises TypeError
+    on the real MI label -- which is how this was found.
+    """
+    if key not in block:
+        return []
+    value = _pvl_value(block[key])
+    if value is None:
+        return []
+    values = value if isinstance(value, (list, tuple)) else [value]
+    out = []
+    for v in values:
+        v = _pvl_value(v)
+        if v is not None:
+            out.append(float(v))
+    return out
+
+
+def _pds3_wavelength_range(label) -> Optional[tuple[float, float]]:
+    """(min, max) nanometres the product covers, from its filter centres and bandwidths.
+
+    One band gives centre +/- half a bandwidth. Several bands give the span from the
+    lowest band's lower edge to the highest band's upper edge. Where the bandwidths
+    are missing or do not match the centres one-for-one, the centres alone are used
+    and the edges are simply not widened -- narrower than the truth, never wider.
+    """
+    centres = _pvl_numbers(label, "CENTER_FILTER_WAVELENGTH")
+    if not centres:
+        return None
+    widths = _pvl_numbers(label, "BANDWIDTH")
+    if len(widths) == 1 and len(centres) > 1:
+        widths = widths * len(centres)
+    if len(widths) != len(centres):
+        widths = [0.0] * len(centres)
+    lower = min(c - w / 2.0 for c, w in zip(centres, widths))
+    upper = max(c + w / 2.0 for c, w in zip(centres, widths))
+    return (lower, upper)
+
+
 def _iso_utc(value) -> Optional[str]:
     """PDS3 times (UTC by definition) as ISO-8601 with a trailing Z, matching PDS4 labels.
 
@@ -580,9 +623,7 @@ def parse_pds3(lbl_path: str | Path) -> SceneMeta:
     verified["solar_incidence_deg"] = incidence is not None
     verified["emission_deg"] = emission is not None
     verified["phase_deg"] = phase is not None
-    centre = _pvl_number(label, "CENTER_FILTER_WAVELENGTH")
-    width = _pvl_number(label, "BANDWIDTH")
-    wavelength = (centre - width / 2.0, centre + width / 2.0) if centre is not None and width is not None else None
+    wavelength = _pds3_wavelength_range(label)
     verified["wavelength_nm"] = wavelength is not None
     verified["raster_path"] = True
 

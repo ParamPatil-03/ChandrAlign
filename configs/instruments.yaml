@@ -83,7 +83,9 @@ instruments:
     n_bands: null             # not stated in PLAN.md; read from a real WAC label
     wavelength_nm: null
     swath_km: null
-    # Not yet checked against a downloaded WAC product; verify when WAC is fetched.
+    # VERIFIED against real ODE product ids returned for our own test box
+    # (wac.m107908070mc, wac.m171594275mc, wac.m106698280mc): WAC monochrome
+    # products end in MC, where NAC ends in LC or RC for its two cameras.
     id_patterns: ['^wac\.', '^m\d+[cm][ce]$']
 
   TC:
@@ -105,10 +107,14 @@ instruments:
     modality: multiband
     kind: multiband imager
     gsd_m: 20.0
-    gsd_range_m: [20.0, 62.0]
-    n_bands: null             # not stated in PLAN.md; read from a real MI label
-    wavelength_nm: null
+    # 14.81 m on the real MI_MAP_03 tile we hold (MAP_SCALE 0.014806323445 km/px);
+    # the level-2 swath products are the coarser end.
+    gsd_range_m: [14.8, 62.0]
+    n_bands: 9                # READ from MI_MAP_03_N01E023N00E024SC.lbl
+    wavelength_nm: [404.0, 1572.0]   # 9 filter centres 414-1550 nm, +/- their bandwidths
     swath_km: null
+    # VERIFIED against real JAXA DARTS product names in our own test region
+    # (MI_MAP_03_N01E023N00E024SC, sln-l-mi-5-map-v3.0/lon023).
     id_patterns: ['^mi[_a-z]', '^m[vn][a-z]?_']
     note: Multiband Imager, 20 m/px VIS and 62 m/px NIR
 

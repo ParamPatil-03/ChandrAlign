@@ -42,7 +42,8 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 # Quick run by default. Full run, including the multi-GB checksum checks:
 #   pytest -m ""
-addopts = "-q -m 'not slow'"
+addopts = "-q -m 'not slow and not network'"
 markers = [
     "slow: reads whole multi-GB products (e.g. ISRO MD5 checks); run with -m slow or -m ''",
+    "network: reaches a live service (ODE, DARTS); excluded by default so the suite passes offline",
 ]

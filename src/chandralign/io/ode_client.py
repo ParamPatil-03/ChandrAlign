@@ -81,3 +81,100 @@ def catalogue_number(record: dict, key: str) -> Optional[float]:
         return float(value)
     except (TypeError, ValueError) as exc:
         raise OdeError(f"ODE field {key}={value!r} is not a number") from exc
+
+
+# ----------------------------------------------------------------------------- DATA-12: area search
+
+# ODE product types for target=moon, as listed by its own query=iipy. CDR is
+# radiometrically calibrated and is what a reference image should be; EDR (raw)
+# stays reachable because the anti-stub tests need a product with a detached label.
+PRODUCT_TYPES = {
+    "NAC": ["CDRNAC4"],
+    "NAC-EDR": ["EDRNAC4"],
+    "WAC": ["CDRWAM4"],
+    "WAC-EDR": ["EDRWAM4"],
+}
+IHID, IID = "LRO", "LROC"
+PRODUCT_FILE_SUFFIXES = (".IMG", ".LBL", ".XML")
+
+
+def to_360(lon: float) -> float:
+    """ODE expresses longitude in 0..360 east; our shapefiles use -180..180."""
+    return lon % 360.0
+
+
+def _as_list(value) -> list:
+    """ODE collapses a single-element list to a bare object. Undo that."""
+    if value is None:
+        return []
+    return [value] if isinstance(value, dict) else list(value)
+
+
+def parse_products(payload: dict, product_type: str) -> list[dict]:
+    """The Products block of an ODE response, flattened to the fields we use.
+
+    Split out from the network call so it can be tested against a saved payload
+    without reaching ODE -- the shape of this response is the part that breaks.
+    """
+    products = _as_list(payload.get("Products", {}).get("Product"))
+    results = []
+    for p in products:
+        files = [
+            {"name": f.get("FileName"), "url": f.get("URL"), "kbytes": f.get("KBytes")}
+            for f in _as_list(p.get("Product_files", {}).get("Product_file"))
+            if str(f.get("FileName", "")).upper().endswith(PRODUCT_FILE_SUFFIXES)
+        ]
+        results.append({
+            "product_id": p.get("pdsid"),
+            "type": product_type,
+            "start_utc": p.get("UTC_start_time"),
+            "incidence_deg": p.get("Incidence_angle"),
+            "emission_deg": p.get("Emission_angle"),
+            "phase_deg": p.get("Phase_angle"),
+            "bbox": [p.get("Minimum_latitude"), p.get("Maximum_latitude"),
+                     p.get("Westernmost_longitude"), p.get("Easternmost_longitude")],
+            "files": files,
+        })
+    return results
+
+
+def search_area(bbox: tuple[float, float, float, float], product: str = "NAC",
+                limit: int = 20, timeout: float = 60.0) -> list[dict]:
+    """Reference products whose footprint covers a ground box (DATA-12).
+
+    bbox is (min_lat, max_lat, min_lon, max_lon) in degrees, longitudes in
+    -180..180 as our shapefiles give them; they are converted to ODE's 0..360.
+
+    Lives here rather than in scripts/fetch_lro.py so the pair-finding work can
+    call it directly and so the response parsing is testable without a network.
+    Raises OdeError when ODE reports a failure; an empty result is NOT an error,
+    because "nothing covers this box" is a real answer.
+    """
+    import requests
+
+    if product not in PRODUCT_TYPES:
+        raise OdeError(f"unknown product {product!r}; known: {sorted(PRODUCT_TYPES)}")
+    min_lat, max_lat, min_lon, max_lon = bbox
+    if min_lat > max_lat:
+        raise OdeError(f"bbox latitudes are inverted: {min_lat} > {max_lat}")
+
+    results: list[dict] = []
+    for ode_type in PRODUCT_TYPES[product]:
+        params = {
+            "query": "product", "target": "moon", "results": "fmp", "output": "JSON",
+            "ihid": IHID, "iid": IID, "pt": ode_type, "limit": limit,
+            "minlat": min_lat, "maxlat": max_lat,
+            "westernlon": to_360(min_lon), "easternlon": to_360(max_lon),
+        }
+        response = requests.get(ODE_URL, params=params, timeout=timeout)
+        response.raise_for_status()
+        payload = response.json().get("ODEResults", {})
+        status = str(payload.get("Status", "")).lower()
+        if status != "success":
+            # ODE says "Success" with zero products for an empty box, so a
+            # non-success status is a real failure and not simply "none found".
+            if "no products" in str(payload.get("Error", "")).lower():
+                continue
+            raise OdeError(f"{ode_type}: {payload.get('Error', 'unexpected ODE response')}")
+        results.extend(parse_products(payload, ode_type))
+    return results

@@ -109,7 +109,11 @@ def test_spec_values_come_from_plan():
     assert ohrc.gsd_m == 0.25 and ohrc.wavelength_nm == (500.0, 800.0) and ohrc.mission == "CH2"
     assert get_spec("IIRS").n_bands == 256
     assert get_spec("TMC2").gsd_range_m == (4.41, 5.0)   # 4.41 on OUR label; PLAN quotes 4.43 from another product
-    assert get_spec("MI").n_bands is None     # not stated in the plan -> read from label
+    # Was None ("not stated in the plan -> read from label"). It has now BEEN read
+    # from a real label: MI_MAP_03_N01E023N00E024SC.lbl, a JAXA DARTS product in our
+    # own test region, states 9 bands with filter centres from 414 to 1550 nm.
+    assert get_spec("MI").n_bands == 9
+    assert get_spec("MI").wavelength_nm == (404.0, 1572.0)   # centres +/- their bandwidths
 
 
 def test_config_missing_a_camera_is_rejected(tmp_path):
