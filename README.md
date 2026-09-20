@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 13b closed** — shadow detection matches a hand-traced mask at IoU 0.894.
+> This README is updated after every completed step. Last update: **Step 13c, IIRS band quality and composite** (PREP-05, PREP-06).
 
 ---
 
@@ -30,9 +30,10 @@
 | 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ on real LOLA tiles |
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
 | 13b | Shadow detection → `shadow_mask` | PREP-04 | ✅ IoU 0.894 vs a hand-traced mask (plan needs > 0.7) |
-| next | 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-05, 06, 07, 08, 02, 03 | ⏳ |
+| 13c | IIRS: score 256 bands, blend the good ones into one plane | PREP-05, PREP-06 | ✅ +43% repeatable features vs the best single band |
+| next | 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-07, 08, 02, 03 | ⏳ |
 
-**Tests:** 234 passing, 1 skipped (the LOLA-vs-SLDEM cross-check needs the second SLDEM tile) (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 248 passing, 1 skipped (the LOLA-vs-SLDEM cross-check needs the second SLDEM tile) (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -245,6 +246,23 @@ ready.shadow_mask                                    # True = shadow: exclude fr
 
 Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors. Against a mask **traced by hand** on that crop: **IoU 0.894**, 96.1% of pixels agree. Both kinds of disagreement trace to hand-drawing limits rather than detector error — pixels only the human marked have median brightness 25 DN (sunlit ground is 38, shadow is 4: brush overspill on a jagged edge), while pixels only the detector marked sit at 5 DN, the sensor's black floor.
 
+### IIRS: 256 bands → one image
+
+```python
+from chandralign.preprocess.iirs_composite import product_band_selection, iirs_composite_plane
+
+selection = product_band_selection(iirs_meta)      # score the bands ONCE per product
+plane = iirs_composite_plane(iirs_meta, window, selection)
+selection.bands, selection.rejected                # which bands, and why the others went
+plane.preprocess_chain[0]                          # 'iirs_composite_125of256_snr>=30_refl'
+```
+
+Every band is scored from the data (signal = median, noise = robust spread of a diagonal double difference). On our real cube **125 of 256 bands are kept**: 3 are dropped for dead pixels (bands 0–2, 9.7%/4.5%/1.6% dead), 20 for low SNR, and 108 for being past 3,000 nm, where the Moon's own **thermal glow** dominates and the image shows temperature rather than surface appearance. Kept bands are blended with inverse-variance weights.
+
+**Use one selection for the whole product.** If each tile scored its own bands, neighbouring tiles would be built from different data and stop being comparable.
+
+**Two things this is not:** it is not a panchromatic response (pan cameras see 400–800 nm, IIRS starts at 800 — there is no overlap; it is a spatial-structure proxy), and per-band wavelengths are **not in the label** — only the overall 800–5,000 nm range is stated, so band→wavelength is interpolated and marked approximate.
+
 ### What is NOT there yet (don't build on it)
 
 | Missing | Why | Arrives with |
@@ -254,7 +272,7 @@ Per image: the black level (1st percentile) and sunlit level (median) set a thre
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
 | LOLA-vs-SLDEM height comparison | second SLDEM tile still to download | DATA-13 cross-check |
-| Phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02, 03, 05–08 |
+| Phase congruency, MIND, terrain scores | Not built yet | PREP-02, 03, 07, 08 |
 
 ---
 
@@ -271,6 +289,7 @@ Worth knowing before designing anything downstream:
 7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
 8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
 10. **Real terrain under the OHRC scene** (LOLA, 29.6 m/px, stitched across the equator from two tiles): heights −1,905 to −1,585 m, 320 m of relief, no gaps. Slopes: median 1.2°, 95th percentile 5.4°, max 28°. The tile join is invisible — the height step across it (0.51 m) is smaller than the typical step elsewhere (0.58 m).
+11. **Raw keypoint count is a misleading quality measure.** On the IIRS cube the noisiest single band scores the *most* SIFT keypoints (1,413 at noise 0.048) while the quietest composite scores fewer (1,319 at 0.042) — SIFT fires on noise. Measured on pairs with independent noise, where only real features can match, the composite gives **+43%** more genuine matches (1,042 vs 727). PLAN.md P1-T14's keypoint-count acceptance wording is superseded for PREP-06; the change is recorded in FEATURES.csv.
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---

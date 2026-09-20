@@ -322,6 +322,50 @@ def check_shadow_iou(samples: int, rng):
             {})
 
 
+def check_iirs_composite(samples: int, rng):
+    """Repeatable features in the IIRS composite vs the best single band (PREP-06).
+
+    Two images of the same terrain with independent noise: only real features match.
+    """
+    import cv2
+    from chandralign.io.pds_raster import read_raster
+    from chandralign.preprocess.iirs_composite import product_band_selection
+    from chandralign.preprocess.radiometric import clahe, percentile_stretch
+
+    meta = parse_label(products()["IIRS"])
+    sel = product_band_selection(meta)
+    cube = read_raster(meta, Window(6000, 0, 256, 250)).astype(np.float64)
+    valid = np.ones(cube.shape[1:], bool)
+    sift, bf = cv2.SIFT_create(), cv2.BFMatcher()
+
+    def prep(img):
+        return (clahe(percentile_stretch(img.astype(np.float32), valid)[0], valid) * 255).astype(np.uint8)
+
+    def matches(a, b):
+        ka, da = sift.detectAndCompute(prep(a), None)
+        kb, db = sift.detectAndCompute(prep(b), None)
+        good = [m for m, n in bf.knnMatch(da, db, k=2) if m.distance < 0.75 * n.distance]
+        if len(good) < 8:
+            return len(ka), 0
+        pa = np.float32([ka[g.queryIdx].pt for g in good])
+        pb = np.float32([kb[g.trainIdx].pt for g in good])
+        _, inl = cv2.estimateAffinePartial2D(pa, pb, method=cv2.RANSAC, ransacReprojThreshold=1.0)
+        return len(ka), int(inl.sum())
+
+    best = max(sel.bands, key=lambda b: sel.snr[b])
+    kp_single, single = matches(cube[best], cube[best + 1])
+    blended = []
+    for half in (sel.bands[0::2], sel.bands[1::2]):
+        idx = list(half)
+        w = sel.snr[idx] ** 2
+        scaled = (cube[idx] - sel.signal[idx][:, None, None]) / sel.noise[idx][:, None, None]
+        blended.append((scaled * (w / w.sum())[:, None, None]).sum(0))
+    kp_comp, paired = matches(*blended)
+    return ({"correct": paired, "total": paired + single, "bands_kept": len(sel.bands),
+             "composite_matches": paired, "best_single_band_matches": single,
+             "raw_keypoints_composite": kp_comp, "raw_keypoints_single": kp_single}, {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -335,6 +379,8 @@ CHECKS = [
      "map round trip", check_geolocation),
 ("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
      check_shadow_iou),
+    ("13c", "IIRS composite", "Repeatable features (independent-noise pair) vs the best single band",
+     check_iirs_composite),
 ]
 
 
