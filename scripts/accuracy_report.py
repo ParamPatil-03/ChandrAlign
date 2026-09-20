@@ -300,6 +300,28 @@ def grid_path_of(meta):
     return grid_path(meta)
 
 
+def check_shadow_iou(samples: int, rng):
+    """Detected shadows vs a mask traced BY HAND on a real OHRC crater crop (PREP-04)."""
+    import cv2
+    from chandralign.preprocess.shadow_mask import detect_shadows, mask_iou
+    crop_path = ROOT / "tests" / "fixtures" / "images" / "ohrc_shadow_crop.npy"
+    mask_path = ROOT / "tests" / "fixtures" / "images" / "ohrc_shadow_crop_mask.png"
+    if not mask_path.exists():
+        return {"correct": 0, "total": 0, "note": "no hand-drawn mask"}, {}
+    drawn = cv2.imread(str(mask_path), cv2.IMREAD_COLOR)
+    truth = (drawn[:, :, 2] > 200) & (drawn[:, :, 1] < 60) & (drawn[:, :, 0] < 60)
+    crop = np.load(crop_path).astype(float)
+    mask = detect_shadows(crop, np.ones(crop.shape, bool)).mask
+    agreed = int((mask == truth).sum())
+    # Where we disagree, is the pixel actually dark? Sunlit ground is ~38 DN, shadow ~4.
+    hand_only, code_only = truth & ~mask, mask & ~truth
+    return ({"correct": agreed, "total": int(truth.size),
+             "iou": round(mask_iou(mask, truth), 4),
+             "hand_only_median_DN": float(np.median(crop[hand_only])) if hand_only.any() else None,
+             "code_only_median_DN": float(np.median(crop[code_only])) if code_only.any() else None},
+            {})
+
+
 CHECKS = [
     ("3", "Camera detection", "Every product ID in ISRO's archive index + every product we hold", check_camera_detection),
     ("4", "CH-2 label fields", "Parsed fields vs a separate plain-text read of the same XML", check_label_fields),
@@ -311,6 +333,8 @@ CHECKS = [
     ("10", "Footprint overlap", "check_overlap vs area-weighted Monte-Carlo, all 11 real pairs", check_overlap_accuracy),
     ("11", "Geolocation / projection", "SELENE corners vs label; every ISRO grid node; ground->pixel inverse; "
      "map round trip", check_geolocation),
+("13b", "Shadow detection", "Detected shadow vs a mask traced by hand on a real OHRC crater crop",
+     check_shadow_iou),
 ]
 
 

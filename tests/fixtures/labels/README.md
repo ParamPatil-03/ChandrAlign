@@ -25,3 +25,11 @@ SELENE/Kaguya Terrain Camera ortho map v2.0, data courtesy of JAXA.
 
 The LRO NAC labels are from NASA's PDS (LROC CDR, via the PDS Orbital Data Explorer),
 Lunar Reconnaissance Orbiter Camera, NASA / Arizona State University.
+
+## Image fixtures (`../images/`)
+
+| File | What |
+|---|---|
+| `ohrc_shadow_crop.npy` | Raw DN of a 512×512 OHRC crater crop (rows 49152.., cols 7168.. of `ch2_ohr_ncp_20240330T0035085365`), sun 7.3° above the horizon |
+| `ohrc_shadow_crop.png` | The same crop stretched for viewing, used for hand-tracing |
+| `ohrc_shadow_crop_mask.png` | The crop with shadow areas painted pure red (255,0,0), **traced by hand by Member A** without seeing the detector's output. The PREP-04 acceptance test compares against this. |

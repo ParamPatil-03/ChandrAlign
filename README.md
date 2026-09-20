@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 12 closed on real LOLA data**; Step 13b waits on a hand-drawn reference mask.
+> This README is updated after every completed step. Last update: **Step 13b closed** — shadow detection matches a hand-traced mask at IoU 0.894.
 
 ---
 
@@ -29,10 +29,10 @@
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
 | 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ on real LOLA tiles |
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
-| 13b | Shadow detection → `shadow_mask` | PREP-04 | 🟡 built · plan's hand-drawn IoU check pending |
+| 13b | Shadow detection → `shadow_mask` | PREP-04 | ✅ IoU 0.894 vs a hand-traced mask (plan needs > 0.7) |
 | next | 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-05, 06, 07, 08, 02, 03 | ⏳ |
 
-**Tests:** 233 passing, 2 skipped (LOLA-vs-SLDEM cross-check needs the second SLDEM tile; the hand-drawn shadow mask is not traced yet) (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 234 passing, 1 skipped (the LOLA-vs-SLDEM cross-check needs the second SLDEM tile) (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -243,7 +243,7 @@ ready = prepare_plane(plane)                         # the shadow mask is carrie
 ready.shadow_mask                                    # True = shadow: exclude from matching
 ```
 
-Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors.
+Per image: the black level (1st percentile) and sunlit level (median) set a threshold 15% of the way up. Dark **and** uniform pixels seed a shadow, and each seed grows over all connected dark pixels, so shadow **edges** (which move with the sun) are included. Dark textured material is left out. On a real OHRC crater crop (sun 7.3° up), 33.9% of pixels are flagged; deep shadow only, not half-lit small crater floors. Against a mask **traced by hand** on that crop: **IoU 0.894**, 96.1% of pixels agree. Both kinds of disagreement trace to hand-drawing limits rather than detector error — pixels only the human marked have median brightness 25 DN (sunlit ground is 38, shadow is 4: brush overspill on a jagged edge), while pixels only the detector marked sit at 5 DN, the sensor's black floor.
 
 ### What is NOT there yet (don't build on it)
 
