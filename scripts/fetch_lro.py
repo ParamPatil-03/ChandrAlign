@@ -107,15 +107,35 @@ def download(entry: dict, ptype: str) -> None:
         if not f["url"]:
             continue
         dest = out_dir / f["name"]
+        want = int(float(f["bytes"] or 0) * 1024)      # ODE reports KBytes
+
+        # Resume-safety: a file that merely EXISTS is not a file that finished.
+        # An interrupted download leaves a short file behind, and skipping on
+        # existence alone would hand that truncated product to the pipeline as
+        # if it were complete -- a silent data-corruption bug, not a slow path.
         if dest.exists():
-            print(f"    have {f['name']}")
-            continue
-        print(f"    get  {f['name']} ({float(f['bytes'] or 0) / 1024:.1f} MB)")
+            have = dest.stat().st_size
+            if want and abs(have - want) / want > 0.01:
+                print(f"    redo {f['name']} (have {have/1e6:.1f} MB of {want/1e6:.1f} MB)")
+                dest.unlink()
+            else:
+                print(f"    have {f['name']}")
+                continue
+
+        print(f"    get  {f['name']} ({want / 1e6:.1f} MB)")
+        # Download to a .part file and rename only on success, so an interrupted
+        # run can never leave something that looks finished.
+        part = dest.with_suffix(dest.suffix + ".part")
         with requests.get(f["url"], stream=True, timeout=600) as r:
             r.raise_for_status()
-            with dest.open("wb") as fh:
+            with part.open("wb") as fh:
                 for chunk in r.iter_content(1 << 20):
                     fh.write(chunk)
+        got = part.stat().st_size
+        if want and abs(got - want) / want > 0.01:
+            part.unlink()
+            raise RuntimeError(f"{f['name']}: got {got} bytes, expected ~{want}")
+        part.replace(dest)
 
 
 def main() -> None:
