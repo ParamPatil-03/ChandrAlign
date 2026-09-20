@@ -6,7 +6,7 @@
 - **Features:** [`FEATURES.csv`](FEATURES.csv) lists all 85 features with owner, task, status and "done when".
 - **Plain-language guide:** [`docs/FEATURE_GUIDE.html`](docs/FEATURE_GUIDE.html).
 
-> This README is updated after every completed step. Last update: **Step 13b, shadow detection** (waiting on a hand-drawn reference mask); Step 12's DEM download still in progress.
+> This README is updated after every completed step. Last update: **Step 12 closed on real LOLA data**; Step 13b waits on a hand-drawn reference mask.
 
 ---
 
@@ -27,12 +27,12 @@
 | 9 | Sun angles and lighting difference between two scenes (source of every value recorded) | GEO-01, DATA-12 | 🟡 scene level done · per-pixel layers with GEO-02 |
 | 10 | Footprint overlap and pre-filter (rejects a pair before any matcher runs) | GEO-04 | ✅ |
 | 11 | Moon map projection (IAU 2015) and pixel ↔ Moon-position models | GEO-05 | ✅ |
-| 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ slope · 🟡 DEM reader done, real tiles downloading |
+| 12 | Elevation maps (LOLA, SLDEM2015) and slope / aspect | DATA-13, GEO-03 | ✅ on real LOLA tiles |
 | 13a | Contrast preparation: percentile stretch + CLAHE | PREP-01 | ✅ |
 | 13b | Shadow detection → `shadow_mask` | PREP-04 | 🟡 built · plan's hand-drawn IoU check pending |
 | next | 13c IIRS band quality + composite · 13d flat / repetitive terrain · 13e phase congruency, MIND | PREP-05, 06, 07, 08, 02, 03 | ⏳ |
 
-**Tests:** 231 passing, 3 skipped (2 wait for the DEM download, 1 for the hand-drawn shadow mask) (`pytest -m ""`), including checks on every real product we hold.
+**Tests:** 233 passing, 2 skipped (LOLA-vs-SLDEM cross-check needs the second SLDEM tile; the hand-drawn shadow mask is not traced yet) (`pytest -m ""`), including checks on every real product we hold.
 
 ---
 
@@ -253,7 +253,7 @@ Per image: the black level (1st percentile) and sunlit level (median) set a thre
 | Emission and phase angles for **CH-2** | Not in ISRO's labels (sun azimuth and incidence are) | GEO-02 |
 | Pixel geolocation for **NAC** | Not in the label (ODE gives only an outline) | SPICE camera model |
 | Per-pixel geometry (`plane.geo`) | Not built yet | GEO-02, GEO-03 |
-| Real elevation for our test region | LOLA / SLDEM tiles still downloading (~0.7 MB/s) | DATA-13 |
+| LOLA-vs-SLDEM height comparison | second SLDEM tile still to download | DATA-13 cross-check |
 | Phase congruency, IIRS composite, terrain scores | Not built yet | PREP-02, 03, 05–08 |
 
 ---
@@ -270,6 +270,7 @@ Worth knowing before designing anything downstream:
 6. **One OHRC scene gives both an easy pair and a stress pair.** OHRC vs NAC M102000149RC differ by only **3°** in incidence (Easy tier). OHRC vs NAC M1417360906LC differ by **75°** (illumination stress test). Same ground, real data.
 7. **OHRC and TMC-2 had the sun on opposite sides** (azimuth 270° vs 104°, 166° apart), so shadows point the opposite way. Expect this pair to be hard for classical matchers.
 8. **IIRS's position is uncertain by up to ~13 km.** ISRO's refined corners (adjusted against SELENE) move IIRS 0.435° from the system-level ones; TMC-2 moves 0.176° (~5 km); OHRC doesn't move. For IIRS this changes which pairs overlap at all (OHRC ↔ IIRS: 27% → 0%). OHRC ↔ IIRS goes through the TMC-2 cascade anyway, but don't trust IIRS geolocation to better than ~13 km until GEO-07 cross-checks it.
+10. **Real terrain under the OHRC scene** (LOLA, 29.6 m/px, stitched across the equator from two tiles): heights −1,905 to −1,585 m, 320 m of relief, no gaps. Slopes: median 1.2°, 95th percentile 5.4°, max 28°. The tile join is invisible — the height step across it (0.51 m) is smaller than the typical step elsewhere (0.58 m).
 9. **Independent vs refined geolocation, measured over the whole strip:** OHRC 0.2 m, TMC-2 ~5.1 km, IIRS ~13.4 km (median). Four-corner models are also coarse on long strips: straight edges are up to ~1 km off for TMC-2 and ~2.5 km for IIRS. SELENE's map formula, written for 0-based pixel indices, reproduces the label's own corners; it is the standard PDS3 relation, which has a `+1` for 1-based indices. **Dropping that `+1` is off by one pixel** (an earlier version of this README wrongly called our convention a departure from the standard).
 
 ---
