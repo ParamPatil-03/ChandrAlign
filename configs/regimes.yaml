@@ -58,6 +58,71 @@ rules:
     matcher: aliked-lightglue
 
 # ---------------------------------------------------------------------------
+# Illumination representation bands (MATCH-09, feeds PREP-02/03)
+# ---------------------------------------------------------------------------
+# WHICH IMAGE DESCRIPTION TO MATCH ON, AS A FUNCTION OF SUN AZIMUTH DIFFERENCE.
+#
+# Measured, not assumed. Correlation between the two descriptions of the same
+# synthetic lunar relief lit from two directions, elevation held at 30 deg,
+# 5 seeds (std 0.005-0.026, so the ordering is stable):
+#
+#   d_az     raw        phase congruency   MIND      winner
+#     0     +1.000          +1.000        +1.000     tie
+#    30     +0.867          +0.705        +0.634     RAW
+#    60     +0.505          +0.513        +0.186     pc
+#    90     +0.010          +0.465        +0.038     pc  (12x MIND)
+#   120     -0.489          +0.459        +0.183     pc
+#   150     -0.855          +0.620        +0.625     tie
+#   180     -0.991          +0.860        +0.975     MIND
+#
+# Three findings drive the bands, and two of them are counter-intuitive:
+#
+#  1. BELOW ~60 DEG, RAW BEATS BOTH DESCRIPTORS. Phase congruency and MIND
+#     discard the intensity relationship, and when the illumination is already
+#     similar that relationship is the strongest signal available. Preprocessing
+#     unconditionally is worse than not preprocessing.
+#  2. PHASE CONGRUENCY OWNS 60-135 DEG. This is the genuinely hard band: raw
+#     collapses to zero correlation at 90 deg because lit and shadowed facets
+#     swap, and only PC still describes the structure.
+#  3. MIND OWNS ~150-180 DEG. An opposed sun is close to a contrast INVERSION,
+#     which is exactly what MIND is invariant to; PC is merely good there.
+#
+# The relationship is NOT monotonic in d_azimuth -- 90 deg is the worst case,
+# not 180 deg -- so a single "more difference -> more invariance" rule is wrong.
+#
+# STATUS: measured on SYNTHETIC hillshaded relief. It is the same in-sample trap
+# as the quality-gate thresholds if it is left there, so these bands are a
+# HYPOTHESIS pending validation on the real LRO NAC illumination ladder
+# (9 products, incidence 2.2-81.8 deg). Do not present them as a result.
+#
+# Also note these correlations measure DESCRIPTION similarity, not matching
+# success. A descriptor can correlate well and still yield too few
+# correspondences, which is why the quality gate stays an independent check.
+representation_bands:
+  - max_d_azimuth_deg: 60.0
+    representation: raw
+    reason: below ~60 deg the intensity relationship still carries the most signal
+  - max_d_azimuth_deg: 135.0
+    representation: phase_congruency
+    reason: lit and shadowed facets swap; only PC still describes the structure
+  - max_d_azimuth_deg: 180.0
+    representation: mind
+    reason: an opposed sun approaches contrast inversion, which MIND is invariant to
+
+# Regimes where NO tested configuration has reached the 2 px accuracy bar.
+# The selector still returns a best effort, but flags the expectation so a
+# caller never reads a returned transform as a supported one. From the 60-run
+# matcher benchmark: at d_azimuth 90 and 180 every one of sift, xfeat,
+# aliked-lightglue and eloftr failed on every seed, best case 3.4 px.
+unsolved_illumination:
+  min_d_azimuth_deg: 60.0
+  evidence: reports/synthetic_matcher_bench.json
+  note: >
+    All four matchers failed across three seeds above 60 deg of sun azimuth
+    difference. Phase congruency is the best available representation there but
+    has not yet been shown to recover the failure end to end.
+
+# ---------------------------------------------------------------------------
 # Cross-modal candidates (MATCH-06)
 # ---------------------------------------------------------------------------
 # DECISION: all four are kept and benchmarked on the same tier. We do NOT drop
