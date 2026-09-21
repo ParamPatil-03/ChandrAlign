@@ -37,7 +37,9 @@ def test_ohrc_to_iirs_routes_to_the_cascade_never_direct():
     d = regime.select(OHRC, IIRS)
     assert d.route == "cascade"
     assert d.regime == "extreme_scale"
-    assert "323" in d.reason or "323.83" in d.reason
+    # 290x, not the 324x the labels give: scale_precheck routes on each pixel's
+    # best-supported size, both axes (IIRS is 99.995 x 79.515 m, not square 97.15).
+    assert "290" in d.reason
 
 
 def test_the_cascade_route_names_no_matcher():
@@ -166,18 +168,38 @@ def test_low_sun_is_recorded_but_not_routed_on():
 # ---------------------------------------------------------------------------
 # Cross-modality
 # ---------------------------------------------------------------------------
-def test_cross_modal_pairs_are_routed_by_modality_not_by_sun():
+@pytest.fixture
+def no_scale_gap(monkeypatch):
+    """Take scale out of the decision so the MODALITY rule can be tested alone.
+
+    These tests used to fake a small scale gap by overwriting IIRS's label GSD. That
+    stopped working, correctly, when scale_precheck began routing on each product's
+    best-supported pixel size: IIRS's corners still say ~89 m, and a label that its
+    own corners contradict no longer decides the scale. So the pre-check is replaced
+    outright with a non-extreme answer, which is what these tests actually mean.
+    """
+    from chandralign.io import instruments
+
+    real = instruments.scale_precheck
+
+    def close(a, b, threshold=None):
+        check = real(a, b, threshold)
+        return dataclasses.replace(check, ratio=1.5, extreme=False,
+                                   reason="scale gap removed for this test")
+
+    monkeypatch.setattr(instruments, "scale_precheck", close)
+
+
+def test_cross_modal_pairs_are_routed_by_modality_not_by_sun(no_scale_gap):
     """A panchromatic/hyperspectral relationship is radiometric, not geometric."""
-    near_iirs = dataclasses.replace(IIRS, gsd_m=TMC2.gsd_m)      # remove the scale gap
-    d = regime.select(TMC2, near_iirs)
+    d = regime.select(TMC2, IIRS)
     assert d.regime == "cross_modal"
     assert d.representation == "mind"
     assert d.candidates, "cross-modal candidates must be offered"
 
 
-def test_cross_modal_candidates_are_not_presented_as_ranked():
-    near_iirs = dataclasses.replace(IIRS, gsd_m=TMC2.gsd_m)
-    d = regime.select(TMC2, near_iirs)
+def test_cross_modal_candidates_are_not_presented_as_ranked(no_scale_gap):
+    d = regime.select(TMC2, IIRS)
     assert d.matcher is None                    # no winner claimed
     assert any("benchmarked, not ranked" in n for n in d.notes)
 

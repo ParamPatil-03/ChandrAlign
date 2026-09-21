@@ -13,7 +13,8 @@ not use to state it, and the two are reported TOGETHER with their disagreement.
 Four independent routes are available from metadata alone:
 
     ground sampling distance   from the OPTICS: pixel pitch x altitude / focal length.
-                               Nothing in that chain is the stated GSD.
+                               NOT INDEPENDENT for Chandrayaan-2 -- see the correction
+                               below. It checks the label's arithmetic, not the ground.
     cross-track pixel size     from the CORNERS: scene width / number of samples.
     along-track pixel size     from the CORNERS: scene length / number of lines, and
                                separately from ORBITAL MECHANICS: the circular-orbit
@@ -44,6 +45,22 @@ WHAT THIS FOUND ON OUR OWN THREE PRODUCTS, none of it assumed in advance:
 
      IIRS is the one that bites: assuming square pixels there is a 22% scale error in
      one axis, which no matcher will recover from.
+
+CORRECTION (found by Member B, confirmed here). An earlier version of this module
+called the optics check independent confirmation, because it agreed with TMC-2's
+label to 1.0000, and named TMC-2's CORNERS as the unreliable source. Both were
+wrong. Every CH-2 label GSD is the instrument's design GSD x altitude / 100 km --
+the same arithmetic as pitch x altitude / focal length -- so optics and label
+agree by construction, and their agreement says the label is the design value,
+not that the ground pixel is that size. Measured from the images (OHRC as a ruler,
+five windows), TMC-2's pixel is 4.92 m across: the corners' 4.88 m was right and
+the label's 4.41 m is 11.6% out. The optics check is kept, because it still catches
+a label that breaks its own arithmetic (and it is what exposed IIRS's 2x2 binning),
+but it is marked `independent=False` and never counts as confirmation.
+
+The along-track check IS independent -- ground speed from orbital mechanics, line
+period from the label, extent from the corners -- and it agrees with the pixel
+measurement: 5.048 m against 5.037 m for TMC-2.
 
 SCOPE. GEO-07 as planned also registers the image against a DEM re-projection and
 reports that disagreement. That half needs CH-2 pixels matched to rendered relief,
@@ -81,6 +98,9 @@ class Discrepancy:
     tolerance: float
     note: str = ""
     binning: int = 1              # a declared integer factor the two sides differ by
+    # False when the "independent" route is really the label's own arithmetic. Such
+    # a check can expose a label that contradicts itself; it cannot confirm one.
+    independent_route: bool = True
 
     @property
     def ratio(self) -> float:
@@ -117,9 +137,14 @@ class CrossCheck:
     def agrees(self) -> bool:
         return not self.failures
 
+    @property
+    def confirmations(self) -> tuple[Discrepancy, ...]:
+        """Agreements that actually confirm something: independent routes only."""
+        return tuple(d for d in self.checks if d.agrees and d.independent_route)
+
     def summary(self) -> str:
         head = f"{self.product_id}: {len(self.checks) - len(self.failures)}/{len(self.checks)} agree"
-        lines = [f"  {'OK ' if d.agrees else 'OUT'} {d.name}: label {d.label:.4g}, "
+        lines = [f"  {'OK ' if d.agrees else 'OUT'}{'' if d.independent_route else '*'} {d.name}: label {d.label:.4g}, "
                  f"independent {d.independent:.4g} ({d.ratio:.4f}x){' -- ' + d.note if d.note else ''}"
                  for d in self.checks]
         return "\n".join([head, *lines])
@@ -190,9 +215,18 @@ def cross_validate(meta: SceneMeta, tolerance: float = DEFAULT_TOLERANCE,
     across = along = None
     if corners:
         across, along = footprint_scales(corners, meta.array_shape)
-        checks.append(Discrepancy(
-            "cross_track_gsd_m", meta.gsd_m, across, tolerance,
-            "scene width / number of samples"))
+        note = "scene width / number of samples"
+        # Where the pixel size has been MEASURED from the images, say which side
+        # of a disagreement is wrong instead of leaving it to the reader.
+        from chandralign.estimate.scale import measured_scale
+        measured = measured_scale(meta.product_id)
+        if measured is not None and abs(across / meta.gsd_m - 1.0) > tolerance:
+            m_across = measured[0]
+            if abs(m_across / across - 1.0) <= tolerance:
+                note += (f"; the LABEL is wrong: a pixel measurement of {m_across:.4g} m "
+                         f"agrees with the corners and is {abs(m_across / meta.gsd_m - 1) * 100:.1f}% "
+                         "from the label")
+        checks.append(Discrepancy("cross_track_gsd_m", meta.gsd_m, across, tolerance, note))
 
     if viewing.altitude_km and viewing.focal_length_mm and viewing.detector_pixel_width_um:
         optics = gsd_from_optics(viewing.detector_pixel_width_um,
@@ -205,11 +239,13 @@ def cross_validate(meta: SceneMeta, tolerance: float = DEFAULT_TOLERANCE,
         binning = round(factor)
         if binning < 1 or abs(factor - binning) > 0.01:
             binning = 1
-        note = "camera optics only"
+        note = ("camera optics only; NOT independent: the label GSD is computed from "
+                "this same arithmetic, so agreement checks the label's sums, not the ground")
         if binning > 1:
-            note = (f"camera optics only; the label states exactly {binning}x this, which is "
-                    f"{binning}x{binning} detector binning, not an error")
-        checks.append(Discrepancy("optics_gsd_m", meta.gsd_m, optics, tolerance, note, binning))
+            note += (f"; the label states exactly {binning}x this, which is "
+                     f"{binning}x{binning} detector binning, not an error")
+        checks.append(Discrepancy("optics_gsd_m", meta.gsd_m, optics, tolerance, note, binning,
+                                  independent_route=False))
 
     period = line_period_s
     if period is None and viewing.line_period_s is not None:

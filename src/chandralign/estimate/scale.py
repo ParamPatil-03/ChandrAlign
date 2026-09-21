@@ -149,12 +149,59 @@ def _agree(values: list[float], tolerance: float) -> bool:
     return len(values) >= 2 and max(values) / min(values) - 1.0 <= tolerance
 
 
+# A label GSD within this of design_gsd x altitude / 100 km is taken to BE that
+# design value rather than a measurement.
+DESIGN_VALUE_TOLERANCE = 0.005
+
+
+def label_design_value(meta: SceneMeta) -> Optional[float]:
+    """The design GSD scaled to the label's altitude, IF that is what the label states.
+
+    Found by Member B on TMC-2 and confirmed here on all three Chandrayaan-2
+    cameras: every label GSD equals the instrument's design GSD x altitude / 100 km
+
+        OHRC   0.25 m x 119.82/100 =  0.2995   label  0.30    (0.15%)
+        TMC-2  5.0  m x  88.20/100 =  4.4100   label  4.41    (exact)
+        IIRS   80   m x 121.44/100 = 97.152    label 97.15    (0.002%)
+
+    So a CH-2 label GSD is a restated design value, not a measurement of this
+    product. It is still a source -- it is right for OHRC and IIRS -- but it cannot
+    be allowed to veto two independent measurements that agree with each other.
+    Returns None when the label is not of this form, or the altitude is unknown.
+    """
+    from ..io.instruments import get_spec
+    from ..io.pds_label import read_viewing_geometry
+
+    try:
+        altitude = read_viewing_geometry(meta.label_path).altitude_km
+        design = float(get_spec(str(meta.instrument)).gsd_m)
+    except Exception:
+        return None
+    if not altitude or not meta.gsd_m:
+        return None
+    derived = design * altitude / 100.0
+    return derived if abs(derived / float(meta.gsd_m) - 1.0) <= DESIGN_VALUE_TOLERANCE else None
+
+
+def measured_scale(product_id: str) -> Optional[tuple[float, float]]:
+    """(across_m, along_m) measured FROM THE IMAGES, from configs/measured_scales.yaml."""
+    try:
+        entry = (config.load("measured_scales").get("products") or {}).get(product_id)
+    except Exception:
+        return None
+    if not entry:
+        return None
+    return float(entry["across_m"]), float(entry["along_m"])
+
+
 def pixel_scale(scene: SceneMeta | str, *,
                 ground_extent_m: Optional[tuple[float, float]] = None,
-                tolerance: float = AGREEMENT_TOLERANCE) -> PixelScale:
+                tolerance: float = AGREEMENT_TOLERANCE,
+                use_measured: bool = True) -> PixelScale:
     """Both axes of one product's pixel, from every source it offers.
 
     Sources, in order of preference for the BEST value:
+      measured   measured from the images (configs/measured_scales.yaml)
       corners    the label's own corner coordinates -- both axes, per product
       footprint  ground_extent_m / array shape, if the caller has a footprint
       label      the label's single gsd_m, read as cross-track
@@ -181,23 +228,43 @@ def pixel_scale(scene: SceneMeta | str, *,
         ex, el = ground_extent_m
         across["footprint"] = float(ex) / n_samples
         along["footprint"] = float(el) / n_lines
+    measured = measured_scale(meta.product_id) if use_measured else None
+    if measured is not None:
+        across["measured"], along["measured"] = measured
 
     if not along:
         along = {"label (assumed square)": across["label"]}
         notes.append("no along-track source: pixel assumed square, which a "
                      "pushbroom camera does not guarantee")
 
-    pick = lambda d: next(d[k] for k in ("corners", "footprint", "label",
+    pick = lambda d: next(d[k] for k in ("measured", "corners", "footprint", "label",
                                           "label (assumed square)") if k in d)
     a_vals, l_vals = list(across.values()), list(along.values())
 
     # Verified = the cross-track size is confirmed by an independent source.
     # The along-track size comes from corners or a footprint, each already a
     # measurement of extent rather than a restated design value.
-    verified = _agree(a_vals, tolerance) and "label (assumed square)" not in along
+    # Two ways to be verified. Either every source agrees, or at least two
+    # sources that are NOT the label agree with each other -- in which case the
+    # label is outvoted, and the note says so. The second rule exists because a
+    # label can be a restated design value (label_design_value), and one such
+    # number must not veto two independent measurements that agree.
+    geometric = {k: v for k, v in across.items() if k != "label"}
+    all_agree = _agree(a_vals, tolerance)
+    geometry_agrees = _agree(list(geometric.values()), tolerance)
+    verified = (all_agree or geometry_agrees) and "label (assumed square)" not in along
+    if geometry_agrees and not all_agree:
+        design = label_design_value(meta)
+        why = (f"; the label is the design value ({design:.4g} m = design GSD x "
+               "altitude / 100 km), not a measurement" if design is not None else "")
+        notes.append(
+            f"label outvoted: {' and '.join(geometric)} agree within "
+            f"{tolerance * 100:.0f}% on {pick(across):.4g} m, where the label states "
+            f"{across['label']:.4g} m (a {abs(pick(across) / across['label'] - 1) * 100:.1f}% "
+            f"disagreement){why}")
     if len(a_vals) < 2:
         notes.append("only one cross-track source; a single source is not verification")
-    elif not _agree(a_vals, tolerance):
+    elif not all_agree and not geometry_agrees:
         worst = max(a_vals) / min(a_vals) - 1.0
         notes.append(
             "cross-track sources disagree by "
