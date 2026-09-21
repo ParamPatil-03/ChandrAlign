@@ -243,3 +243,47 @@ def test_thresholds_are_declared_as_synthetic_in_config():
     from pathlib import Path
     text = Path(__file__).resolve().parents[1].joinpath("configs/default.yaml").read_text(encoding="utf-8")
     assert "SYNTHETIC" in text and "bench_matchers.py" in text
+
+
+# ---------------------------------------------------------------------------
+# Holes found by scripts/sabotage.py, now pinned.
+#
+# Both of these passed every existing test while the code was deliberately
+# broken, which is the only way they were found. A green suite says the tests
+# pass; it does not say they would fail if the code were wrong.
+# ---------------------------------------------------------------------------
+def test_assess_actually_applies_the_geometry_check():
+    """The helper was tested; the WIRING into assess() was not.
+
+    test_geometry_check_rejects_a_mirrored_transform calls geometry_validity()
+    directly, so deleting the call inside assess() left every test green while
+    mirrored transforms sailed through. A unit test of a function says nothing
+    about whether anything calls it.
+    """
+    mirror = TransformModel(kind="affine", matrix=np.diag([-1.0, 1.0, 1.0]))
+    v = quality.assess(inlier_count=500, inlier_ratio=0.95, spatial_coverage=0.95,
+                       model=mirror)
+    assert v.tier == "REJECTED", "a reflection reached the caller as an accepted transform"
+    assert v.limiting_signal == "geometry"
+    assert quality.FM_FALSE_CORRESPONDENCE in v.failure_modes
+
+
+def test_assess_applies_the_anisotropy_limit_too():
+    stretch = TransformModel(kind="affine", matrix=np.diag([10.0, 1.0, 1.0]))
+    v = quality.assess(inlier_count=500, inlier_ratio=0.95, spatial_coverage=0.95,
+                       model=stretch)
+    assert v.tier == "REJECTED" and v.limiting_signal == "geometry"
+
+
+def test_a_tier_rejection_names_a_failure_mode():
+    """CHECK-07 requires REJECTED to arrive with failure_modes filled in.
+
+    Nothing asserted it for the graded-signal path, so dropping the
+    failure-mode append left the suite green and the failure log empty --
+    a rejection no downstream report could explain.
+    """
+    v = quality.assess(inlier_count=4, inlier_ratio=0.02, spatial_coverage=0.02,
+                       model=good_model())
+    assert v.tier == "REJECTED"
+    assert v.failure_modes, "a rejection with no failure mode cannot be reported or triaged"
+    assert quality.FM_FALSE_CORRESPONDENCE in v.failure_modes

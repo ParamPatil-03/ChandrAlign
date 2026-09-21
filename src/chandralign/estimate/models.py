@@ -69,21 +69,47 @@ def inverse(model: TransformModel) -> TransformModel:
                           scale_estimated=est, scale_expected=exp)
 
 
-def estimated_scale(matrix: np.ndarray, at: tuple[float, float] = (0.0, 0.0)) -> float:
-    """Local scale factor of a 3x3 transform, evaluated at a point.
+def local_jacobian(matrix: np.ndarray, at: tuple[float, float] = (0.0, 0.0)) -> np.ndarray | None:
+    """2x2 Jacobian of a 3x3 transform at a point, or None where it is singular.
 
-    A homography's scale is not constant across the image, so we take the
-    determinant of its Jacobian at a chosen point (normally the tile centre)
-    rather than pretending a single number describes the whole frame.
+    A homography's local linear map varies across the frame, so it is evaluated
+    at a chosen point (normally the tile centre).
     """
     matrix = np.asarray(matrix, np.float64)
     x, y = float(at[0]), float(at[1])
     w = matrix[2, 0] * x + matrix[2, 1] * y + matrix[2, 2]
     if abs(w) < 1e-12:
-        return float("nan")
+        return None
     q = (matrix @ np.array([x, y, 1.0]))[:2] / w
-    jac = (matrix[:2, :2] - np.outer(q, matrix[2, :2])) / w
+    return (matrix[:2, :2] - np.outer(q, matrix[2, :2])) / w
+
+
+def estimated_scale(matrix: np.ndarray, at: tuple[float, float] = (0.0, 0.0)) -> float:
+    """Local AREA scale of a 3x3 transform at a point: sqrt|det J|.
+
+    One number, and deliberately so -- it is the geometric mean of the two axis
+    scales, which is exactly what survives an unknown rotation. It says nothing
+    about whether the two axes are scaled DIFFERENTLY; local_axis_scales does.
+    """
+    jac = local_jacobian(matrix, at)
+    if jac is None:
+        return float("nan")
     return float(np.sqrt(abs(np.linalg.det(jac))))
+
+
+def local_axis_scales(matrix: np.ndarray, at: tuple[float, float] = (0.0, 0.0)) -> tuple[float, float]:
+    """(largest, smallest) axis scale of a transform at a point: J's singular values.
+
+    Rotation-invariant, so it can be compared against pixel geometry without
+    knowing how the two images are oriented. Their ratio is the transform's
+    anisotropy; for a pushbroom camera whose along-track spacing differs from
+    its cross-track spacing, a correct transform is NOT isotropic.
+    """
+    jac = local_jacobian(matrix, at)
+    if jac is None:
+        return float("nan"), float("nan")
+    s = np.linalg.svd(jac, compute_uv=False)
+    return float(s[0]), float(s[-1])
 
 
 def residuals(model: TransformModel, src_pts: np.ndarray,

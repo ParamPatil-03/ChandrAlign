@@ -26,6 +26,8 @@ import numpy as np
 from .. import config
 from ..contracts import TransformModel
 from . import models
+from .scale import ExpectedScale, ScaleVerdict
+from .scale import check as _check_expected
 
 # Failure-mode IDs from PLAN.md section 15.
 FM_FALSE_CORRESPONDENCE = 12
@@ -47,6 +49,9 @@ class EstimateResult:
     ok: bool
     notes: list[str] = field(default_factory=list)
     failure_modes: list[int] = field(default_factory=list)
+    # consistent | unverified | inconsistent | abstained | skipped | degenerate.
+    # `ok` alone cannot say whether the scale was CONFIRMED or merely not refuted.
+    scale_status: str | None = None
 
     @property
     def inlier_count(self) -> int:
@@ -79,35 +84,51 @@ def _fit_affine(src, ref, flag, thresh, iters, conf):
     return full, mask.ravel().astype(bool)
 
 
-def check_scale(model: TransformModel, expected_scale: float | None,
+def check_scale(model: TransformModel, expected_scale: float | ExpectedScale | None,
                 centre: tuple[float, float] = (0.0, 0.0),
-                tolerance: float | None = None) -> tuple[bool, str]:
+                tolerance: float | None = None) -> ScaleVerdict:
     """Compare the recovered scale against what the instruments imply.
 
-    Returns (ok, message). A None expected_scale means we have no instrument
-    information, so the check abstains rather than inventing a verdict.
+    `expected_scale` may be:
+      ExpectedScale  per-axis and provenance-aware (estimate/scale.py). Use this
+                     for real products: it knows pixels need not be square and
+                     that a label's GSD is not automatically a measurement.
+      float          an isotropic ratio the CALLER vouches for -- e.g. a
+                     synthetic pair whose true scale is known exactly. Taken on
+                     trust, so a float from a label reintroduces the NAC problem.
+      None           no information: the check abstains rather than invent one.
+
+    Returns a ScaleVerdict, which unpacks as (ok, message).
     """
     if tolerance is None:
         tolerance = float(config.get("estimate.scale_tolerance", 0.25))
     if model.matrix is None:
-        return True, "scale check skipped: non-matrix model"
+        return ScaleVerdict(True, "skipped", "scale check skipped: non-matrix model")
     est = models.estimated_scale(model.matrix, at=centre)
     model.scale_estimated = None if np.isnan(est) else float(est)
     if expected_scale is None:
-        return True, "scale check abstained: no expected scale available"
+        return ScaleVerdict(True, "abstained", "scale check abstained: no expected scale available")
+
+    if isinstance(expected_scale, ExpectedScale):
+        model.scale_expected = float(expected_scale.area)
+        return _check_expected(model.matrix, expected_scale, centre=centre, tolerance=tolerance)
+
     model.scale_expected = float(expected_scale)
     if np.isnan(est) or expected_scale == 0:
-        return False, "scale check failed: degenerate transform"
+        return ScaleVerdict(False, "degenerate", "scale check failed: degenerate transform")
     rel = abs(est / float(expected_scale) - 1.0)
     if rel > tolerance:
-        return False, (f"scale {est:.4g} disagrees with the {expected_scale:.4g} "
-                       f"implied by the instrument GSDs "
-                       f"({rel * 100:.0f}% off, tolerance {tolerance * 100:.0f}%)")
-    return True, f"scale {est:.4g} consistent with {expected_scale:.4g} ({rel * 100:.1f}% off)"
+        return ScaleVerdict(False, "inconsistent",
+                            f"scale {est:.4g} disagrees with the {expected_scale:.4g} "
+                            f"implied by the instrument GSDs "
+                            f"({rel * 100:.0f}% off, tolerance {tolerance * 100:.0f}%)", est)
+    return ScaleVerdict(True, "consistent",
+                        f"scale {est:.4g} consistent with {expected_scale:.4g} "
+                        f"({rel * 100:.1f}% off)", est)
 
 
 def estimate(src_pts: np.ndarray, ref_pts: np.ndarray, *, kind: str = "auto",
-             expected_scale: float | None = None,
+             expected_scale: float | ExpectedScale | None = None,
              centre: tuple[float, float] | None = None,
              method: str | None = None,
              reproj_threshold: float | None = None,
@@ -183,22 +204,23 @@ def estimate(src_pts: np.ndarray, ref_pts: np.ndarray, *, kind: str = "auto",
     name, matrix, mask = chosen[0], chosen[1], chosen[2]
     model = TransformModel(kind=name, matrix=matrix)
 
-    ok_scale, scale_msg = check_scale(model, expected_scale, centre=centre)
-    notes.append(scale_msg)
-    if not ok_scale:
+    verdict = check_scale(model, expected_scale, centre=centre)
+    notes.append(verdict.message)
+    if not verdict.ok:
         fms.append(FM_SCALE_CONFUSION)
-        return EstimateResult(model, np.zeros(len(src), bool), False, notes, fms)
+        return EstimateResult(model, np.zeros(len(src), bool), False, notes, fms,
+                              scale_status=verdict.status)
 
     n_in = int(mask.sum())
     if n_in < need:
         notes.append(f"only {n_in} inliers, below the {need} required: "
                      f"a RANSAC 'success' this thin is not trustworthy")
         fms.append(FM_FALSE_CORRESPONDENCE)
-        return EstimateResult(model, mask, False, notes, fms)
+        return EstimateResult(model, mask, False, notes, fms, scale_status=verdict.status)
 
     struct = models.residual_structure(src[mask], models.residuals(model, src[mask], ref[mask]))
     if struct > 0.35:
         notes.append(f"residuals are spatially structured ({struct:.2f}); local "
                      f"relief may need TPS rather than a global {name}")
 
-    return EstimateResult(model, mask, True, notes, fms)
+    return EstimateResult(model, mask, True, notes, fms, scale_status=verdict.status)

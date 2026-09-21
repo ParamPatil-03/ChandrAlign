@@ -119,7 +119,14 @@ def test_missing_pixel_file(tmp_path):
 
 REAL = {p.name[:7]: p for p in sorted(
     (ROOT / "data" / "raw" / "ch2").glob("*/products/*/data/calibrated/*/*_d_img_d18.xml"))}
-needs_real = pytest.mark.skipif(len(REAL) < 3, reason="real products not downloaded (data/raw is gitignored)")
+needs_real = pytest.mark.skipif(not REAL, reason="real products not downloaded (data/raw is gitignored)")
+
+
+def require(key: str) -> Path:
+    """The label for one CH-2 camera, or skip. Having some products is not having this one."""
+    if key not in REAL:
+        pytest.skip(f"{key} product not downloaded (have: {', '.join(sorted(REAL)) or 'none'})")
+    return REAL[key]
 
 
 def _direct_pixel(label: Path, band: int, line: int, sample: int):
@@ -139,7 +146,7 @@ def _direct_pixel(label: Path, band: int, line: int, sample: int):
 @needs_real
 @pytest.mark.parametrize("key", ["ch2_ohr", "ch2_tmc", "ch2_iir"])
 def test_real_window_matches_direct_byte_reads(key):
-    label = REAL[key]
+    label = require(key)
     meta = parse_pds4(label)
     lines, samples = meta.array_shape
     w = Window(row=lines // 2, col=samples // 3, height=64, width=64)
@@ -153,7 +160,7 @@ def test_real_window_matches_direct_byte_reads(key):
 @pytest.mark.parametrize("key", ["ch2_ohr", "ch2_tmc", "ch2_iir"])
 def test_real_small_window_is_fast(key):
     """PLAN.md P1-T03: a small window from a multi-GB product in < 100 ms."""
-    meta = parse_pds4(REAL[key])
+    meta = parse_pds4(require(key))
     lines, samples = meta.array_shape
     w = Window(lines - 40, samples - 40, 16, 16)   # far end of the file: no free ride from caching the start
     read_raster(meta, Window(0, 0, 1, 1), bands=0 if meta.n_bands > 1 else None)  # warm the label parse
@@ -164,13 +171,13 @@ def test_real_small_window_is_fast(key):
 
 @needs_real
 def test_real_iirs_envi_header_agrees_with_label():
-    check_envi_header(REAL["ch2_iir"])
+    check_envi_header(require("ch2_iir"))
 
 
 @needs_real
 @pytest.mark.parametrize("key", ["ch2_ohr", "ch2_tmc", "ch2_iir"])
 def test_real_sizes_match_label(key):
-    assert verify_raster(REAL[key])["size_ok"]
+    assert verify_raster(require(key))["size_ok"]
 
 
 @needs_real
@@ -178,13 +185,13 @@ def test_real_sizes_match_label(key):
 @pytest.mark.parametrize("key", ["ch2_ohr", "ch2_tmc", "ch2_iir"])
 def test_real_pixels_match_isro_md5(key):
     """Our copy is byte-identical to what ISRO published. Reads the whole file."""
-    assert verify_raster(REAL[key], check_md5=True)["md5_checked"]
+    assert verify_raster(require(key), check_md5=True)["md5_checked"]
 
 
 @needs_real
 def test_real_single_pixel_reads_are_fast_after_first_read():
     """Accuracy report found p95 ~230 ms when every call re-parsed the label; now cached."""
-    meta = parse_pds4(REAL["ch2_iir"])
+    meta = parse_pds4(require("ch2_iir"))
     rng = np.random.default_rng(0)
     read_raster(meta, Window(0, 0, 1, 1), bands=0)                # first call parses the label
     times = []

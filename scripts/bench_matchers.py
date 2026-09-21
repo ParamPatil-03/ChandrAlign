@@ -86,7 +86,7 @@ def run_one(model_name: str, case: str, seed: int = 3) -> dict:
 
     verdict = quality.assess(inlier_count=res.inlier_count, inlier_ratio=ratio,
                              spatial_coverage=coverage, model=res.model,
-                             scale_ok=scale_ok)
+                             scale_ok=scale_ok, scale_status=res.scale_status)
 
     row = {
         "model": model_name, "case": case, "seed": seed,

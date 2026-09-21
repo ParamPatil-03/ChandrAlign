@@ -147,14 +147,21 @@ OHRC = _find("ch2/ohrc/products/*/data/calibrated/*/*_d_img_d18.xml")
 TMC2 = _find("ch2/tmc2/products/*/data/calibrated/*/*_d_img_d18.xml")
 IIRS = _find("ch2/iirs/products/*/data/calibrated/*/*_d_img_d18.xml")
 NAC = _find("lro/nac/nac.m1417360906lc/M1417360906LC.XML")
-needs_real = pytest.mark.skipif(not all([OHRC, TMC2, IIRS, NAC]), reason="real products not downloaded")
+needs_real = pytest.mark.skipif(not any([OHRC, TMC2, IIRS, NAC]), reason="real products not downloaded")
+
+
+def require(label, name: str):
+    """Skip unless THIS product is present; holding the others does not help."""
+    if label is None:
+        pytest.skip(f"{name} product not downloaded")
+    return label
 
 
 @needs_real
 @pytest.mark.parametrize("label", [OHRC, NAC], ids=["OHRC", "NAC"])
 def test_gate_a_real_imageplane(label):
     """PLAN.md GATE A: a real ImagePlane from a real OHRC and a real NAC product."""
-    meta = parse_label(label)
+    meta = parse_label(require(label, "OHRC/NAC"))
     lines, samples = meta.array_shape
     w = Window(lines // 2, samples // 2, 1024, 1024)
     plane = read_tile(meta, w)
@@ -171,7 +178,7 @@ def test_gate_a_real_imageplane(label):
 
 @needs_real
 def test_real_iirs_band_tile():
-    meta = parse_label(IIRS)
+    meta = parse_label(require(IIRS, "IIRS"))
     plane = read_tile(meta, Window(6000, 0, 256, 250), band=100)
     assert plane.array.shape == (256, 250)
     assert plane.preprocess_chain == ["band_100", "tile_minmax"]
@@ -180,7 +187,7 @@ def test_real_iirs_band_tile():
 @needs_real
 def test_tiling_a_full_strip_keeps_memory_bounded():
     """Stepping along the 1.3 GB TMC-2 strip holds only a few tiles in memory at once."""
-    meta = parse_label(TMC2)
+    meta = parse_label(require(TMC2, "TMC-2"))
     stats = TilingStats()
     tracemalloc.start()
     n = 0

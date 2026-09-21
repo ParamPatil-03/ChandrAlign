@@ -93,10 +93,24 @@ REAL = {p.stem: p for p in sorted((ROOT / "data" / "raw" / "lro" / "nac").glob("
 needs_real = pytest.mark.skipif(len(REAL) < 2, reason="NAC products not downloaded (data/raw is gitignored)")
 
 
+def require(product: str) -> Path:
+    """The label for one named product, or skip.
+
+    A count of available products is not the same as holding the PARTICULAR one
+    a test names: two NAC scenes satisfy `len(REAL) >= 2` and the test still
+    fails looking up "M102000149RC" if the side fetched was LC. Which products
+    a checkout holds depends on what was fetched, so a test that names one has
+    to check for that one.
+    """
+    if product not in REAL:
+        pytest.skip(f"{product} not downloaded (have: {', '.join(sorted(REAL)) or 'none'})")
+    return REAL[product]
+
+
 @needs_real
 @pytest.mark.parametrize("product", ["M1417360906LC", "M102000149RC"])
 def test_real_nac_window_matches_direct_bytes(product):
-    label = REAL[product]
+    label = require(product)
     layout = read_array_layout(label)
     w = Window(row=30000, col=2000, height=48, width=48)
     tile = read_raster(label, w)
@@ -114,5 +128,5 @@ def test_real_nac_window_matches_direct_bytes(product):
 @pytest.mark.parametrize("product", ["M1417360906LC", "M102000149RC"])
 def test_real_nac_both_checksums(product):
     """NASA's whole-file MD5 (PDS4) and the pixels-only MD5 (attached PDS3 header) both match."""
-    assert verify_raster(REAL[product], check_md5=True)["md5_checked"]
-    assert check_attached_pds3_header(REAL[product], check_md5=True)["pixel_md5_checked"]
+    assert verify_raster(require(product), check_md5=True)["md5_checked"]
+    assert check_attached_pds3_header(require(product), check_md5=True)["pixel_md5_checked"]
