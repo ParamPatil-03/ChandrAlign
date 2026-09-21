@@ -98,9 +98,17 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
            spatial_coverage: float | None = None,
            model: TransformModel | None = None,
            scale_ok: bool = True,
+           scale_status: str | None = None,
            gates: dict[str, bool] | None = None,
            require_gates: bool = False) -> QualityVerdict:
-    """Combine independent quality signals into a confidence tier."""
+    """Combine independent quality signals into a confidence tier.
+
+    `scale_status` is EstimateResult.scale_status. It matters because a scale
+    check can pass without CONFIRMING anything: "unverified" means the transform
+    was not refuted by instrument sources that disagree with each other, and
+    "abstained" means there were none. Neither may lift a result above LOW --
+    the same rule that applies to any unmeasured signal (H1).
+    """
     thresholds = config.get("tiers", {}) or {}
     notes: list[str] = []
     fms: list[int] = []
@@ -109,6 +117,7 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
         "inlier_ratio": None if inlier_ratio is None else round(float(inlier_ratio), 4),
         "spatial_coverage": None if spatial_coverage is None else round(float(spatial_coverage), 4),
         "scale_ok": bool(scale_ok),
+        "scale_status": scale_status,
     }
 
     # Hard rejections first: these are not "low confidence", they are invalid.
@@ -123,7 +132,7 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
         notes.append("no control gates were run; a result without gates is unverified (rule H4)")
         return QualityVerdict("REJECTED", signals, "control_gates", [], notes)
 
-    if not scale_ok:
+    if not scale_ok or scale_status in ("inconsistent", "degenerate"):
         notes.append("scale disagrees with the instrument GSD ratio")
         return QualityVerdict("REJECTED", signals, "scale_ok", [FM_SCALE_CONFUSION], notes)
 
@@ -141,6 +150,10 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
         "inlier_ratio": _tier_for(inlier_ratio, thresholds, "min_inlier_ratio"),
         "spatial_coverage": _tier_for(spatial_coverage, thresholds, "min_coverage"),
     }
+    if scale_status in ("unverified", "abstained"):
+        per_signal["scale"] = "LOW"
+        notes.append(f"scale {scale_status}: the instruments could not confirm it, "
+                     f"so the result is capped at LOW")
     signals["per_signal_tier"] = per_signal
     worst = max(per_signal.values(), key=TIER_ORDER.index)
     limiting = max(per_signal, key=lambda k: TIER_ORDER.index(per_signal[k]))

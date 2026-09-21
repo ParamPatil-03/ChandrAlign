@@ -52,6 +52,41 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "_SYNTHETIC_EVIDENCE = (", '_SYNTHETIC_EVIDENCE = ""\n_UNUSED = ('),
         },
     ),
+    "scale": (
+        "src/chandralign/estimate/scale.py",
+        "tests/test_scale.py",
+        {
+            "drop the anisotropy check (area only, as before)": (
+                "    if expected.verified and not (k_lo_t <= aniso <= k_hi_t):",
+                "    if False:"),
+            "report an unverified expectation as consistent": (
+                '    if expected.verified:\n        return ScaleVerdict(True, "consistent",',
+                '    if True:\n        return ScaleVerdict(True, "consistent",'),
+            "a single source counts as verified": (
+                '    verified = _agree(a_vals, tolerance) and "label (assumed square)" not in along',
+                "    verified = True"),
+            "ignore the corners (every pixel square)": (
+                "    if corners is not None:", "    if False:"),
+            "no slack for unverified (trust the label fully)": (
+                "        a_lo, a_hi = lo / slack, hi * slack",
+                "        a_lo, a_hi = lo / (1.0 + tolerance), hi * (1.0 + tolerance)"),
+            "unlimited slack (unverified can never reject)": (
+                '    slack = float(config.get("estimate.unverified_scale_slack", 3.0))',
+                "    slack = 1e9"),
+        },
+    ),
+    "scale-gate": (
+        "src/chandralign/evaluate/quality.py",
+        "tests/test_scale.py",
+        {
+            "an unverified scale no longer caps the tier": (
+                '    if scale_status in ("unverified", "abstained"):',
+                "    if False:"),
+            "an inconsistent scale status is ignored": (
+                '    if not scale_ok or scale_status in ("inconsistent", "degenerate"):',
+                "    if not scale_ok:"),
+        },
+    ),
     "quality": (
         "src/chandralign/evaluate/quality.py",
         "tests/test_quality_uniformity.py",
@@ -72,7 +107,8 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "skip the geometry check": (
                 "    if not geom_ok:", "    if False:"),
             "ignore a failed scale check": (
-                "    if not scale_ok:", "    if False:"),
+                "    if not scale_ok or scale_status in (\"inconsistent\", \"degenerate\"):",
+                "    if False:"),
         },
     ),
 }

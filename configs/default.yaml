@@ -26,6 +26,16 @@ estimate:
   # Failure mode #13: reject a transform whose estimated scale disagrees with
   # the GSD ratio the instrument registry predicts.
   scale_tolerance: 0.25
+  # Axis-ratio tolerance, used only when both products' pixel sizes are
+  # VERIFIED by two agreeing sources. Tighter than scale_tolerance because a
+  # correct transform's anisotropy is fixed by pixel geometry: IIRS is 26%
+  # anisotropic, so a 25% tolerance could not tell it from a square pixel.
+  anisotropy_tolerance: 0.10
+  # How far outside its source range an UNVERIFIED expectation must be before
+  # it may reject. Set from measurement, not taste: scripts/audit_gsd.py found
+  # NAC labels off by up to 2.33x, so anything tighter would reject correct
+  # transforms on the strength of a label already known to be wrong.
+  unverified_scale_slack: 3.0
 
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
