@@ -16,8 +16,28 @@ from chandralign.io.pds_label import parse_label
 ROOT = Path(__file__).resolve().parents[1]
 PAIRS_FILE = ROOT / "data" / "pairs" / "registered_pairs.json"
 
-pytestmark = pytest.mark.skipif(not PAIRS_FILE.exists(),
-                                reason="run scripts/build_pairs.py first")
+# registered_pairs.json is COMMITTED, but the products it names are not, so
+# the file existing says nothing about whether these tests can run. Guarding on
+# it alone meant a checkout without the CH-2/SELENE rasters went red rather than
+# skipping. Require the labels the file actually points at.
+def _labels_present() -> bool:
+    if not PAIRS_FILE.exists():
+        return False
+    try:
+        doc = json.loads(PAIRS_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    for pair in doc.get("pairs", []):
+        for side in ("source", "reference"):
+            label = pair.get(side, {}).get("label")
+            if label and not (ROOT / label).is_file():
+                return False
+    return True
+
+
+pytestmark = pytest.mark.skipif(
+    not _labels_present(),
+    reason="run scripts/build_pairs.py, or the products it names are not downloaded")
 
 
 @pytest.fixture(scope="module")

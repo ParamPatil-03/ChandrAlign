@@ -23,8 +23,22 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 LABELS = ROOT / "tests" / "fixtures" / "labels"
 
-pytestmark = pytest.mark.skipif(not (RAW / "lro").is_dir(),
-                                reason="reference products not downloaded")
+# This module asserts on all four reference cameras, so it needs all four on
+# disk. Guarding on `lro/` alone was too coarse: a checkout holding only NAC
+# (the products anyone can fetch without a login) passed the guard and then
+# failed four tests on the missing WAC/TC/MI. A partial dataset should skip,
+# not go red -- otherwise the first thing a new machine sees is a broken suite.
+_REFERENCE_GLOBS = {
+    "NAC": "lro/nac/*/*.XML",
+    "WAC": "lro/wac/*/*.XML",
+    "TC": "selene/tc/*.lbl",
+    "MI": "selene/mi/*.lbl",
+}
+_MISSING = sorted(name for name, pattern in _REFERENCE_GLOBS.items()
+                  if not any(RAW.glob(pattern)))
+pytestmark = pytest.mark.skipif(
+    bool(_MISSING),
+    reason=f"reference products not downloaded: {', '.join(_MISSING)} (data/raw is gitignored)")
 
 
 @pytest.fixture(scope="module")
