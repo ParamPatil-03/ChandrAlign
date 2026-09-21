@@ -126,6 +126,7 @@ REAL = {
     "TC": _real("selene/tc/TCO_MAP_02_N03E021N00E024SC.lbl"),
 }
 needs_real = pytest.mark.skipif(not all(REAL.values()), reason="real products not downloaded")
+needs_ohrc = pytest.mark.skipif(REAL["OHRC"] is None, reason="OHRC product not downloaded")
 
 
 def _mid_tile(meta):
@@ -135,7 +136,7 @@ def _mid_tile(meta):
     return read_tile(meta, Window(L // 2, max(0, S // 2 - 512), 1024, 1024))
 
 
-@needs_real
+@needs_ohrc
 def test_real_shadowed_ohrc_crop_gains_local_contrast():
     """PLAN.md P1-T12 acceptance on the darkest 256 x 256 region of a mid-strip OHRC tile (sun 7.3 deg up)."""
     tile = _mid_tile(REAL["OHRC"])
