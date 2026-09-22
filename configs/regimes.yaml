@@ -36,7 +36,7 @@ rules:
   - regime: cross_modal
     when:
       cross_modality: true
-    candidates: [xoftr, minima, rift2]   # matchanything-eloftr removed: PRL licence
+    candidates: [xoftr, minima, matchanything-eloftr, rift2]
     reason: >
       Panchromatic vs hyperspectral is a nonlinear, sometimes contrast-reversing
       radiometric relationship. Candidates are BENCHMARKED, not assumed -- see
@@ -141,12 +141,14 @@ cross_modal_candidates:
     source: vismatch
     kind: learned
     note: cross-modality matching family; several variants available
-  # matchanything-eloftr REMOVED 2026-09-23. Trained for cross-modality
-  # generalisation and it benchmarked well, but its licence (and its
-  # EfficientLoFTR backbone's) is the Project Registration License: use is free
-  # only after registering the project with the authors, which is a restriction
-  # we would pass on to anyone we ship to. reports/licence_audit.json.
-  # It stays in benchmark_only_matchers, so it can still be measured against.
+  matchanything-eloftr:
+    source: vismatch
+    kind: learned
+    note: >
+      trained for cross-modality generalisation. Apache-2.0 as we use it (HF
+      vismatch/matchanything-eloftr, 2026-02-10); upstream relicensed to the
+      Project Registration License on 2026-09-15, so this depends on the
+      vismatch pin -- see reports/licence_audit.json.
   rift2:
     source: vendored           # third_party/rift2, pinned SHA
     kind: classical
@@ -160,9 +162,12 @@ cross_modal_candidates:
 shippable_matchers:
   - aliked-lightglue         # ALIKED BSD-3 + LightGlue Apache-2.0; default
   - disk-lightglue
-  # eloftr REMOVED 2026-09-23: Project Registration License, not redistributable
-  # (reports/licence_audit.json). It was on this list; the licence gate now
-  # blocks it, and licence.shippable() filters it even if the config is wrong.
+  - eloftr                   # Apache-2.0 AS WE USE IT: vismatch 1.3.2 (2026-08-17)
+                             # and HF vismatch/eloftr (2026-02-10) both predate
+                             # zju3dv's 2026-09-15 relicence to the Project
+                             # Registration License. Upstream TODAY is restricted,
+                             # so the pin in pyproject.toml is load-bearing.
+                             # Full chain: reports/licence_audit.json
   - xfeat                    # CPU-capable fallback
   - sift-lightglue
   - sift-nn                  # the documented classical floor (MATCH-01)
@@ -175,12 +180,8 @@ benchmark_only_matchers:
   - superpoint-lightglue       # LightGlue is clean, SuperPoint's weights are not
   - minima-superpoint-lightglue
   - r2d2                       # CC BY-NC-SA 3.0, share-alike
-  # Project Registration License v1.0, VERIFIED 2026-09-23 from each repo's own
-  # LICENSE (reports/licence_audit.json). Not OSI-approved: free of charge, but
-  # only once the project has been REGISTERED with the authors beforehand,
-  # commercial or not. That precondition travels to whoever we ship to.
-  # eloftr was on the shippable list and matchanything-eloftr was offered as a
-  # cross-modal candidate; both were wrong, and the name gave no hint.
-  - eloftr
-  - matchanything-eloftr
-  - matchanything-roma
+  # NOTE: eloftr and matchanything-eloftr are NOT here. They were briefly added
+  # on 2026-09-23 after reading zju3dv's CURRENT repository licence, which is
+  # now the Project Registration License. The artefacts we install predate that
+  # relicence and are Apache-2.0, which is irrevocable. See licence.py and
+  # reports/licence_audit.json; the control is the vismatch pin, not a ban.

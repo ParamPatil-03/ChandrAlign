@@ -12,9 +12,8 @@ change.** Protocol section 8 leaves the decision to the team;
 **Replace `aliked-lightglue` with `xoftr` as `default_matcher`**, and keep the
 routing table's existing honesty about where no matcher works.
 
-Also, independently of that decision: **`eloftr` must stop being used**, in the
-shippable list and in `scripts/register_tmc2_tc.py`'s default, on licence
-grounds alone (`reports/licence_audit.json`).
+`eloftr` stays usable. An earlier version of this document said it must be
+withdrawn on licence grounds; that was wrong and is corrected in section 1.
 
 ---
 
@@ -30,22 +29,33 @@ rather than by reading an existing table.
 
 ---
 
-## 1. Licence gate (protocol 4.1) — two candidates eliminated before measuring
+## 1. Licence gate (protocol 4.1) — nothing eliminated, and a corrected error
 
-| model | licence | |
-|---|---|---|
-| `eloftr` | Project Registration License v1.0 | **was in `shippable_matchers`** |
-| `matchanything-eloftr` | Project Registration License v1.0 | **was a cross-modal candidate** |
+**All nine candidates pass.** An earlier version of this audit excluded `eloftr`
+and `matchanything-eloftr`, and that was wrong.
 
-Not OSI-approved. Free of charge only once the project is **registered with the
-authors beforehand**, commercial or not — a precondition that travels to anyone
-we ship to. Verified by reading each repository's own LICENSE file.
+zju3dv did relicense EfficientLoFTR and MatchAnything from Apache-2.0 to the
+Project Registration License — not OSI-approved, registration required before
+organisational use — on **2026-09-15**, eight days before the audit. But nothing
+we install comes from upstream today:
 
-The trap: zju3dv license their models individually. LoFTR is Apache-2.0;
-EfficientLoFTR, same group, is not. A licence cannot be inferred from a sibling
-model, an author, or an earlier version of the same repository.
+| what | artefact | licence | date |
+|---|---|---|---|
+| code we run | vismatch 1.3.2 (vendors both) | Apache-2.0 | released **2026-08-17** |
+| weights we load | HF `vismatch/eloftr` | Apache-2.0 | modified **2026-02-10** |
+| weights we load | HF `vismatch/matchanything-eloftr` | Apache-2.0 | modified **2026-02-10** |
 
-## 2. Synthetic measurement (protocol 3–5) — 560 runs, seeds 101–110
+Apache-2.0 section 2 grants a *perpetual, irrevocable* licence. A relicence binds
+future releases; it cannot withdraw what was already distributed.
+
+**The error was reading a licence off the PROJECT rather than off the
+artefact-at-a-version**, from a licence API's summary rather than the LICENSE
+text. The control is therefore a **version pin, not a ban** — banning the model
+would discard a permissively licensed artefact while leaving the real risk (an
+upgrade that vendors the relicensed code) wide open. Enforced by
+`pyproject.toml` (`vismatch>=1.3,<=1.3.2`) and two tests.
+
+## 2. Synthetic measurement (protocol 3–5) — 720 runs, seeds 101–110
 
 | candidate | core ok | core px | false conf. | stretch | sec | |
 |---|---|---|---|---|---|---|
@@ -56,11 +66,19 @@ model, an author, or an earlier version of the same repository.
 | disk-lightglue | 78% | 0.075 | 0 | 1/3 | 0.67 | |
 | xfeat | 62% | 0.292 | 0 | 1/3 | 0.07 | |
 | sift-nn | 44% | 0.101 | 0 | 1/3 | 0.10 | |
+| eloftr | 80% | 0.123 | 1 | 1/3 | 0.26 | re-run after the correction |
+| matchanything-eloftr | 60% | 0.131 | **23** | 1/3 | 0.29 | re-run after the correction |
+
+The two restored candidates were measured under the same frozen protocol, the
+same seeds and unchanged thresholds. **Neither is eligible**, so the licence
+error did not change the outcome — but it could have, which is why it was worth
+correcting rather than leaving in place. `matchanything-eloftr` produces 23 false
+confidences in 80 runs (28.7%), the worst in the field.
 
 **Candidates fail by whole regimes, not marginally.** Every eliminated candidate
 scored 0/10 on some core regime, never 7/10:
 
-- `cross_modal` — **0/10 for five of seven candidates**, the incumbent among
+- `cross_modal` — **0/10 for seven of nine candidates**, the incumbent among
   them. They cannot do the problem statement's own hardest named pairing at all.
 - `resolution_2x` — **0/10 for `minima-loftr`**, which is otherwise the best of
   the field at extreme illumination. It cannot do TMC-2 to SELENE TC, a route we
@@ -149,8 +167,8 @@ Rerun only results the old default directly produced. Verified by inspection:
 
 | result | depends on the default? | |
 |---|---|---|
-| `reports/tmc2_tc_registration.json` | no — explicit `--matcher eloftr` | **rerun anyway, on licence** — done, `reports/tmc2_tc_xoftr.json` |
-| `reports/tmc2_tc_gap_rows.json` | no — explicit `eloftr` | **rerun, on licence** |
+| `reports/tmc2_tc_registration.json` | no — explicit `--matcher eloftr` | valid; `reports/tmc2_tc_xoftr.json` is now an independent second result |
+| `reports/tmc2_tc_gap_rows.json` | no — explicit `eloftr` | valid, no rerun needed |
 | `reports/cascade_ohrc_tc.json` | **no** — the cascade matches with MIND | unaffected |
 | `reports/rift_benchmark.json` | no — explicit model list | unaffected (benchmark of matchers) |
 | `reports/estimator_benchmark.json` | no — correspondence sets, no matcher | unaffected |
