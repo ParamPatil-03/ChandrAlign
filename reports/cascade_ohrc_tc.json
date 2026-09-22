@@ -1,0 +1,627 @@
+{
+  "source": "measured",
+  "tile": "TCO_MAP_02_N00E021S03E024SC",
+  "routes": {
+    "cascade": "OHRC -16x-> TMC-2 -1.5x-> TC",
+    "direct": "OHRC -24x-> TC"
+  },
+  "priors": "system-level only (OHRC system grid, TMC-2 system corners, TC map)",
+  "rows": [
+    {
+      "ohrc_row": 48572,
+      "lat": -0.1246,
+      "cascade_steps_registered": [
+        true,
+        false
+      ],
+      "direct_registered": true,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 24.8,
+          "peak_xy": [
+            721,
+            3303
+          ],
+          "search_px": [
+            2663,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            461,
+            449
+          ],
+          "z": 4.8,
+          "peak_xy": [
+            1581,
+            523
+          ],
+          "search_px": [
+            2912,
+            792
+          ],
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 10.8,
+          "peak_xy": [
+            1355,
+            147
+          ],
+          "search_px": [
+            2562,
+            1729
+          ],
+          "subpixel_ok": "9/11"
+        }
+      },
+      "seconds": 10.7
+    },
+    {
+      "ohrc_row": 52072,
+      "lat": -0.1603,
+      "cascade_steps_registered": [
+        true,
+        true
+      ],
+      "direct_registered": true,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 29.9,
+          "peak_xy": [
+            733,
+            3303
+          ],
+          "search_px": [
+            2675,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            461,
+            449
+          ],
+          "z": 77.4,
+          "peak_xy": [
+            1551,
+            124
+          ],
+          "search_px": [
+            2912,
+            939
+          ],
+          "subpixel_ok": "6/11"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 15.6,
+          "peak_xy": [
+            1355,
+            293
+          ],
+          "search_px": [
+            2562,
+            1875
+          ],
+          "subpixel_ok": "9/11"
+        }
+      },
+      "cascade_vs_direct_tc_px": {
+        "rmse": 1.169,
+        "max": 1.19
+      },
+      "cascade_vs_direct_m": 8.65,
+      "cascade_error": {
+        "per_step": [
+          {
+            "step": "OHRC -> TMC2",
+            "rmse_px_own": 0.2784,
+            "rmse_m": 1.37,
+            "rmse_px_final": 0.1877
+          },
+          {
+            "step": "TMC2 -> TC",
+            "rmse_px_own": 0.1957,
+            "rmse_m": 1.449,
+            "rmse_px_final": 0.1957
+          }
+        ],
+        "total_tc_px": 0.2712,
+        "total_m": 2.008
+      },
+      "direct_error_tc_px": 0.5797,
+      "ohrc_system_offset_m": {
+        "east": 551,
+        "north": 2229,
+        "total": 2296
+      },
+      "seconds": 12.2
+    },
+    {
+      "ohrc_row": 55572,
+      "lat": -0.1959,
+      "cascade_steps_registered": [
+        true,
+        true
+      ],
+      "direct_registered": true,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 30.7,
+          "peak_xy": [
+            744,
+            3300
+          ],
+          "search_px": [
+            2687,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            461,
+            449
+          ],
+          "z": 76.7,
+          "peak_xy": [
+            1550,
+            271
+          ],
+          "search_px": [
+            2912,
+            1087
+          ],
+          "subpixel_ok": "11/11"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 13.8,
+          "peak_xy": [
+            1355,
+            439
+          ],
+          "search_px": [
+            2562,
+            2022
+          ],
+          "subpixel_ok": "9/11"
+        }
+      },
+      "cascade_vs_direct_tc_px": {
+        "rmse": 0.391,
+        "max": 0.449
+      },
+      "cascade_vs_direct_m": 2.89,
+      "cascade_error": {
+        "per_step": [
+          {
+            "step": "OHRC -> TMC2",
+            "rmse_px_own": 0.1444,
+            "rmse_m": 0.71,
+            "rmse_px_final": 0.0973
+          },
+          {
+            "step": "TMC2 -> TC",
+            "rmse_px_own": 0.5375,
+            "rmse_m": 3.979,
+            "rmse_px_final": 0.5375
+          }
+        ],
+        "total_tc_px": 0.5462,
+        "total_m": 4.044
+      },
+      "direct_error_tc_px": 0.7265,
+      "ohrc_system_offset_m": {
+        "east": 552,
+        "north": 2231,
+        "total": 2298
+      },
+      "seconds": 12.4
+    },
+    {
+      "ohrc_row": 59072,
+      "lat": -0.2316,
+      "cascade_steps_registered": [
+        true,
+        true
+      ],
+      "direct_registered": true,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 27.0,
+          "peak_xy": [
+            755,
+            3298
+          ],
+          "search_px": [
+            2699,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            461,
+            449
+          ],
+          "z": 68.0,
+          "peak_xy": [
+            1550,
+            417
+          ],
+          "search_px": [
+            2912,
+            1234
+          ],
+          "subpixel_ok": "11/11"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 12.6,
+          "peak_xy": [
+            1355,
+            586
+          ],
+          "search_px": [
+            2562,
+            2168
+          ],
+          "subpixel_ok": "8/11"
+        }
+      },
+      "cascade_vs_direct_tc_px": {
+        "rmse": 0.377,
+        "max": 0.396
+      },
+      "cascade_vs_direct_m": 2.79,
+      "cascade_error": {
+        "per_step": [
+          {
+            "step": "OHRC -> TMC2",
+            "rmse_px_own": 0.2481,
+            "rmse_m": 1.221,
+            "rmse_px_final": 0.1673
+          },
+          {
+            "step": "TMC2 -> TC",
+            "rmse_px_own": 0.6452,
+            "rmse_m": 4.776,
+            "rmse_px_final": 0.6452
+          }
+        ],
+        "total_tc_px": 0.6665,
+        "total_m": 4.934
+      },
+      "direct_error_tc_px": 0.268,
+      "ohrc_system_offset_m": {
+        "east": 552,
+        "north": 2229,
+        "total": 2296
+      },
+      "seconds": 12.8
+    },
+    {
+      "ohrc_row": 62572,
+      "lat": -0.2673,
+      "cascade_steps_registered": [
+        true,
+        true
+      ],
+      "direct_registered": true,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 27.9,
+          "peak_xy": [
+            766,
+            3295
+          ],
+          "search_px": [
+            2711,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            461,
+            449
+          ],
+          "z": 64.2,
+          "peak_xy": [
+            1549,
+            564
+          ],
+          "search_px": [
+            2912,
+            1382
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 10.9,
+          "peak_xy": [
+            1355,
+            732
+          ],
+          "search_px": [
+            2562,
+            2314
+          ],
+          "subpixel_ok": "7/11"
+        }
+      },
+      "cascade_vs_direct_tc_px": {
+        "rmse": 1.112,
+        "max": 1.137
+      },
+      "cascade_vs_direct_m": 8.23,
+      "cascade_error": {
+        "per_step": [
+          {
+            "step": "OHRC -> TMC2",
+            "rmse_px_own": 0.2505,
+            "rmse_m": 1.232,
+            "rmse_px_final": 0.1688
+          },
+          {
+            "step": "TMC2 -> TC",
+            "rmse_px_own": 0.2777,
+            "rmse_m": 2.056,
+            "rmse_px_final": 0.2777
+          }
+        ],
+        "total_tc_px": 0.325,
+        "total_m": 2.406
+      },
+      "direct_error_tc_px": 0.5945,
+      "ohrc_system_offset_m": {
+        "east": 555,
+        "north": 2232,
+        "total": 2299
+      },
+      "seconds": 14.1
+    },
+    {
+      "ohrc_row": 66072,
+      "lat": -0.303,
+      "cascade_steps_registered": [
+        false,
+        false
+      ],
+      "direct_registered": false,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 9.8,
+          "peak_xy": [
+            2722,
+            0
+          ],
+          "search_px": [
+            2723,
+            3863
+          ],
+          "note": "peak on the edge of the search region: the true place may lie outside it",
+          "failed": "ambiguous match: z 9.8 below cascade.min_z"
+        },
+        "step2": {},
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 7.5,
+          "peak_xy": [
+            608,
+            2459
+          ],
+          "search_px": [
+            2562,
+            2460
+          ],
+          "note": "peak on the edge of the search region: the true place may lie outside it",
+          "failed": "ambiguous match: z 7.5 below cascade.min_z"
+        }
+      },
+      "seconds": 10.1
+    },
+    {
+      "ohrc_row": 69572,
+      "lat": -0.3387,
+      "cascade_steps_registered": [
+        true,
+        true
+      ],
+      "direct_registered": false,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 21.5,
+          "peak_xy": [
+            790,
+            3299
+          ],
+          "search_px": [
+            2736,
+            3863
+          ],
+          "subpixel_ok": "9/11"
+        },
+        "step2": {
+          "template_px": [
+            462,
+            449
+          ],
+          "z": 53.4,
+          "peak_xy": [
+            1551,
+            855
+          ],
+          "search_px": [
+            2912,
+            1671
+          ],
+          "subpixel_ok": "11/11"
+        },
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 9.0,
+          "peak_xy": [
+            1356,
+            979
+          ],
+          "search_px": [
+            2562,
+            2561
+          ],
+          "failed": "ambiguous match: z 9.0 below cascade.min_z"
+        }
+      },
+      "seconds": 15.4
+    },
+    {
+      "ohrc_row": 73072,
+      "lat": -0.3744,
+      "cascade_steps_registered": [
+        false,
+        false
+      ],
+      "direct_registered": false,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 7.5,
+          "peak_xy": [
+            2146,
+            0
+          ],
+          "search_px": [
+            2748,
+            3863
+          ],
+          "note": "peak on the edge of the search region: the true place may lie outside it",
+          "failed": "ambiguous match: z 7.5 below cascade.min_z"
+        },
+        "step2": {},
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 7.7,
+          "peak_xy": [
+            238,
+            2560
+          ],
+          "search_px": [
+            2562,
+            2561
+          ],
+          "note": "peak on the edge of the search region: the true place may lie outside it",
+          "failed": "ambiguous match: z 7.7 below cascade.min_z"
+        }
+      },
+      "seconds": 10.2
+    },
+    {
+      "ohrc_row": 76572,
+      "lat": -0.4101,
+      "cascade_steps_registered": [
+        false,
+        false
+      ],
+      "direct_registered": false,
+      "diagnostics": {
+        "step1": {
+          "template_px": [
+            176,
+            181
+          ],
+          "z": 9.6,
+          "peak_xy": [
+            813,
+            3300
+          ],
+          "search_px": [
+            2760,
+            3863
+          ],
+          "failed": "ambiguous match: z 9.6 below cascade.min_z"
+        },
+        "step2": {},
+        "direct": {
+          "template_px": [
+            124,
+            123
+          ],
+          "z": 7.9,
+          "peak_xy": [
+            0,
+            2560
+          ],
+          "search_px": [
+            2562,
+            2561
+          ],
+          "note": "peak on the edge of the search region: the true place may lie outside it",
+          "failed": "ambiguous match: z 7.9 below cascade.min_z"
+        }
+      },
+      "seconds": 10.2
+    }
+  ]
+}
