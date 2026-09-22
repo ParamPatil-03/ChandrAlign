@@ -91,9 +91,12 @@ tiers:                       # CHECK-07 confidence tiers
 
 gates:                       # CHECK-01..06 tolerances
   null_max_inlier_ratio: 0.05      # a null test scoring above this means we are broken
-  perturbation_shift_px: 5.0
+  # CHECK-03 moves the source by (3, 4) px -- |s| = 5 px -- so BOTH axes are
+  # tested; a pure x shift would never catch a pipeline that ignores y.
+  perturbation_shift_xy: [3, 4]
   perturbation_tolerance_px: 1.5
   identity_max_rmse_px: 0.25
+  identity_min_inlier_ratio: 0.9   # an image against itself should keep ~every match
 
 paths:
   data_root: data

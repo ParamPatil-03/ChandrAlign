@@ -39,7 +39,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from chandralign import compute, synth  # noqa: E402
 from chandralign.estimate import models, robust  # noqa: E402
-from chandralign.evaluate import quality  # noqa: E402
+from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.matching import adapter, classical  # noqa: E402
 from chandralign.refine import uniformity  # noqa: E402
 
@@ -66,7 +66,7 @@ def transform_rmse(model, h_true, shape=SHAPE, n=24) -> float:
     return float(np.sqrt(((pred - true) ** 2).sum(1).mean()))
 
 
-def run_one(model_name: str, case: str, seed: int = 3) -> dict:
+def run_one(model_name: str, case: str, seed: int = 3, gates_on: bool = True) -> dict:
     src, ref, h_true = synth.make_pair(out_shape=SHAPE, rot_deg=8.0,
                                        shift=(0.37, -0.62), n_craters=45,
                                        seed=seed, **CASES[case])
@@ -84,9 +84,17 @@ def run_one(model_name: str, case: str, seed: int = 3) -> dict:
                 if res.inlier_count else 0.0)
     scale_ok = robust.FM_SCALE_CONFUSION not in res.failure_modes
 
+    # CHECK-01..04, 06: run with the SAME matcher on the SAME pair, on every
+    # benchmark execution, and fed to the verdict. Ground truth is still never an
+    # input -- the gates see only what a real run would see.
+    gates = None
+    if gates_on:
+        gates = control_gates.run_all(control_gates.pipeline_from(model_name, gsd_m=src.gsd_m),
+                                      src.array, ref.array, src, ref, seed=seed)
     verdict = quality.assess(inlier_count=res.inlier_count, inlier_ratio=ratio,
                              spatial_coverage=coverage, model=res.model,
-                             scale_ok=scale_ok, scale_status=res.scale_status)
+                             scale_ok=scale_ok, scale_status=res.scale_status,
+                             gates=gates.gates if gates else None)
 
     row = {
         "model": model_name, "case": case, "seed": seed,
@@ -103,6 +111,8 @@ def run_one(model_name: str, case: str, seed: int = 3) -> dict:
         "limiting_signal": verdict.limiting_signal,
         "match_seconds": round(match_s, 3),
         "source": "synthetic",
+        "gates": gates.gates if gates else None,
+        "gates_failed": [g.name for g in gates.failed] if gates else None,
     }
     # Recorded to GRADE the gate. Never an input to it.
     row["transform_rmse_px"] = (round(transform_rmse(res.model, h_true), 4)
@@ -117,6 +127,7 @@ def main() -> int:
     ap.add_argument("--cases", default=",".join(CASES))
     ap.add_argument("--seeds", default="3")
     ap.add_argument("--out", default="reports/synthetic_matcher_bench.json")
+    ap.add_argument("--no-gates", action="store_true", help="skip the control gates (not for reported runs)")
     args = ap.parse_args()
 
     model_names = [m.strip() for m in args.models.split(",") if m.strip()]
@@ -132,7 +143,7 @@ def main() -> int:
         for seed in seeds:
             for case in case_names:
                 try:
-                    row = run_one(model_name, case, seed=seed)
+                    row = run_one(model_name, case, seed=seed, gates_on=not args.no_gates)
                 except Exception as exc:
                     rows.append({"model": model_name, "case": case, "seed": seed,
                                  "tier": "ERROR", "source": "synthetic",
