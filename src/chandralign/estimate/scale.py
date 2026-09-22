@@ -253,7 +253,8 @@ def pixel_scale(scene: SceneMeta | str, *,
     all_agree = _agree(a_vals, tolerance)
     geometry_agrees = _agree(list(geometric.values()), tolerance)
     verified = (all_agree or geometry_agrees) and "label (assumed square)" not in along
-    if geometry_agrees and not all_agree:
+    outvoted = geometry_agrees and not all_agree
+    if outvoted:
         design = label_design_value(meta)
         why = (f"; the label is the design value ({design:.4g} m = design GSD x "
                "altitude / 100 km), not a measurement" if design is not None else "")
@@ -261,7 +262,8 @@ def pixel_scale(scene: SceneMeta | str, *,
             f"label outvoted: {' and '.join(geometric)} agree within "
             f"{tolerance * 100:.0f}% on {pick(across):.4g} m, where the label states "
             f"{across['label']:.4g} m (a {abs(pick(across) / across['label'] - 1) * 100:.1f}% "
-            f"disagreement){why}")
+            f"disagreement){why}. Kept on record here, left out of the range the "
+            f"scale check tolerates")
     if len(a_vals) < 2:
         notes.append("only one cross-track source; a single source is not verification")
     elif not all_agree and not geometry_agrees:
@@ -271,10 +273,18 @@ def pixel_scale(scene: SceneMeta | str, *,
             f"{worst * 100:.0f}% ({', '.join(f'{k} {v:.4g} m' for k, v in across.items())}), "
             f"past the {tolerance * 100:.0f}% agreement tolerance")
 
+    # The RANGE is what the scale check tolerates. Once the label is outvoted, the
+    # product is verified precisely BECAUSE the label was judged wrong, so keeping
+    # that value inside the range contradicts the verdict. Measured on TMC-2: with
+    # the outvoted 4.41 m kept, a verified check accepted a wrong-axis squash of
+    # up to 18.9% against a configured anisotropy tolerance of 10%; with it left
+    # out, up to 10.3%. The label stays on record in the note above.
+    range_vals = list(geometric.values()) if outvoted else a_vals
+
     return PixelScale(
         product=meta.product_id,
         across_m=pick(across), along_m=pick(along),
-        across_range=(min(a_vals), max(a_vals)),
+        across_range=(min(range_vals), max(range_vals)),
         along_range=(min(l_vals), max(l_vals)),
         sources=tuple(sorted(set(across) | set(along))),
         verified=verified, notes=tuple(notes))
