@@ -29,6 +29,24 @@ RESTRICTED_COMPONENTS: dict[str, str] = {
     "superpoint": "Magic Leap licence: non-commercial research only",
     "superglue": "Magic Leap licence: non-commercial research only",
     "r2d2": "CC BY-NC-SA 3.0: non-commercial AND share-alike",
+    # Project Registration License v1.0, VERIFIED 2026-09-23 against each
+    # repository's own LICENSE file, not inferred from the name. The PRL is not
+    # OSI-approved: it permits use free of charge but only once the project has
+    # been REGISTERED with the authors beforehand, commercial or not. A
+    # registration precondition travels with the software, so anyone we ship to
+    # would have to register too -- which is a redistribution restriction, and
+    # exactly what failure mode #14 is about, even though nothing in the name
+    # or the word "free" suggests it.
+    #
+    # NOTE the trap: zju3dv licence their models INDIVIDUALLY. LoFTR is
+    # Apache-2.0; EfficientLoFTR from the same group is PRL. So "loftr" must
+    # NOT be restricted -- that would wrongly block `minima-loftr`, whose whole
+    # chain (MINIMA Apache-2.0, fine-tuning LoFTR Apache-2.0) is clean. Only
+    # the exact restricted components appear here.
+    "eloftr": "Project Registration License v1.0: requires registration before "
+              "any project use, and is not OSI-approved",
+    "matchanything": "Project Registration License v1.0: requires registration "
+                     "before any project use, and is not OSI-approved",
 }
 
 

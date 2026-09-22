@@ -233,6 +233,40 @@ def test_default_matcher_is_shippable():
     assert not licence.is_restricted(config.load("regimes")["default_matcher"])
 
 
+def test_licence_gate_blocks_the_registration_licence():
+    """A restriction that no name, and no word in the licence, warns you about.
+
+    EfficientLoFTR and MatchAnything use the Project Registration License:
+    free of charge, but only once the project has been REGISTERED with the
+    authors beforehand, commercial or not, and not OSI-approved. That
+    precondition travels to anyone we ship to.
+
+    This is not hypothetical. `eloftr` was on regimes.yaml's shippable list and
+    `matchanything-eloftr` was offered as a cross-modal candidate until
+    reports/licence_audit.json read the actual LICENSE files on 2026-09-23.
+    Both had passed every test in this file, because the old gate only knew
+    about SuperPoint, SuperGlue and R2D2.
+    """
+    for name in ("eloftr", "matchanything-eloftr", "matchanything-roma"):
+        with pytest.raises(licence.LicenceRestrictedError):
+            licence.assert_allowed(name, ship_mode=True)
+
+
+def test_the_registration_licence_rule_does_not_over_reach():
+    """The same group licenses its models INDIVIDUALLY, so precision matters.
+
+    zju3dv publish LoFTR under Apache-2.0 and EfficientLoFTR under the PRL.
+    Restricting "loftr" instead of "eloftr" would wrongly block `minima-loftr`,
+    whose chain (MINIMA Apache-2.0 fine-tuning LoFTR Apache-2.0) is clean --
+    and it would do so silently, by removing a legitimate candidate from
+    consideration rather than by failing.
+    """
+    assert not licence.is_restricted("minima-loftr")
+    assert not licence.is_restricted("loftr")
+    assert not licence.is_restricted("xoftr")
+    assert licence.is_restricted("eloftr")
+
+
 # ---------------------------------------------------------------------------
 # Instrument registry (feeds CHECK-05 and MATCH-10)
 # ---------------------------------------------------------------------------
