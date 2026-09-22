@@ -107,6 +107,11 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    use = refined & sane", "    use = sane"),
             "a refinement may relocate a match": (
                 "np.hypot(est.dx, est.dy) <= max_move", "True"),
+            "iteration adds nothing (first estimate only)": (
+                "        d = d + r.d", "        d = d"),
+            "iteration resamples in the wrong direction": (
+                "        m = np.array([[1.0, 0.0, -d[0]], [0.0, 1.0, -d[1]]], np.float32)",
+                "        m = np.array([[1.0, 0.0, d[0]], [0.0, 1.0, d[1]]], np.float32)"),
             "a flat patch yields a number instead of a failure": (
                 '        return _failed(method, "no texture: a flat patch has no correlation peak")',
                 "        pass"),

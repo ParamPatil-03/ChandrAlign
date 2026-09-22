@@ -58,9 +58,13 @@ from chandralign.io.pds_label import parse_label  # noqa: E402
 from chandralign.refine import subpixel as sp  # noqa: E402
 
 TARGET = (0.37, -0.62)
-# PREC-06 names "the four methods"; the NCC peak fit is one method with two fits.
-FOUR = {"ncc": "ncc_gaussian", "phase": "phase", "corner": "corner", "ecc": "ecc"}
-ALL = ["ncc_parabola", "ncc_gaussian", "phase", "corner", "ecc"]
+# PREC-06 names "the four methods". Which VARIANT represents each was fixed
+# BEFORE the OHRC run that followed it, on the crater-field dev fixture only
+# (ncc_gaussian_iter 0.012 px mean there, phase_iter 0.048), and the single-pass
+# variants stay in every table beside them. The first OHRC run -- single-pass
+# only, NOT MET with 1 of 4 -- is kept in git history (9b487d2) as the baseline.
+FOUR = {"ncc": "ncc_gaussian_iter", "phase": "phase_iter", "corner": "corner", "ecc": "ecc"}
+ALL = ["ncc_parabola", "ncc_gaussian", "ncc_gaussian_iter", "phase", "phase_iter", "corner", "ecc"]
 
 
 def native_noise_ratio(a: np.ndarray) -> float:

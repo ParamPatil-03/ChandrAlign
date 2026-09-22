@@ -146,3 +146,32 @@ def test_refine_points_will_not_relocate_a_match():
     src = np.array([[28.0, 28.0]])
     refined, moved = sp.refine_points(ref, mov, src, src + 3.0, method="ecc", half=12, max_move=1.5)
     assert not moved[0] and np.allclose(refined, src + 3.0)
+
+
+# ---------------------------------------------------------------------------
+# Iterative refinement (the variants PREC-06 was met with)
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize("base, it", [("ncc_gaussian", "ncc_gaussian_iter"), ("phase", "phase_iter")])
+def test_iterating_removes_most_of_the_fit_bias(base, it):
+    """Dev-fixture numbers, fixed before the OHRC run: NCC 0.041 -> 0.012 px
+    mean, phase 0.097 -> 0.048. Pinned so iteration cannot silently stop helping."""
+    before = np.mean([err(base, t) for t in SUBPIXEL_TRUTHS])
+    after = np.mean([err(it, t) for t in SUBPIXEL_TRUTHS])
+    assert after < 0.7 * before, f"{it}: {before:.3f} -> {after:.3f}"
+
+
+def test_iterated_ncc_meets_a_twentieth_of_a_pixel_on_the_fixture():
+    assert max(err("ncc_gaussian_iter", t) for t in SUBPIXEL_TRUTHS) < 0.05
+
+
+def test_iteration_keeps_the_sign_convention():
+    for m in ("ncc_gaussian_iter", "phase_iter"):
+        e = sp.estimate(*pair(2.0, -1.0), m)
+        assert e.dx == pytest.approx(2.0, abs=0.05) and e.dy == pytest.approx(-1.0, abs=0.05)
+
+
+def test_the_default_method_is_one_that_met_prec06():
+    """configs/default.yaml's subpixel.method must name a real, measured method."""
+    from chandralign import config
+    assert config.get("subpixel.method") in ("ncc_gaussian_iter", "ecc")
+    assert config.get("subpixel.method") in sp.METHODS

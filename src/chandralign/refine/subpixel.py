@@ -218,12 +218,57 @@ def ecc(ref: np.ndarray, mov: np.ndarray, seed: Optional[ShiftEstimate] = None,
 
 
 # ---------------------------------------------------------------------------
+# Iterative refinement: remove the fit bias by re-estimating near zero
+# ---------------------------------------------------------------------------
+def iterate(ref: np.ndarray, mov: np.ndarray, base: Callable[..., ShiftEstimate],
+            iterations: int = 3, name: Optional[str] = None) -> ShiftEstimate:
+    """Estimate, shift `mov` back by the estimate, re-estimate the residual, repeat.
+
+    Why it helps: a 3-point peak fit (and phase correlation's upsampled peak) is
+    biased except near zero offset -- the "pixel locking" measured in PREC-01's
+    tests. Each pass leaves a smaller residual, where that bias is smaller, so the
+    accumulated estimate converges on the unbiased answer.
+
+    The resampling uses Lanczos-4. That is interpolation INSIDE the method, which
+    is legitimate; the truth it is scored against is still the exact
+    block-averaged shift, so no interpolation model is shared with the test.
+    Border pixels the warp has to invent are cropped before each re-estimate.
+    """
+    name = name or f"{base.__name__}_iter"
+    ref, mov = _as_float(ref), _as_float(mov)
+    first = base(ref, mov)
+    if not first.ok:
+        first.method = name
+        return first
+    d = first.d.copy()
+    h, w = ref.shape
+    for _ in range(iterations):
+        m = np.array([[1.0, 0.0, -d[0]], [0.0, 1.0, -d[1]]], np.float32)
+        back = cv2.warpAffine(mov, m, (w, h), flags=cv2.INTER_LANCZOS4,
+                              borderMode=cv2.BORDER_REFLECT)      # back(y) = mov(y + d) ~ ref(y)
+        c = int(np.ceil(np.abs(d).max())) + 3
+        if min(h, w) - 2 * c < 24:
+            break
+        r = base(ref[c:-c, c:-c], back[c:-c, c:-c])
+        if not r.ok:
+            break
+        d = d + r.d
+        if np.hypot(*r.d) < 1e-3:
+            break
+    return ShiftEstimate(float(d[0]), float(d[1]), name, quality=first.quality,
+                         notes=first.notes + [f"iterated {iterations}x with Lanczos-4 resampling"])
+
+
+# ---------------------------------------------------------------------------
 # Dispatch and per-match refinement (the pipeline's use of PREC-01..04)
 # ---------------------------------------------------------------------------
 METHODS: dict[str, Callable[..., ShiftEstimate]] = {
     "ncc_parabola": lambda r, m: ncc_peak(r, m, fit="parabola"),
     "ncc_gaussian": lambda r, m: ncc_peak(r, m, fit="gaussian"),
+    "ncc_gaussian_iter": lambda r, m: iterate(r, m, lambda a, b: ncc_peak(a, b, max_shift=3, fit="gaussian"),
+                                              name="ncc_gaussian_iter"),
     "phase": phase,
+    "phase_iter": lambda r, m: iterate(r, m, phase, name="phase_iter"),
     "corner": corner,
     "ecc": ecc,
 }
@@ -239,7 +284,7 @@ def estimate(ref: np.ndarray, mov: np.ndarray, method: str = "phase") -> ShiftEs
 
 
 def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
-                  ref_pts: np.ndarray, method: str = "phase", half: int = 16,
+                  ref_pts: np.ndarray, method: Optional[str] = None, half: int = 16,
                   max_move: float = 1.5) -> tuple[np.ndarray, np.ndarray]:
     """Refine each match's position in `ref_img` to sub-pixel precision.
 
@@ -249,6 +294,7 @@ def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
     fails, or wants to move a point further than `max_move` px, is not applied:
     a sub-pixel step should correct a matcher's rounding, not relocate a match.
     """
+    method = method or str(config.get("subpixel.method", "ncc_gaussian_iter"))
     src_pts = np.asarray(src_pts, float).reshape(-1, 2)
     out = np.asarray(ref_pts, float).reshape(-1, 2).copy()
     moved = np.zeros(len(out), bool)
