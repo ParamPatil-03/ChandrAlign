@@ -1,0 +1,297 @@
+{
+  "source": "measured",
+  "method": "Real OHRC is brought down to TMC-2's resolution (16x16 block average,\n~4.9 m) and matched into TMC-2 with MIND over a +-2 km search region -- the\nscale of real system-geolocation error (TMC-2's own refinement moved it 5.4 km,\nOHRC sits ~2 km off). A full-width template first establishes where each\nwindow truly belongs. Then the template is shrunk to W x W coarse pixels and\nre-matched in the SAME region. A trial succeeds only if its peak is\nunambiguous (z >= 10) AND lands within 3 px of the full-width answer: a sharp\npeak in the wrong place is a failure, not a success.",
+  "search_km": 2.0,
+  "success": "z >= 10 and within 3 px of the full-width answer",
+  "threshold_px": 112,
+  "results": {
+    "32": [
+      {
+        "row": 9338,
+        "z": 5.3,
+        "error_px": 528.2,
+        "ok": false
+      },
+      {
+        "row": 23338,
+        "z": 6.6,
+        "error_px": 1711.4,
+        "ok": false
+      },
+      {
+        "row": 37338,
+        "z": 6.1,
+        "error_px": 0.0,
+        "ok": false
+      },
+      {
+        "row": 51338,
+        "z": 5.8,
+        "error_px": 1170.2,
+        "ok": false
+      },
+      {
+        "row": 65338,
+        "z": 7.0,
+        "error_px": 1476.6,
+        "ok": false
+      }
+    ],
+    "48": [
+      {
+        "row": 9338,
+        "z": 5.6,
+        "error_px": 1268.2,
+        "ok": false
+      },
+      {
+        "row": 23338,
+        "z": 7.1,
+        "error_px": 1813.3,
+        "ok": false
+      },
+      {
+        "row": 37338,
+        "z": 8.3,
+        "error_px": 0.0,
+        "ok": false
+      },
+      {
+        "row": 51338,
+        "z": 9.2,
+        "error_px": 1.0,
+        "ok": false
+      },
+      {
+        "row": 65338,
+        "z": 6.8,
+        "error_px": 1378.9,
+        "ok": false
+      }
+    ],
+    "64": [
+      {
+        "row": 9338,
+        "z": 6.3,
+        "error_px": 883.2,
+        "ok": false
+      },
+      {
+        "row": 23338,
+        "z": 7.1,
+        "error_px": 1188.0,
+        "ok": false
+      },
+      {
+        "row": 37338,
+        "z": 12.1,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 11.3,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 7.8,
+        "error_px": 1056.0,
+        "ok": false
+      }
+    ],
+    "80": [
+      {
+        "row": 9338,
+        "z": 7.7,
+        "error_px": 0.0,
+        "ok": false
+      },
+      {
+        "row": 23338,
+        "z": 6.2,
+        "error_px": 1078.6,
+        "ok": false
+      },
+      {
+        "row": 37338,
+        "z": 14.8,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 14.6,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 8.5,
+        "error_px": 1683.2,
+        "ok": false
+      }
+    ],
+    "96": [
+      {
+        "row": 9338,
+        "z": 10.6,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 23338,
+        "z": 8.2,
+        "error_px": 0.0,
+        "ok": false
+      },
+      {
+        "row": 37338,
+        "z": 17.2,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 17.1,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 8.4,
+        "error_px": 0.0,
+        "ok": false
+      }
+    ],
+    "112": [
+      {
+        "row": 9338,
+        "z": 15.1,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 23338,
+        "z": 11.4,
+        "error_px": 1.0,
+        "ok": true
+      },
+      {
+        "row": 37338,
+        "z": 17.9,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 19.5,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 10.9,
+        "error_px": 0.0,
+        "ok": true
+      }
+    ],
+    "128": [
+      {
+        "row": 9338,
+        "z": 16.9,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 23338,
+        "z": 14.0,
+        "error_px": 1.0,
+        "ok": true
+      },
+      {
+        "row": 37338,
+        "z": 20.2,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 20.5,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 11.9,
+        "error_px": 0.0,
+        "ok": true
+      }
+    ],
+    "144": [
+      {
+        "row": 9338,
+        "z": 19.0,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 23338,
+        "z": 17.6,
+        "error_px": 1.0,
+        "ok": true
+      },
+      {
+        "row": 37338,
+        "z": 21.5,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 22.3,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 12.9,
+        "error_px": 0.0,
+        "ok": true
+      }
+    ],
+    "160": [
+      {
+        "row": 9338,
+        "z": 20.1,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 23338,
+        "z": 20.8,
+        "error_px": 1.0,
+        "ok": true
+      },
+      {
+        "row": 37338,
+        "z": 23.2,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 51338,
+        "z": 24.6,
+        "error_px": 0.0,
+        "ok": true
+      },
+      {
+        "row": 65338,
+        "z": 14.5,
+        "error_px": 0.0,
+        "ok": true
+      }
+    ]
+  }
+}

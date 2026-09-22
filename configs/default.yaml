@@ -89,6 +89,17 @@ tiers:                       # CHECK-07 confidence tiers
   # accept/reject decision, so it cannot say whether a MEDIUM is really medium.
   # Anything below `low`, or any failed control gate, is REJECTED (CHECK-08).
 
+cascade:                     # MATCH-10
+  # A step is feasible when the finer image spans at least this many of the
+  # coarser camera's pixels. MEASURED (scripts/measure_cascade_footprint.py):
+  # real OHRC matched into TMC-2 over +-2 km with MIND, 5 windows, success =
+  # z >= 10 AND within 3 px of a ~220 px reference template:
+  #   64 px 2/5   80 px 2/5   96 px 3/5   112 px 5/5   128-160 px 5/5
+  # Measured under the WORST lighting we hold (suns ~166 deg apart), so it is
+  # conservative for better-matched pairs. Routes it decides on real products:
+  # OHRC->TMC-2 727 px, TMC-2->IIRS 197, OHRC->TC 495 feasible; OHRC->IIRS 37 not.
+  min_footprint_px: 112
+
 gates:                       # CHECK-01..06 tolerances
   null_max_inlier_ratio: 0.05      # a null test scoring above this means we are broken
   # CHECK-03 moves the source by (3, 4) px -- |s| = 5 px -- so BOTH axes are

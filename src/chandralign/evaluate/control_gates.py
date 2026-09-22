@@ -43,6 +43,7 @@ class PipelineRun:
     inliers: int
     matrix: Optional[np.ndarray] = None   # 3x3, source px -> reference px
     note: str = ""
+    rmse_px: Optional[float] = None       # inlier fit error, reference px (None = not measured)
 
     @property
     def inlier_ratio(self) -> float:
@@ -249,7 +250,7 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
     certify; a separate, simpler stand-in would test itself, not the pipeline.
     """
     from .. import synth
-    from ..estimate import robust
+    from ..estimate import models, robust
     from ..matching import adapter, classical
 
     def plane(a: np.ndarray):
@@ -273,8 +274,12 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
         res = robust.estimate(ms.src_pts, ms.ref_pts, expected_scale=None,
                               centre=(s.array.shape[1] / 2.0, s.array.shape[0] / 2.0))
         m = None if res.model is None or res.model.matrix is None else np.asarray(res.model.matrix, float)
+        rmse = None
+        if m is not None and res.inlier_count:
+            r = models.residuals(res.model, ms.src_pts[res.inlier_mask], ms.ref_pts[res.inlier_mask])
+            rmse = float(np.sqrt(np.mean(np.asarray(r) ** 2)))
         return PipelineRun(bool(res.ok), n, int(res.inlier_count), m,
-                           res.notes[-1] if res.notes else "")
+                           res.notes[-1] if res.notes else "", rmse)
 
     run.__name__ = f"pipeline[{matcher}]"
     return run

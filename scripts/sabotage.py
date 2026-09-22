@@ -121,6 +121,31 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    noise = rng.normal(0.0, 1.0, np.asarray(src).shape)"),
         },
     ),
+    "cascade": (
+        "src/chandralign/matching/cascade.py",
+        "tests/test_cascade.py",
+        {
+            "every step is called feasible": (
+                "    ok = px >= threshold\n", "    ok = True\n"),
+            "an infeasible direct step is attempted anyway": (
+                "    if direct.feasible:\n        return Plan(src.name, ref.name, \"direct\"",
+                "    if True:\n        return Plan(src.name, ref.name, \"direct\""),
+            "later steps' scale is ignored in error propagation": (
+                "            rest_scale *= _local_scale(steps[j].model, points[j])",
+                "            rest_scale *= 1.0"),
+            "steps are composed in the wrong order": (
+                "        total = models.compose(total, s.model)",
+                "        total = models.compose(s.model, total)"),
+            "an ambiguous dense match is accepted": (
+                '    if z < float(config.get("cascade.min_z", 10.0)):',
+                "    if False:"),
+            "downsampling loses the half-pixel offset": (
+                "    return np.array([[1 / f, 0, 0.5 / f - 0.5], [0, 1 / f, 0.5 / f - 0.5], [0, 0, 1]], float)",
+                "    return np.array([[1 / f, 0, 0.0], [0, 1 / f, 0.0], [0, 0, 1]], float)"),
+            "a failed step is bridged over": (
+                "    if missing:\n", "    if False:\n"),
+        },
+    ),
     "subpixel": (
         "src/chandralign/refine/subpixel.py",
         "tests/test_subpixel.py",
