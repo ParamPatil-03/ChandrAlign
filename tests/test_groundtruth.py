@@ -324,3 +324,38 @@ class TestDemRegistration:
         finite = relief[np.isfinite(relief)]
         assert finite.min() >= 0.0 and finite.max() <= 1.0
         assert finite.std() > 0
+
+
+# ----------------------------------------------------------------------------- the correction
+
+def test_the_optics_check_is_not_counted_as_confirmation():
+    """Correction of an earlier claim. Every CH-2 label GSD is design x altitude / 100,
+    the same arithmetic as pitch x altitude / focal -- so optics and label agree by
+    construction and that agreement confirms nothing about the ground."""
+    for name in PRODUCTS:
+        report = cross_validate(meta(name))
+        optics = named(report, "optics_gsd_m")
+        assert optics.independent_route is False
+        assert "NOT independent" in optics.note
+        assert optics not in report.confirmations
+
+
+def test_tmc2s_cross_track_disagreement_names_the_label_as_wrong():
+    """It was the corners I first called unreliable. Measured from pixels, the corners
+    (4.881 m) were right and the label (4.41 m) is 11.6% out."""
+    check = named(cross_validate(meta("TMC2")), "cross_track_gsd_m")
+    assert not check.agrees
+    assert "LABEL is wrong" in check.note
+    assert "4.92" in check.note
+
+
+def test_the_independent_along_track_route_agrees_with_the_pixel_measurement():
+    """Orbital mechanics (5.048 m) and the image measurement (5.037 m) know nothing
+    about each other, and agree within 0.3%."""
+    from chandralign.estimate.scale import measured_scale
+
+    along = named(cross_validate(meta("TMC2")), "along_track_gsd_m")
+    assert along.independent_route is True
+    assert along in cross_validate(meta("TMC2")).confirmations
+    measured_along = measured_scale(meta("TMC2").product_id)[1]
+    assert along.independent == pytest.approx(measured_along, rel=0.01)

@@ -61,12 +61,49 @@ def test_a_label_confirmed_by_its_own_corners_is_verified():
 
 
 def test_tmc2s_label_disagrees_with_its_own_corners():
-    """Not only NAC: TMC-2 states 4.41 m across while its corners say 4.88."""
-    p = scale.pixel_scale(TMC2)
+    """Not only NAC: TMC-2 states 4.41 m across while its corners say 4.88.
+
+    From the labels ALONE this stays unverified: one label and one corner set that
+    disagree cannot settle which is right.
+    """
+    p = scale.pixel_scale(TMC2, use_measured=False)
     assert not p.verified
     assert p.across_range[0] == pytest.approx(4.41, rel=1e-3)
     assert p.across_range[1] == pytest.approx(4.881, rel=1e-2)
     assert any("disagree" in n for n in p.notes)
+
+
+def test_a_pixel_measurement_settles_tmc2_and_outvotes_the_label():
+    """Decision (a), agreed by both members: the measurement is a source of its own,
+    and two agreeing non-label sources outvote a label that disagrees with both.
+
+    Corners 4.881 and the pixel measurement 4.920 agree within 0.8%; the label's
+    4.41 is 11.6% out, and it is the design GSD restated rather than a measurement.
+    """
+    p = scale.pixel_scale(TMC2)
+    assert p.verified
+    assert "measured" in p.sources
+    assert p.across_m == pytest.approx(4.920)            # the measurement is preferred
+    assert p.along_m == pytest.approx(5.037)
+    assert p.across_range[0] == pytest.approx(4.41, rel=1e-3)   # the label is KEPT in range
+    outvoted = [n for n in p.notes if "label outvoted" in n]
+    assert outvoted and "design value" in outvoted[0]
+
+
+def test_one_source_cannot_outvote_a_label():
+    """The outvote needs TWO agreeing non-label sources; one is just a disagreement."""
+    p = scale.pixel_scale(NAC, ground_extent_m=(6_000.0, 62_200.0))
+    assert not p.verified
+    assert not any("label outvoted" in n for n in p.notes)
+
+
+def test_every_ch2_label_gsd_is_the_design_value_scaled_to_altitude():
+    """Member B's finding on TMC-2, confirmed on all three CH-2 cameras."""
+    for meta in (OHRC, TMC2, IIRS):
+        derived = scale.label_design_value(meta)
+        assert derived is not None, meta.instrument
+        assert derived == pytest.approx(meta.gsd_m, rel=scale.DESIGN_VALUE_TOLERANCE)
+    assert scale.label_design_value(NAC) is None      # no altitude in a NAC label
 
 
 def test_a_nac_label_alone_is_never_verification():

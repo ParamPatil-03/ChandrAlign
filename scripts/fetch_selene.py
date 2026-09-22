@@ -94,16 +94,38 @@ def head(url: str) -> int | None:
 
 
 def fetch(url: str, dest: Path) -> None:
+    """Download one file, never leaving a truncated file that looks finished.
+
+    Same fix as fetch_lro.py (54bf21e): a file that merely EXISTS is not a file
+    that finished, so an interrupted run used to leave a short .img that the
+    next run reported as "have". Size truth is the server's Content-Length.
+    """
     dest.parent.mkdir(parents=True, exist_ok=True)
+    want = head(url) or None
     if dest.exists():
-        print(f"    have {dest.name}")
-        return
+        have = dest.stat().st_size
+        if want is None:
+            print(f"    have {dest.name} (size unverified: no Content-Length)")
+            return
+        if have == want:
+            print(f"    have {dest.name}")
+            return
+        print(f"    redo {dest.name} (have {have / 1e6:.1f} MB of {want / 1e6:.1f} MB)")
+        dest.unlink()
+    part = dest.with_suffix(dest.suffix + ".part")
     with requests.get(url, stream=True, timeout=1800) as r:
         r.raise_for_status()
-        with dest.open("wb") as fh:
+        declared = r.headers.get("Content-Length")
+        declared = int(declared) if declared is not None else want
+        with part.open("wb") as fh:
             for chunk in r.iter_content(1 << 20):
                 fh.write(chunk)
-    print(f"    got  {dest.name} ({dest.stat().st_size / 1e6:.1f} MB)")
+    got = part.stat().st_size
+    if declared is not None and got != declared:
+        part.unlink()
+        raise RuntimeError(f"{dest.name}: got {got} bytes, server declared {declared}")
+    part.replace(dest)
+    print(f"    got  {dest.name} ({got / 1e6:.1f} MB)")
 
 
 def main() -> None:

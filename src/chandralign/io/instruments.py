@@ -146,8 +146,10 @@ class ScaleCheck:
     ratio: float                 # coarser / finer, always >= 1
     threshold: float
     extreme: bool                # True -> must go through the cascade (MATCH-10)
-    source: str                  # "label" | "nominal" | "mixed"
+    source: str                  # "measured" | "corners" | "label" | "nominal" | "mixed"
     reason: str
+    verified: bool = False       # both pixel sizes confirmed by two agreeing sources
+    provenance: tuple = ()       # every source each side's pixel size came from
 
     @property
     def route(self) -> str:
@@ -172,11 +174,30 @@ def cascade_threshold(config_name: str = "regimes") -> float:
     return DEFAULT_CASCADE_RATIO
 
 
-def _gsd_of(scene) -> tuple[str, float, str]:
-    """(instrument, gsd_m, source) from a SceneMeta, or from a bare instrument name."""
+def _gsd_of(scene) -> tuple[str, float, str, bool, tuple]:
+    """(instrument, effective_gsd_m, best_source, verified, sources) for one side.
+
+    A SceneMeta goes through estimate.scale.pixel_scale, so the size used for
+    routing is the best-supported one -- a pixel measurement, then the corners --
+    and not the label's single number. That matters because Chandrayaan-2 labels
+    state the DESIGN GSD scaled to altitude (TMC-2's 4.41 m is 11.6% below its
+    measured 4.92 m), and pushbroom pixels are not square. The effective size is
+    the geometric mean of the two axes, which is what a transform's area scale
+    sees whatever the rotation between the images.
+    """
     if isinstance(scene, str):
-        return scene, get_spec(scene).gsd_m, "nominal"
-    return str(scene.instrument), float(scene.gsd_m), "label"
+        g = float(get_spec(scene).gsd_m)
+        return scene, g, "nominal", False, ("nominal",)
+    from chandralign.estimate.scale import pixel_scale
+
+    # Refuse a nonsense size BEFORE any ratio is formed from it; pixel_scale would
+    # otherwise divide by it while comparing sources.
+    if not scene.gsd_m or float(scene.gsd_m) <= 0:
+        raise ValueError(f"a GSD must be positive, got {scene.gsd_m} for {scene.product_id}")
+    ps = pixel_scale(scene)
+    effective = (ps.across_m * ps.along_m) ** 0.5
+    best = next(s for s in ("measured", "corners", "footprint", "label") if s in ps.sources)
+    return str(scene.instrument), float(effective), best, ps.verified, ps.sources
 
 
 def scale_precheck(a, b, threshold: Optional[float] = None) -> ScaleCheck:
@@ -202,8 +223,8 @@ def scale_precheck(a, b, threshold: Optional[float] = None) -> ScaleCheck:
     is refused before a matcher is ever constructed.
     """
     threshold = cascade_threshold() if threshold is None else float(threshold)
-    name_a, gsd_a, src_a = _gsd_of(a)
-    name_b, gsd_b, src_b = _gsd_of(b)
+    name_a, gsd_a, src_a, ver_a, prov_a = _gsd_of(a)
+    name_b, gsd_b, src_b, ver_b, prov_b = _gsd_of(b)
     if gsd_a <= 0 or gsd_b <= 0:
         raise ValueError(f"a GSD must be positive, got {gsd_a} and {gsd_b}")
     ratio = max(gsd_a, gsd_b) / min(gsd_a, gsd_b)
@@ -214,4 +235,7 @@ def scale_precheck(a, b, threshold: Optional[float] = None) -> ScaleCheck:
                  "evaluation at this scale gap, so route to the cascade"
                  if extreme else
                  f"within the {threshold:g}x limit: direct matching is allowed"))
-    return ScaleCheck(name_a, name_b, gsd_a, gsd_b, ratio, threshold, extreme, source, reason)
+    if not (ver_a and ver_b):
+        reason += "; at least one pixel size is UNVERIFIED, so treat the ratio as approximate"
+    return ScaleCheck(name_a, name_b, gsd_a, gsd_b, ratio, threshold, extreme, source, reason,
+                      verified=ver_a and ver_b, provenance=(prov_a, prov_b))

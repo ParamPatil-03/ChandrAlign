@@ -1,0 +1,29 @@
+# Pixel sizes MEASURED from the images themselves, per product.
+#
+# Read by estimate/scale.py as a source of its own ("measured"), alongside the
+# label, the corners and any footprint. A label states what a pixel should be;
+# a measurement states what it is. When the two disagree, the disagreement stays
+# on record -- nothing here overwrites a label.
+#
+# Every entry must say how it was measured and how to reproduce it, because a
+# number here outvotes a label, and an unreproducible number should not be able
+# to do that.
+
+products:
+  ch2_tmc_nca_20250207T1102039417_d_img_d18:
+    across_m: 4.920
+    along_m: 5.037
+    across_spread_m: [4.877, 4.950]
+    along_spread_m: [5.015, 5.053]
+    method: >
+      OHRC used as a ruler (its label, corners and system grid agree at 0.305 m).
+      Both images block-averaged to ~10 m, OHRC rotated into TMC-2's frame using
+      both geometry grids, each axis scaled, and MIND-template-matched over ~15 km
+      of TMC-2. Five independent OHRC windows, every match unambiguous (z 12-31).
+    resolution_m: 0.04        # the scale search steps on a grid
+    reproduce: scripts/measure_tmc2_scale.py
+    measured_by: Member B
+    commit: f944998
+    finding: >
+      The label's 4.41 m is 5 m x 88.2 km / 100 km -- the DESIGN GSD scaled to the
+      label's altitude, not a measurement. It is 11.6% below the measured value.

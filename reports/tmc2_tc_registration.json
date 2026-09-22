@@ -1,0 +1,358 @@
+{
+  "source": "measured",
+  "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) <-> SELENE TC",
+  "prior": "TMC-2 SYSTEM corners only; refined geolocation used for stage-4 comparison only",
+  "rows": [
+    {
+      "tmc_row": 1562,
+      "window_px": 1536,
+      "lat": -1.3782,
+      "coarse_z": 77.6,
+      "coarse_peak": 0.22,
+      "system_offset_px": [
+        71.0,
+        609.0
+      ],
+      "system_offset_m": {
+        "east": 525,
+        "north": -4509,
+        "total": 4539
+      },
+      "match_seconds": 28.6,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 14638,
+      "inliers": 8849,
+      "inlier_ratio": 0.6045,
+      "coverage": 0.984,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.593,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.966,
+        "along": 5.034
+      },
+      "fine_residual_shift_px": [
+        -2.83,
+        3.28
+      ],
+      "vs_isro_refined_grid_m": 551.7,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 30.8
+    },
+    {
+      "tmc_row": 3125,
+      "window_px": 1536,
+      "lat": -1.1173,
+      "coarse_z": 73.0,
+      "coarse_peak": 0.204,
+      "system_offset_px": [
+        74.0,
+        608.0
+      ],
+      "system_offset_m": {
+        "east": 548,
+        "north": -4501,
+        "total": 4534
+      },
+      "match_seconds": 0.6,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 14455,
+      "inliers": 7087,
+      "inlier_ratio": 0.4903,
+      "coverage": 0.891,
+      "scale_status": "consistent",
+      "tier": "MEDIUM",
+      "limiting_signal": "inlier_ratio",
+      "inlier_rmse_px": 1.642,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.969,
+        "along": 5.015
+      },
+      "fine_residual_shift_px": [
+        -3.26,
+        0.14
+      ],
+      "vs_isro_refined_grid_m": 543.3,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 2.6
+    },
+    {
+      "tmc_row": 4687,
+      "window_px": 1536,
+      "lat": -0.8565,
+      "coarse_z": 68.6,
+      "coarse_peak": 0.205,
+      "system_offset_px": [
+        84.0,
+        627.0
+      ],
+      "system_offset_m": {
+        "east": 622,
+        "north": -4642,
+        "total": 4683
+      },
+      "match_seconds": 1.0,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 14844,
+      "inliers": 7947,
+      "inlier_ratio": 0.5354,
+      "coverage": 0.844,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.556,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.976,
+        "along": 5.086
+      },
+      "fine_residual_shift_px": [
+        -12.39,
+        -19.66
+      ],
+      "vs_isro_refined_grid_m": 491.7,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 2.9
+    },
+    {
+      "tmc_row": 16000,
+      "window_px": 1536,
+      "lat": 1.0321,
+      "coarse_z": 111.3,
+      "coarse_peak": 0.31,
+      "system_offset_px": [
+        89.0,
+        642.0
+      ],
+      "system_offset_m": {
+        "east": 659,
+        "north": -4753,
+        "total": 4798
+      },
+      "match_seconds": 4.8,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 14316,
+      "inliers": 13836,
+      "inlier_ratio": 0.9665,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.061,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.994,
+        "along": 5.037
+      },
+      "fine_residual_shift_px": [
+        -4.96,
+        0.69
+      ],
+      "vs_isro_refined_grid_m": 312.7,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 6.9
+    },
+    {
+      "tmc_row": 18750,
+      "window_px": 1536,
+      "lat": 1.4911,
+      "coarse_z": 134.0,
+      "coarse_peak": 0.381,
+      "system_offset_px": [
+        91.0,
+        649.0
+      ],
+      "system_offset_m": {
+        "east": 673,
+        "north": -4805,
+        "total": 4852
+      },
+      "match_seconds": 2.0,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 15288,
+      "inliers": 15183,
+      "inlier_ratio": 0.9931,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.721,
+      "tmc_pixel_from_tc_m": {
+        "across": 5.0,
+        "along": 5.046
+      },
+      "fine_residual_shift_px": [
+        -3.47,
+        2.25
+      ],
+      "vs_isro_refined_grid_m": 259.4,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 4.7
+    },
+    {
+      "tmc_row": 21500,
+      "window_px": 1536,
+      "lat": 1.9502,
+      "coarse_z": 155.1,
+      "coarse_peak": 0.454,
+      "system_offset_px": [
+        95.0,
+        652.0
+      ],
+      "system_offset_m": {
+        "east": 703,
+        "north": -4827,
+        "total": 4878
+      },
+      "match_seconds": 2.0,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 15226,
+      "inliers": 15057,
+      "inlier_ratio": 0.9889,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.003,
+      "tmc_pixel_from_tc_m": {
+        "across": 5.002,
+        "along": 5.063
+      },
+      "fine_residual_shift_px": [
+        -3.87,
+        -0.14
+      ],
+      "vs_isro_refined_grid_m": 238.4,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 4.3
+    },
+    {
+      "tmc_row": 52000,
+      "window_px": 1536,
+      "lat": 7.0419,
+      "coarse_z": 186.7,
+      "coarse_peak": 0.565,
+      "system_offset_px": [
+        124.0,
+        636.0
+      ],
+      "system_offset_m": {
+        "east": 911,
+        "north": -4708,
+        "total": 4796
+      },
+      "match_seconds": 1.9,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 15882,
+      "inliers": 15834,
+      "inlier_ratio": 0.997,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.712,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.988,
+        "along": 5.06
+      },
+      "fine_residual_shift_px": [
+        3.94,
+        0.28
+      ],
+      "vs_isro_refined_grid_m": 312.4,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 4.2
+    },
+    {
+      "tmc_row": 54750,
+      "window_px": 1536,
+      "lat": 7.501,
+      "coarse_z": 138.5,
+      "coarse_peak": 0.389,
+      "system_offset_px": [
+        126.0,
+        640.0
+      ],
+      "system_offset_m": {
+        "east": 925,
+        "north": -4738,
+        "total": 4827
+      },
+      "match_seconds": 2.0,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 15363,
+      "inliers": 15179,
+      "inlier_ratio": 0.988,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.291,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.987,
+        "along": 5.057
+      },
+      "fine_residual_shift_px": [
+        4.77,
+        -5.82
+      ],
+      "vs_isro_refined_grid_m": 300.2,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 4.2
+    },
+    {
+      "tmc_row": 57500,
+      "window_px": 1536,
+      "lat": 7.9601,
+      "coarse_z": 140.2,
+      "coarse_peak": 0.391,
+      "system_offset_px": [
+        128.0,
+        641.0
+      ],
+      "system_offset_m": {
+        "east": 938,
+        "north": -4745,
+        "total": 4837
+      },
+      "match_seconds": 7.7,
+      "device": "cuda",
+      "matcher": "eloftr",
+      "matches": 15280,
+      "inliers": 15187,
+      "inlier_ratio": 0.9939,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.843,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.989,
+        "along": 5.062
+      },
+      "fine_residual_shift_px": [
+        5.08,
+        -4.51
+      ],
+      "vs_isro_refined_grid_m": 287.1,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 9.8
+    }
+  ]
+}

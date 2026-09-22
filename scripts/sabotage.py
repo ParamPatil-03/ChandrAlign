@@ -63,8 +63,11 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    if expected.verified:\n        return ScaleVerdict(True, "consistent",',
                 '    if True:\n        return ScaleVerdict(True, "consistent",'),
             "a single source counts as verified": (
-                '    verified = _agree(a_vals, tolerance) and "label (assumed square)" not in along',
+                '    verified = (all_agree or geometry_agrees) and "label (assumed square)" not in along',
                 "    verified = True"),
+            "one non-label source is enough to outvote the label": (
+                "    geometry_agrees = _agree(list(geometric.values()), tolerance)",
+                "    geometry_agrees = len(geometric) >= 1"),
             "ignore the corners (every pixel square)": (
                 "    if corners is not None:", "    if False:"),
             "no slack for unverified (trust the label fully)": (

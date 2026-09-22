@@ -31,11 +31,20 @@ def meta(name):
 
 def test_ohrc_to_iirs_is_flagged_before_any_matcher_runs():
     """GEO-06 acceptance, on the two real labels."""
+    from chandralign.estimate.scale import pixel_scale
+
     check = scale_precheck(meta("OHRC"), meta("IIRS"))
     assert check.extreme is True
     assert check.route == "cascade"
-    assert check.ratio == pytest.approx(97.15 / 0.30, rel=1e-6)
-    assert check.source == "label"
+    # The ratio uses each pixel's AREA (geometric mean of both axes), from the
+    # best-supported source. IIRS is 99.995 x 79.515 m, so its effective size is
+    # 89.17 m, not the label's 97.15 -- the ratio is 290, not the 324 the labels give.
+    po, pi = pixel_scale(meta("OHRC")), pixel_scale(meta("IIRS"))
+    expected = ((pi.across_m * pi.along_m) / (po.across_m * po.along_m)) ** 0.5
+    assert check.ratio == pytest.approx(expected, rel=1e-9)
+    assert check.ratio == pytest.approx(290.15, abs=0.1)
+    assert check.source == "corners"
+    assert check.verified is True
     assert "cascade" in check.reason
 
 
@@ -61,34 +70,50 @@ def test_the_threshold_comes_from_member_bs_config_not_a_constant():
 
 # ----------------------------------------------------------------------------- label vs nominal
 
-def test_label_gsds_are_preferred_and_differ_from_nominal():
-    """The registry's nominal figures are design values; our real products are not them."""
+def test_the_best_supported_size_is_used_not_the_label():
+    """Neither the registry nominal nor the label: the best-supported size, per product.
+
+    Every CH-2 label states the design GSD scaled to altitude, and TMC-2's is 11.6%
+    below its measured size, so routing on labels would route on the wrong number.
+    """
+    from chandralign.estimate.scale import pixel_scale
+
     for name, nominal in (("OHRC", 0.25), ("TMC2", 5.0), ("IIRS", 80.0)):
         m = meta(name)
+        ps = pixel_scale(m)
+        check = scale_precheck(m, "NAC")
         assert get_spec(name).gsd_m == nominal
-        assert m.gsd_m != nominal                              # the label disagrees
-        assert scale_precheck(m, "NAC").gsd_a_m == m.gsd_m     # and the label wins
-        assert scale_precheck(m, "NAC").source == "mixed"      # one label, one nominal
+        assert check.gsd_a_m == pytest.approx((ps.across_m * ps.along_m) ** 0.5)
+        assert check.source == "mixed"                         # best source vs nominal
+    tmc2 = scale_precheck(meta("TMC2"), "NAC")
+    assert tmc2.gsd_a_m == pytest.approx((4.920 * 5.037) ** 0.5)   # the MEASURED size
+    assert tmc2.gsd_a_m != meta("TMC2").gsd_m                        # not the label
 
 
 def test_no_registry_pairing_changes_its_decision_when_label_gsds_are_used():
     """Measured, and recorded because it is the honest result rather than the hoped-for one.
 
-    All three nominal GSDs are 12-21% out, but every one of the 21 pairings sits far
-    enough from the threshold that the yes/no answer is unchanged. The label GSD still
-    matters: TMC-2 <-> MI is nominally 4.00 against a 4.00 threshold -- a knife-edge --
-    and the label value moves it to 4.54, off the boundary.
-    """
-    real = {n: meta(n).gsd_m for n in PRODUCTS}
-    names = list(load_registry())
-    for a, b in itertools.combinations(names, 2):
-        nominal = scale_precheck(a, b)
-        ga, gb = real.get(a, get_spec(a).gsd_m), real.get(b, get_spec(b).gsd_m)
-        ratio = max(ga, gb) / min(ga, gb)
-        assert (ratio >= nominal.threshold) == nominal.extreme, (a, b, ratio, nominal.ratio)
+    Across all 21 registry pairings, using each product's best-supported size
+    instead of the nominal one changes NO routing decision.
 
-    assert scale_precheck("TMC2", "MI").ratio == pytest.approx(4.0)     # exactly on the edge
-    assert scale_precheck(meta("TMC2"), "MI").ratio == pytest.approx(4.54, abs=0.01)
+    CORRECTION of an earlier claim: I said the label GSD moved TMC-2 <-> MI off
+    the 4.00 knife-edge to 4.54. That 4.54 came from TMC-2's label, which is 11.6%
+    wrong. With TMC-2's measured size the ratio is 4.02 -- still on the edge. What
+    actually takes the pair off it is MI's OWN label: 14.806 m on the tile we hold,
+    not the 20 m nominal, which gives 2.97 and routes DIRECT.
+    """
+    real = {n: meta(n) for n in PRODUCTS}
+    for a, b in itertools.combinations(list(load_registry()), 2):
+        nominal = scale_precheck(a, b)
+        best = scale_precheck(real.get(a, a), real.get(b, b))
+        assert best.extreme == nominal.extreme, (a, b, nominal.ratio, best.ratio)
+
+    assert scale_precheck("TMC2", "MI").ratio == pytest.approx(4.0)       # nominal: on the edge
+    assert scale_precheck(meta("TMC2"), "MI").ratio == pytest.approx(4.02, abs=0.01)
+    mi = parse_label(ROOT / "tests" / "fixtures" / "labels" / "MI_MAP_03_N01E023N00E024SC.lbl")
+    real_pair = scale_precheck(meta("TMC2"), mi)
+    assert real_pair.ratio == pytest.approx(2.97, abs=0.01)
+    assert real_pair.route == "direct"
 
 
 def test_it_agrees_with_scale_gap_when_both_sides_are_nominal():
