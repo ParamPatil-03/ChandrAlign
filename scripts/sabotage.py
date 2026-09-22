@@ -93,6 +93,34 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    if not scale_ok:"),
         },
     ),
+    "gates": (
+        "src/chandralign/evaluate/control_gates.py",
+        "tests/test_control_gates.py",
+        {
+            "a null test passes whatever was accepted": (
+                "    if run.inlier_ratio <= limit:", "    if True:"),
+            "the perturbation gate always passes": (
+                "    if err <= tol:", "    if True:"),
+            "an unevaluable perturbation counts as passed": (
+                '        return GateResult(name, False, f"cannot evaluate: the baseline registration failed "',
+                '        return GateResult(name, True, f"cannot evaluate: the baseline registration failed "'),
+            "the identity gate ignores RMSE": (
+                "    if rmse > max_rmse:", "    if False:"),
+            "shared masks detected by identity only, not by memory": (
+                "        if a is b or np.shares_memory(np.asarray(a), np.asarray(b)):",
+                "        if a is b:"),
+            "a skipped mask check silently disappears": (
+                '        results.append(GateResult("masks_independent", False,\n'
+                '                                  "not evaluated: no ImagePlanes were given to check"))',
+                "        pass"),
+            "an ungated result is allowed through": (
+                "    if not gates:\n        raise UngatedResultError(",
+                "    if False:\n        raise UngatedResultError("),
+            "noise ignores the reference's brightness": (
+                "    noise = rng.normal(float(ref.mean()), float(ref.std()) or 1.0, np.asarray(src).shape)",
+                "    noise = rng.normal(0.0, 1.0, np.asarray(src).shape)"),
+        },
+    ),
     "subpixel": (
         "src/chandralign/refine/subpixel.py",
         "tests/test_subpixel.py",

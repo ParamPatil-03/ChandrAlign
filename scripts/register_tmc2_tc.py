@@ -46,10 +46,13 @@ sys.path.insert(0, str(ROOT / "src"))
 import cv2  # noqa: E402
 import numpy as np  # noqa: E402
 
+from dataclasses import asdict  # noqa: E402
+
 from chandralign import synth  # noqa: E402
+from chandralign.contracts import Metrics, RegistrationResult, TransformModel  # noqa: E402
 from chandralign.estimate import robust, scale  # noqa: E402
 from chandralign.estimate.scale import PixelScale  # noqa: E402
-from chandralign.evaluate import quality  # noqa: E402
+from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
@@ -205,7 +208,8 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                                 gsd_m=gsd, meta=None, geo=None)
 
     t0 = time.perf_counter()
-    ms = adapter.match(plane(src_img, src_ok, tc.gsd_m), plane(ref_img, ref_ok, tc.gsd_m),
+    src_plane, ref_plane = plane(src_img, src_ok, tc.gsd_m), plane(ref_img, ref_ok, tc.gsd_m)
+    ms = adapter.match(src_plane, ref_plane,
                        model_name=matcher, device=device)
     out["match_seconds"] = round(time.perf_counter() - t0, 1)
     out["device"] = ms.device
@@ -226,10 +230,19 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     # Scale check on the COMPOSED transform, against real per-axis expectations.
     exp = scale.expected_scale(scale.pixel_scale(tmc), tc_pixel_scale(tc, lat_c))
     verdict = scale.check(T_total, exp, centre=(win / 2.0, win / 2.0))
+    # CHECK-01..04, 06 on THIS pair, with the SAME matcher that produced the result,
+    # recorded with it and fed to the verdict: a failed gate rejects the window.
+    t_g = time.perf_counter()
+    gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=tc.gsd_m),
+                                  src_img, ref_img, src_plane, ref_plane)
+    out["gates"] = gates.gates
+    out["gate_detail"] = gates.to_dict()
+    out["gate_seconds"] = round(time.perf_counter() - t_g, 1)
     q = quality.assess(inlier_count=res.inlier_count,
                        inlier_ratio=res.inlier_count / n if n else 0.0,
                        spatial_coverage=coverage, model=res.model,
-                       scale_ok=verdict.ok, scale_status=verdict.status)
+                       scale_ok=verdict.ok, scale_status=verdict.status,
+                       gates=gates.gates, require_gates=True)
     across, along = tmc_pixel_from(T_total[:2, :2], (tc.gsd_m * math.cos(math.radians(lat_c)), tc.gsd_m))
     resid = robust.models.residuals(res.model, ms.src_pts[res.inlier_mask], ms.ref_pts[res.inlier_mask]) \
         if res.inlier_count else np.array([])
@@ -238,6 +251,30 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                inlier_rmse_px=round(float(np.sqrt(np.mean(resid ** 2))), 3) if len(resid) else None,
                tmc_pixel_from_tc_m={"across": round(across, 3), "along": round(along, 3)},
                fine_residual_shift_px=[round(float(R[0, 2]), 2), round(float(R[1, 2]), 2)])
+
+    # The Part 2 -> Part 3 handoff object, built for real and refused if ungated
+    # (CHECK-08). Its transform is the COMPOSED TMC-2 window px -> TC px map.
+    rmse_px = float(np.sqrt(np.mean(resid ** 2))) if len(resid) else None
+    result = RegistrationResult(
+        matches=ms, inlier_mask=res.inlier_mask,
+        model=TransformModel(kind=res.model.kind, matrix=T_total,
+                             scale_estimated=res.model.scale_estimated),
+        metrics=Metrics(rmse_px=rmse_px,
+                        rmse_m=None if rmse_px is None else rmse_px * tc.gsd_m,
+                        inlier_count=res.inlier_count,
+                        inlier_ratio=res.inlier_count / n if n else None,
+                        spatial_coverage=coverage, runtime_s=out["match_seconds"],
+                        source="measured"),
+        confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
+        notes=list(res.notes) + list(q.notes),
+        provenance={"matcher": matcher, "device": ms.device, "prior": "TMC-2 SYSTEM corners",
+                    "reference": tc.product_id})
+    control_gates.require_gates(result)
+    out["registration_result"] = {
+        "confidence_tier": result.confidence_tier, "gates": result.gates,
+        "failure_modes": result.failure_modes,
+        "metrics": {k: v for k, v in asdict(result.metrics).items() if v is not None},
+        "model": {"kind": result.model.kind, "matrix": [[round(float(v), 8) for v in row] for row in T_total]}}
 
     # ---- stage 4: compare with ISRO's refined (SELENE-fitted) solution ----------
     centre = np.array([win / 2.0, win / 2.0, 1.0])
