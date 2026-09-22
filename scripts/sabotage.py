@@ -173,6 +173,34 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "        pass"),
         },
     ),
+    "estimator": (
+        "src/chandralign/estimate/robust.py",
+        "tests/test_estimators.py",
+        {
+            # The failure Member A's cross-validator taught us to fear: the
+            # config still SAYS magsac and every test still passes, because on
+            # easy match sets the two are indistinguishable. Only the cost
+            # measurement at 90% outliers can tell them apart.
+            "magsac silently becomes plain RANSAC": (
+                '    "magsac": cv2.USAC_MAGSAC,', '    "magsac": cv2.RANSAC,'),
+            "per-call max_iters is ignored in favour of the config": (
+                "    iters = int(max_iters if max_iters is not None\n"
+                '                else config.get("estimate.max_iters", 100000))',
+                '    iters = int(config.get("estimate.max_iters", 100000))'),
+            "iteration budget quietly re-capped at the old 10000": (
+                '                else config.get("estimate.max_iters", 100000))',
+                '                else config.get("estimate.max_iters", 100000))\n'
+                "    iters = min(iters, 10000)"),
+            "every correspondence is reported as an inlier": (
+                "    return np.asarray(matrix, np.float64), mask.ravel().astype(bool)",
+                "    return np.asarray(matrix, np.float64), np.ones(len(src), bool)"),
+            "reprojection threshold widened until outliers fit too": (
+                "    matrix, mask = cv2.findHomography(src, ref, method=flag,\n"
+                "                                      ransacReprojThreshold=float(thresh),",
+                "    matrix, mask = cv2.findHomography(src, ref, method=flag,\n"
+                "                                      ransacReprojThreshold=25.0,"),
+        },
+    ),
     "quality": (
         "src/chandralign/evaluate/quality.py",
         "tests/test_quality_uniformity.py",
