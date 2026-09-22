@@ -85,9 +85,29 @@ def test_a_pixel_measurement_settles_tmc2_and_outvotes_the_label():
     assert "measured" in p.sources
     assert p.across_m == pytest.approx(4.920)            # the measurement is preferred
     assert p.along_m == pytest.approx(5.037)
-    assert p.across_range[0] == pytest.approx(4.41, rel=1e-3)   # the label is KEPT in range
+    # The outvoted label stays ON RECORD (the note) but OUT of the tolerated range.
+    assert p.across_range == (pytest.approx(4.881, rel=1e-3), pytest.approx(4.920))
     outvoted = [n for n in p.notes if "label outvoted" in n]
-    assert outvoted and "design value" in outvoted[0]
+    assert outvoted and "design value" in outvoted[0] and "4.41" in outvoted[0]
+
+
+def test_an_outvoted_label_does_not_loosen_a_verified_check():
+    """The reason the outvoted label is kept out of the range, as a measurement.
+
+    TMC-2's pixel is ~4.92 x 5.04 m. Scaling only the across axis wrongly is the
+    error the anisotropy check exists for; config sets that tolerance at 10%.
+    With the outvoted 4.41 m inside the range, a VERIFIED check accepted an
+    across-axis squash of up to 18.9% -- the wrong number quietly doubled a
+    setting everyone reads as 10%. Out of the range: up to 10.3%.
+    """
+    exp = scale.expected_scale(scale.pixel_scale(TMC2), SQUARE_REF)
+    across, along = scale.pixel_scale(TMC2).across_m, scale.pixel_scale(TMC2).along_m
+    ok = lambda a: scale.check(transform((a, along), (100.0, 100.0)), exp).ok
+    assert ok(across)                                   # the correct pixel still passes
+    assert not ok(4.41)                                 # squashed to the label's value
+    assert not ok(across * 0.85)                        # a 15% wrong-axis squash
+    accepted = [f for f in np.arange(0.0, 0.30, 0.001) if ok(across * (1 - f))]
+    assert max(accepted) < 0.12, f"verified check tolerates a {max(accepted):.1%} axis squash"
 
 
 def test_one_source_cannot_outvote_a_label():

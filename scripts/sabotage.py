@@ -68,6 +68,9 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "one non-label source is enough to outvote the label": (
                 "    geometry_agrees = _agree(list(geometric.values()), tolerance)",
                 "    geometry_agrees = len(geometric) >= 1"),
+            "an outvoted label is kept in the tolerated range": (
+                "    range_vals = list(geometric.values()) if outvoted else a_vals",
+                "    range_vals = a_vals"),
             "ignore the corners (every pixel square)": (
                 "    if corners is not None:", "    if False:"),
             "no slack for unverified (trust the label fully)": (
