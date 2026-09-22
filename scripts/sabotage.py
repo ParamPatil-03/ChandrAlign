@@ -90,6 +90,33 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    if not scale_ok:"),
         },
     ),
+    "subpixel": (
+        "src/chandralign/refine/subpixel.py",
+        "tests/test_subpixel.py",
+        {
+            "phase correlation returns the opposite sign": (
+                '    return ShiftEstimate(-float(shift[1]), -float(shift[0]), "phase", quality=float(error))',
+                '    return ShiftEstimate(float(shift[1]), float(shift[0]), "phase", quality=float(error))'),
+            "the peak fit silently rounds to whole pixels": (
+                "    return float(np.clip(0.5 * (cm1 - cp1) / denom, -0.5, 0.5))",
+                "    return 0.0"),
+            "the Gaussian fit quietly falls back to the parabola": (
+                '    if fit == "gaussian" and min(cm1, c0, cp1) > 0:',
+                "    if False:"),
+            "corners that were never refined are counted": (
+                "    use = refined & sane", "    use = sane"),
+            "a refinement may relocate a match": (
+                "np.hypot(est.dx, est.dy) <= max_move", "True"),
+            "iteration adds nothing (first estimate only)": (
+                "        d = d + r.d", "        d = d"),
+            "iteration resamples in the wrong direction": (
+                "        m = np.array([[1.0, 0.0, -d[0]], [0.0, 1.0, -d[1]]], np.float32)",
+                "        m = np.array([[1.0, 0.0, d[0]], [0.0, 1.0, d[1]]], np.float32)"),
+            "a flat patch yields a number instead of a failure": (
+                '        return _failed(method, "no texture: a flat patch has no correlation peak")',
+                "        pass"),
+        },
+    ),
     "quality": (
         "src/chandralign/evaluate/quality.py",
         "tests/test_quality_uniformity.py",

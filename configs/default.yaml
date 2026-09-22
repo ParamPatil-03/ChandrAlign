@@ -45,7 +45,12 @@ uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   delaunay_gap_warn_px: 120.0
 
 subpixel:                    # PREC-01..05
-  method: ncc_quadratic      # ncc_quadratic | phase_correlation | corner | lsq
+  # Chosen by measurement (scripts/verify_subpixel.py, real OHRC, (0.37, -0.62),
+  # 10 windows, sensor-realistic noise): ncc_gaussian_iter has the best WORST
+  # case (max 0.037 px; ecc 0.058) and cannot fail to converge the way ECC can.
+  # ecc has the best median (0.016 vs 0.025). The old value, ncc_quadratic, was
+  # not the name of any implemented method.
+  method: ncc_gaussian_iter  # ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
   ncc_window: 11
   phase_upsample: 100
   ecc_iterations: 50
