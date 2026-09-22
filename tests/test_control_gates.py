@@ -215,3 +215,33 @@ def test_require_gates_refuses_a_result_nobody_checked():
 def test_require_gates_lets_a_failed_but_checked_result_through():
     """A failed gate is a finding (shown as REJECTED); only an ABSENT check is refused."""
     cg.require_gates(_Result({"identity": False}))
+
+
+# ---------------------------------------------------------------------------
+# Independent cross-check (the role the RIFT2 benchmark gave RIFT2)
+# ---------------------------------------------------------------------------
+def _shift(dx, dy):
+    m = np.eye(3); m[0, 2], m[1, 2] = dx, dy; return m
+
+
+def test_crosscheck_flags_a_consistently_wrong_primary():
+    g = cg.crosscheck_gate(_shift(4.0, 0.0), np.eye(3), True, (512, 512))
+    assert g is not None and not g.passed and g.detail["gap_px"] == pytest.approx(4.0)
+
+
+def test_crosscheck_passes_when_the_methods_agree():
+    g = cg.crosscheck_gate(_shift(0.3, -0.2), np.eye(3), True, (512, 512))
+    assert g is not None and g.passed
+
+
+@pytest.mark.parametrize("checker, accepted", [(None, False), (np.eye(3), False)])
+def test_an_unconfident_checker_abstains_rather_than_pass_or_fail(checker, accepted):
+    """Neither a pass (no check happened) nor a fail (29 correct results would
+    have been rejected at +30 deg lighting, where RIFT2 itself fails)."""
+    assert cg.crosscheck_gate(_shift(4.0, 0.0), checker, accepted, (512, 512)) is None
+
+
+def test_crosscheck_threshold_comes_from_config():
+    from chandralign import config
+    assert config.get("gates.crosscheck_flag_px") == 2.0
+    assert cg.crosscheck_gate(_shift(1.5, 0.0), np.eye(3), True, (512, 512), flag_px=1.0).passed is False
