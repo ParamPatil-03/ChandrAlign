@@ -1,0 +1,145 @@
+{
+  "source": "synthetic",
+  "what": "matcher runtime vs window size, to decide whether the real-data cost is recoverable",
+  "protocol": "docs/runtime_budget_protocol.md",
+  "demo_budget_s": 180.0,
+  "gate_matcher_calls": 5,
+  "repeats": 3,
+  "sizes": [
+    512,
+    768,
+    1024,
+    1536
+  ],
+  "scaling_exponent_k": {
+    "xoftr": 2.817,
+    "eloftr": 1.337,
+    "aliked-lightglue": -0.074
+  },
+  "tiling_1536_as_9x512": {
+    "xoftr": {
+      "whole_s": 17.081,
+      "four_tiles_s": 1.18,
+      "speedup": 14.48
+    },
+    "eloftr": {
+      "whole_s": 0.865,
+      "four_tiles_s": 0.516,
+      "speedup": 1.68
+    },
+    "aliked-lightglue": {
+      "whole_s": 0.186,
+      "four_tiles_s": 0.98,
+      "speedup": 0.19
+    }
+  },
+  "nine_window_demo": {
+    "xoftr": {
+      "match_only_s": 153.7,
+      "with_gates_s": 922.4,
+      "verdict": "CONDITIONAL (match only fits)"
+    },
+    "eloftr": {
+      "match_only_s": 7.8,
+      "with_gates_s": 46.7,
+      "verdict": "PASS"
+    },
+    "aliked-lightglue": {
+      "match_only_s": 1.7,
+      "with_gates_s": 10.0,
+      "verdict": "PASS"
+    }
+  },
+  "rows": [
+    {
+      "method": "xoftr",
+      "size": 512,
+      "pixels": 262144,
+      "cold_s": 20.451,
+      "warm_s": 0.295,
+      "peak_vram_mb": 2085.7
+    },
+    {
+      "method": "xoftr",
+      "size": 768,
+      "pixels": 589824,
+      "cold_s": 18.78,
+      "warm_s": 0.806,
+      "peak_vram_mb": 4739.2
+    },
+    {
+      "method": "xoftr",
+      "size": 1024,
+      "pixels": 1048576,
+      "cold_s": 17.882,
+      "warm_s": 17.081,
+      "peak_vram_mb": 8325.3
+    },
+    {
+      "method": "xoftr",
+      "size": 1536,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.27 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the "
+    },
+    {
+      "method": "eloftr",
+      "size": 512,
+      "pixels": 262144,
+      "cold_s": 22.479,
+      "warm_s": 0.129,
+      "peak_vram_mb": 930.4
+    },
+    {
+      "method": "eloftr",
+      "size": 768,
+      "pixels": 589824,
+      "cold_s": 17.996,
+      "warm_s": 0.26,
+      "peak_vram_mb": 1915.3
+    },
+    {
+      "method": "eloftr",
+      "size": 1024,
+      "pixels": 1048576,
+      "cold_s": 21.619,
+      "warm_s": 0.865,
+      "peak_vram_mb": 4935.1
+    },
+    {
+      "method": "eloftr",
+      "size": 1536,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.06 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the "
+    },
+    {
+      "method": "aliked-lightglue",
+      "size": 512,
+      "pixels": 262144,
+      "cold_s": 6.938,
+      "warm_s": 0.245,
+      "peak_vram_mb": 1745.2
+    },
+    {
+      "method": "aliked-lightglue",
+      "size": 768,
+      "pixels": 589824,
+      "cold_s": 6.496,
+      "warm_s": 0.179,
+      "peak_vram_mb": 1753.1
+    },
+    {
+      "method": "aliked-lightglue",
+      "size": 1024,
+      "pixels": 1048576,
+      "cold_s": 7.661,
+      "warm_s": 0.186,
+      "peak_vram_mb": 1751.8
+    },
+    {
+      "method": "aliked-lightglue",
+      "size": 1536,
+      "pixels": 2359296,
+      "cold_s": 9.294,
+      "warm_s": 0.204,
+      "peak_vram_mb": 1797.7
+    }
+  ]
+}
