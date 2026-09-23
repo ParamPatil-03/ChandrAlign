@@ -53,12 +53,14 @@ from chandralign.contracts import Metrics, RegistrationResult, TransformModel  #
 from chandralign.estimate import robust, scale  # noqa: E402
 from chandralign.estimate.scale import PixelScale  # noqa: E402
 from chandralign.evaluate import control_gates, quality  # noqa: E402
+from chandralign.evaluate.run_record import run_record  # noqa: E402
+from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
+from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
 from chandralign.matching import adapter, routing  # noqa: E402
 from chandralign.preprocess.phase_congruency import mind  # noqa: E402
-from chandralign.refine import uniformity  # noqa: E402
 
 TILES = {
     "N09": "TCO_MAP_02_N09E021N06E024SC",
@@ -115,11 +117,37 @@ def tmc_pixel_from(J: np.ndarray, g_tc: tuple[float, float]) -> tuple[float, flo
     return float(np.linalg.norm(M[:, 0])), float(np.linalg.norm(M[:, 1]))
 
 
+class _OffsetModel:
+    """TC's map model for pixels of a region that starts at TC px (x0, y0)."""
+
+    def __init__(self, tcm, origin_xy):
+        self.tcm, self.x0, self.y0 = tcm, float(origin_xy[0]), float(origin_xy[1])
+
+    def pixel_to_latlon(self, rows, cols):
+        return self.tcm.pixel_to_latlon(np.asarray(rows, float) + self.y0, np.asarray(cols, float) + self.x0)
+
+
+def _dem_for(tcm, origin_xy, w: int, h: int):
+    """SLDEM covering a TC region (with a margin), or None if no tile is held."""
+    from chandralign.io.dem import dem_patch, find_tiles
+    tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
+    if not tiles:
+        return None
+    x0, y0 = origin_xy
+    lat, lon = tcm.pixel_to_latlon(np.array([y0, y0 + h, y0, y0 + h], float),
+                                   np.array([x0, x0, x0 + w, x0 + w], float))
+    m = 0.02
+    return dem_patch(tiles, (float(np.min(lat)) - m, float(np.max(lat)) + m,
+                             float(np.min(lon)) - m, float(np.max(lon)) + m))
+
+
 def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
                prior_offset_m: tuple[float, float] = (0.0, 0.0),
-               match_kwargs: dict | None = None, gate_reuse_base: bool = False) -> dict:
+               match_kwargs: dict | None = None, gate_reuse_base: bool = False,
+               stages: dict | None = None) -> dict:
     match_kwargs = dict(match_kwargs or {})
+    stages = stage_flags(stages)
     col_c = tmc.array_shape[1] // 2
     r0, c0 = row_c - win // 2, col_c - win // 2
     out: dict = {"tmc_row": row_c, "window_px": win}
@@ -166,7 +194,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     canvas_o = np.floor(lo_xy).astype(int)                              # TC px of template canvas
     size = np.ceil((hi_xy - canvas_o) / coarse).astype(int) + 1
     Wc = np.diag([1.0 / coarse, 1.0 / coarse, 1.0]) @ T(-canvas_o[0], -canvas_o[1]) @ A_sys
-    tpl = cv2.warpAffine(tmc_n, Wc[:2], (int(size[0]), int(size[1])), flags=cv2.INTER_AREA)
+    tpl = warp_affine(tmc_n, Wc, (int(size[0]), int(size[1])))   # anti-aliased (cv2 ignores INTER_AREA)
     tmask = cv2.warpAffine(tmc_valid.astype(np.float32), Wc[:2], (int(size[0]), int(size[1])),
                            flags=cv2.INTER_NEAREST) > 0.5
     yy, xx = np.where(tmask)
@@ -199,7 +227,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     e_f = np.ceil(c1[:, :2].max(0)).astype(int) - 8
     wF, hF = int(e_f[0] - o_f[0]), int(e_f[1] - o_f[1])
     Wf = T(-o_f[0], -o_f[1]) @ A1
-    src_img = cv2.warpAffine(tmc_n, Wf[:2], (wF, hF), flags=cv2.INTER_AREA)
+    src_img = warp_affine(tmc_n, Wf, (wF, hF))                   # anti-aliased (cv2 ignores INTER_AREA)
     src_ok = cv2.warpAffine(tmc_valid.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
     ref_raw = pds_raster.read_raster(tc, pds_raster.Window(int(o_f[1]), int(o_f[0]), hF, wF)).astype(np.float32)
     ref_ok = ref_raw > 0
@@ -215,19 +243,25 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                        model_name=matcher, device=device, **match_kwargs)
     out["match_seconds"] = round(time.perf_counter() - t0, 1)
     out["device"] = ms.device
-    res = robust.estimate(ms.src_pts, ms.ref_pts, expected_scale=None,
-                          centre=(wF / 2.0, hF / 2.0))
     n = int(len(ms.src_pts))
+    # The fine stage (pipeline.fine_stage): terrain filter, robust estimate, uniform
+    # control points, per-point sub-pixel, final fit -- each switched by `stages`.
+    # After the coarse lock both images are in TC's frame (offset o_f), so one
+    # ground model serves both ends of every match.
+    fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages,
+                    ground_model=_OffsetModel(tcm, o_f),
+                    dem=_dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None)
+    res, ms = fr.first, fr.matches
     out.update(matcher=matcher, matches=n, inliers=res.inlier_count,
-               inlier_ratio=round(res.inlier_count / n, 4) if n else 0.0)
-    if res.model is None or res.model.matrix is None:
+               inlier_ratio=round(res.inlier_count / n, 4) if n else 0.0,
+               pipeline=fr.stages, control_points=int(len(fr.control_src)))
+    if not fr.ok:
         out["status"] = "fine stage: no transform"
         return out
 
-    R = np.asarray(res.model.matrix, float)
+    R = np.asarray(fr.model.matrix, float)
     T_total = T(o_f[0], o_f[1]) @ R @ Wf                              # window px -> TC px
-    coverage = (uniformity.coverage_of(ms.src_pts[res.inlier_mask], (hF, wF), grid=8)
-                if res.inlier_count else 0.0)
+    coverage = fr.coverage
 
     # Tiled matching only: how the matches near an internal tile boundary behave
     # against the interior ones (verify protocol 3.B, reported, not gated).
@@ -266,32 +300,30 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     base = (control_gates.PipelineRun(bool(res.ok), n, int(res.inlier_count), R)
             if gate_reuse_base else None)
     gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=tc.gsd_m,
-                                                              **match_kwargs),
+                                                              stages=stages, **match_kwargs),
                                   src_img, ref_img, src_plane, ref_plane, base=base)
     out["gates"] = gates.gates
     out["gate_detail"] = gates.to_dict()
     out["gate_seconds"] = round(time.perf_counter() - t_g, 1)
     q = quality.assess(inlier_count=res.inlier_count,
                        inlier_ratio=res.inlier_count / n if n else 0.0,
-                       spatial_coverage=coverage, model=res.model,
+                       spatial_coverage=coverage, model=fr.model,
                        scale_ok=verdict.ok, scale_status=verdict.status,
                        gates=gates.gates, require_gates=True)
     across, along = tmc_pixel_from(T_total[:2, :2], (tc.gsd_m * math.cos(math.radians(lat_c)), tc.gsd_m))
-    resid = robust.models.residuals(res.model, ms.src_pts[res.inlier_mask], ms.ref_pts[res.inlier_mask]) \
-        if res.inlier_count else np.array([])
+    rmse_px = fr.rmse_px                  # final model on the delivered control points
     out.update(coverage=round(coverage, 3), scale_status=verdict.status,
                tier=q.tier, limiting_signal=q.limiting_signal,
-               inlier_rmse_px=round(float(np.sqrt(np.mean(resid ** 2))), 3) if len(resid) else None,
+               inlier_rmse_px=round(rmse_px, 3) if rmse_px is not None else None,
                tmc_pixel_from_tc_m={"across": round(across, 3), "along": round(along, 3)},
                fine_residual_shift_px=[round(float(R[0, 2]), 2), round(float(R[1, 2]), 2)])
 
     # The Part 2 -> Part 3 handoff object, built for real and refused if ungated
     # (CHECK-08). Its transform is the COMPOSED TMC-2 window px -> TC px map.
-    rmse_px = float(np.sqrt(np.mean(resid ** 2))) if len(resid) else None
     result = RegistrationResult(
         matches=ms, inlier_mask=res.inlier_mask,
-        model=TransformModel(kind=res.model.kind, matrix=T_total,
-                             scale_estimated=res.model.scale_estimated),
+        model=TransformModel(kind=fr.model.kind, matrix=T_total,
+                             scale_estimated=fr.model.scale_estimated),
         metrics=Metrics(rmse_px=rmse_px,
                         rmse_m=None if rmse_px is None else rmse_px * tc.gsd_m,
                         inlier_count=res.inlier_count,
@@ -340,8 +372,14 @@ def main() -> int:
                     help="split the coarse-aligned pair into tiles no larger than this")
     ap.add_argument("--gate-reuse-base", action="store_true",
                     help="perturbation gate reuses the main registration as its baseline")
+    ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
+                    help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
+                         "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
+    stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in
+                          (item.split("=", 1) for item in args.stage)})
+    print(f"pipeline stages: {stages}", flush=True)
     args.matcher, routed_opts, matcher_choice = resolve_matcher(args.matcher)
     print(f"matcher: {args.matcher}  ({matcher_choice['chosen_by']})", flush=True)
     # Routed fine-stage options first, explicit CLI flags on top of them.
@@ -378,7 +416,7 @@ def main() -> int:
             r = run_window(tmc, sysm, refm, tcs[key], tcms[key], int(row_c), win=args.win,
                            coarse=args.coarse, margin_km=args.margin_km, matcher=args.matcher,
                            device=args.device, prior_offset_m=tuple(args.prior_offset_m),
-                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base)
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)
@@ -397,7 +435,7 @@ def main() -> int:
             t = time.perf_counter()
             r = run_window(tmc, sysm, refm, tc, tcm, int(row_c), win=args.win, coarse=args.coarse,
                            margin_km=args.margin_km, matcher=args.matcher, device=args.device,
-                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base)
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)
@@ -410,7 +448,9 @@ def main() -> int:
         "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) <-> SELENE TC",
         "prior": "TMC-2 SYSTEM corners only; refined geolocation used for stage-4 comparison only",
         "match_options": {**mk, "gate_reuse_base": bool(args.gate_reuse_base)},
+        "pipeline_stages": stages,
         "matcher_choice": matcher_choice,
+        "run": run_record(),
         "rows": results}, indent=2), encoding="utf-8")
     print(f"\nwrote {out}")
     return 0

@@ -43,6 +43,7 @@ from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
 from chandralign.preprocess.phase_congruency import mind  # noqa: E402
+from chandralign.preprocess.resample import warp_affine  # noqa: E402
 
 K = 16                      # OHRC -> ~TMC-2 resolution
 FULL = 320                  # OHRC window, coarse px (= 5120 OHRC px); truth template ~220 px
@@ -89,7 +90,7 @@ def main() -> int:
         size = FULL + 64
         Ac = A.copy()
         Ac[:, 2] += np.array([size / 2, size / 2]) - centre_t
-        warped = cv2.warpAffine(ds, Ac, (size, size), flags=cv2.INTER_AREA)
+        warped = warp_affine(ds, Ac, (size, size))     # ~unit scale: identical to bilinear
         mask = cv2.warpAffine(np.ones_like(ds), Ac, (size, size), flags=cv2.INTER_NEAREST) > 0.5
 
         # Region: +-(search + template) around the grid's placement, plus the

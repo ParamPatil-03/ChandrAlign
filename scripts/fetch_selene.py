@@ -1,21 +1,27 @@
-"""Download SELENE / Kaguya Terrain Camera tiles covering a ground box.
+"""Download SELENE / Kaguya Terrain Camera or Multiband Imager tiles covering a ground box.
 
-Feature DATA-08 (SELENE TC reference support). JAXA DARTS has no search API, so
-we derive tile names from the 3 deg x 3 deg naming grid and fetch directly. No login.
+Features DATA-08 (SELENE TC) and DATA-09 (SELENE MI). JAXA DARTS has no search
+API, so we derive tile names from the naming grid and fetch directly. No login.
+TC maps are 3 deg x 3 deg tiles; MI maps are 1 deg x 1 deg.
 
 TMC-2 <-> SELENE TC is the pairing with no published prior attempt, which makes
 this the fuel for the project's headline claim (PLAN.md section 1.3).
 
     .venv/Scripts/python scripts/fetch_selene.py --scene ch2_ohr_nrp_20240330T0035085365_d_img_d18
     .venv/Scripts/python scripts/fetch_selene.py --bbox -0.5 0.5 23.4 23.7 --download
+    .venv/Scripts/python scripts/fetch_selene.py --bbox 0.1 0.9 23.1 23.9 --bundle mi --download
 
 Tile names look like TCO_MAP_02_N03E021N00E024SC: product, version, then the
-north-west corner and the south-east corner of a 3 deg tile. Products land in
-data/raw/selene/tc/. Run scripts/make_manifest.py afterwards.
+north-west corner and the south-east corner of the tile. MI names follow the same
+pattern (MI_MAP_03_N01E023N00E024SC). Products land in data/raw/selene/tc/ or
+data/raw/selene/mi/. Files already recorded in data/manifest.json are checked
+against their recorded SHA-256 after download. Run scripts/make_manifest.py
+afterwards for anything new.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import sys
@@ -29,13 +35,17 @@ BASE = "https://data.darts.isas.jaxa.jp/pub/pds3"
 
 # Simple-cylindrical products only, which is everything within +/-60 deg latitude.
 # The poles use a different projection and a different naming grid.
+# bundle: (DARTS volume, file prefix, tile size deg, folder under data/raw/selene)
 BUNDLES = {
-    "ortho": ("sln-l-tc-5-ortho-map-v2.0", "TCO_MAP_02"),
-    "morning": ("sln-l-tc-5-morning-map-v4.0", "TCO_MAPm04"),
-    "evening": ("sln-l-tc-5-evening-map-v4.0", "TCO_MAPe04"),
+    "ortho": ("sln-l-tc-5-ortho-map-v2.0", "TCO_MAP_02", 3, "tc"),
+    "morning": ("sln-l-tc-5-morning-map-v4.0", "TCO_MAPm04", 3, "tc"),
+    "evening": ("sln-l-tc-5-evening-map-v4.0", "TCO_MAPe04", 3, "tc"),
+    # MI: 9-band multispectral map, 1 deg tiles, one DARTS folder per degree of longitude.
+    "mi": ("sln-l-mi-5-map-v3.0", "MI_MAP_03", 1, "mi"),
 }
-TILE_DEG = 3
+TILE_DEG = 3            # the TC grid; kept for callers that import it
 MAX_ABS_LAT = 60
+MANIFEST = ROOT / "data" / "manifest.json"
 
 
 def fmt_lat(lat: int) -> str:
@@ -46,18 +56,19 @@ def fmt_lon(lon: int) -> str:
     return f"E{lon % 360:03d}"
 
 
-def tiles_for(bbox: tuple[float, float, float, float]) -> list[str]:
+def tiles_for(bbox: tuple[float, float, float, float], tile_deg: int = TILE_DEG) -> list[str]:
     """Tile stems covering (min_lat, max_lat, min_lon, max_lon)."""
     min_lat, max_lat, min_lon, max_lon = bbox
     if max(abs(min_lat), abs(max_lat)) > MAX_ABS_LAT:
         sys.exit(f"latitudes beyond +/-{MAX_ABS_LAT} deg use the polar grid, not handled here")
 
+    t = tile_deg
     stems = []
-    south0 = math.floor(min_lat / TILE_DEG) * TILE_DEG
-    west0 = math.floor(min_lon / TILE_DEG) * TILE_DEG
-    for south in range(south0, math.ceil(max_lat / TILE_DEG) * TILE_DEG, TILE_DEG):
-        for west in range(west0, math.ceil(max_lon / TILE_DEG) * TILE_DEG, TILE_DEG):
-            north, east = south + TILE_DEG, west + TILE_DEG
+    south0 = math.floor(min_lat / t) * t
+    west0 = math.floor(min_lon / t) * t
+    for south in range(south0, math.ceil(max_lat / t) * t, t):
+        for west in range(west0, math.ceil(max_lon / t) * t, t):
+            north, east = south + t, west + t
             stems.append(f"{fmt_lat(north)}{fmt_lon(west)}{fmt_lat(south)}{fmt_lon(east)}SC")
     return stems
 
@@ -76,9 +87,9 @@ def scene_bbox(scene_id: str, pad_deg: float) -> tuple[float, float, float, floa
 
 
 def urls_for(stem: str, bundle: str) -> list[tuple[str, str]]:
-    volume, prefix = BUNDLES[bundle]
+    volume, prefix, tile_deg, _ = BUNDLES[bundle]
     lon_band = int(stem.split("E")[1][:3])  # the western longitude in the stem
-    vol_dir = f"lon{lon_band // TILE_DEG * TILE_DEG:03d}"
+    vol_dir = f"lon{lon_band // tile_deg * tile_deg:03d}"
     name = f"{prefix}_{stem}"
     # .img and .lbl are separate files in PDS3; the label alone is useless.
     return [(f"{BASE}/{volume}/{vol_dir}/data/{name}.{ext}", f"{name}.{ext}")
@@ -128,6 +139,26 @@ def fetch(url: str, dest: Path) -> None:
     print(f"    got  {dest.name} ({got / 1e6:.1f} MB)")
 
 
+def check_manifest(dest: Path) -> None:
+    """Compare a file with the SHA-256 data/manifest.json recorded for it, if any.
+
+    A mismatch is not deleted: DARTS may have reissued the file. It is reported,
+    because a test written against the recorded file may no longer hold.
+    """
+    if not MANIFEST.exists():
+        return
+    key = dest.relative_to(ROOT / "data" / "raw").as_posix()
+    entry = json.loads(MANIFEST.read_text(encoding="utf-8")).get("files", {}).get(key)
+    if not entry:
+        return
+    h = hashlib.sha256()
+    with dest.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 22), b""):
+            h.update(chunk)
+    ok = h.hexdigest() == entry["sha256"]
+    print(f"    {'sha256 matches the manifest' if ok else '*** sha256 DIFFERS from the manifest ***'}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", help="CH-2 product_id to take the ground box from")
@@ -145,11 +176,12 @@ def main() -> None:
     else:
         sys.exit("give --scene or --bbox")
 
-    stems = tiles_for(bbox)
+    volume, _, tile_deg, folder = BUNDLES[args.bundle]
+    stems = tiles_for(bbox, tile_deg)
     print(f"{args.bundle}: lat {bbox[0]:.3f}..{bbox[1]:.3f}, lon {bbox[2]:.3f}..{bbox[3]:.3f}"
           f" -> {len(stems)} tile(s)\n")
 
-    out_dir = ROOT / "data" / "raw" / "selene" / "tc"
+    out_dir = ROOT / "data" / "raw" / "selene" / folder
     for stem in stems:
         print(stem)
         for url, name in urls_for(stem, args.bundle):
@@ -160,6 +192,7 @@ def main() -> None:
             print(f"    {name:34} {size / 1e6:8.1f} MB")
             if args.download:
                 fetch(url, out_dir / name)
+                check_manifest(out_dir / name)
 
 
 if __name__ == "__main__":

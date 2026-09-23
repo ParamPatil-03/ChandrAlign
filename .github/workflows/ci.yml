@@ -1,0 +1,57 @@
+# Runs on every push and pull request.
+#
+# Why this exists: on 2026-09-23 `main` went red after two PRs that each passed on
+# their own were merged together, and nobody knew. CI would have said so.
+#
+# What it can and cannot check. The runner has no GPU and no mission data
+# (data/raw is gitignored, many GB, and some of it needs a login), so every test
+# that needs real products skips with its reason, and the learned matchers
+# (torch, vismatch) are not installed. What runs is everything else: parsers on
+# committed fixtures, the geometry, estimators, gates, routing, the pipeline
+# wiring, the licence gate. A green run here is NOT the real-data evidence;
+# that is in reports/ and docs/.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    name: tests (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: "3.13"}
+          - {os: windows-latest, python: "3.13"}   # the team's own platform
+          - {os: ubuntu-latest, python: "3.11"}    # pyproject's requires-python floor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install (base + dev; no learned matchers)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Tests
+        run: python -m pytest -q -rs
+
+  licences:
+    name: licence gate (CHECK-10)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install (base)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: No GPL/AGPL dependency; no restricted model shippable
+        run: python scripts/check_licences.py

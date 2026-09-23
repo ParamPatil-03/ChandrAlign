@@ -86,33 +86,25 @@ def run(scene, ratio, mutual=False):
 
 # ----------------------------------------------------------------------------- the headline
 
-def test_ransac_alone_confidently_returns_a_wrong_transform(scene, truth):
-    """ALIGN-03 acceptance, and the reason the feature exists.
+def test_the_estimator_is_no_longer_fooled_on_this_pool(scene, truth):
+    """ALIGN-03's original headline, CORRECTED 2026-09-23.
 
-    With the match pool at 3.7% precision, RANSAC finds a consistent set of 13
-    look-alike craters, NONE of which is correct, and reports ok=True. A confident
-    wrong answer is worse than no answer. The terrain filter removes those matches
-    before RANSAC ever sees them, and the fit becomes 24 inliers, all correct.
+    Measured 2026-09-20 (commit 163935c): at 3.7% pool precision the estimator
+    found 13 look-alike craters, none correct, and reported ok=True; the terrain
+    filter turned that into 24 inliers, all correct. Re-run on the SAME 646-match
+    pool with the estimator as it has been since c82b25b: 24 inliers, all correct,
+    with or without the filter -- and 0 of 20 random seeds are fooled, for RANSAC
+    and for MAGSAC alike. The estimator improved; the confident wrong answer the
+    filter was shown to prevent no longer happens here. This test pins the current
+    behaviour so a regression that brings it back is caught. What the filter still
+    does on this pool is the next test: it removes most wrong matches and loses none.
     """
     matches, kept, _ = run(scene, ratio=0.95)
-
-    before = robust.estimate(matches.src_pts, matches.ref_pts, kind="affine")
-    mask = np.asarray(before.inlier_mask, bool)
-    _, correct_before, n_before = inlier_precision(
-        matches.src_pts[mask], matches.ref_pts[mask], truth)
-
-    after = robust.estimate(kept.src_pts, kept.ref_pts, kind="affine")
-    mask = np.asarray(after.inlier_mask, bool)
-    precision_after, correct_after, n_after = inlier_precision(
-        kept.src_pts[mask], kept.ref_pts[mask], truth)
-
-    assert correct_before == 0, f"expected RANSAC to be fooled, got {correct_before}"
-    assert before.ok is True, "the point is that it reports SUCCESS while being wrong"
-    assert n_before >= 10
-
-    assert precision_after == 1.0
-    assert correct_after >= 20
-    assert n_after == correct_after
+    for pool in (matches, kept):
+        res = robust.estimate(pool.src_pts, pool.ref_pts, kind="affine")
+        mask = np.asarray(res.inlier_mask, bool)
+        precision, correct, n = inlier_precision(pool.src_pts[mask], pool.ref_pts[mask], truth)
+        assert res.ok and correct >= 20 and precision == 1.0, (len(pool.src_pts), correct, n)
 
 
 def test_the_filter_raises_precision_without_losing_true_matches(scene, truth):

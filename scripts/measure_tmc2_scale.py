@@ -54,6 +54,7 @@ from chandralign.io.pds_label import parse_label
 from chandralign.io import pds_raster
 from chandralign.geometry import projection
 from chandralign.preprocess.phase_congruency import mind
+from chandralign.preprocess.resample import warp_affine
 
 B = 2                    # working resolution = 2 TMC-2 pixels
 K = 16 * B               # OHRC block factor to reach it
@@ -112,7 +113,7 @@ def run_window(row_offset):
         size = int(np.ceil(N_DS * base * max(sx, sy) * 1.5)) + 4
         c_out = np.array([size / 2, size / 2])
         A = np.c_[Alin, c_out - Alin @ np.array([N_DS / 2, N_DS / 2])]
-        w = cv2.warpAffine(ds, A, (size, size), flags=cv2.INTER_AREA)
+        w = warp_affine(ds, A, (size, size))           # ~unit scale: identical to bilinear
         m = cv2.warpAffine(np.ones_like(ds), A, (size, size), flags=cv2.INTER_NEAREST) > 0.5
         yy, xx = np.where(m)
         y0, y1, x0, x1 = yy.min(), yy.max(), xx.min(), xx.max()

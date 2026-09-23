@@ -252,12 +252,26 @@ def test_vismatch_version_is_licence_audited():
 
     If this fails, re-audit before raising the pin -- do not just bump it.
     """
-    from importlib.metadata import version
+    import re
+    import tomllib
+    from importlib.metadata import PackageNotFoundError, version
 
     audited = "1.3.2"                      # reports/licence_audit.json
-    installed = version("vismatch")
     def parts(v):
         return tuple(int(x) for x in v.split(".")[:3] if x.isdigit())
+
+    # The PIN is the control, and it can be checked with or without vismatch
+    # installed (CI installs no learned extras).
+    project = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text(encoding="utf-8"))
+    spec = next(r for r in project["project"]["optional-dependencies"]["learned"] if r.startswith("vismatch"))
+    cap = re.search(r"<=\s*([0-9.]+)", spec)
+    assert cap and parts(cap.group(1)) <= parts(audited), (
+        f"pyproject pins {spec!r}: the cap must exist and be at most the audited {audited}")
+
+    try:
+        installed = version("vismatch")
+    except PackageNotFoundError:
+        pytest.skip("vismatch not installed: the pin above is what protects an install")
     assert parts(installed) <= parts(audited), (
         f"vismatch {installed} is newer than the audited {audited}. Releases "
         f"after 2026-09-15 may vendor EfficientLoFTR and MatchAnything under "

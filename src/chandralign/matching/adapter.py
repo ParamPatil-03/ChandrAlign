@@ -112,7 +112,7 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
     if precision not in ("fp32", "fp16"):
         raise ValueError(f"precision must be 'fp32' or 'fp16', not {precision!r}")
     if model_name is None:
-        model_name = config.load("regimes").get("default_matcher", "aliked-lightglue")
+        model_name = config.load("regimes").get("default_matcher", "eloftr")
 
     # Gate first: never construct a restricted model, even to fail later.
     licence.assert_allowed(model_name, ship_mode=ship_mode)
