@@ -84,6 +84,34 @@ Without it the regime map is barely better than the wrong one it replaces:
 to supported.** That is the largest single capability gain available in Part 2,
 and it is a promotion decision, not a research problem.
 
+## CORRECTION (post-dates the proposal above)
+
+`minima-loftr` has since been run on the 9 real TMC-2 -> SELENE TC windows and
+**fails CHECK-03 on 5 of them** -- median perturbation error 1.77 px against a
+1.5 px tolerance, where xoftr, eloftr and aliked-lightglue score 0.05, 0.08 and
+0.01. On one window it recovered a known (3, 4) px move as (1.21, -0.85): the
+y component has the wrong sign. Its accuracy metrics were fine throughout, so
+only the control gate saw it.
+
+**So the illumination lane in the table above has no matcher supported by real
+data.** Promotion of `minima-loftr` is blocked pending an explanation.
+
+A SECOND CORRECTION, to this document and to commit 6675c44. Both described
+those 9 windows as "similar-illumination pairs". That was never checked and is
+not supported: TMC-2's label gives sun_azimuth 104.27 deg, but SELENE TC is
+`SLN-L-TC-5-ORTHO-MAP-V2.0`, a MOSAICKED ortho map whose label carries no
+illumination angle because it is assembled from many orbits. The regime of
+those pairs is UNKNOWN, not easy, and the failure above therefore cannot be
+placed on the azimuth axis at all.
+
+That has a consequence beyond this matcher: **the illumination bands in
+`configs/regimes.yaml` cannot be validated against TMC-2 <-> TC**, because the
+reference product cannot supply a sun azimuth. `regime.py` correctly marks such
+pairs `illumination_known=False` and falls back, but the bands stay
+SYNTHETIC-ONLY until we register pairs that carry per-product sun geometry --
+the LRO NAC illumination ladder that `regimes.yaml` already names as the
+validation set and that has never been built.
+
 ## What is still unmeasured, and must not be assumed
 
 - `minima-loftr` has **never been run on real data**. Every number above for it
