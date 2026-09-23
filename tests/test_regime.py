@@ -122,17 +122,103 @@ def test_unknown_sun_geometry_is_not_treated_as_a_matching_sun():
     assert not d.supported
 
 
-def test_an_opposed_sun_pair_is_flagged_as_an_unsolved_regime():
-    """All four benchmarked matchers failed above 60 deg on every seed."""
-    d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
-    assert d.expectation == "unsolved"
-    assert not d.supported
-    assert "3.4 px" in d.reason or "failed" in d.reason
+def test_the_hard_band_is_in_the_middle_not_at_the_end():
+    """The headline of MATCH-09, and the reason a min_ threshold cannot work.
+
+    90 deg is harder than 180 deg: at 90 the lit and shadowed facets swap, while
+    at 180 the scene approaches a contrast inversion that MIND-style descriptors
+    are invariant to. Measured, best licence-clean matcher out of 10 seeds:
+    6/10 at 90 deg against 10/10 at 180 (reports/illumination_sweep.json).
+
+    Any rule of the form "unsolved at or above X deg" gets this backwards by
+    construction, which is what the superseded min_d_azimuth_deg: 60.0 did.
+    """
+    middle = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 90.0))
+    opposed = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
+
+    assert middle.expectation == "degraded" and not middle.supported
+    assert opposed.expectation == "solved" and opposed.supported
+
+    severity = {"solved": 0, "degraded": 1, "unsolved": 2}
+    assert severity[middle.expectation] > severity[opposed.expectation], (
+        "the 90 deg band must rank worse than the 180 deg band; if this ever "
+        "reverses, the band structure has collapsed back to a monotonic rule")
 
 
-def test_a_matching_sun_pair_is_the_only_supported_case():
+def test_the_band_the_old_rule_called_unsolved_is_solved():
+    """60 and 75 deg were flagged unsupported and are met on every seed.
+
+    This is the bug MATCH-09 fixed: the selector was telling callers the system
+    could not handle pairs it handles 10 times out of 10.
+    """
+    for azimuth in (60.0, 75.0):
+        d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, azimuth))
+        assert d.expectation == "solved", f"{azimuth} deg regressed to {d.expectation}"
+        assert d.supported
+
+
+def test_a_matching_sun_pair_is_supported():
     d = regime.select(with_sun(TMC2, 100.0), with_sun(TMC2, 105.0))
     assert d.expectation == "solved" and d.supported
+
+
+def test_a_band_names_the_matcher_that_earned_it():
+    """`solved` with no attribution is useless to a caller.
+
+    Every band above 60 deg was earned by minima-loftr, not by the default. A
+    caller that runs the default there does not get the behaviour the band
+    promises, so the decision has to say so.
+    """
+    d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
+    assert "minima-loftr" in d.reason
+    assert any("not by the default" in n for n in d.notes)
+    assert d.matcher == "aliked-lightglue"      # the default is still what runs
+
+
+def test_an_unsampled_azimuth_takes_the_worse_of_its_two_bands():
+    """The sweep measured twelve angles; real pairs land between them.
+
+    82 deg sits between the solved 0-75 band and the degraded 90-120 band.
+    Interpolating upward would promote an angle nobody measured, so the rule
+    fixed in the protocol before measuring is to take the worse neighbour.
+    """
+    d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 82.0))
+    assert d.expectation == "degraded"
+    assert not d.supported
+    assert "not sampled" in d.reason
+
+
+def test_every_measured_band_is_reachable_and_declared():
+    """No band may be dead config, and none may claim a verdict it cannot hold."""
+    bands = config.load("regimes")["unsolved_illumination"]["bands"]
+    assert bands, "the band list is empty: every pair would fall through"
+    for band in bands:
+        lo, hi = band["d_azimuth_deg"]
+        assert 0.0 <= lo <= hi <= 180.0
+        assert band["expectation"] in {"solved", "degraded", "unsolved"}
+        # A band that claims better than `unsolved` must name who earned it.
+        if band["expectation"] != "unsolved":
+            assert band["solved_by"], f"{lo}-{hi} deg claims {band['expectation']} unattributed"
+        mid = (lo + hi) / 2.0
+        d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, mid))
+        assert d.expectation == band["expectation"]
+
+
+def test_a_config_without_bands_falls_back_instead_of_calling_everything_solved(monkeypatch):
+    """Deleting the bands must not silently make every regime supported.
+
+    That failure is exactly what scripts/sabotage.py injects, so the reader
+    keeps the pre-MATCH-09 shape as a fallback rather than trusting an empty
+    list to mean "no problems".
+    """
+    real_load = config.load                     # capture BEFORE patching
+    cfg = dict(real_load("regimes"))
+    cfg["unsolved_illumination"] = {"min_d_azimuth_deg": 60.0}
+    monkeypatch.setattr(config, "load",
+                        lambda name="default": cfg if name == "regimes" else real_load(name))
+
+    d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
+    assert d.expectation == "unsolved"
 
 
 def test_every_decision_declares_its_evidence_as_synthetic():
@@ -205,6 +291,12 @@ def test_cross_modal_candidates_are_not_presented_as_ranked(no_scale_gap):
 
 
 def test_explain_reports_the_decision_without_hiding_the_expectation():
-    text = regime.explain(regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0)))
+    """The 90 deg band, because that is the one a caller must not miss.
+
+    This used to read 180 deg, back when a single threshold called an opposed
+    sun the worst case. 180 deg is now solved, so asserting the warning there
+    would assert the opposite of what is measured.
+    """
+    text = regime.explain(regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 90.0)))
     assert "not a supported configuration" in text
-    assert "mind" in text and "evidence" in text
+    assert "phase_congruency" in text and "evidence" in text
