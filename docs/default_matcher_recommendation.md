@@ -137,8 +137,12 @@ candidate or a routed default — not quietly accepting the cost.
 ## Other honest limits
 
 - `xoftr` fails `lighting_+90` on every seed. It is the best candidate, not a
-  universal one. `configs/regimes.yaml`'s `unsolved_illumination` band must keep
-  saying that no matcher solves that regime.
+  universal one. An earlier version of this line went further and said the
+  `unsolved_illumination` band "must keep saying that no matcher solves that
+  regime" -- **that was wrong**, and the MATCH-09 sweep
+  (`reports/illumination_sweep.json`, branch `part2/unsolved-band`) falsified
+  it: `minima-loftr` reaches 6/10 at 90 deg and 10/10 at 180 deg. See
+  `docs/routing_proposal.md`.
 - **`minima-loftr` beats `xoftr` at extreme illumination** (7/10 at +90 where
   `xoftr` scores 0/10, and 3/3 stretch regimes against 2/3). Ineligible as a
   *default* is not useless; it is a real candidate for an opposed-sun route.
