@@ -2,7 +2,7 @@
   "source": "measured",
   "axis": "incidence_difference",
   "azimuth_status": "not_validated",
-  "azimuth_note": "ODE supplies incidence, emission and phase but not solar azimuth, and azimuth cannot be derived from incidence: two scenes can share an incidence angle and be lit from opposite sides of noon. No azimuth band may be rewritten from this result.",
+  "azimuth_note": "CORRECTED 2026-09-23. An earlier version of this field said azimuth 'cannot be derived' without SPICE. That was WRONG: LROC's own observation pages carry Sub solar azimuth per product (data/pairs/nac_solar_azimuth.json). The axis is still not validated, but for a MEASURED reason instead of an assumed one: among the pairs where both incidences exceed 10 deg -- below that the sun is near-overhead and azimuth is ill-defined -- the largest sub-solar azimuth difference available in these nine products is 11.2 deg, and none exceeds 60 deg. All nine are near-equatorial targets imaged near local noon, so sub-solar azimuth clusters at 170-185 deg.",
   "protocol": "docs/nac_illumination_protocol.md",
   "ground_truth": "none available; the accuracy measure is the perturbation gate's recovery of a known (3,4) px shift injected into the real source",
   "products": {
@@ -4286,5 +4286,7 @@
       "window": 3,
       "coarse_z": 13.98
     }
-  ]
+  ],
+  "azimuth_span_deg": 11.2,
+  "azimuth_controlled": "the scale-clean pairs tested here differ in sub-solar azimuth by at most 5.2 deg, so this experiment varies INCIDENCE at near-constant azimuth -- a controlled single-axis test rather than a mixed one"
 }
