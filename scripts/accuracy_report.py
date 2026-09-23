@@ -397,18 +397,39 @@ def check_illumination_invariance(samples: int, rng):
     from chandralign.io.dem import dem_patch, find_tiles
     from chandralign.preprocess.phase_congruency import mind, phase_congruency
 
+    from chandralign.geometry.projection import geolocation_model
+    from chandralign.geometry.solar import angular_separation, bearing, sub_solar_point
+
+    bbox = (-0.45, 0.38, 23.45, 23.60)
     tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
-    patch = dem_patch(tiles, (-0.45, 0.38, 23.45, 23.60))
+    patch = dem_patch(tiles, bbox)
     terrain = slope_aspect(patch)
-    a = hillshade(terrain, 269.8, 7.3)[3:-3, 3:-3]      # OHRC's sun
-    b = hillshade(terrain, 104.3, 44.0)[3:-3, 3:-3]     # TMC-2's sun
+
+    # Each product's sun AT THIS PATCH, not the label's scene-centre numbers: TMC-2's
+    # label (104.3 az) refers to ~11.7 N, ~11 deg of azimuth away from the patch.
+    # Same method as solar.geometry_layers: the labelled angles fix the sub-solar
+    # point from the scene centre; the sun at any other point follows from it.
+    p_lat, p_lon = (bbox[0] + bbox[1]) / 2, (bbox[2] + bbox[3]) / 2
+
+    def sun_at_patch(name):
+        meta = parse_label(products()[name])
+        ill = scene_illumination(meta)
+        n_rows, n_cols = meta.array_shape
+        c_lat, c_lon = geolocation_model(meta).pixel_to_latlon(np.array(n_rows / 2.0), np.array(n_cols / 2.0))
+        s_lat, s_lon = sub_solar_point(c_lat, c_lon, ill.incidence_deg, ill.sub_solar_azimuth_deg)
+        return float(bearing(p_lat, p_lon, s_lat, s_lon)), 90.0 - float(angular_separation(p_lat, p_lon, s_lat, s_lon))
+
+    suns = {name: sun_at_patch(name) for name in ("OHRC", "TMC2")}
+    a = hillshade(terrain, *suns["OHRC"])[3:-3, 3:-3]
+    b = hillshade(terrain, *suns["TMC2"])[3:-3, 3:-3]
     corr = lambda x, y: float(np.corrcoef(np.asarray(x).ravel(), np.asarray(y).ravel())[0, 1])
     raw = corr(a, b)
     pc = corr(phase_congruency(a).energy, phase_congruency(b).energy)
     md = corr(mind(a), mind(b))
     checks = [raw < 0.0, pc > 0.7, md > 0.7]
     return ({"correct": int(sum(checks)), "total": len(checks), "raw_brightness": round(raw, 4),
-             "phase_congruency": round(pc, 4), "mind": round(md, 4)}, {})
+             "phase_congruency": round(pc, 4), "mind": round(md, 4),
+             "sun_at_patch_az_elev_deg": {k: [round(v[0], 1), round(v[1], 1)] for k, v in suns.items()}}, {})
 
 
 

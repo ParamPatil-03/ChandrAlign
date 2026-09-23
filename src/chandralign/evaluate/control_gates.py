@@ -293,17 +293,20 @@ def crosscheck_gate(primary: np.ndarray, checker: Optional[np.ndarray], checker_
 # The real pipeline, wrapped so the gates can drive it
 # ---------------------------------------------------------------------------
 def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
-                  gsd_m: float = 1.0, **match_kwargs) -> Pipeline:
-    """Wrap the matcher + robust estimator the registration actually uses.
+                  gsd_m: float = 1.0, stages: Optional[dict] = None, **match_kwargs) -> Pipeline:
+    """Wrap the matcher + fine stage the registration actually uses.
 
     The gates must exercise THE SAME code path that produced the result they
     certify; a separate, simpler stand-in would test itself, not the pipeline.
     `match_kwargs` (precision, tile_px, ...) are passed to adapter.match for that
     reason: a result matched in fp16 or in tiles is certified in fp16 or in tiles.
+    `stages` are pipeline.fine_stage's stage switches, for the same reason. (The
+    terrain filter cannot run inside a gate -- a gate's synthetic source has no
+    ground position -- and fine_stage records it as skipped.)
     """
     from .. import synth
-    from ..estimate import models, robust
     from ..matching import adapter, classical
+    from ..pipeline import fine_stage
 
     def plane(a: np.ndarray):
         a = np.asarray(a, np.float32)
@@ -323,15 +326,12 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
         n = int(len(ms.src_pts))
         if n < 4:
             return PipelineRun(False, n, 0, None, f"only {n} matches")
-        res = robust.estimate(ms.src_pts, ms.ref_pts, expected_scale=None,
-                              centre=(s.array.shape[1] / 2.0, s.array.shape[0] / 2.0))
-        m = None if res.model is None or res.model.matrix is None else np.asarray(res.model.matrix, float)
-        rmse = None
-        if m is not None and res.inlier_count:
-            r = models.residuals(res.model, ms.src_pts[res.inlier_mask], ms.ref_pts[res.inlier_mask])
-            rmse = float(np.sqrt(np.mean(np.asarray(r) ** 2)))
+        fr = fine_stage(ms, s.array, r.array, flags=stages,
+                        centre=(s.array.shape[1] / 2.0, s.array.shape[0] / 2.0))
+        res = fr.first
+        m = None if fr.model is None or fr.model.matrix is None else np.asarray(fr.model.matrix, float)
         return PipelineRun(bool(res.ok), n, int(res.inlier_count), m,
-                           res.notes[-1] if res.notes else "", rmse)
+                           res.notes[-1] if res.notes else "", fr.rmse_px)
 
     run.__name__ = f"pipeline[{matcher}]"
     return run

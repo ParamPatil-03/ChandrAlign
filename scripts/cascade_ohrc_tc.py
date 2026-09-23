@@ -38,6 +38,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import numpy as np  # noqa: E402
 
 from chandralign.estimate import models  # noqa: E402
+from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
@@ -194,6 +195,7 @@ def main() -> int:
     out.write_text(json.dumps({"source": "measured", "tile": TC_TILE,
                                "routes": {"cascade": "OHRC -16x-> TMC-2 -1.5x-> TC", "direct": "OHRC -24x-> TC"},
                                "priors": "system-level only (OHRC system grid, TMC-2 system corners, TC map)",
+                               "run": run_record(),
                                "rows": results}, indent=2), encoding="utf-8")
     print(f"wrote {out}")
     return 0

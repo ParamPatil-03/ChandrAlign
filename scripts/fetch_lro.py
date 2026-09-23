@@ -10,7 +10,10 @@ Search only:
 Download the top N results:
     .venv/Scripts/python scripts/fetch_lro.py --scene <id> --download 2
 
-Products land in data/raw/lro/<nac|wac>/. Run scripts/make_manifest.py afterwards.
+Products land in data/raw/lro/<nac|wac>/, each with its ODE catalogue record saved
+beside it as ode_metadata.json: WAC labels carry no corners and NAC CDR labels no
+sun angles, so without that record a product has no footprint and
+scripts/build_pairs.py stops on it. Run scripts/make_manifest.py afterwards.
 """
 from __future__ import annotations
 
@@ -23,6 +26,7 @@ from typing import Optional
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 FOOTPRINTS = ROOT / "data" / "pairs" / "ch2_footprints.json"
 ODE = "https://oderest.rsl.wustl.edu/live2/"
 
@@ -165,6 +169,13 @@ def download(entry: dict, ptype: str) -> None:
             part.unlink()
             raise RuntimeError(f"{f['name']}: got {got} bytes, server declared {declared}")
         part.replace(dest)
+
+    # The catalogue record is part of the product as far as this pipeline is
+    # concerned: footprint_of() needs it whenever the label has no corners.
+    from chandralign.io.ode_client import find_saved_record, save_product_record
+    if find_saved_record(out_dir) is None:
+        save_product_record(str(entry["product_id"]), out_dir)
+        print(f"    saved {out_dir.name}/ode_metadata.json")
 
 
 def main() -> None:

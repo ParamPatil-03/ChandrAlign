@@ -45,6 +45,16 @@ estimate:
   # transforms on the strength of a label already known to be wrong.
   unverified_scale_slack: 3.0
 
+pipeline:                    # P2-T16: optional fine-stage steps (src/chandralign/pipeline.py)
+  # Each switches one stage of pipeline.fine_stage, used by the registrations AND
+  # by the control gates, so a gate always certifies the path that ran. All three
+  # were built and unit-tested but called by no pipeline until 2026-09-23. They
+  # stay OFF here until measured on real data: the values below are set by
+  # docs/pipeline_stages_protocol.md, not by preference.
+  geometry_filter: false     # ALIGN-03: drop matches whose two ends are different terrain
+  uniformity: false          # ALIGN-04: top-k per grid cell of the inliers (PS mandate)
+  subpixel: false            # PREC-01: per-point NCC refinement of the control points (PS mandate)
+
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
   top_k_per_cell: 6

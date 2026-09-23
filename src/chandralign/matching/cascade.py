@@ -281,6 +281,7 @@ def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *
     import cv2
 
     from ..preprocess.phase_congruency import mind
+    from ..preprocess.resample import warp_affine
     from ..refine import subpixel
 
     small = block_average(src_img, factor) if factor > 1 else np.asarray(src_img, np.float32)
@@ -295,7 +296,7 @@ def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *
     Wc = np.eye(3)
     Wc[:2, :2] = lin
     Wc[:2, 2] = np.array([size[0] / 2, size[1] / 2]) - lin @ np.array([w / 2, h / 2])
-    canvas = cv2.warpAffine(small, Wc[:2], size, flags=cv2.INTER_AREA)
+    canvas = warp_affine(small, Wc, size)       # anti-aliased: cv2 ignores INTER_AREA
     valid = cv2.warpAffine(np.ones_like(small), Wc[:2], size, flags=cv2.INTER_NEAREST) > 0.5
     ys, xs = np.where(valid)
     y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
