@@ -15,6 +15,44 @@ can do for us:
    and the estimate says 3.0, the estimate is wrong no matter how clean its
    inlier set looks. Nothing off the shelf can make that judgement: it needs
    configs/instruments.yaml.
+
+WHY MAGSAC IS THE DEFAULT, AND WHAT THAT IS AND IS NOT WORTH
+Measured, not assumed -- scripts/bench_estimators.py, 900 synthetic
+correspondence sets, reports/estimator_benchmark.json:
+
+  - ACCURACY IS A TIE, and PLAN.md's accept bar ("MAGSAC beats plain RANSAC at
+    70% outliers") is NOT met as written. Against outliers that agree with
+    nothing, all three drivers succeed on every seed out to 90% and land inside
+    0.4 px; at 70% plain RANSAC's median error is marginally the better of the
+    two (0.196 px against 0.213 px). 70% scattered outliers is simply not a
+    hard problem, so that bar could not have separated them.
+  - WHAT DOES SEPARATE THEM IS COST. At 90% outliers both reach 10/10, MAGSAC
+    in 0.021 s against plain RANSAC's 3.27 s -- 150x less for the same answer,
+    and there the better median too (0.387 px against 0.432 px). MAGSAC
+    terminates adaptively, so it converts a raised iteration cap into
+    reliability at almost no runtime; plain RANSAC pays the cap in full.
+  - Threshold-insensitivity holds but is SMALL once the budget is adequate:
+    across 1, 3 and 10 px MAGSAC is flat at 1.00, plain RANSAC dips to 0.90 at
+    1 px and 90% outliers. Worth having, because estimate.reproj_threshold_px
+    is one constant applied across instrument pairs whose true noise differs,
+    but it is not on its own the reason for the default. (Measured before the
+    max_iters fix that gap was 30 points, which would have overstated it -- an
+    estimator benchmark run at a starved budget measures the budget.)
+  - It buys NOTHING against outliers that agree with each other. See below.
+
+So the default is MAGSAC for cost and predictability at high outlier rates,
+not because it is more accurate. On easy match sets any of the three would do.
+
+THE LIMIT, AND WHY IT IS DOCUMENTED HERE RATHER THAN FIXED HERE
+When false matches are mutually consistent -- repetitive crater fields and mare
+ridges produce exactly this, failure mode #12 -- they form their own consensus.
+Past 50% every driver returns the outliers' transform and reports it as a clean
+fit: 110 to 114 confident wrong answers in 300 runs each, with no meaningful
+difference between them. That is not a defect in any of the three. A consensus
+method is definitionally unable to prefer the minority, so no choice of robust
+driver, threshold or iteration budget addresses it. The defences that do are
+elsewhere: the scale check below, the control gates (CHECK-01..08) and the
+independent cross-check (MATCH-06). Picking a better RANSAC is not one of them.
 """
 from __future__ import annotations
 
@@ -132,7 +170,8 @@ def estimate(src_pts: np.ndarray, ref_pts: np.ndarray, *, kind: str = "auto",
              centre: tuple[float, float] | None = None,
              method: str | None = None,
              reproj_threshold: float | None = None,
-             min_inliers: int | None = None) -> EstimateResult:
+             min_inliers: int | None = None,
+             max_iters: int | None = None) -> EstimateResult:
     """Fit a source -> reference transform robustly, then sanity-check it."""
     src = np.asarray(src_pts, np.float64).reshape(-1, 2)
     ref = np.asarray(ref_pts, np.float64).reshape(-1, 2)
@@ -145,7 +184,8 @@ def estimate(src_pts: np.ndarray, ref_pts: np.ndarray, *, kind: str = "auto",
     flag = _method_flag(method or config.get("estimate.method", "magsac"))
     thresh = float(reproj_threshold if reproj_threshold is not None
                    else config.get("estimate.reproj_threshold_px", 3.0))
-    iters = int(config.get("estimate.max_iters", 10000))
+    iters = int(max_iters if max_iters is not None
+                else config.get("estimate.max_iters", 100000))
     conf = float(config.get("estimate.confidence", 0.9999))
     need = int(min_inliers if min_inliers is not None
                else config.get("estimate.min_inliers", 12))

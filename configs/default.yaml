@@ -20,7 +20,15 @@ matching:
 estimate:
   method: magsac             # magsac | ransac | usac_accurate
   reproj_threshold_px: 3.0
-  max_iters: 10000
+  # Raised from 10000 by MEASUREMENT (scripts/bench_estimators.py). At 90%
+  # outliers a 4-point sample is all-inlier about once in 10^4 draws, so a
+  # 10000 cap sat exactly on the edge: MAGSAC stopped early and succeeded on
+  # 4 seeds in 10, where 100000 succeeds on all 10. It is a CAP, not a cost --
+  # MAGSAC terminates adaptively, so runtime up to 80% outliers is unchanged
+  # (0.0011 s at 30%, identical under both budgets) and only the 90% case
+  # spends more (0.0033 s -> 0.021 s). Plain RANSAC does not share that
+  # property: the same budget costs it 3.3 s per fit.
+  max_iters: 100000
   confidence: 0.9999
   min_inliers: 12
   # Failure mode #13: reject a transform whose estimated scale disagrees with
