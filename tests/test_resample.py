@@ -20,7 +20,8 @@ def test_no_blur_when_not_shrinking():
     a = np.random.default_rng(1).random((64, 64)).astype(np.float32)
     for m in (np.array([[1.0, 0, 0.3], [0, 1.0, -0.2]]), np.array([[1.4, 0.1, 0], [-0.1, 1.4, 0]])):
         ours = warp_affine(a, m, (80, 80))
-        cv2_ = cv2.warpAffine(a, m.astype(np.float32), (80, 80), flags=cv2.INTER_LINEAR)
+        # The same float64 matrix: OpenCV 5 resamples a float32 copy ~3e-6 differently.
+        cv2_ = cv2.warpAffine(a, m, (80, 80), flags=cv2.INTER_LINEAR)
         assert np.array_equal(ours, cv2_)
 
 

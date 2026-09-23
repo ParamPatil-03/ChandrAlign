@@ -181,3 +181,25 @@ rule 1). The two are decided separately.
 
 **Limits:** same image, same sun, same sensor: this measures how precisely a
 point is LOCATED, not cross-sensor accuracy -- the same limit PREC-06 states.
+
+## Result of v3 (2026-09-23) -- reports/point_refinement_verification.json
+
+Nine real TMC-2 windows, exact (0.25, -0.75) px shift, sensor-realistic noise,
+`eloftr`, 384 uniform delivered points per window:
+
+| | median error of delivered points | 90th percentile |
+|---|---|---|
+| unrefined (the matcher's own positions) | 0.30 - 0.33 px | 0.41 - 0.59 px |
+| refined | **0.056 - 0.094 px** | **0.11 - 0.20 px** |
+
+- `subpixel`: better on **9 of 9** windows (rule: >= 8) -> **default ON**.
+- `uniformity`: coverage equal to all inliers' and <= 6 per cell on **9 of 9** -> **default ON**.
+- Sign check: a wrong convention would put refined errors near 0.8 px, not 0.06.
+- Limit, as stated in v3: same image, same sun, same sensor.
+
+The v2 rule-2 failure (refined points' residual to the affine model rose on the
+three N00 windows) is therefore NOT refinement error: refined points are 4-5x
+closer to a known truth. It remains a lead worth following -- ground an affine
+model does not describe -- and is ALIGN-02's (TPS) question, not this one's.
+
+`geometry_filter` is still undecided: run USG waits for the second SLDEM tile.

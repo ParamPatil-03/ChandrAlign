@@ -1,0 +1,285 @@
+{
+  "source": "measured",
+  "protocol": "docs/pipeline_stages_protocol.md#v3",
+  "product": "ch2_tmc_nca_20250207T1102039417_d_img_d18",
+  "shift_coarse_px": [
+    0.25,
+    -0.75
+  ],
+  "block": 4,
+  "coarse_window_px": 768,
+  "matcher": "eloftr",
+  "run": {
+    "command": "python scripts/verify_point_refinement.py",
+    "commit": "f7371138f352abc8b5548fd4ee93b411e8e27091",
+    "uncommitted_changes": true,
+    "utc": "2026-09-23T18:00:15+00:00"
+  },
+  "verdict": {
+    "subpixel": {
+      "windows_better": 9,
+      "of": 9,
+      "rule": ">= 8 of 9",
+      "default_on": true
+    },
+    "uniformity": {
+      "windows_ok": 9,
+      "of": 9,
+      "default_on": true
+    }
+  },
+  "windows": [
+    {
+      "row": 5000,
+      "native_noise_ratio": 0.1005,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3187,
+        "p90": 0.4264,
+        "max": 0.8787
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.063,
+        "p90": 0.1405,
+        "max": 0.2573
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 27.4,
+      "uniformity_ok": true
+    },
+    {
+      "row": 23399,
+      "native_noise_ratio": 0.2546,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.329,
+        "p90": 0.5852,
+        "max": 1.0863
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0869,
+        "p90": 0.1754,
+        "max": 0.5716
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.0,
+      "uniformity_ok": true
+    },
+    {
+      "row": 41799,
+      "native_noise_ratio": 0.2537,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3247,
+        "p90": 0.5002,
+        "max": 1.0218
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0888,
+        "p90": 0.1712,
+        "max": 0.3483
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.2,
+      "uniformity_ok": true
+    },
+    {
+      "row": 60198,
+      "native_noise_ratio": 0.1176,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3182,
+        "p90": 0.4124,
+        "max": 0.8054
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0595,
+        "p90": 0.1256,
+        "max": 0.2213
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.3,
+      "uniformity_ok": true
+    },
+    {
+      "row": 78598,
+      "native_noise_ratio": 0.2082,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3304,
+        "p90": 0.4624,
+        "max": 0.9783
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0699,
+        "p90": 0.1496,
+        "max": 0.2462
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.3,
+      "uniformity_ok": true
+    },
+    {
+      "row": 96998,
+      "native_noise_ratio": 0.1625,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3276,
+        "p90": 0.5275,
+        "max": 1.0212
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0943,
+        "p90": 0.2013,
+        "max": 0.321
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.2,
+      "uniformity_ok": true
+    },
+    {
+      "row": 115397,
+      "native_noise_ratio": 0.1173,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.2956,
+        "p90": 0.4205,
+        "max": 0.9314
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0592,
+        "p90": 0.1167,
+        "max": 0.4048
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.6,
+      "uniformity_ok": true
+    },
+    {
+      "row": 133797,
+      "native_noise_ratio": 0.1007,
+      "matches": 8457,
+      "inliers": 8457,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3119,
+        "p90": 0.4244,
+        "max": 0.8126
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0556,
+        "p90": 0.1165,
+        "max": 0.3323
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.2,
+      "uniformity_ok": true
+    },
+    {
+      "row": 152197,
+      "native_noise_ratio": 0.1252,
+      "matches": 8464,
+      "inliers": 8464,
+      "unrefined": {
+        "n": 384,
+        "median": 0.3222,
+        "p90": 0.4213,
+        "max": 0.8835
+      },
+      "refined": {
+        "n": 384,
+        "median": 0.0577,
+        "p90": 0.107,
+        "max": 0.231
+      },
+      "subpixel_better": true,
+      "uniformity": {
+        "delivered": 384,
+        "coverage": 1.0,
+        "coverage_all_inliers": 1.0,
+        "max_per_cell": 6,
+        "top_k": 6
+      },
+      "seconds": 2.0,
+      "uniformity_ok": true
+    }
+  ]
+}
