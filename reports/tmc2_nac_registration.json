@@ -1,0 +1,6554 @@
+{
+  "source": "measured",
+  "protocol": "docs/tmc2_nac_protocol.md",
+  "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) -> LRO NAC CDR",
+  "routing": {
+    "route": "cascade",
+    "model_name": null,
+    "regime": "extreme_scale"
+  },
+  "method": "cascade.register_step_dense (MIND search + sub-pixel median), NAC as the finer src",
+  "prior": "LROC corner coordinates through TMC-2 SYSTEM corners; position searched, never taken from the prior",
+  "thresholds": {
+    "min_z": 10.0,
+    "known_shift_px": [
+      3,
+      4
+    ],
+    "shift_tolerance_px": 1.5,
+    "solved": 0.9,
+    "degraded": 0.6,
+    "null_void_rate": 0.1,
+    "false_lock_m": 500.0,
+    "margin_m": 7000.0
+  },
+  "null_lock_rate": 0.0,
+  "void_by_nulls": false,
+  "stop_rule_triggered": false,
+  "groups": {
+    "same_sun": {
+      "products": [
+        "M111443315RC",
+        "M131494509LC"
+      ],
+      "windows": 10,
+      "counted": 10,
+      "excluded": [],
+      "locked": 10,
+      "success": 9,
+      "success_rate": 0.9,
+      "verdict": "solved",
+      "success_excluding_probable_false_locks": 9,
+      "median_z": 30.2,
+      "null_locks": 0,
+      "flipped_prior_locks_where_true_prior_succeeded": 0,
+      "d_az_vs_tmc2": {
+        "M111443315RC": 2.1,
+        "M131494509LC": 3.5
+      }
+    },
+    "opposed_sun": {
+      "products": [
+        "M117338434LC",
+        "M122054682LC"
+      ],
+      "windows": 10,
+      "counted": 10,
+      "excluded": [],
+      "locked": 10,
+      "success": 10,
+      "success_rate": 1.0,
+      "verdict": "solved",
+      "success_excluding_probable_false_locks": 5,
+      "median_z": 31.6,
+      "null_locks": 0,
+      "flipped_prior_locks_where_true_prior_succeeded": 0,
+      "d_az_vs_tmc2": {
+        "M117338434LC": 176.4,
+        "M122054682LC": 177.4
+      }
+    },
+    "secondary_same_sun_12x": {
+      "products": [
+        "M175124932LC"
+      ],
+      "windows": 5,
+      "counted": 5,
+      "excluded": [],
+      "locked": 5,
+      "success": 5,
+      "success_rate": 1.0,
+      "verdict": "solved",
+      "success_excluding_probable_false_locks": 5,
+      "median_z": 32.7,
+      "null_locks": 0,
+      "flipped_prior_locks_where_true_prior_succeeded": null,
+      "d_az_vs_tmc2": {
+        "M175124932LC": 1.3
+      }
+    },
+    "secondary_opposed_4x": {
+      "products": [
+        "M106719774LC",
+        "M104362199LC",
+        "M102000149LC",
+        "M102014464RC"
+      ],
+      "windows": 20,
+      "counted": 20,
+      "excluded": [],
+      "locked": 19,
+      "success": 19,
+      "success_rate": 0.95,
+      "verdict": "solved",
+      "success_excluding_probable_false_locks": 2,
+      "median_z": 49.4,
+      "null_locks": 0,
+      "flipped_prior_locks_where_true_prior_succeeded": null,
+      "d_az_vs_tmc2": {
+        "M106719774LC": 172.5,
+        "M104362199LC": 175.6,
+        "M102000149LC": 176.9,
+        "M102014464RC": 176.9
+      }
+    }
+  },
+  "windows": [
+    {
+      "nac": "M111443315RC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 0.9533,
+      "lon": 23.4483,
+      "block_factor": 10,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.99202,
+          0.04699
+        ],
+        [
+          0.0388,
+          -1.0653
+        ]
+      ],
+      "predicted_tmc_cols": [
+        807,
+        1323
+      ],
+      "region": {
+        "row0": 13831,
+        "col0": 0,
+        "rows": 3340,
+        "cols": 2746,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          512,
+          479
+        ],
+        "z": 35.7,
+        "peak_xy": [
+          959,
+          2413
+        ],
+        "search_px": [
+          2268,
+          2829
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 7.0
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.09920228,
+          0.00469947,
+          906.83775741
+        ],
+        [
+          0.00388017,
+          -0.10653038,
+          17416.94476537
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          10.06305037,
+          0.44392016,
+          -16857.28690138
+        ],
+        [
+          0.36652781,
+          -9.37082437,
+          162878.7491343
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.315,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 35.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 36.8,
+        "expected_tmc_px": [
+          -3.873,
+          4.437
+        ],
+        "recovered_tmc_px": [
+          -4.101,
+          4.501
+        ],
+        "error_px": 0.237,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 16499.5,
+        "tmc_col": 1198.9,
+        "system_offset_m": {
+          "east": 825,
+          "north": -5035
+        },
+        "tc_measured_offset_m": {
+          "east": 662,
+          "north": -4762
+        },
+        "disagreement_m": 318,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.7,
+          "failed": "ambiguous match: z 5.7 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.9
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M111443315RC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.7967,
+      "lon": 23.4467,
+      "block_factor": 10,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.9926,
+          0.04705
+        ],
+        [
+          0.0388,
+          -1.0653
+        ]
+      ],
+      "predicted_tmc_cols": [
+        848,
+        1364
+      ],
+      "region": {
+        "row0": 12894,
+        "col0": 0,
+        "rows": 3340,
+        "cols": 2787,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          512,
+          479
+        ],
+        "z": 33.1,
+        "peak_xy": [
+          1002,
+          2409
+        ],
+        "search_px": [
+          2309,
+          2829
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 8.3
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.09926038,
+          0.00470538,
+          908.68315224
+        ],
+        [
+          0.00388005,
+          -0.10653039,
+          17403.58331543
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          10.05714889,
+          0.44421774,
+          -16869.74225214
+        ],
+        [
+          0.36630162,
+          -9.37081371,
+          162752.88502691
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.44,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 33.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 32.5,
+        "expected_tmc_px": [
+          -3.875,
+          4.437
+        ],
+        "recovered_tmc_px": [
+          -3.901,
+          4.337
+        ],
+        "error_px": 0.103,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15558.9,
+        "tmc_col": 1241.9,
+        "system_offset_m": {
+          "east": 832,
+          "north": -5018
+        },
+        "tc_measured_offset_m": {
+          "east": 658,
+          "north": -4749
+        },
+        "disagreement_m": 321,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.4,
+          "failed": "ambiguous match: z 5.4 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.3,
+          "failed": "ambiguous match: z 5.3 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.4
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M111443315RC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.64,
+      "lon": 23.445,
+      "block_factor": 10,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.99319,
+          0.04711
+        ],
+        [
+          0.0388,
+          -1.0653
+        ]
+      ],
+      "predicted_tmc_cols": [
+        890,
+        1406
+      ],
+      "region": {
+        "row0": 11957,
+        "col0": 0,
+        "rows": 3339,
+        "cols": 2829,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          512,
+          480
+        ],
+        "z": 32.7,
+        "peak_xy": [
+          1051,
+          2401
+        ],
+        "search_px": [
+          2350,
+          2828
+        ],
+        "subpixel_ok": "7/11",
+        "seconds": 5.0
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.0993193,
+          0.0047113,
+          916.06031309
+        ],
+        [
+          0.00387995,
+          -0.10653039,
+          17386.36761426
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          10.05117174,
+          0.44451238,
+          -16935.93516202
+        ],
+        [
+          0.36607397,
+          -9.3708031,
+          162588.88164767
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.377,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 32.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 31.7,
+        "expected_tmc_px": [
+          -3.877,
+          4.437
+        ],
+        "recovered_tmc_px": [
+          -3.974,
+          4.453
+        ],
+        "error_px": 0.098,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 14614.5,
+        "tmc_col": 1290.6,
+        "system_offset_m": {
+          "east": 866,
+          "north": -4981
+        },
+        "tc_measured_offset_m": {
+          "east": 654,
+          "north": -4739
+        },
+        "disagreement_m": 321,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.8
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M111443315RC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.4833,
+      "lon": 23.4433,
+      "block_factor": 10,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.99379,
+          0.04717
+        ],
+        [
+          0.0388,
+          -1.0653
+        ]
+      ],
+      "predicted_tmc_cols": [
+        931,
+        1447
+      ],
+      "region": {
+        "row0": 11019,
+        "col0": 0,
+        "rows": 3340,
+        "cols": 2871,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          512,
+          480
+        ],
+        "z": 35.8,
+        "peak_xy": [
+          1087,
+          2400
+        ],
+        "search_px": [
+          2392,
+          2829
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 8.4
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.09937903,
+          0.00471723,
+          911.81895906
+        ],
+        [
+          0.00387985,
+          -0.10653039,
+          17374.19087968
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          10.04511906,
+          0.44480406,
+          -16887.44066299
+        ],
+        [
+          0.36584486,
+          -9.37079253,
+          162476.35376796
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.226,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 35.8,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 35.7,
+        "expected_tmc_px": [
+          -3.88,
+          4.437
+        ],
+        "recovered_tmc_px": [
+          -3.931,
+          4.461
+        ],
+        "error_px": 0.056,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13675.1,
+        "tmc_col": 1327.7,
+        "system_offset_m": {
+          "east": 844,
+          "north": -4970
+        },
+        "tc_measured_offset_m": {
+          "east": 651,
+          "north": -4730
+        },
+        "disagreement_m": 308,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.5,
+          "failed": "ambiguous match: z 5.5 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.7
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M111443315RC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.3267,
+      "lon": 23.4417,
+      "block_factor": 10,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.9944,
+          0.04723
+        ],
+        [
+          0.0388,
+          -1.0653
+        ]
+      ],
+      "predicted_tmc_cols": [
+        972,
+        1489
+      ],
+      "region": {
+        "row0": 10082,
+        "col0": 0,
+        "rows": 3340,
+        "cols": 2912,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          512,
+          480
+        ],
+        "z": 36.9,
+        "peak_xy": [
+          1136,
+          2394
+        ],
+        "search_px": [
+          2433,
+          2829
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 8.8
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.09943959,
+          0.00472318,
+          918.83099102
+        ],
+        [
+          0.00387978,
+          -0.1065304,
+          17358.12708705
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          10.03899099,
+          0.44509278,
+          -16950.11312385
+        ],
+        [
+          0.3656143,
+          -9.370782,
+          162323.28709699
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.364,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 36.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 35.8,
+        "expected_tmc_px": [
+          -3.882,
+          4.437
+        ],
+        "recovered_tmc_px": [
+          -3.99,
+          4.51
+        ],
+        "error_px": 0.13,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 12731.7,
+        "tmc_col": 1376.2,
+        "system_offset_m": {
+          "east": 877,
+          "north": -4939
+        },
+        "tc_measured_offset_m": {
+          "east": 648,
+          "north": -4721
+        },
+        "disagreement_m": 316,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.5
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M131494509LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 0.7883,
+      "lon": 23.4692,
+      "block_factor": 12,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          0.97292,
+          -0.03613
+        ],
+        [
+          0.02295,
+          1.3027
+        ]
+      ],
+      "predicted_tmc_cols": [
+        771,
+        1165
+      ],
+      "region": {
+        "row0": 12839,
+        "col0": 0,
+        "rows": 3342,
+        "cols": 2589,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          529,
+          395
+        ],
+        "z": 27.2,
+        "peak_xy": [
+          866,
+          2409
+        ],
+        "search_px": [
+          2195,
+          2814
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 6.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.08107699,
+          -0.00301071,
+          884.82068021
+        ],
+        [
+          0.00191238,
+          0.10855869,
+          14563.09095005
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          12.32589243,
+          0.34183999,
+          -15884.45144765
+        ],
+        [
+          -0.21713456,
+          9.20558495,
+          -133869.64574583
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.39,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 27.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 26.6,
+        "expected_tmc_px": [
+          -2.87,
+          -4.739
+        ],
+        "recovered_tmc_px": [
+          -2.994,
+          -4.832
+        ],
+        "error_px": 0.155,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15512.8,
+        "tmc_col": 1063.9,
+        "system_offset_m": {
+          "east": 628,
+          "north": -5063
+        },
+        "tc_measured_offset_m": {
+          "east": 657,
+          "north": -4748
+        },
+        "disagreement_m": 316,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.1
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M131494509LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.9467,
+      "lon": 23.4683,
+      "block_factor": 12,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          0.97235,
+          -0.03608
+        ],
+        [
+          0.02295,
+          1.3027
+        ]
+      ],
+      "predicted_tmc_cols": [
+        740,
+        1144
+      ],
+      "region": {
+        "row0": 13786,
+        "col0": 0,
+        "rows": 3343,
+        "cols": 2567,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          529,
+          395
+        ],
+        "z": 27.6,
+        "peak_xy": [
+          844,
+          2413
+        ],
+        "search_px": [
+          2173,
+          2815
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 5.3
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.08102891,
+          -0.00300689,
+          888.18265545
+        ],
+        [
+          0.00191253,
+          0.10855869,
+          14568.83774383
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          12.33321059,
+          0.34160858,
+          -15930.98365975
+        ],
+        [
+          -0.21728054,
+          9.20558877,
+          -133921.744283
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.488,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 27.6,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 26.8,
+        "expected_tmc_px": [
+          -2.869,
+          -4.739
+        ],
+        "recovered_tmc_px": [
+          -2.928,
+          -4.743
+        ],
+        "error_px": 0.06,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 16463.5,
+        "tmc_col": 1041.0,
+        "system_offset_m": {
+          "east": 646,
+          "north": -5077
+        },
+        "tc_measured_offset_m": {
+          "east": 661,
+          "north": -4762
+        },
+        "disagreement_m": 316,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.3
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M131494509LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 1.105,
+      "lon": 23.4675,
+      "block_factor": 12,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          0.97178,
+          -0.03604
+        ],
+        [
+          0.02295,
+          1.3027
+        ]
+      ],
+      "predicted_tmc_cols": [
+        709,
+        1123
+      ],
+      "region": {
+        "row0": 14734,
+        "col0": 0,
+        "rows": 3343,
+        "cols": 2546,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          529,
+          395
+        ],
+        "z": 21.5,
+        "peak_xy": [
+          822,
+          2417
+        ],
+        "search_px": [
+          2152,
+          2815
+        ],
+        "subpixel_ok": "7/11",
+        "seconds": 6.0
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.08098152,
+          -0.00300307,
+          892.39208048
+        ],
+        [
+          0.00191271,
+          0.10855869,
+          14575.45258349
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          12.34043385,
+          0.34137485,
+          -15988.19832109
+        ],
+        [
+          -0.21742725,
+          9.20559256,
+          -133981.64746324
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.342,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 21.5,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 21.6,
+        "expected_tmc_px": [
+          -2.867,
+          -4.739
+        ],
+        "recovered_tmc_px": [
+          -2.99,
+          -4.689
+        ],
+        "error_px": 0.133,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 17415.0,
+        "tmc_col": 1019.0,
+        "system_offset_m": {
+          "east": 668,
+          "north": -5096
+        },
+        "tc_measured_offset_m": {
+          "east": 666,
+          "north": -4780
+        },
+        "disagreement_m": 316,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.8
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M131494509LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 1.2633,
+      "lon": 23.4667,
+      "block_factor": 12,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          0.97122,
+          -0.03599
+        ],
+        [
+          0.02295,
+          1.3027
+        ]
+      ],
+      "predicted_tmc_cols": [
+        677,
+        1102
+      ],
+      "region": {
+        "row0": 15681,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 2525,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          531,
+          396
+        ],
+        "z": 20.2,
+        "peak_xy": [
+          795,
+          2419
+        ],
+        "search_px": [
+          2130,
+          2814
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 6.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.0809348,
+          -0.00299926,
+          892.03835249
+        ],
+        [
+          0.0019129,
+          0.10855869,
+          14581.25597437
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          12.34756204,
+          0.34113881,
+          -15988.73116642
+        ],
+        [
+          -0.21757468,
+          9.20559632,
+          -134035.07137348
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.906,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 20.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 19.3,
+        "expected_tmc_px": [
+          -2.866,
+          -4.739
+        ],
+        "recovered_tmc_px": [
+          -11.803,
+          -5.365
+        ],
+        "error_px": 8.96,
+        "tolerance_px": 1.5,
+        "passed": false
+      },
+      "geolocation": {
+        "tmc_row": 18365.7,
+        "tmc_col": 992.5,
+        "system_offset_m": {
+          "east": 667,
+          "north": -5111
+        },
+        "tc_measured_offset_m": {
+          "east": 671,
+          "north": -4798
+        },
+        "disagreement_m": 314,
+        "probable_false_lock": false
+      },
+      "success": false,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.5,
+          "failed": "ambiguous match: z 5.5 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.6
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M131494509LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 1.4217,
+      "lon": 23.4658,
+      "block_factor": 12,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          0.97067,
+          -0.03595
+        ],
+        [
+          0.02296,
+          1.3027
+        ]
+      ],
+      "predicted_tmc_cols": [
+        646,
+        1080
+      ],
+      "region": {
+        "row0": 16629,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 2504,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          529,
+          394
+        ],
+        "z": 21.1,
+        "peak_xy": [
+          775,
+          2424
+        ],
+        "search_px": [
+          2111,
+          2816
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 7.1
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.08088876,
+          -0.00299546,
+          897.14341802
+        ],
+        [
+          0.00191311,
+          0.10855868,
+          14588.20432239
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          12.35459498,
+          0.34090046,
+          -16056.96917707
+        ],
+        [
+          -0.21772285,
+          9.20560006,
+          -134097.84590689
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 1.264,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 21.1,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 21.4,
+        "expected_tmc_px": [
+          -2.864,
+          -4.739
+        ],
+        "recovered_tmc_px": [
+          -1.973,
+          -4.613
+        ],
+        "error_px": 0.9,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 19317.5,
+        "tmc_col": 971.6,
+        "system_offset_m": {
+          "east": 693,
+          "north": -5132
+        },
+        "tc_measured_offset_m": {
+          "east": 679,
+          "north": -4810
+        },
+        "disagreement_m": 322,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.3
+      },
+      "group": "same_sun"
+    },
+    {
+      "nac": "M117338434LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": -0.0717,
+      "lon": 23.4275,
+      "block_factor": 12,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -1.02524,
+          -0.0225
+        ],
+        [
+          -0.01362,
+          1.30296
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1201,
+        1591
+      ],
+      "region": {
+        "row0": 7699,
+        "col0": 0,
+        "rows": 3343,
+        "cols": 3014,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          535,
+          422
+        ],
+        "z": 41.7,
+        "peak_xy": [
+          1272,
+          2390
+        ],
+        "search_px": [
+          2593,
+          2809
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 8.1
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08543649,
+          -0.00187497,
+          1714.83257336
+        ],
+        [
+          -0.00113492,
+          0.10858038,
+          9413.87948364
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.70191625,
+          -0.20206871,
+          21969.07768072
+        ],
+        [
+          -0.12231213,
+          9.20765513,
+          -86470.01087585
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.471,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 41.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 42.7,
+        "expected_tmc_px": [
+          3.242,
+          -4.627
+        ],
+        "recovered_tmc_px": [
+          3.266,
+          -4.682
+        ],
+        "error_px": 0.06,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 10356.1,
+        "tmc_col": 1482.2,
+        "system_offset_m": {
+          "east": 578,
+          "north": -4976
+        },
+        "tc_measured_offset_m": {
+          "east": 641,
+          "north": -4698
+        },
+        "disagreement_m": 285,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.4
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M117338434LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.0867,
+      "lon": 23.425,
+      "block_factor": 12,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -1.02458,
+          -0.02247
+        ],
+        [
+          -0.01362,
+          1.30296
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1180,
+        1580
+      ],
+      "region": {
+        "row0": 8647,
+        "col0": 0,
+        "rows": 3343,
+        "cols": 3003,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          537,
+          423
+        ],
+        "z": 31.0,
+        "peak_xy": [
+          1252,
+          2391
+        ],
+        "search_px": [
+          2581,
+          2807
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 8.2
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08538206,
+          -0.00187258,
+          1712.20989773
+        ],
+        [
+          -0.00113496,
+          0.10858038,
+          9419.59005866
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.70937776,
+          -0.2019398,
+          21951.10260377
+        ],
+        [
+          -0.12239431,
+          9.20765654,
+          -86522.78528481
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.604,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 31.0,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 31.9,
+        "expected_tmc_px": [
+          3.24,
+          -4.627
+        ],
+        "recovered_tmc_px": [
+          3.354,
+          -4.677
+        ],
+        "error_px": 0.125,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 11306.9,
+        "tmc_col": 1463.4,
+        "system_offset_m": {
+          "east": 567,
+          "north": -4990
+        },
+        "tc_measured_offset_m": {
+          "east": 644,
+          "north": -4707
+        },
+        "disagreement_m": 293,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 6.9,
+          "failed": "ambiguous match: z 6.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.3
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M117338434LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.245,
+      "lon": 23.4225,
+      "block_factor": 12,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -1.02394,
+          -0.02244
+        ],
+        [
+          -0.01362,
+          1.30296
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1159,
+        1568
+      ],
+      "region": {
+        "row0": 9595,
+        "col0": 0,
+        "rows": 3343,
+        "cols": 2992,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          535,
+          421
+        ],
+        "z": 27.2,
+        "peak_xy": [
+          1234,
+          2397
+        ],
+        "search_px": [
+          2572,
+          2809
+        ],
+        "subpixel_ok": "7/11",
+        "seconds": 8.2
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08532835,
+          -0.00187019,
+          1708.92375983
+        ],
+        [
+          -0.00113502,
+          0.10858037,
+          9427.32128827
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.7167498,
+          -0.2018095,
+          21925.55515975
+        ],
+        [
+          -0.12247864,
+          9.2076579,
+          -86594.24267685
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.436,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 27.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 27.6,
+        "expected_tmc_px": [
+          3.238,
+          -4.627
+        ],
+        "recovered_tmc_px": [
+          3.151,
+          -4.579
+        ],
+        "error_px": 0.099,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 12259.7,
+        "tmc_col": 1444.0,
+        "system_offset_m": {
+          "east": 553,
+          "north": -5015
+        },
+        "tc_measured_offset_m": {
+          "east": 647,
+          "north": -4716
+        },
+        "disagreement_m": 313,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.3,
+          "failed": "ambiguous match: z 5.3 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.3
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M117338434LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.4033,
+      "lon": 23.42,
+      "block_factor": 12,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -1.0233,
+          -0.02241
+        ],
+        [
+          -0.01362,
+          1.30296
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1137,
+        1557
+      ],
+      "region": {
+        "row0": 10543,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 2980,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          535,
+          421
+        ],
+        "z": 33.0,
+        "peak_xy": [
+          1214,
+          2401
+        ],
+        "search_px": [
+          2560,
+          2810
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 8.4
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08527536,
+          -0.00186781,
+          1705.47007425
+        ],
+        [
+          -0.00113512,
+          0.10858037,
+          9433.87033142
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.72403221,
+          -0.20167784,
+          21897.58864971
+        ],
+        [
+          -0.12256513,
+          9.2076592,
+          -86654.83179125
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.741,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 33.0,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 32.2,
+        "expected_tmc_px": [
+          3.236,
+          -4.627
+        ],
+        "recovered_tmc_px": [
+          3.265,
+          -4.608
+        ],
+        "error_px": 0.035,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13211.3,
+        "tmc_col": 1424.5,
+        "system_offset_m": {
+          "east": 538,
+          "north": -5034
+        },
+        "tc_measured_offset_m": {
+          "east": 650,
+          "north": -4726
+        },
+        "disagreement_m": 328,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.2
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M117338434LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.5617,
+      "lon": 23.4175,
+      "block_factor": 12,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -1.02268,
+          -0.02239
+        ],
+        [
+          -0.01362,
+          1.30296
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1116,
+        1546
+      ],
+      "region": {
+        "row0": 11491,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 2969,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          537,
+          422
+        ],
+        "z": 25.7,
+        "peak_xy": [
+          1194,
+          2402
+        ],
+        "search_px": [
+          2548,
+          2808
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 7.7
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08522309,
+          -0.00186543,
+          1701.46561377
+        ],
+        [
+          -0.00113524,
+          0.10858037,
+          9439.27421277
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.73122481,
+          -0.2015448,
+          21862.71225667
+        ],
+        [
+          -0.12265379,
+          9.20766044,
+          -86704.94059668
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.487,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 25.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 26.4,
+        "expected_tmc_px": [
+          3.233,
+          -4.627
+        ],
+        "recovered_tmc_px": [
+          3.206,
+          -4.646
+        ],
+        "error_px": 0.033,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 14161.8,
+        "tmc_col": 1404.5,
+        "system_offset_m": {
+          "east": 520,
+          "north": -5047
+        },
+        "tc_measured_offset_m": {
+          "east": 653,
+          "north": -4735
+        },
+        "disagreement_m": 339,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.5
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M122054682LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 0.0083,
+      "lon": 23.4133,
+      "block_factor": 11,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -0.96177,
+          -0.02715
+        ],
+        [
+          -0.0177,
+          1.19428
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1247,
+        1691
+      ],
+      "region": {
+        "row0": 8180,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 3114,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          533,
+          430
+        ],
+        "z": 39.6,
+        "peak_xy": [
+          1455,
+          2399
+        ],
+        "search_px": [
+          2685,
+          2812
+        ],
+        "subpixel_ok": "10/11",
+        "seconds": 8.3
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08743331,
+          -0.00246809,
+          1912.90841858
+        ],
+        [
+          -0.00160865,
+          0.10857106,
+          9904.65377232
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.43250754,
+          -0.25988926,
+          24443.45309793
+        ],
+        [
+          -0.16939031,
+          9.20670723,
+          -90865.21932519
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.333,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 39.6,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 39.1,
+        "expected_tmc_px": [
+          3.341,
+          -4.609
+        ],
+        "recovered_tmc_px": [
+          3.357,
+          -4.602
+        ],
+        "error_px": 0.018,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 10845.6,
+        "tmc_col": 1670.0,
+        "system_offset_m": {
+          "east": 1153,
+          "north": -5000
+        },
+        "tc_measured_offset_m": {
+          "east": 642,
+          "north": -4702
+        },
+        "disagreement_m": 591,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.5
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M122054682LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.1667,
+      "lon": 23.4117,
+      "block_factor": 11,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -0.96116,
+          -0.02711
+        ],
+        [
+          -0.0177,
+          1.19428
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1226,
+        1669
+      ],
+      "region": {
+        "row0": 9128,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 3093,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          533,
+          430
+        ],
+        "z": 32.9,
+        "peak_xy": [
+          1437,
+          2401
+        ],
+        "search_px": [
+          2664,
+          2812
+        ],
+        "subpixel_ok": "10/11",
+        "seconds": 7.6
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08737798,
+          -0.00246494,
+          1915.9969699
+        ],
+        [
+          -0.0016087,
+          0.10857105,
+          9909.97429784
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.4397496,
+          -0.25972255,
+          24492.36934735
+        ],
+        [
+          -0.16950316,
+          9.20670975,
+          -90913.48946434
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.622,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 32.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 33.1,
+        "expected_tmc_px": [
+          3.339,
+          -4.609
+        ],
+        "recovered_tmc_px": [
+          3.634,
+          -4.625
+        ],
+        "error_px": 0.296,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 11795.9,
+        "tmc_col": 1651.8,
+        "system_offset_m": {
+          "east": 1170,
+          "north": -5012
+        },
+        "tc_measured_offset_m": {
+          "east": 645,
+          "north": -4712
+        },
+        "disagreement_m": 605,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 6.6,
+          "failed": "ambiguous match: z 6.6 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.5
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M122054682LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.325,
+      "lon": 23.41,
+      "block_factor": 11,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -0.96056,
+          -0.02708
+        ],
+        [
+          -0.0177,
+          1.19428
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1204,
+        1648
+      ],
+      "region": {
+        "row0": 10076,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 3071,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          531,
+          428
+        ],
+        "z": 32.3,
+        "peak_xy": [
+          1420,
+          2407
+        ],
+        "search_px": [
+          2644,
+          2814
+        ],
+        "subpixel_ok": "10/11",
+        "seconds": 8.9
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08732339,
+          -0.00246181,
+          1919.48994635
+        ],
+        [
+          -0.00160878,
+          0.10857105,
+          9917.78980792
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.4469042,
+          -0.25955406,
+          24546.42014562
+        ],
+        [
+          -0.16961744,
+          9.20671223,
+          -90984.65774538
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.533,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 32.3,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 31.3,
+        "expected_tmc_px": [
+          3.337,
+          -4.609
+        ],
+        "recovered_tmc_px": [
+          3.628,
+          -4.587
+        ],
+        "error_px": 0.292,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 12748.7,
+        "tmc_col": 1634.1,
+        "system_offset_m": {
+          "east": 1190,
+          "north": -5037
+        },
+        "tc_measured_offset_m": {
+          "east": 648,
+          "north": -4721
+        },
+        "disagreement_m": 627,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.5,
+          "failed": "ambiguous match: z 5.5 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.1
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M122054682LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.4833,
+      "lon": 23.4083,
+      "block_factor": 11,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -0.95996,
+          -0.02705
+        ],
+        [
+          -0.0177,
+          1.19428
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1183,
+        1626
+      ],
+      "region": {
+        "row0": 11023,
+        "col0": 0,
+        "rows": 3345,
+        "cols": 3049,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          531,
+          428
+        ],
+        "z": 30.1,
+        "peak_xy": [
+          1403,
+          2411
+        ],
+        "search_px": [
+          2622,
+          2815
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 9.4
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08726953,
+          -0.00245867,
+          1923.46406079
+        ],
+        [
+          -0.00160888,
+          0.10857105,
+          9923.56270728
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.45397115,
+          -0.25938381,
+          24605.31335654
+        ],
+        [
+          -0.16973317,
+          9.20671467,
+          -91036.93466189
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.577,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 30.1,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 30.3,
+        "expected_tmc_px": [
+          3.335,
+          -4.609
+        ],
+        "recovered_tmc_px": [
+          3.408,
+          -4.739
+        ],
+        "error_px": 0.149,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13699.5,
+        "tmc_col": 1616.9,
+        "system_offset_m": {
+          "east": 1212,
+          "north": -5051
+        },
+        "tc_measured_offset_m": {
+          "east": 651,
+          "north": -4730
+        },
+        "disagreement_m": 646,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 6.3
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M122054682LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.6417,
+      "lon": 23.4067,
+      "block_factor": 11,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          -0.95938,
+          -0.02701
+        ],
+        [
+          -0.0177,
+          1.19428
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1162,
+        1605
+      ],
+      "region": {
+        "row0": 11971,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 3028,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          533,
+          429
+        ],
+        "z": 29.3,
+        "peak_xy": [
+          1384,
+          2412
+        ],
+        "search_px": [
+          2600,
+          2812
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 8.1
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.08721641,
+          -0.00245555,
+          1926.16992873
+        ],
+        [
+          -0.00160901,
+          0.10857105,
+          9928.51211122
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -11.46095031,
+          -0.25921179,
+          24649.32526224
+        ],
+        [
+          -0.16985035,
+          9.20671706,
+          -91081.84119268
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.499,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 29.3,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 29.5,
+        "expected_tmc_px": [
+          3.333,
+          -4.609
+        ],
+        "recovered_tmc_px": [
+          3.354,
+          -4.692
+        ],
+        "error_px": 0.086,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 14649.5,
+        "tmc_col": 1598.5,
+        "system_offset_m": {
+          "east": 1228,
+          "north": -5062
+        },
+        "tc_measured_offset_m": {
+          "east": 655,
+          "north": -4740
+        },
+        "disagreement_m": 658,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.7,
+          "failed": "ambiguous match: z 5.7 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.5,
+          "failed": "ambiguous match: z 5.5 below cascade.min_z"
+        }
+      },
+      "flipped_prior": {
+        "locked": false,
+        "z": 5.2
+      },
+      "group": "opposed_sun"
+    },
+    {
+      "nac": "M175124932LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 0.95,
+      "lon": 23.5117,
+      "block_factor": 20,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.97247,
+          0.04914
+        ],
+        [
+          0.01807,
+          -2.2109
+        ]
+      ],
+      "predicted_tmc_cols": [
+        548,
+        806
+      ],
+      "region": {
+        "row0": 13798,
+        "col0": 0,
+        "rows": 3344,
+        "cols": 2229,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          539,
+          234
+        ],
+        "z": 34.7,
+        "peak_xy": [
+          701,
+          2418
+        ],
+        "search_px": [
+          1996,
+          2806
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 5.6
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.04862327,
+          0.00245723,
+          673.01179576
+        ],
+        [
+          0.00090343,
+          -0.1105448,
+          17445.13934349
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          20.55779271,
+          0.4569669,
+          -21807.48828526
+        ],
+        [
+          0.16800908,
+          -9.04237162,
+          157632.3607884
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.56,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 34.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 36.2,
+        "expected_tmc_px": [
+          -1.905,
+          4.72
+        ],
+        "recovered_tmc_px": [
+          -2.034,
+          4.765
+        ],
+        "error_px": 0.137,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 16485.2,
+        "tmc_col": 817.5,
+        "system_offset_m": {
+          "east": 860,
+          "north": -5119
+        },
+        "tc_measured_offset_m": {
+          "east": 661,
+          "north": -4762
+        },
+        "disagreement_m": 409,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 6.8,
+          "failed": "ambiguous match: z 6.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.6,
+          "failed": "ambiguous match: z 4.6 below cascade.min_z"
+        }
+      },
+      "group": "secondary_same_sun_12x"
+    },
+    {
+      "nac": "M175124932LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.79,
+      "lon": 23.5133,
+      "block_factor": 20,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.97305,
+          0.04921
+        ],
+        [
+          0.01807,
+          -2.2109
+        ]
+      ],
+      "predicted_tmc_cols": [
+        569,
+        827
+      ],
+      "region": {
+        "row0": 12840,
+        "col0": 0,
+        "rows": 3345,
+        "cols": 2250,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          539,
+          234
+        ],
+        "z": 28.0,
+        "peak_xy": [
+          724,
+          2410
+        ],
+        "search_px": [
+          2017,
+          2807
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 5.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.04865243,
+          0.00246039,
+          675.00651492
+        ],
+        [
+          0.00090333,
+          -0.1105448,
+          17440.58027439
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          20.5454664,
+          0.45727984,
+          -21843.54937454
+        ],
+        [
+          0.16788946,
+          -9.04236935,
+          157590.84196331
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.348,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 28.0,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 27.7,
+        "expected_tmc_px": [
+          -1.906,
+          4.72
+        ],
+        "recovered_tmc_px": [
+          -2.059,
+          4.719
+        ],
+        "error_px": 0.153,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15518.5,
+        "tmc_col": 841.0,
+        "system_offset_m": {
+          "east": 869,
+          "north": -5074
+        },
+        "tc_measured_offset_m": {
+          "east": 657,
+          "north": -4748
+        },
+        "disagreement_m": 388,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.7,
+          "failed": "ambiguous match: z 5.7 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        }
+      },
+      "group": "secondary_same_sun_12x"
+    },
+    {
+      "nac": "M175124932LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.63,
+      "lon": 23.515,
+      "block_factor": 20,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.97364,
+          0.04927
+        ],
+        [
+          0.01806,
+          -2.2109
+        ]
+      ],
+      "predicted_tmc_cols": [
+        590,
+        848
+      ],
+      "region": {
+        "row0": 11882,
+        "col0": 0,
+        "rows": 3345,
+        "cols": 2272,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          539,
+          234
+        ],
+        "z": 28.9,
+        "peak_xy": [
+          739,
+          2401
+        ],
+        "search_px": [
+          2039,
+          2807
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 5.6
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.04868201,
+          0.00246356,
+          669.29282135
+        ],
+        [
+          0.00090324,
+          -0.1105448,
+          17436.17698579
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          20.53297886,
+          0.45758961,
+          -21721.18869618
+        ],
+        [
+          0.16777128,
+          -9.04236703,
+          157552.02379618
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.515,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 28.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 28.4,
+        "expected_tmc_px": [
+          -1.907,
+          4.72
+        ],
+        "recovered_tmc_px": [
+          -2.217,
+          4.744
+        ],
+        "error_px": 0.311,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 14551.9,
+        "tmc_col": 856.9,
+        "system_offset_m": {
+          "east": 840,
+          "north": -5030
+        },
+        "tc_measured_offset_m": {
+          "east": 654,
+          "north": -4739
+        },
+        "disagreement_m": 346,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.6,
+          "failed": "ambiguous match: z 5.6 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_same_sun_12x"
+    },
+    {
+      "nac": "M175124932LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.47,
+      "lon": 23.5167,
+      "block_factor": 20,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.97424,
+          0.04933
+        ],
+        [
+          0.01806,
+          -2.2109
+        ]
+      ],
+      "predicted_tmc_cols": [
+        611,
+        870
+      ],
+      "region": {
+        "row0": 10924,
+        "col0": 0,
+        "rows": 3345,
+        "cols": 2293,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          539,
+          234
+        ],
+        "z": 32.7,
+        "peak_xy": [
+          772,
+          2391
+        ],
+        "search_px": [
+          2060,
+          2807
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 5.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.04871201,
+          0.00246673,
+          679.24869733
+        ],
+        [
+          0.00090317,
+          -0.11054481,
+          17430.63616669
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          20.5203304,
+          0.4578962,
+          -21919.82979288
+        ],
+        [
+          0.16765453,
+          -9.04236467,
+          157500.28956438
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.116,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 32.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 33.7,
+        "expected_tmc_px": [
+          -1.908,
+          4.72
+        ],
+        "recovered_tmc_px": [
+          -2.059,
+          4.717
+        ],
+        "error_px": 0.151,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13584.2,
+        "tmc_col": 888.5,
+        "system_offset_m": {
+          "east": 889,
+          "north": -4978
+        },
+        "tc_measured_offset_m": {
+          "east": 651,
+          "north": -4729
+        },
+        "disagreement_m": 344,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.3,
+          "failed": "ambiguous match: z 5.3 below cascade.min_z"
+        }
+      },
+      "group": "secondary_same_sun_12x"
+    },
+    {
+      "nac": "M175124932LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.31,
+      "lon": 23.5183,
+      "block_factor": 20,
+      "mirrored": true,
+      "prior_2x2": [
+        [
+          0.97485,
+          0.0494
+        ],
+        [
+          0.01806,
+          -2.2109
+        ]
+      ],
+      "predicted_tmc_cols": [
+        633,
+        891
+      ],
+      "region": {
+        "row0": 9966,
+        "col0": 0,
+        "rows": 3345,
+        "cols": 2315,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          537,
+          233
+        ],
+        "z": 34.0,
+        "peak_xy": [
+          796,
+          2384
+        ],
+        "search_px": [
+          2083,
+          2809
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 5.7
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          0.04874242,
+          0.0024699,
+          681.5962889
+        ],
+        [
+          0.00090311,
+          -0.11054481,
+          17426.49243492
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          20.50752133,
+          0.45819962,
+          -21962.66265161
+        ],
+        [
+          0.16753921,
+          -9.04236227,
+          157462.46360827
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.372,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 34.0,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 34.2,
+        "expected_tmc_px": [
+          -1.91,
+          4.72
+        ],
+        "recovered_tmc_px": [
+          -2.09,
+          4.734
+        ],
+        "error_px": 0.181,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 12617.9,
+        "tmc_col": 912.5,
+        "system_offset_m": {
+          "east": 900,
+          "north": -4935
+        },
+        "tc_measured_offset_m": {
+          "east": 648,
+          "north": -4720
+        },
+        "disagreement_m": 332,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.4,
+          "failed": "ambiguous match: z 5.4 below cascade.min_z"
+        }
+      },
+      "group": "secondary_same_sun_12x"
+    },
+    {
+      "nac": "M106719774LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 1.6817,
+      "lon": 23.4234,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.03409,
+          0.03758
+        ],
+        [
+          -0.03444,
+          -0.99451
+        ]
+      ],
+      "predicted_tmc_cols": [
+        408,
+        1740
+      ],
+      "region": {
+        "row0": 17793,
+        "col0": 0,
+        "rows": 4142,
+        "cols": 3163,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1210,
+          1264
+        ],
+        "z": 51.1,
+        "peak_xy": [
+          676,
+          2451
+        ],
+        "search_px": [
+          1900,
+          2933
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 14.7
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.25852307,
+          0.00939592,
+          1881.12398643
+        ],
+        [
+          -0.00861043,
+          -0.24862669,
+          23034.91641573
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.86326412,
+          -0.14599764,
+          10630.32229351
+        ],
+        [
+          0.1337924,
+          -4.0170381,
+          92280.45670069
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.23,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 51.1,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 49.7,
+        "expected_tmc_px": [
+          9.161,
+          11.01
+        ],
+        "recovered_tmc_px": [
+          9.286,
+          11.085
+        ],
+        "error_px": 0.146,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 20849.1,
+        "tmc_col": 1308.3,
+        "system_offset_m": {
+          "east": 1323,
+          "north": -4952
+        },
+        "tc_measured_offset_m": {
+          "east": 696,
+          "north": -4822
+        },
+        "disagreement_m": 640,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M106719774LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 1.3183,
+      "lon": 23.4217,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.03542,
+          0.03769
+        ],
+        [
+          -0.03444,
+          -0.99451
+        ]
+      ],
+      "predicted_tmc_cols": [
+        489,
+        1823
+      ],
+      "region": {
+        "row0": 15619,
+        "col0": 0,
+        "rows": 4142,
+        "cols": 3246,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1210,
+          1266
+        ],
+        "z": 48.4,
+        "peak_xy": [
+          749,
+          2449
+        ],
+        "search_px": [
+          1981,
+          2933
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 17.1
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.25885575,
+          0.00942328,
+          1873.46559045
+        ],
+        [
+          -0.00860913,
+          -0.24862671,
+          23023.15181205
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.85829195,
+          -0.14623435,
+          10595.15273093
+        ],
+        [
+          0.13359998,
+          -4.01703038,
+          92234.4052273
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.192,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 48.3,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 47.5,
+        "expected_tmc_px": [
+          9.172,
+          11.009
+        ],
+        "recovered_tmc_px": [
+          9.16,
+          10.961
+        ],
+        "error_px": 0.05,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 18673.3,
+        "tmc_col": 1382.1,
+        "system_offset_m": {
+          "east": 1279,
+          "north": -4945
+        },
+        "tc_measured_offset_m": {
+          "east": 673,
+          "north": -4804
+        },
+        "disagreement_m": 623,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M106719774LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.955,
+      "lon": 23.42,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.0368,
+          0.0378
+        ],
+        [
+          -0.03443,
+          -0.99451
+        ]
+      ],
+      "predicted_tmc_cols": [
+        571,
+        1907
+      ],
+      "region": {
+        "row0": 13445,
+        "col0": 0,
+        "rows": 4142,
+        "cols": 3330,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1210,
+          1268
+        ],
+        "z": 59.6,
+        "peak_xy": [
+          820,
+          2444
+        ],
+        "search_px": [
+          2063,
+          2933
+        ],
+        "subpixel_ok": "9/11",
+        "seconds": 19.8
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.25919984,
+          0.00945076,
+          1863.55397664
+        ],
+        [
+          -0.00860808,
+          -0.24862673,
+          23007.78505824
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.85316298,
+          -0.14646585,
+          10550.43195478
+        ],
+        [
+          0.13340609,
+          -4.01702268,
+          92174.18505206
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.649,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 59.6,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 58.1,
+        "expected_tmc_px": [
+          9.184,
+          11.009
+        ],
+        "recovered_tmc_px": [
+          9.187,
+          10.983
+        ],
+        "error_px": 0.026,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 16493.8,
+        "tmc_col": 1454.0,
+        "system_offset_m": {
+          "east": 1225,
+          "north": -4919
+        },
+        "tc_measured_offset_m": {
+          "east": 662,
+          "north": -4762
+        },
+        "disagreement_m": 585,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M106719774LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.5916,
+      "lon": 23.4184,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.03822,
+          0.03791
+        ],
+        [
+          -0.03443,
+          -0.99451
+        ]
+      ],
+      "predicted_tmc_cols": [
+        653,
+        1990
+      ],
+      "region": {
+        "row0": 11271,
+        "col0": 0,
+        "rows": 4142,
+        "cols": 3414,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1208,
+          1268
+        ],
+        "z": 64.2,
+        "peak_xy": [
+          893,
+          2438
+        ],
+        "search_px": [
+          2147,
+          2935
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 17.8
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.25955537,
+          0.00947836,
+          1853.93651465
+        ],
+        [
+          -0.00860728,
+          -0.24862675,
+          22990.79891205
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.84787787,
+          -0.14669213,
+          10506.29053884
+        ],
+        [
+          0.13321074,
+          -4.01701502,
+          92107.42032706
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 1.1,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 64.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 63.6,
+        "expected_tmc_px": [
+          9.196,
+          11.009
+        ],
+        "recovered_tmc_px": [
+          9.053,
+          11.017
+        ],
+        "error_px": 0.143,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 14312.8,
+        "tmc_col": 1526.7,
+        "system_offset_m": {
+          "east": 1173,
+          "north": -4885
+        },
+        "tc_measured_offset_m": {
+          "east": 653,
+          "north": -4736
+        },
+        "disagreement_m": 540,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M106719774LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.2283,
+      "lon": 23.4167,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.03969,
+          0.03802
+        ],
+        [
+          -0.03443,
+          -0.99451
+        ]
+      ],
+      "predicted_tmc_cols": [
+        735,
+        2074
+      ],
+      "region": {
+        "row0": 9097,
+        "col0": 0,
+        "rows": 4142,
+        "cols": 3498,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1208,
+          1270
+        ],
+        "z": 66.5,
+        "peak_xy": [
+          964,
+          2432
+        ],
+        "search_px": [
+          2229,
+          2935
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 14.7
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.25992241,
+          0.00950609,
+          1843.09815767
+        ],
+        [
+          -0.00860673,
+          -0.24862677,
+          22974.1940784
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.8424373,
+          -0.14691316,
+          10457.20063425
+        ],
+        [
+          0.13301395,
+          -4.01700739,
+          92042.34957993
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.625,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 66.5,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 67.5,
+        "expected_tmc_px": [
+          9.208,
+          11.009
+        ],
+        "recovered_tmc_px": [
+          9.064,
+          10.733
+        ],
+        "error_px": 0.312,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 12132.2,
+        "tmc_col": 1598.7,
+        "system_offset_m": {
+          "east": 1116,
+          "north": -4854
+        },
+        "tc_measured_offset_m": {
+          "east": 646,
+          "north": -4715
+        },
+        "disagreement_m": 490,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.7,
+          "failed": "ambiguous match: z 4.7 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M104362199LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 1.5167,
+      "lon": 23.3575,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.95374,
+          0.03838
+        ],
+        [
+          -0.03426,
+          -0.93917
+        ]
+      ],
+      "predicted_tmc_cols": [
+        877,
+        2141
+      ],
+      "region": {
+        "row0": 16883,
+        "col0": 0,
+        "rows": 4011,
+        "cols": 3564,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1138,
+          1161
+        ],
+        "z": 48.9,
+        "peak_xy": [
+          1145,
+          2427
+        ],
+        "search_px": [
+          2404,
+          2874
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 12.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.23843521,
+          0.00959585,
+          2245.45841682
+        ],
+        [
+          -0.00856426,
+          -0.23479174,
+          21943.70265276
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.18786366,
+          -0.17115643,
+          13159.47948002
+        ],
+        [
+          0.15275649,
+          -4.25285053,
+          92980.27905831
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.383,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 48.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 48.5,
+        "expected_tmc_px": [
+          8.409,
+          10.413
+        ],
+        "recovered_tmc_px": [
+          8.472,
+          10.498
+        ],
+        "error_px": 0.105,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 19878.4,
+        "tmc_col": 1725.3,
+        "system_offset_m": {
+          "east": 1230,
+          "north": -4981
+        },
+        "tc_measured_offset_m": {
+          "east": 685,
+          "north": -4814
+        },
+        "disagreement_m": 569,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M104362199LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 1.1733,
+      "lon": 23.355,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.95492,
+          0.03849
+        ],
+        [
+          -0.03425,
+          -0.93917
+        ]
+      ],
+      "predicted_tmc_cols": [
+        965,
+        2220
+      ],
+      "region": {
+        "row0": 14829,
+        "col0": 0,
+        "rows": 4010,
+        "cols": 3644,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1138,
+          1163
+        ],
+        "z": 52.7,
+        "peak_xy": [
+          1223,
+          2423
+        ],
+        "search_px": [
+          2482,
+          2873
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 12.6
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.23872912,
+          0.00962227,
+          2241.58210349
+        ],
+        [
+          -0.00856331,
+          -0.23479176,
+          21929.98465551
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.1826993,
+          -0.17141598,
+          13135.01374132
+        ],
+        [
+          0.15255113,
+          -4.25284146,
+          92922.79205624
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.552,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 52.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 51.9,
+        "expected_tmc_px": [
+          8.419,
+          10.413
+        ],
+        "recovered_tmc_px": [
+          8.527,
+          10.482
+        ],
+        "error_px": 0.128,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 17821.0,
+        "tmc_col": 1804.6,
+        "system_offset_m": {
+          "east": 1205,
+          "north": -4966
+        },
+        "tc_measured_offset_m": {
+          "east": 668,
+          "north": -4787
+        },
+        "disagreement_m": 566,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.6,
+          "failed": "ambiguous match: z 4.6 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M104362199LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.83,
+      "lon": 23.3525,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.95613,
+          0.0386
+        ],
+        [
+          -0.03425,
+          -0.93917
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1053,
+        2300
+      ],
+      "region": {
+        "row0": 12775,
+        "col0": 0,
+        "rows": 4010,
+        "cols": 3724,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1138,
+          1165
+        ],
+        "z": 57.1,
+        "peak_xy": [
+          1300,
+          2416
+        ],
+        "search_px": [
+          2560,
+          2873
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 11.6
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.23903242,
+          0.0096488,
+          2235.75394129
+        ],
+        [
+          -0.00856254,
+          -0.23479177,
+          21912.29003038
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.17738335,
+          -0.17167009,
+          13101.28598518
+        ],
+        [
+          0.15234358,
+          -4.25283245,
+          92848.69524939
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.632,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 57.0,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 56.5,
+        "expected_tmc_px": [
+          8.429,
+          10.413
+        ],
+        "recovered_tmc_px": [
+          8.653,
+          10.942
+        ],
+        "error_px": 0.574,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15759.7,
+        "tmc_col": 1882.5,
+        "system_offset_m": {
+          "east": 1171,
+          "north": -4931
+        },
+        "tc_measured_offset_m": {
+          "east": 658,
+          "north": -4751
+        },
+        "disagreement_m": 543,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.7,
+          "failed": "ambiguous match: z 4.7 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M104362199LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.4866,
+      "lon": 23.35,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.95738,
+          0.0387
+        ],
+        [
+          -0.03425,
+          -0.93917
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1142,
+        2381
+      ],
+      "region": {
+        "row0": 10721,
+        "col0": 0,
+        "rows": 4009,
+        "cols": 3804,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1138,
+          1166
+        ],
+        "z": 70.0,
+        "peak_xy": [
+          1377,
+          2409
+        ],
+        "search_px": [
+          2639,
+          2872
+        ],
+        "subpixel_ok": "7/11",
+        "seconds": 10.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.23934517,
+          0.00967543,
+          2229.64340092
+        ],
+        [
+          -0.00856196,
+          -0.23479179,
+          21895.33937005
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.1719164,
+          -0.17191872,
+          13066.10453101
+        ],
+        [
+          0.15213385,
+          -4.25282349,
+          92777.80934202
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.63,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 69.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 70.4,
+        "expected_tmc_px": [
+          8.44,
+          10.413
+        ],
+        "recovered_tmc_px": [
+          8.789,
+          11.494
+        ],
+        "error_px": 1.136,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13699.1,
+        "tmc_col": 1960.5,
+        "system_offset_m": {
+          "east": 1137,
+          "north": -4900
+        },
+        "tc_measured_offset_m": {
+          "east": 651,
+          "north": -4730
+        },
+        "disagreement_m": 514,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 6.9,
+          "failed": "ambiguous match: z 6.9 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M104362199LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": 0.1433,
+      "lon": 23.3475,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.95867,
+          0.03881
+        ],
+        [
+          -0.03425,
+          -0.93917
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1231,
+        2461
+      ],
+      "region": {
+        "row0": 8667,
+        "col0": 0,
+        "rows": 4009,
+        "cols": 3885,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1138,
+          1168
+        ],
+        "z": 56.3,
+        "peak_xy": [
+          1454,
+          2402
+        ],
+        "search_px": [
+          2718,
+          2872
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 15.2
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.23966739,
+          0.00970218,
+          2222.56645003
+        ],
+        [
+          -0.00856156,
+          -0.23479181,
+          21878.18248022
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.16629906,
+          -0.17216186,
+          13026.46499494
+        ],
+        [
+          0.15192194,
+          -4.25281459,
+          92706.19700052
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.496,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 56.3,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 55.9,
+        "expected_tmc_px": [
+          8.45,
+          10.413
+        ],
+        "recovered_tmc_px": [
+          8.638,
+          10.596
+        ],
+        "error_px": 0.262,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 11638.4,
+        "tmc_col": 2038.0,
+        "system_offset_m": {
+          "east": 1099,
+          "north": -4868
+        },
+        "tc_measured_offset_m": {
+          "east": 645,
+          "north": -4710
+        },
+        "disagreement_m": 480,
+        "probable_false_lock": false
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102000149LC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 1.1542,
+      "lon": 23.2942,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.97133,
+          0.03379
+        ],
+        [
+          -0.03025,
+          -0.93143
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1310,
+        2630
+      ],
+      "region": {
+        "row0": 14705,
+        "col0": 0,
+        "rows": 4053,
+        "cols": 4000,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1133,
+          1188
+        ],
+        "z": 42.6,
+        "peak_xy": [
+          1608,
+          2406
+        ],
+        "search_px": [
+          2813,
+          2921
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 13.7
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.24283279,
+          0.00844633,
+          2742.88975252
+        ],
+        [
+          -0.00756344,
+          -0.23285744,
+          19723.57840558
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.11341272,
+          -0.14920395,
+          14225.47332213
+        ],
+        [
+          0.13360771,
+          -4.28962673,
+          84240.31784642
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.397,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 42.6,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 42.2,
+        "expected_tmc_px": [
+          8.622,
+          10.293
+        ],
+        "recovered_tmc_px": [
+          8.668,
+          10.294
+        ],
+        "error_px": 0.046,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 17677.6,
+        "tmc_col": 2201.6,
+        "system_offset_m": {
+          "east": 1298,
+          "north": -4763
+        },
+        "tc_measured_offset_m": {
+          "east": 668,
+          "north": -4785
+        },
+        "disagreement_m": 630,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102000149LC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.8133,
+      "lon": 23.2934,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.97256,
+          0.03388
+        ],
+        [
+          -0.03025,
+          -0.93143
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1388,
+        2700
+      ],
+      "region": {
+        "row0": 12671,
+        "col0": 0,
+        "rows": 4043,
+        "cols": 4000,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1133,
+          1190
+        ],
+        "z": 39.7,
+        "peak_xy": [
+          1675,
+          2394
+        ],
+        "search_px": [
+          2811,
+          2911
+        ],
+        "subpixel_ok": "7/11",
+        "seconds": 12.3
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.24313971,
+          0.00846945,
+          2738.13457615
+        ],
+        [
+          -0.00756256,
+          -0.23285746,
+          19704.2293601
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.10821406,
+          -0.14942328,
+          14193.11350808
+        ],
+        [
+          0.13342328,
+          -4.28961988,
+          84158.32305407
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.625,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 39.7,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 38.4,
+        "expected_tmc_px": [
+          8.632,
+          10.293
+        ],
+        "recovered_tmc_px": [
+          8.677,
+          10.543
+        ],
+        "error_px": 0.254,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15631.5,
+        "tmc_col": 2269.9,
+        "system_offset_m": {
+          "east": 1267,
+          "north": -4731
+        },
+        "tc_measured_offset_m": {
+          "east": 658,
+          "north": -4749
+        },
+        "disagreement_m": 610,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102000149LC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.4725,
+      "lon": 23.2925,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.97382,
+          0.03397
+        ],
+        [
+          -0.03025,
+          -0.93143
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1466,
+        2770
+      ],
+      "region": {
+        "row0": 10636,
+        "col0": 43,
+        "rows": 4033,
+        "cols": 3957,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1133,
+          1191
+        ],
+        "z": 49.6,
+        "peak_xy": [
+          1703,
+          2391
+        ],
+        "search_px": [
+          2767,
+          2901
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 14.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.24345609,
+          0.00849267,
+          2735.73837829
+        ],
+        [
+          -0.0075619,
+          -0.23285747,
+          19692.4807624
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.10286907,
+          -0.14963792,
+          14171.11816269
+        ],
+        [
+          0.13323812,
+          -4.28961304,
+          84108.61756615
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.733,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 49.6,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 49.7,
+        "expected_tmc_px": [
+          8.643,
+          10.293
+        ],
+        "recovered_tmc_px": [
+          8.372,
+          9.676
+        ],
+        "error_px": 0.673,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 13593.0,
+        "tmc_col": 2341.1,
+        "system_offset_m": {
+          "east": 1251,
+          "north": -4736
+        },
+        "tc_measured_offset_m": {
+          "east": 651,
+          "north": -4729
+        },
+        "disagreement_m": 600,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.5,
+          "failed": "ambiguous match: z 5.5 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102000149LC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.1316,
+      "lon": 23.2917,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.97513,
+          0.03406
+        ],
+        [
+          -0.03025,
+          -0.93143
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1545,
+        2840
+      ],
+      "region": {
+        "row0": 8602,
+        "col0": 122,
+        "rows": 4022,
+        "cols": 3878,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1133,
+          1193
+        ],
+        "z": 50.9,
+        "peak_xy": [
+          1693,
+          2383
+        ],
+        "search_px": [
+          2686,
+          2890
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 12.0
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.24378196,
+          0.00851598,
+          2732.26414124
+        ],
+        [
+          -0.00756147,
+          -0.23285749,
+          19677.43416009
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.09737835,
+          -0.14984784,
+          14143.74092044
+        ],
+        [
+          0.13305224,
+          -4.2896062,
+          84044.90975858
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.569,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 50.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 49.9,
+        "expected_tmc_px": [
+          8.654,
+          10.293
+        ],
+        "recovered_tmc_px": [
+          8.638,
+          10.29
+        ],
+        "error_px": 0.016,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 11551.1,
+        "tmc_col": 2411.5,
+        "system_offset_m": {
+          "east": 1229,
+          "north": -4725
+        },
+        "tc_measured_offset_m": {
+          "east": 644,
+          "north": -4709
+        },
+        "disagreement_m": 585,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.4,
+          "failed": "ambiguous match: z 5.4 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.2,
+          "failed": "ambiguous match: z 5.2 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102000149LC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": -0.2092,
+      "lon": 23.2909,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -0.97647,
+          0.03416
+        ],
+        [
+          -0.03025,
+          -0.93143
+        ]
+      ],
+      "predicted_tmc_cols": [
+        1624,
+        2911
+      ],
+      "region": {
+        "row0": 6567,
+        "col0": 200,
+        "rows": 4013,
+        "cols": 3800,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1133,
+          1195
+        ],
+        "z": 49.1,
+        "peak_xy": [
+          1681,
+          2370
+        ],
+        "search_px": [
+          2606,
+          2881
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 10.8
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.24411737,
+          0.00853939,
+          2724.82010448
+        ],
+        [
+          -0.00756127,
+          -0.23285751,
+          19656.60846061
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -4.09174247,
+          -0.15005303,
+          14098.79578868
+        ],
+        [
+          0.13286563,
+          -4.28959937,
+          83956.94040541
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.383,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 49.1,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 48.5,
+        "expected_tmc_px": [
+          8.665,
+          10.293
+        ],
+        "recovered_tmc_px": [
+          8.735,
+          10.453
+        ],
+        "error_px": 0.176,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 9503.5,
+        "tmc_col": 2478.3,
+        "system_offset_m": {
+          "east": 1188,
+          "north": -4686
+        },
+        "tc_measured_offset_m": {
+          "east": 638,
+          "north": -4689
+        },
+        "disagreement_m": 550,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102014464RC",
+      "fraction": 0.1667,
+      "centre_line": 8704,
+      "valid_fraction": 0.9874,
+      "lat": 1.1883,
+      "lon": 23.49,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.04273,
+          0.05853
+        ],
+        [
+          -0.06025,
+          -0.92239
+        ]
+      ],
+      "predicted_tmc_cols": [
+        52,
+        1474
+      ],
+      "region": {
+        "row0": 14875,
+        "col0": 0,
+        "rows": 4050,
+        "cols": 2897,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1097,
+          1248
+        ],
+        "z": 21.3,
+        "peak_xy": [
+          116,
+          2405
+        ],
+        "search_px": [
+          1650,
+          2954
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 9.5
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.26068257,
+          0.01463286,
+          1272.5510608
+        ],
+        [
+          -0.01506212,
+          -0.23059739,
+          19874.16232364
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.8220696,
+          -0.24253452,
+          9683.94923213
+        ],
+        [
+          0.24964929,
+          -4.32072073,
+          85553.01363863
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.442,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 21.3,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 21.1,
+        "expected_tmc_px": [
+          9.016,
+          10.473
+        ],
+        "recovered_tmc_px": [
+          9.083,
+          10.212
+        ],
+        "error_px": 0.269,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 17828.9,
+        "tmc_col": 739.9,
+        "system_offset_m": {
+          "east": 39,
+          "north": -4706
+        },
+        "tc_measured_offset_m": {
+          "east": 668,
+          "north": -4788
+        },
+        "disagreement_m": 634,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102014464RC",
+      "fraction": 0.3333,
+      "centre_line": 17408,
+      "valid_fraction": 0.9874,
+      "lat": 0.8517,
+      "lon": 23.48,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.04402,
+          0.05869
+        ],
+        [
+          -0.06025,
+          -0.92239
+        ]
+      ],
+      "predicted_tmc_cols": [
+        179,
+        1603
+      ],
+      "region": {
+        "row0": 12862,
+        "col0": 0,
+        "rows": 4050,
+        "cols": 3026,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1098,
+          1250
+        ],
+        "z": 23.1,
+        "peak_xy": [
+          243,
+          2403
+        ],
+        "search_px": [
+          1777,
+          2953
+        ],
+        "subpixel_ok": "4/11",
+        "seconds": 9.8
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.26100575,
+          0.01467239,
+          1273.43265063
+        ],
+        [
+          -0.01506188,
+          -0.23059739,
+          19866.30663386
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.81731688,
+          -0.24288726,
+          9686.36870792
+        ],
+        [
+          0.24933493,
+          -4.32069783,
+          85518.79666963
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.538,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 23.1,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 23.2,
+        "expected_tmc_px": [
+          9.026,
+          10.473
+        ],
+        "recovered_tmc_px": [
+          8.881,
+          10.789
+        ],
+        "error_px": 0.348,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 15813.9,
+        "tmc_col": 868.0,
+        "system_offset_m": {
+          "east": 40,
+          "north": -4696
+        },
+        "tc_measured_offset_m": {
+          "east": 658,
+          "north": -4751
+        },
+        "disagreement_m": 620,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.0,
+          "failed": "ambiguous match: z 5.0 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.9,
+          "failed": "ambiguous match: z 4.9 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102014464RC",
+      "fraction": 0.5,
+      "centre_line": 26112,
+      "valid_fraction": 0.9874,
+      "lat": 0.515,
+      "lon": 23.47,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.04536,
+          0.05885
+        ],
+        [
+          -0.06025,
+          -0.92239
+        ]
+      ],
+      "predicted_tmc_cols": [
+        306,
+        1732
+      ],
+      "region": {
+        "row0": 10849,
+        "col0": 0,
+        "rows": 4050,
+        "cols": 3155,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1098,
+          1253
+        ],
+        "z": 20.8,
+        "peak_xy": [
+          372,
+          2399
+        ],
+        "search_px": [
+          1903,
+          2953
+        ],
+        "subpixel_ok": "1/11",
+        "failed": "only 1 of 11 sub-pixel estimates succeeded",
+        "seconds": 10.0
+      },
+      "locked": false,
+      "success": false,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 4.8,
+          "failed": "ambiguous match: z 4.8 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102014464RC",
+      "fraction": 0.6667,
+      "centre_line": 34816,
+      "valid_fraction": 0.9874,
+      "lat": 0.1783,
+      "lon": 23.46,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.04673,
+          0.05901
+        ],
+        [
+          -0.06025,
+          -0.92239
+        ]
+      ],
+      "predicted_tmc_cols": [
+        434,
+        1862
+      ],
+      "region": {
+        "row0": 8836,
+        "col0": 0,
+        "rows": 4050,
+        "cols": 3285,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1098,
+          1255
+        ],
+        "z": 22.2,
+        "peak_xy": [
+          503,
+          2391
+        ],
+        "search_px": [
+          2031,
+          2953
+        ],
+        "subpixel_ok": "6/11",
+        "seconds": 12.0
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.26168193,
+          0.01475193,
+          1279.18128675
+        ],
+        [
+          -0.0150614,
+          -0.23059743,
+          19842.54928351
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.80741422,
+          -0.24357038,
+          9703.43036993
+        ],
+        [
+          0.24868017,
+          -4.32065309,
+          85414.66489938
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.967,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 22.2,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 22.3,
+        "expected_tmc_px": [
+          9.048,
+          10.473
+        ],
+        "recovered_tmc_px": [
+          9.208,
+          9.982
+        ],
+        "error_px": 0.516,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 11775.9,
+        "tmc_col": 1130.2,
+        "system_offset_m": {
+          "east": 66,
+          "north": -4634
+        },
+        "tc_measured_offset_m": {
+          "east": 645,
+          "north": -4712
+        },
+        "disagreement_m": 584,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.3,
+          "failed": "ambiguous match: z 5.3 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    },
+    {
+      "nac": "M102014464RC",
+      "fraction": 0.8333,
+      "centre_line": 43520,
+      "valid_fraction": 0.9874,
+      "lat": -0.1584,
+      "lon": 23.45,
+      "block_factor": 4,
+      "mirrored": false,
+      "prior_2x2": [
+        [
+          -1.04814,
+          0.05917
+        ],
+        [
+          -0.06024,
+          -0.92239
+        ]
+      ],
+      "predicted_tmc_cols": [
+        562,
+        1992
+      ],
+      "region": {
+        "row0": 6823,
+        "col0": 0,
+        "rows": 4050,
+        "cols": 3415,
+        "valid_fraction": 1.0
+      },
+      "step": {
+        "template_px": [
+          1098,
+          1257
+        ],
+        "z": 23.9,
+        "peak_xy": [
+          633,
+          2385
+        ],
+        "search_px": [
+          2159,
+          2953
+        ],
+        "subpixel_ok": "8/11",
+        "seconds": 10.3
+      },
+      "locked": true,
+      "nac_to_tmc": [
+        [
+          -0.26203499,
+          0.01479194,
+          1280.94276855
+        ],
+        [
+          -0.01506116,
+          -0.23059745,
+          19831.21502716
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "tmc_to_nac": [
+        [
+          -3.80226532,
+          -0.24390071,
+          9707.33178777
+        ],
+        [
+          0.24833984,
+          -4.32063126,
+          85365.25849383
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "subpixel_spread_tmc_px": 0.672,
+      "known_shift_vacuous_integer_tmc": {
+        "shift": [
+          3,
+          4
+        ],
+        "z": 23.9,
+        "recovered": [
+          3.0,
+          4.0
+        ],
+        "error_px": 0.0,
+        "counts": false
+      },
+      "known_shift": {
+        "nac_shift_px": [
+          37,
+          43
+        ],
+        "z": 23.5,
+        "expected_tmc_px": [
+          9.059,
+          10.473
+        ],
+        "recovered_tmc_px": [
+          9.013,
+          10.561
+        ],
+        "error_px": 0.1,
+        "tolerance_px": 1.5,
+        "passed": true
+      },
+      "geolocation": {
+        "tmc_row": 9757.5,
+        "tmc_col": 1261.2,
+        "system_offset_m": {
+          "east": 76,
+          "north": -4606
+        },
+        "tc_measured_offset_m": {
+          "east": 639,
+          "north": -4692
+        },
+        "disagreement_m": 569,
+        "probable_false_lock": true
+      },
+      "success": true,
+      "null": {
+        "flat_grey": {
+          "locked": false,
+          "z": 5.1,
+          "failed": "ambiguous match: z 5.1 below cascade.min_z"
+        },
+        "noise": {
+          "locked": false,
+          "z": 5.7,
+          "failed": "ambiguous match: z 5.7 below cascade.min_z"
+        }
+      },
+      "group": "secondary_opposed_4x"
+    }
+  ]
+}
