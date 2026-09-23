@@ -98,20 +98,54 @@ def _drop_shadowed(pts_src, pts_ref, conf, src: ImagePlane, ref: ImagePlane):
 def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
           device: str | None = None, max_keypoints: int | None = None,
           ship_mode: bool | None = None, drop_shadowed: bool = True,
-          regime: str = "same_modal_normal", stage: str = "direct") -> MatchSet:
-    """Match two planes with a vismatch model, returning our MatchSet."""
+          regime: str = "same_modal_normal", stage: str = "direct",
+          precision: str = "fp32", tile_px: int | None = None,
+          tile_margin_px: int = 64) -> MatchSet:
+    """Match two planes with a vismatch model, returning our MatchSet.
+
+    precision  "fp32" (default, unchanged behaviour) or "fp16": the model runs
+               under CUDA autocast. Ignored off CUDA, and recorded on the result.
+    tile_px    None (default): one call on the whole pair. An int splits a
+               PRE-ALIGNED, equal-size pair into tiles no larger than this; see
+               matching/pair_tiling.py for what that assumes.
+    """
+    if precision not in ("fp32", "fp16"):
+        raise ValueError(f"precision must be 'fp32' or 'fp16', not {precision!r}")
     if model_name is None:
         model_name = config.load("regimes").get("default_matcher", "aliked-lightglue")
 
     # Gate first: never construct a restricted model, even to fail later.
     licence.assert_allowed(model_name, ship_mode=ship_mode)
 
+    if tile_px:
+        from . import pair_tiling
+
+        started = time.perf_counter()
+        ms = pair_tiling.match_tiled(
+            src, ref,
+            lambda s, r: match(s, r, model_name=model_name, device=device,
+                               max_keypoints=max_keypoints, ship_mode=ship_mode,
+                               drop_shadowed=drop_shadowed, regime=regime, stage=stage,
+                               precision=precision),
+            target=int(tile_px), margin=int(tile_margin_px))
+        ms.device = config.resolve_device(device)            # type: ignore[attr-defined]
+        ms.runtime_s = float(time.perf_counter() - started)  # type: ignore[attr-defined]
+        ms.precision = precision                             # type: ignore[attr-defined]
+        ms.provenance = compute.provenance(ms.device, stage="match")  # type: ignore[attr-defined]
+        return ms
+
     device = config.resolve_device(device)
     max_keypoints = int(max_keypoints or config.get("matching.max_num_keypoints", 2048))
     matcher = _load(model_name, device, max_keypoints)
 
     started = time.perf_counter()
-    out = matcher(to_vismatch_image(src), to_vismatch_image(ref))
+    if precision == "fp16" and str(device).startswith("cuda"):
+        import torch
+
+        with torch.autocast("cuda", dtype=torch.float16):
+            out = matcher(to_vismatch_image(src), to_vismatch_image(ref))
+    else:
+        out = matcher(to_vismatch_image(src), to_vismatch_image(ref))
     elapsed = time.perf_counter() - started
 
     src_pts = np.asarray(out.get("matched_kpts0"), np.float64).reshape(-1, 2)
@@ -132,6 +166,7 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
                   method=model_name, regime=regime, stage=stage)
     ms.device = device                                   # type: ignore[attr-defined]
     ms.runtime_s = float(elapsed)                        # type: ignore[attr-defined]
+    ms.precision = precision if str(device).startswith("cuda") else "fp32"  # type: ignore[attr-defined]
     ms.n_keypoints_src = int(len(out.get("all_kpts0", [])))   # type: ignore[attr-defined]
     ms.n_keypoints_ref = int(len(out.get("all_kpts1", [])))   # type: ignore[attr-defined]
     ms.n_dropped_shadowed = int(n_shadowed)              # type: ignore[attr-defined]

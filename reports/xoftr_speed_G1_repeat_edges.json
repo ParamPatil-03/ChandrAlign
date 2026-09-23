@@ -1,0 +1,1281 @@
+{
+  "source": "measured",
+  "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) <-> SELENE TC",
+  "prior": "TMC-2 SYSTEM corners only; refined geolocation used for stage-4 comparison only",
+  "match_options": {
+    "precision": "fp32",
+    "tile_px": 640,
+    "gate_reuse_base": true
+  },
+  "rows": [
+    {
+      "tmc_row": 1562,
+      "window_px": 1536,
+      "lat": -1.3782,
+      "coarse_z": 77.6,
+      "coarse_peak": 0.22,
+      "system_offset_px": [
+        71.0,
+        609.0
+      ],
+      "system_offset_m": {
+        "east": 525,
+        "north": -4509,
+        "total": 4539
+      },
+      "match_seconds": 13.8,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 16377,
+      "inliers": 9646,
+      "inlier_ratio": 0.589,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1966,
+        "share_of_inliers_near_edge": 0.1811,
+        "inlier_ratio_near_edge": 0.5425,
+        "inlier_ratio_interior": 0.6004,
+        "inlier_rmse_near_edge_px": 1.715,
+        "inlier_rmse_interior_px": 1.543
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (35 matches)",
+          "matches": 35,
+          "inliers": 6,
+          "inlier_ratio": 0.1714,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.00, 3.93), 0.07 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.003,
+            3.933
+          ],
+          "error_px": 0.067,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.052 px, inlier ratio 0.99",
+          "rmse_px": 0.0522,
+          "inlier_ratio": 0.9904,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.7,
+      "coverage": 0.984,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.575,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.966,
+        "along": 5.038
+      },
+      "fine_residual_shift_px": [
+        -3.09,
+        2.76
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.5753664419921778,
+          "rmse_m": 11.662692545685895,
+          "inlier_count": 9646,
+          "inlier_ratio": 0.5889967637540453,
+          "spatial_coverage": 0.984375,
+          "runtime_s": 13.8,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67086849,
+              -0.0213853,
+              10326.03106047
+            ],
+            [
+              0.01546465,
+              -0.68023224,
+              6767.34374193
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 554.5,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 18.6
+    },
+    {
+      "tmc_row": 3125,
+      "window_px": 1536,
+      "lat": -1.1173,
+      "coarse_z": 73.0,
+      "coarse_peak": 0.204,
+      "system_offset_px": [
+        74.0,
+        608.0
+      ],
+      "system_offset_m": {
+        "east": 548,
+        "north": -4501,
+        "total": 4534
+      },
+      "match_seconds": 1.2,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 16230,
+      "inliers": 7641,
+      "inlier_ratio": 0.4708,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1938,
+        "share_of_inliers_near_edge": 0.2671,
+        "inlier_ratio_near_edge": 0.6488,
+        "inlier_ratio_interior": 0.428,
+        "inlier_rmse_near_edge_px": 1.589,
+        "inlier_rmse_interior_px": 1.686
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (42 matches)",
+          "matches": 42,
+          "inliers": 7,
+          "inlier_ratio": 0.1667,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.00, 4.07), 0.07 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.0,
+            4.065
+          ],
+          "error_px": 0.065,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.048 px, inlier ratio 0.99",
+          "rmse_px": 0.0482,
+          "inlier_ratio": 0.9896,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.6,
+      "coverage": 0.891,
+      "scale_status": "consistent",
+      "tier": "MEDIUM",
+      "limiting_signal": "inlier_ratio",
+      "inlier_rmse_px": 1.661,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.969,
+        "along": 5.016
+      },
+      "fine_residual_shift_px": [
+        -3.53,
+        -0.07
+      ],
+      "registration_result": {
+        "confidence_tier": "MEDIUM",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.6608062238727794,
+          "rmse_m": 12.29521706866851,
+          "inlier_count": 7641,
+          "inlier_ratio": 0.4707948243992606,
+          "spatial_coverage": 0.890625,
+          "runtime_s": 1.2,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67133844,
+              -0.02079906,
+              10292.6349796
+            ],
+            [
+              0.00590801,
+              -0.67725483,
+              5704.66865465
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 543.7,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 5.8
+    },
+    {
+      "tmc_row": 4687,
+      "window_px": 1536,
+      "lat": -0.8565,
+      "coarse_z": 68.6,
+      "coarse_peak": 0.205,
+      "system_offset_px": [
+        84.0,
+        627.0
+      ],
+      "system_offset_m": {
+        "east": 622,
+        "north": -4642,
+        "total": 4683
+      },
+      "match_seconds": 1.3,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 16803,
+      "inliers": 8377,
+      "inlier_ratio": 0.4985,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1975,
+        "share_of_inliers_near_edge": 0.1746,
+        "inlier_ratio_near_edge": 0.4408,
+        "inlier_ratio_interior": 0.5128,
+        "inlier_rmse_near_edge_px": 1.57,
+        "inlier_rmse_interior_px": 1.473
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (69 matches)",
+          "matches": 69,
+          "inliers": 11,
+          "inlier_ratio": 0.1594,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (2.86, 4.48), 0.50 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            2.86,
+            4.475
+          ],
+          "error_px": 0.495,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.030 px, inlier ratio 0.99",
+          "rmse_px": 0.03,
+          "inlier_ratio": 0.9853,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.9,
+      "coverage": 0.844,
+      "scale_status": "consistent",
+      "tier": "MEDIUM",
+      "limiting_signal": "inlier_ratio",
+      "inlier_rmse_px": 1.49,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.976,
+        "along": 5.078
+      },
+      "fine_residual_shift_px": [
+        -13.17,
+        -18.85
+      ],
+      "registration_result": {
+        "confidence_tier": "MEDIUM",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.4900432954869007,
+          "rmse_m": 11.031031493249625,
+          "inlier_count": 8377,
+          "inlier_ratio": 0.49854192703683864,
+          "spatial_coverage": 0.84375,
+          "runtime_s": 1.3,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67224197,
+              -0.02228657,
+              10260.98018947
+            ],
+            [
+              0.00663208,
+              -0.68556905,
+              4648.76710866
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 494.9,
+      "status": "registered",
+      "tile": "N00",
+      "seconds": 6.3
+    },
+    {
+      "tmc_row": 16000,
+      "window_px": 1536,
+      "lat": 1.0321,
+      "coarse_z": 111.3,
+      "coarse_peak": 0.31,
+      "system_offset_px": [
+        89.0,
+        642.0
+      ],
+      "system_offset_m": {
+        "east": 659,
+        "north": -4753,
+        "total": 4798
+      },
+      "match_seconds": 1.2,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 12867,
+      "inliers": 12281,
+      "inlier_ratio": 0.9545,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1855,
+        "share_of_inliers_near_edge": 0.187,
+        "inlier_ratio_near_edge": 0.9623,
+        "inlier_ratio_interior": 0.9527,
+        "inlier_rmse_near_edge_px": 0.851,
+        "inlier_rmse_interior_px": 1.204
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (88 matches)",
+          "matches": 88,
+          "inliers": 6,
+          "inlier_ratio": 0.0682,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.00, 3.97), 0.03 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.005,
+            3.967
+          ],
+          "error_px": 0.033,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.045 px, inlier ratio 0.99",
+          "rmse_px": 0.0448,
+          "inlier_ratio": 0.9864,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.9,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.147,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.994,
+        "along": 5.036
+      },
+      "fine_residual_shift_px": [
+        -5.24,
+        0.41
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.1465272876887862,
+          "rmse_m": 8.487926932507216,
+          "inlier_count": 12281,
+          "inlier_ratio": 0.9544571384161032,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.2,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67449275,
+              -0.02148969,
+              10017.38213324
+            ],
+            [
+              0.01553783,
+              -0.67994767,
+              9213.08484438
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 315.4,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 6.9
+    },
+    {
+      "tmc_row": 18750,
+      "window_px": 1536,
+      "lat": 1.4911,
+      "coarse_z": 134.0,
+      "coarse_peak": 0.381,
+      "system_offset_px": [
+        91.0,
+        649.0
+      ],
+      "system_offset_m": {
+        "east": 673,
+        "north": -4805,
+        "total": 4852
+      },
+      "match_seconds": 1.3,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 12277,
+      "inliers": 12003,
+      "inlier_ratio": 0.9777,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1733,
+        "share_of_inliers_near_edge": 0.1707,
+        "inlier_ratio_near_edge": 0.9633,
+        "inlier_ratio_interior": 0.9807,
+        "inlier_rmse_near_edge_px": 0.764,
+        "inlier_rmse_interior_px": 0.801
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (48 matches)",
+          "matches": 48,
+          "inliers": 6,
+          "inlier_ratio": 0.125,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.02, 3.97), 0.04 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.019,
+            3.967
+          ],
+          "error_px": 0.038,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.033 px, inlier ratio 0.99",
+          "rmse_px": 0.0329,
+          "inlier_ratio": 0.9907,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.6,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.795,
+      "tmc_pixel_from_tc_m": {
+        "across": 5.0,
+        "along": 5.046
+      },
+      "fine_residual_shift_px": [
+        -3.74,
+        1.92
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 0.7949440635030129,
+          "rmse_m": 5.8850994641790635,
+          "inlier_count": 12003,
+          "inlier_ratio": 0.9776818440987212,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.3,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67533525,
+              -0.0213891,
+              9959.12189017
+            ],
+            [
+              0.0185553,
+              -0.68130034,
+              7338.73348862
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 262.2,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 6.5
+    },
+    {
+      "tmc_row": 21500,
+      "window_px": 1536,
+      "lat": 1.9502,
+      "coarse_z": 155.1,
+      "coarse_peak": 0.454,
+      "system_offset_px": [
+        95.0,
+        652.0
+      ],
+      "system_offset_m": {
+        "east": 703,
+        "north": -4827,
+        "total": 4878
+      },
+      "match_seconds": 1.3,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 14594,
+      "inliers": 14184,
+      "inlier_ratio": 0.9719,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.185,
+        "share_of_inliers_near_edge": 0.1799,
+        "inlier_ratio_near_edge": 0.9448,
+        "inlier_ratio_interior": 0.9781,
+        "inlier_rmse_near_edge_px": 0.898,
+        "inlier_rmse_interior_px": 1.028
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (72 matches)",
+          "matches": 72,
+          "inliers": 8,
+          "inlier_ratio": 0.1111,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.02, 3.96), 0.05 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.025,
+            3.956
+          ],
+          "error_px": 0.05,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.047 px, inlier ratio 0.99",
+          "rmse_px": 0.0475,
+          "inlier_ratio": 0.9927,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.8,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.006,
+      "tmc_pixel_from_tc_m": {
+        "across": 5.002,
+        "along": 5.064
+      },
+      "fine_residual_shift_px": [
+        -4.13,
+        -0.44
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.0059586150746558,
+          "rmse_m": 7.447274315722633,
+          "inlier_count": 14184,
+          "inlier_ratio": 0.9719062628477456,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.3,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67581588,
+              -0.02137885,
+              9900.55930906
+            ],
+            [
+              0.01828574,
+              -0.68368849,
+              5463.14755491
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 240.4,
+      "status": "registered",
+      "tile": "N03",
+      "seconds": 6.7
+    },
+    {
+      "tmc_row": 52000,
+      "window_px": 1536,
+      "lat": 7.0419,
+      "coarse_z": 186.7,
+      "coarse_peak": 0.565,
+      "system_offset_px": [
+        124.0,
+        636.0
+      ],
+      "system_offset_m": {
+        "east": 911,
+        "north": -4708,
+        "total": 4796
+      },
+      "match_seconds": 1.2,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 13065,
+      "inliers": 12841,
+      "inlier_ratio": 0.9829,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1889,
+        "share_of_inliers_near_edge": 0.1859,
+        "inlier_ratio_near_edge": 0.9672,
+        "inlier_ratio_interior": 0.9865,
+        "inlier_rmse_near_edge_px": 0.751,
+        "inlier_rmse_interior_px": 0.731
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (50 matches)",
+          "matches": 50,
+          "inliers": 6,
+          "inlier_ratio": 0.12,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.00, 3.94), 0.06 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.004,
+            3.942
+          ],
+          "error_px": 0.058,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.039 px, inlier ratio 0.99",
+          "rmse_px": 0.0392,
+          "inlier_ratio": 0.9927,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.8,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.735,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.986,
+        "along": 5.061
+      },
+      "fine_residual_shift_px": [
+        3.81,
+        -0.07
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 0.734932697653432,
+          "rmse_m": 5.440825617476285,
+          "inlier_count": 12841,
+          "inlier_ratio": 0.9828549559892843,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.2,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.6784315,
+              -0.02171131,
+              9244.50906629
+            ],
+            [
+              0.01828539,
+              -0.6832299,
+              9167.62892805
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 315.0,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 6.6
+    },
+    {
+      "tmc_row": 54750,
+      "window_px": 1536,
+      "lat": 7.501,
+      "coarse_z": 138.5,
+      "coarse_peak": 0.389,
+      "system_offset_px": [
+        126.0,
+        640.0
+      ],
+      "system_offset_m": {
+        "east": 925,
+        "north": -4738,
+        "total": 4827
+      },
+      "match_seconds": 1.2,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 13060,
+      "inliers": 12709,
+      "inlier_ratio": 0.9731,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1904,
+        "share_of_inliers_near_edge": 0.1851,
+        "inlier_ratio_near_edge": 0.9461,
+        "inlier_ratio_interior": 0.9795,
+        "inlier_rmse_near_edge_px": 1.513,
+        "inlier_rmse_interior_px": 1.27
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (36 matches)",
+          "matches": 36,
+          "inliers": 6,
+          "inlier_ratio": 0.1667,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (3.01, 4.01), 0.01 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            3.009,
+            4.007
+          ],
+          "error_px": 0.011,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.033 px, inlier ratio 0.99",
+          "rmse_px": 0.0329,
+          "inlier_ratio": 0.9912,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 4.1,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 1.318,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.985,
+        "along": 5.058
+      },
+      "fine_residual_shift_px": [
+        4.76,
+        -6.86
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 1.318023970591453,
+          "rmse_m": 9.75754461128009,
+          "inlier_count": 12709,
+          "inlier_ratio": 0.9731240428790199,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.2,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.67909884,
+              -0.0216388,
+              9185.46606595
+            ],
+            [
+              0.0125693,
+              -0.68288357,
+              7292.62234927
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 304.5,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 7.0
+    },
+    {
+      "tmc_row": 57500,
+      "window_px": 1536,
+      "lat": 7.9601,
+      "coarse_z": 140.2,
+      "coarse_peak": 0.391,
+      "system_offset_px": [
+        128.0,
+        641.0
+      ],
+      "system_offset_m": {
+        "east": 938,
+        "north": -4745,
+        "total": 4837
+      },
+      "match_seconds": 1.1,
+      "device": "cuda",
+      "matcher": "xoftr",
+      "matches": 11395,
+      "inliers": 11087,
+      "inlier_ratio": 0.973,
+      "tile_edges": {
+        "tiles": 4,
+        "margin_px": 64,
+        "share_of_matches_near_edge": 0.1887,
+        "share_of_inliers_near_edge": 0.1827,
+        "inlier_ratio_near_edge": 0.9423,
+        "inlier_ratio_interior": 0.9801,
+        "inlier_rmse_near_edge_px": 0.992,
+        "inlier_rmse_interior_px": 0.949
+      },
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gate_detail": {
+        "null_constant_grey": {
+          "passed": true,
+          "reason": "flat grey source: no transform accepted (0 matches)",
+          "matches": 0,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "estimator_accepted": false
+        },
+        "null_random_noise": {
+          "passed": true,
+          "reason": "random-noise source: no transform accepted (88 matches)",
+          "matches": 88,
+          "inliers": 8,
+          "inlier_ratio": 0.0909,
+          "estimator_accepted": false
+        },
+        "perturbation_sensitivity": {
+          "passed": true,
+          "reason": "recovered a 5 px move as (2.98, 4.02), 0.03 px off",
+          "shift": [
+            3,
+            4
+          ],
+          "recovered": [
+            2.977,
+            4.021
+          ],
+          "error_px": 0.031,
+          "tolerance_px": 1.5
+        },
+        "identity": {
+          "passed": true,
+          "reason": "RMSE 0.036 px, inlier ratio 0.99",
+          "rmse_px": 0.0357,
+          "inlier_ratio": 0.9916,
+          "max_rmse_px": 0.25,
+          "min_inlier_ratio": 0.9
+        },
+        "masks_independent": {
+          "passed": true,
+          "reason": "source and reference masks are separate arrays"
+        }
+      },
+      "gate_seconds": 3.8,
+      "coverage": 1.0,
+      "scale_status": "consistent",
+      "tier": "HIGH",
+      "limiting_signal": "inlier_count",
+      "inlier_rmse_px": 0.957,
+      "tmc_pixel_from_tc_m": {
+        "across": 4.988,
+        "along": 5.062
+      },
+      "fine_residual_shift_px": [
+        4.95,
+        -4.83
+      ],
+      "registration_result": {
+        "confidence_tier": "HIGH",
+        "gates": {
+          "null_constant_grey": true,
+          "null_random_noise": true,
+          "perturbation_sensitivity": true,
+          "identity": true,
+          "masks_independent": true
+        },
+        "failure_modes": [],
+        "metrics": {
+          "rmse_px": 0.9572173532739869,
+          "rmse_m": 7.086434871947806,
+          "inlier_count": 11087,
+          "inlier_ratio": 0.9729706011408512,
+          "spatial_coverage": 1.0,
+          "runtime_s": 1.1,
+          "source": "measured"
+        },
+        "model": {
+          "kind": "affine",
+          "matrix": [
+            [
+              -0.68015303,
+              -0.02177888,
+              9126.59156581
+            ],
+            [
+              0.01431326,
+              -0.68338844,
+              5413.40024649
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "vs_isro_refined_grid_m": 289.6,
+      "status": "registered",
+      "tile": "N09",
+      "seconds": 6.5
+    }
+  ]
+}

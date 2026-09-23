@@ -1,0 +1,135 @@
+{
+  "source": "measured",
+  "protocol": "docs/verify_default_protocol.md 3.B",
+  "budget_s": 180.0,
+  "committed_baseline_total_s": 948.3,
+  "variants": {
+    "V0_fp32_whole": {
+      "label": "control",
+      "match_options": {
+        "precision": "fp32",
+        "gate_reuse_base": false
+      },
+      "total_s": 887.2,
+      "total_without_first_window_s": 726.0,
+      "match_s": 217.0,
+      "gate_s": 652.9,
+      "under_budget": false,
+      "max_vs_committed_px": 0.0,
+      "criteria_failures": [],
+      "acceptable_3B": false
+    },
+    "V1_fp16_whole": {
+      "label": "fp16",
+      "match_options": {
+        "precision": "fp16",
+        "gate_reuse_base": false
+      },
+      "total_s": 140.3,
+      "total_without_first_window_s": 109.1,
+      "match_s": 43.8,
+      "gate_s": 79.6,
+      "under_budget": true,
+      "max_vs_committed_px": 1.523,
+      "criteria_failures": [
+        "3125: 0.852 px from committed xoftr > envelope 0.423",
+        "4687: 1.523 px from committed xoftr > envelope 0.697"
+      ],
+      "acceptable_3B": false
+    },
+    "V2_fp32_tiled": {
+      "label": "tiled",
+      "match_options": {
+        "precision": "fp32",
+        "tile_px": 640,
+        "gate_reuse_base": false
+      },
+      "total_s": 95.2,
+      "total_without_first_window_s": 64.3,
+      "match_s": 34.0,
+      "gate_s": 46.4,
+      "under_budget": true,
+      "max_vs_committed_px": 0.529,
+      "criteria_failures": [
+        "4687: tier MEDIUM worse than V0 HIGH"
+      ],
+      "acceptable_3B": false
+    },
+    "V3_fp16_tiled": {
+      "label": "fp16+tiled",
+      "match_options": {
+        "precision": "fp16",
+        "tile_px": 640,
+        "gate_reuse_base": false
+      },
+      "total_s": 69.7,
+      "total_without_first_window_s": 47.0,
+      "match_s": 24.1,
+      "gate_s": 31.1,
+      "under_budget": true,
+      "max_vs_committed_px": 1.77,
+      "criteria_failures": [
+        "4687: 1.770 px from committed xoftr > envelope 0.697"
+      ],
+      "acceptable_3B": false
+    },
+    "G1_fp32_tiled_reuse": {
+      "label": "tiled + gate base reuse",
+      "match_options": {
+        "precision": "fp32",
+        "tile_px": 640,
+        "gate_reuse_base": true
+      },
+      "total_s": 80.3,
+      "total_without_first_window_s": 53.2,
+      "match_s": 31.4,
+      "gate_s": 34.8,
+      "under_budget": true,
+      "max_vs_committed_px": 0.529,
+      "criteria_failures": [
+        "4687: tier MEDIUM worse than V0 HIGH"
+      ],
+      "acceptable_3B": false
+    },
+    "G1_repeat_edges": {
+      "label": "G1 repeat, with tile-edge stats",
+      "match_options": {
+        "precision": "fp32",
+        "tile_px": 640,
+        "gate_reuse_base": true
+      },
+      "total_s": 70.9,
+      "total_without_first_window_s": 52.3,
+      "match_s": 23.6,
+      "gate_s": 34.2,
+      "under_budget": true,
+      "max_vs_committed_px": 0.529,
+      "criteria_failures": [
+        "4687: tier MEDIUM worse than V0 HIGH"
+      ],
+      "acceptable_3B": false
+    }
+  },
+  "tiling_prediction_check": {
+    "predicted_speedup_match_only": 14.48,
+    "source_of_prediction": "reports/runtime_budget.json (extrapolated)",
+    "measured_median_match_s_whole_windows2to9": 21.6,
+    "measured_median_match_s_tiled_windows2to9": 1.25,
+    "measured_speedup_match_only": 17.3,
+    "whole_window_match_range_s": [
+      3.9,
+      38.5
+    ],
+    "note": "near-identical-size (~1040 px) windows take 3.9-38.5 s whole: a power law in pixels cannot produce a 10x spread at fixed size. The ~1040 px xoftr call needs ~8 GB on a 6 GB card and spills to shared memory; tiling and fp16 both remove the spill. The k=2.82 exponent was fitted across that memory cliff and will not transfer to a card with more VRAM."
+  },
+  "G2_per_reference_tile_null_gates": {
+    "source": "derived from measured G1 per-call gate time, NOT run end to end",
+    "per_gate_call_s": 0.97,
+    "calls_saved": 18,
+    "estimated_saving_s": 17.4,
+    "estimated_total_s": 62.9,
+    "verification_lost": "blank, noise and identity would test the matcher against one reference crop per TC tile instead of the crop each window actually used; a window whose own crop makes the matcher invent structure (repetitive texture, a seam) would no longer be caught by CHECK-01/02/04",
+    "recommended": false,
+    "why": "not needed: G1 is already under budget without weakening any gate"
+  }
+}

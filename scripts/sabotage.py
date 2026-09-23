@@ -31,6 +31,31 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # target -> (source file, test file, {description: (find, replace)})
 TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
+    "pair_tiling": (
+        "src/chandralign/matching/pair_tiling.py",
+        "tests/test_pair_tiling.py",
+        {
+            "tile matches left in tile coordinates (source)": (
+                "        src_parts.append(sp + [x0, y0])", "        src_parts.append(sp)"),
+            "reference offset ignores the margin": (
+                "        ref_parts.append(rp + [rx0, ry0])", "        ref_parts.append(rp + [x0, y0])"),
+            "reference tile gets no margin": (
+                "        ry0, ry1 = max(0, y0 - margin), min(h, y1 + margin)", "        ry0, ry1 = y0, y1"),
+            "grid over-splits the window": (
+                "    ys = np.linspace(0, h, ny + 1)", "    ys = np.linspace(0, h, ny + 2)"),
+            "an unaligned pair is tiled anyway": (
+                "    if np.asarray(ref.array).shape[:2] != (h, w):", "    if False:"),
+        },
+    ),
+    "gate_reuse": (
+        "src/chandralign/evaluate/control_gates.py",
+        "tests/test_pair_tiling.py",
+        {
+            "perturbation gate ignores the base it is given": (
+                "    if base is None:\n        base = _safe(pipeline, src, ref)",
+                "    base = _safe(pipeline, src, ref)"),
+        },
+    ),
     "regime": (
         "src/chandralign/matching/regime.py",
         "tests/test_regime.py",

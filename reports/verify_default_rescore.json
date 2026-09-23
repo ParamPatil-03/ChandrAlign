@@ -1,0 +1,637 @@
+{
+  "source": "synthetic",
+  "note": "synthetic sections re-derived from reports/default_matcher_selection.json rows; real_check sections from measured reports/tmc2_tc_*.json. Protocol: docs/verify_default_protocol.md",
+  "recount_matches_stored_false_confidences": true,
+  "definition_inconsistency": {
+    "what": "the selector's `success` requires only estimator acceptance and <2 px; `false_confidence` additionally requires the quality tier not REJECTED. A run the quality gate rejected can therefore count as a success.",
+    "runs_affected": 7,
+    "examples": [
+      [
+        "xfeat",
+        "resolution_2x",
+        101
+      ],
+      [
+        "sift-nn",
+        "resolution_2x",
+        106
+      ],
+      [
+        "sift-nn",
+        "cross_modal+opposite",
+        103
+      ],
+      [
+        "sift-nn",
+        "cross_modal+opposite",
+        104
+      ],
+      [
+        "minima-loftr",
+        "lighting_+90",
+        103
+      ],
+      [
+        "minima-loftr",
+        "lighting_+90",
+        106
+      ],
+      [
+        "minima-loftr",
+        "lighting_+90",
+        110
+      ]
+    ]
+  },
+  "original_protocol": {
+    "core": [
+      "cross_modal",
+      "lighting_+30",
+      "low_texture",
+      "resolution_2x",
+      "same_lighting"
+    ],
+    "stretch": [
+      "cross_modal+opposite",
+      "lighting_+90",
+      "lighting_opposite"
+    ],
+    "scorecards": [
+      {
+        "method": "aliked-lightglue",
+        "runs": 80,
+        "core_success": 0.8,
+        "core_success_gate_accepted": 0.8,
+        "false_confidences": 15,
+        "false_confidence_rate": 0.1875,
+        "false_confidences_by_regime": {
+          "cross_modal": 4,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 5,
+          "lighting_opposite": 6,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.4074,
+        "stretch_solved": 1,
+        "median_seconds": 0.356,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "disk-lightglue",
+        "runs": 80,
+        "core_success": 0.78,
+        "core_success_gate_accepted": 0.78,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.0753,
+        "stretch_solved": 1,
+        "median_seconds": 0.666,
+        "errors": 1,
+        "eligible": false
+      },
+      {
+        "method": "eloftr",
+        "runs": 80,
+        "core_success": 0.8,
+        "core_success_gate_accepted": 0.8,
+        "false_confidences": 1,
+        "false_confidence_rate": 0.0125,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 1,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1227,
+        "stretch_solved": 1,
+        "median_seconds": 0.261,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "matchanything-eloftr",
+        "runs": 80,
+        "core_success": 0.6,
+        "core_success_gate_accepted": 0.6,
+        "false_confidences": 23,
+        "false_confidence_rate": 0.2875,
+        "false_confidences_by_regime": {
+          "cross_modal": 8,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 8,
+          "lighting_opposite": 7,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1305,
+        "stretch_solved": 1,
+        "median_seconds": 0.294,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "minima-loftr",
+        "runs": 80,
+        "core_success": 0.8,
+        "core_success_gate_accepted": 0.8,
+        "false_confidences": 1,
+        "false_confidence_rate": 0.0125,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 1,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.181,
+        "stretch_solved": 3,
+        "median_seconds": 0.475,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "sift-lightglue",
+        "runs": 80,
+        "core_success": 0.8,
+        "core_success_gate_accepted": 0.8,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.0447,
+        "stretch_solved": 1,
+        "median_seconds": 0.744,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "sift-nn",
+        "runs": 80,
+        "core_success": 0.44,
+        "core_success_gate_accepted": 0.42,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.101,
+        "stretch_solved": 1,
+        "median_seconds": 0.104,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "xfeat",
+        "runs": 80,
+        "core_success": 0.62,
+        "core_success_gate_accepted": 0.6,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.292,
+        "stretch_solved": 1,
+        "median_seconds": 0.072,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "xoftr",
+        "runs": 80,
+        "core_success": 1.0,
+        "core_success_gate_accepted": 1.0,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "cross_modal": 0,
+          "cross_modal+opposite": 0,
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.0982,
+        "stretch_solved": 2,
+        "median_seconds": 0.53,
+        "errors": 0,
+        "eligible": true
+      }
+    ],
+    "ranked_eligible": [
+      "xoftr"
+    ]
+  },
+  "same_modality_only": {
+    "why": "regime.select returns matcher=None for cross-modal pairs and checks scale first, so default_matcher is only reached on the same-modality branch",
+    "core": [
+      "lighting_+30",
+      "low_texture",
+      "resolution_2x",
+      "same_lighting"
+    ],
+    "stretch": [
+      "lighting_+90",
+      "lighting_opposite"
+    ],
+    "scorecards": [
+      {
+        "method": "aliked-lightglue",
+        "runs": 60,
+        "core_success": 1.0,
+        "core_success_gate_accepted": 1.0,
+        "false_confidences": 11,
+        "false_confidence_rate": 0.1833,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 5,
+          "lighting_opposite": 6,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.4074,
+        "stretch_solved": 0,
+        "median_seconds": 0.37,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "disk-lightglue",
+        "runs": 60,
+        "core_success": 0.975,
+        "core_success_gate_accepted": 0.975,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.0753,
+        "stretch_solved": 0,
+        "median_seconds": 0.663,
+        "errors": 1,
+        "eligible": true
+      },
+      {
+        "method": "eloftr",
+        "runs": 60,
+        "core_success": 1.0,
+        "core_success_gate_accepted": 1.0,
+        "false_confidences": 1,
+        "false_confidence_rate": 0.0167,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 1,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1227,
+        "stretch_solved": 0,
+        "median_seconds": 0.261,
+        "errors": 0,
+        "eligible": true
+      },
+      {
+        "method": "matchanything-eloftr",
+        "runs": 60,
+        "core_success": 0.75,
+        "core_success_gate_accepted": 0.75,
+        "false_confidences": 15,
+        "false_confidence_rate": 0.25,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 8,
+          "lighting_opposite": 7,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1305,
+        "stretch_solved": 0,
+        "median_seconds": 0.294,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "minima-loftr",
+        "runs": 60,
+        "core_success": 0.75,
+        "core_success_gate_accepted": 0.75,
+        "false_confidences": 1,
+        "false_confidence_rate": 0.0167,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 1,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1615,
+        "stretch_solved": 2,
+        "median_seconds": 0.472,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "sift-lightglue",
+        "runs": 60,
+        "core_success": 1.0,
+        "core_success_gate_accepted": 1.0,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.0447,
+        "stretch_solved": 0,
+        "median_seconds": 0.752,
+        "errors": 0,
+        "eligible": true
+      },
+      {
+        "method": "sift-nn",
+        "runs": 60,
+        "core_success": 0.55,
+        "core_success_gate_accepted": 0.525,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.101,
+        "stretch_solved": 0,
+        "median_seconds": 0.105,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "xfeat",
+        "runs": 60,
+        "core_success": 0.775,
+        "core_success_gate_accepted": 0.75,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.292,
+        "stretch_solved": 0,
+        "median_seconds": 0.071,
+        "errors": 0,
+        "eligible": false
+      },
+      {
+        "method": "xoftr",
+        "runs": 60,
+        "core_success": 1.0,
+        "core_success_gate_accepted": 1.0,
+        "false_confidences": 0,
+        "false_confidence_rate": 0.0,
+        "false_confidences_by_regime": {
+          "lighting_+30": 0,
+          "lighting_+90": 0,
+          "lighting_opposite": 0,
+          "low_texture": 0,
+          "resolution_2x": 0,
+          "same_lighting": 0
+        },
+        "core_median_rmse_px": 0.1036,
+        "stretch_solved": 1,
+        "median_seconds": 0.523,
+        "errors": 0,
+        "eligible": true
+      }
+    ],
+    "ranked_eligible": [
+      "sift-lightglue",
+      "disk-lightglue",
+      "xoftr",
+      "eloftr"
+    ]
+  },
+  "real_check_tmc2_tc": {
+    "xoftr": {
+      "registered": "9/9",
+      "rejected_windows": [],
+      "gate_failures": {},
+      "max_vs_xoftr_rms_px": 0.0,
+      "windows_over_bad_px": [],
+      "windows_outside_eloftr_envelope": [],
+      "total_seconds": 948.3,
+      "passes_3A": true,
+      "verdict_is_post_hoc": true
+    },
+    "eloftr": {
+      "registered": "9/9",
+      "rejected_windows": [],
+      "gate_failures": {},
+      "max_vs_xoftr_rms_px": 0.697,
+      "windows_over_bad_px": [],
+      "windows_outside_eloftr_envelope": [],
+      "total_seconds": 107.5,
+      "passes_3A": true,
+      "verdict_is_post_hoc": true
+    },
+    "aliked-lightglue": {
+      "registered": "9/9",
+      "rejected_windows": [
+        4687
+      ],
+      "gate_failures": {
+        "4687": [
+          "perturbation_sensitivity"
+        ]
+      },
+      "max_vs_xoftr_rms_px": 2.016,
+      "windows_over_bad_px": [
+        4687
+      ],
+      "windows_outside_eloftr_envelope": [
+        1562,
+        3125,
+        4687,
+        16000,
+        18750,
+        21500,
+        52000
+      ],
+      "total_seconds": 100.7,
+      "passes_3A": false,
+      "verdict_is_post_hoc": true
+    },
+    "minima-loftr": {
+      "registered": "9/9",
+      "rejected_windows": [
+        3125,
+        4687,
+        18750,
+        21500,
+        52000
+      ],
+      "gate_failures": {
+        "3125": [
+          "perturbation_sensitivity"
+        ],
+        "4687": [
+          "perturbation_sensitivity"
+        ],
+        "18750": [
+          "perturbation_sensitivity"
+        ],
+        "21500": [
+          "perturbation_sensitivity"
+        ],
+        "52000": [
+          "perturbation_sensitivity"
+        ]
+      },
+      "max_vs_xoftr_rms_px": 8.592,
+      "windows_over_bad_px": [
+        1562,
+        3125,
+        21500,
+        54750
+      ],
+      "windows_outside_eloftr_envelope": [
+        1562,
+        3125,
+        4687,
+        16000,
+        18750,
+        21500,
+        52000,
+        54750,
+        57500
+      ],
+      "total_seconds": 280.8,
+      "passes_3A": false,
+      "verdict_is_post_hoc": true
+    },
+    "sift-lightglue": {
+      "registered": "9/9",
+      "rejected_windows": [
+        4687
+      ],
+      "gate_failures": {
+        "4687": [
+          "perturbation_sensitivity"
+        ]
+      },
+      "max_vs_xoftr_rms_px": 2.958,
+      "windows_over_bad_px": [
+        4687
+      ],
+      "windows_outside_eloftr_envelope": [
+        1562,
+        3125,
+        4687,
+        16000,
+        18750,
+        21500,
+        52000,
+        57500
+      ],
+      "total_seconds": 48.3,
+      "passes_3A": false,
+      "verdict_is_post_hoc": false
+    },
+    "disk-lightglue": {
+      "registered": "9/9",
+      "rejected_windows": [
+        3125
+      ],
+      "gate_failures": {
+        "3125": [
+          "perturbation_sensitivity"
+        ]
+      },
+      "max_vs_xoftr_rms_px": 8.625,
+      "windows_over_bad_px": [
+        1562,
+        4687
+      ],
+      "windows_outside_eloftr_envelope": [
+        1562,
+        3125,
+        4687,
+        16000,
+        21500,
+        54750,
+        57500
+      ],
+      "total_seconds": 45.5,
+      "passes_3A": false,
+      "verdict_is_post_hoc": false
+    }
+  }
+}
