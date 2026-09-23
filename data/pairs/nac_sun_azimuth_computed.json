@@ -1,0 +1,74 @@
+{
+ "M109080308LC": {
+  "incidence": 2.21,
+  "sub_solar_lat": -1.49,
+  "sub_solar_lon": 22.9,
+  "target_lat": 0.62,
+  "target_lon": 23.56,
+  "sun_azimuth_deg": 197.37
+ },
+ "M1417360906LC": {
+  "incidence": 7.71,
+  "sub_solar_lat": 1.31,
+  "sub_solar_lon": 16.12,
+  "target_lat": -0.72,
+  "target_lon": 23.56,
+  "sun_azimuth_deg": 285.26
+ },
+ "M172765160RC": {
+  "incidence": 13.5,
+  "sub_solar_lat": -1.39,
+  "sub_solar_lon": 37.18,
+  "target_lat": 0.625,
+  "target_lon": 23.83,
+  "sun_azimuth_deg": 98.59
+ },
+ "M106719774LC": {
+  "incidence": 27.23,
+  "sub_solar_lat": -1.09,
+  "sub_solar_lon": 356.27,
+  "target_lat": 0.955,
+  "target_lon": 23.42,
+  "sun_azimuth_deg": 265.76
+ },
+ "M1415013176LC": {
+  "incidence": 35.89,
+  "sub_solar_lat": 1.53,
+  "sub_solar_lon": 347.99,
+  "target_lat": -0.16,
+  "target_lon": 23.84,
+  "sun_azimuth_deg": 272.83
+ },
+ "M175124932LC": {
+  "incidence": 40.94,
+  "sub_solar_lat": -0.86,
+  "sub_solar_lon": 64.43,
+  "target_lat": 0.63,
+  "target_lon": 23.515,
+  "sun_azimuth_deg": 92.04
+ },
+ "M104362199LC": {
+  "incidence": 53.78,
+  "sub_solar_lat": -0.44,
+  "sub_solar_lon": 329.58,
+  "target_lat": 0.83,
+  "target_lon": 23.355,
+  "sun_azimuth_deg": 268.85
+ },
+ "M102000149LC": {
+  "incidence": 79.56,
+  "sub_solar_lat": 0.3,
+  "sub_solar_lon": 303.73,
+  "target_lat": 0.475,
+  "target_lon": 23.29,
+  "sun_azimuth_deg": 270.22
+ },
+ "M102014464RC": {
+  "incidence": 81.76,
+  "sub_solar_lat": 0.3,
+  "sub_solar_lon": 301.71,
+  "target_lat": 0.515,
+  "target_lon": 23.47,
+  "sun_azimuth_deg": 270.23
+ }
+}
