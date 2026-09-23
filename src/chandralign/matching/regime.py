@@ -283,7 +283,7 @@ def select(src: SceneMeta | str, ref: SceneMeta | str) -> Decision:
     """
     cond = conditions(src, ref)
     cfg = config.load("regimes")
-    default_matcher = str(cfg.get("default_matcher", "aliked-lightglue"))
+    default_matcher = str(cfg.get("default_matcher", "eloftr"))
     notes = list(cond.notes)
 
     # 1. Scale first. Nothing about illumination rescues a gap this wide.
@@ -297,8 +297,9 @@ def select(src: SceneMeta | str, ref: SceneMeta | str) -> Decision:
             reason=check.reason,
             evidence="scale threshold from configs/regimes.yaml via io.instruments.scale_precheck",
             notes=tuple(notes + [
-                "the cascade (MATCH-10) chooses the matcher for each step, so no "
-                "single matcher is named here"]))
+                "no matcher is named: cascade.plan() decides by footprint how many "
+                "steps are needed (possibly one), and each step runs "
+                "cascade.register_step_dense unless the caller names a matcher"]))
 
     # 2. Cross-modality is a radiometric relationship, not a geometric one, so
     #    it is decided on its own candidate list rather than by azimuth band.
@@ -370,7 +371,7 @@ def explain(decision: Decision) -> str:
         f"regime          {decision.regime}",
         f"route           {decision.route}",
         f"representation  {decision.representation}",
-        f"matcher         {decision.matcher or '(chosen per cascade step)'}",
+        f"matcher         {decision.matcher or '(none: cascade.plan() decides the steps)'}",
         f"expectation     {decision.expectation}"
         + ("" if decision.supported else "   <- not a supported configuration"),
     ]

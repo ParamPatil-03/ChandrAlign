@@ -19,12 +19,15 @@ import json
 import math
 import re
 import statistics
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import shapefile
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from chandralign.geometry.footprint import check_overlap, footprint_of
 from chandralign.geometry.solar import azimuth_difference, illumination_delta, scene_illumination

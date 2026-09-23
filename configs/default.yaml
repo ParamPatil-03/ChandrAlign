@@ -59,7 +59,12 @@ subpixel:                    # PREC-01..05
   # ecc has the best median (0.016 vs 0.025). The old value, ncc_quadratic, was
   # not the name of any implemented method.
   method: ncc_gaussian_iter  # ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
-  ncc_window: 11
+  # refine_points compares a (2*half+1)^2 patch around every match. This key
+  # REPLACES `ncc_window: 11`, which no code read: the real window was a
+  # hard-coded half=16 (33 px), and it still is -- behaviour is unchanged.
+  # NOT YET MEASURED AT THIS SIZE. PREC-06's "< 0.1 px" was measured on whole
+  # 64x64 patches (scripts/verify_subpixel.py), not on 33 px per-point windows.
+  refine_half_px: 16
   phase_upsample: 100
   ecc_iterations: 50
   ecc_eps: 1.0e-6
@@ -114,6 +119,11 @@ cascade:                     # MATCH-10
   # conservative for better-matched pairs. Routes it decides on real products:
   # OHRC->TMC-2 727 px, TMC-2->IIRS 197, OHRC->TC 495 feasible; OHRC->IIRS 37 not.
   min_footprint_px: 112
+  # A dense step is refused, not guessed, when the MIND peak's z-score is below
+  # this. Read by cascade.register_step_dense, which until 2026-09-23 fell back
+  # to a hard-coded 10.0 because this key did not exist. Same value; now visible.
+  # Source: the footprint measurement above scored success as z >= 10.
+  min_z: 10.0
 
 gates:                       # CHECK-01..06 tolerances
   null_max_inlier_ratio: 0.05      # a null test scoring above this means we are broken
