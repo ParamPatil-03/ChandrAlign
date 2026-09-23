@@ -99,6 +99,26 @@ M1417360906LC (NAC incidence < 10 deg, azimuth ill-defined).
 
 There is no ground truth. None is invented.
 
+### AMENDMENT 1 (2026-09-23, before the full run): section 5.2 as frozen is vacuous
+
+Found on a smoke run of ONE product (M111443315RC, same-sun control, 5 windows),
+before any other product was run. Every window recovered the (3, 4) shift as
+exactly (3.000, 4.000), error 0.000 px. That is not precision. An INTEGER shift of
+the search image only re-indexes its pixels, so the MIND correlation map
+translates by exactly (3, 4) and the sub-pixel estimators see the identical
+patch. The test cannot fail except at region borders, so it checks nothing.
+
+**Replacement, used for every group:** the NAC window's content is moved by
+**(37, 43) NAC px** (reflect-padded, `control_gates._shift_content`). At the ~10x
+block factor that is a FRACTIONAL move of about 3.7 x 4.3 TMC-2 px, so the
+block-averaged template really changes and the sub-pixel stage must recover it.
+With T0 the step's NAC -> TMC-2 transform, the expected move of the window centre
+is `-A0 (37, 43)`, where A0 is T0's linear part. The error is the distance between
+the recovered and expected moves, in TMC-2 px. Tolerance unchanged: **1.5 TMC-2 px**
+(`gates.perturbation_tolerance_px`). The vacuous integer test is still run and
+reported, labelled vacuous, and does not count. The smoke windows are re-run
+under the amended rule with everything else.
+
 ## 6. Controls
 
 - **Null:** per window, the NAC window replaced by flat grey, and by Gaussian
