@@ -83,6 +83,62 @@ overlapping longitude range. 512 px square at native resolution. No seed and no
 random selection: the pair set is the sample, and re-running must reproduce it
 exactly. 15 pairs x 5 windows = **75 window-pairs per matcher**.
 
+## 2a. AMENDMENT, before any result existed — a confound found during setup
+
+Committed separately and before the measurement ran; `git log` shows the order.
+**No threshold, verdict boundary, window rule or matcher changed.** What changed
+is the pair set and the search range, for two reasons discovered while building
+the harness, neither of them an outcome:
+
+**(1) The pairs differ in SCALE as well as illumination.** ODE's
+`Map_resolution` gives each product's ground sampling, and across the nine it
+spans **0.400 to 1.269 m/px, a 3.2x range**. Several pairs therefore carry a
+large resolution gap on top of the illumination gap. That is disqualifying for
+this experiment's question: `minima-loftr` scores 0/10 on `resolution_2x` in
+`reports/default_matcher_selection.json`, so a failure on a 2.3x pair could not
+be attributed to illumination at all.
+
+**Only pairs with a scale ratio below 1.5 are used** — 7 of the 15:
+
+| pair | inc gap | scale ratio |
+|---|---|---|
+| M102000149LC / M102014464RC | 2.2 | 1.03 |
+| M104362199LC / M102000149LC | 25.8 | 1.00 |
+| M106719774LC / M104362199LC | 26.6 | 1.07 |
+| M104362199LC / M102014464RC | 28.0 | 1.04 |
+| M109080308LC / M175124932LC | 38.7 | 1.34 |
+| M106719774LC / M102000149LC | 52.3 | 1.07 |
+| M106719774LC / M102014464RC | 54.5 | 1.03 |
+
+**A consequence that must be reported with every result: the 60-90 degree band
+is now EMPTY.** Both pairs in it (74.0 and 79.5 deg) have scale ratios of 1.56
+and 2.29, so the largest illumination gap testable without a confound is
+**54.5 deg**. Nothing in this experiment can speak about incidence differences
+above 60 degrees. Revised bands:
+
+| band | scene pairs | window-pairs |
+|---|---|---|
+| 0-15 deg | 1 | 5 | **very thin** |
+| 15-30 deg | 3 | 15 | |
+| 30-60 deg | 3 | 15 | |
+| 60-90 deg | **0** | **0** | **cannot be tested** |
+
+**(2) The ODE bounding box is a far worse prior than section 4.1 assumed.** It
+is the lat/lon bounding box of a ROTATED footprint, not a linear frame over the
+image, so `m/line` and `m/samp` derived from it disagree by up to 5.6x on the
+same product. Measured, the prior is wrong by **about 7000 lines**. The +-192 px
+search margin was therefore hopeless, and the first attempt failed to lock on
+every pair tried (z = 3.3 to 4.3 against a 6.0 bar).
+
+The search is widened to **+-4000 lines and the full sample width**. With that,
+and on scale-clean pairs, the MIND lock is confident: z = 11.0 at a 26.6 deg gap
+and z = 15.6 at 54.5 deg. Latitude-to-line remains a usable prior -- the bbox
+`m/line` agrees with ODE's `Map_resolution` to within 13% on seven of nine
+products -- while longitude-to-sample is discarded.
+
+Both changes were made before any matcher ran and before any success rate was
+computed. No partial rows from the failed first attempt are kept.
+
 ## 3. Matchers
 
 `xoftr`, `minima-loftr`, `eloftr`, `aliked-lightglue`, `sift-nn`.
