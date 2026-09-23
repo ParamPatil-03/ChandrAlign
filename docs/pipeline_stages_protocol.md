@@ -203,3 +203,17 @@ closer to a known truth. It remains a lead worth following -- ground an affine
 model does not describe -- and is ALIGN-02's (TPS) question, not this one's.
 
 `geometry_filter` is still undecided: run USG waits for the second SLDEM tile.
+
+## Result of rule 5, run on the v2 design (2026-09-24)
+
+`geometry_filter` on, uniformity and sub-pixel on (the v3 defaults), same nine windows:
+applied on 9/9 (every match endpoint inside SLDEM), **1,283 matches rejected** in total
+(26-378 per window), **no window lost**, perturbation error identical on every window,
+ISRO-grid proxy within 1 m except row 4687 (497.4 -> 488.9 m). -> **default ON.**
+
+Caveat, recorded not hidden: on the three N00 windows it rejects 295-378 matches,
+several times the ~0.3% the robust estimate itself rejects, so some of those are
+probably CORRECT matches judged on 59 m SLDEM slopes. No accuracy measure moved,
+because ~14,000 remain. On sparser pairings this could cost real evidence; the
+thresholds (configs, ALIGN-03) were set on synthetic look-alike craters and are
+not tuned for this.

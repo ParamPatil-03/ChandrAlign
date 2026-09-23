@@ -119,8 +119,14 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
             stages["geometry_filter"] = {"applied": False,
                                          "reason": "no DEM" if dem is None else "no ground model"}
         else:
-            ms, rep = geometry_filter.filter_matches(ms, None, None, dem,
-                                                     src_model=ground_model, ref_model=ground_model)
+            filtered, rep = geometry_filter.filter_matches(ms, None, None, dem,
+                                                           src_model=ground_model, ref_model=ground_model)
+            # dataclasses.replace() drops what the matcher attached at run time
+            # (device, tile boxes, precision); callers read those, so carry them over.
+            for k, v in vars(ms).items():
+                if not hasattr(filtered, k):
+                    setattr(filtered, k, v)
+            ms = filtered
             stages["geometry_filter"] = {"applied": rep.applied, "reason": rep.reason,
                                          "n_in": rep.n_in, "n_kept": rep.n_kept,
                                          "rejected_slope": rep.n_rejected_slope,

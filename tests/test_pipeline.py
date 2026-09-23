@@ -149,8 +149,11 @@ def test_geometry_filter_drops_matches_that_join_different_terrain():
     src = rng.uniform([20, 20], [180, 380], (200, 2))            # all on the flat west half
     ref = src + [0.4, -0.3]
     ref[:20] = rng.uniform([260, 20], [380, 380], (20, 2))        # 20 land on the steep east half
-    fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200),
+    ms = matchset(src, ref)
+    ms.device = "cuda"                 # the matcher attaches this at run time; callers read it
+    fr = fine_stage(ms, blank(), blank(), centre=(200, 200),
                     flags={**OFF, "geometry_filter": True}, ground_model=_Identity(), dem=_ridge_dem())
+    assert fr.matches.device == "cuda", "the filter dropped a run-time attribute (crashed a real run)"
     st = fr.stages["geometry_filter"]
     assert st["applied"] and st["n_in"] == 200
     assert st["rejected_slope"] == 20 and st["n_kept"] == 180
