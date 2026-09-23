@@ -172,8 +172,9 @@ def test_a_band_names_the_matcher_that_earned_it():
     d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
     assert "minima-loftr" in d.reason
     assert any("not by the default" in n for n in d.notes)
-    # the default is still what runs -- whatever the config names, not a literal
-    # that goes stale when the default changes (it did: aliked-lightglue -> eloftr)
+    # The default is still what runs. Read from config, never a literal: this line
+    # once said "aliked-lightglue", passed on its own branch, and turned main red
+    # the moment PR #13 changed default_matcher to eloftr in a separate merge.
     assert d.matcher == config.load("regimes")["default_matcher"]
 
 

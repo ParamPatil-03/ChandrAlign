@@ -193,7 +193,8 @@ def test_the_tolerance_is_honoured():
 REAL_DEM = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
 
 
-@pytest.mark.skipif(len(REAL_DEM) < 1, reason="SLDEM tiles not downloaded")
+# BOTH tiles: OHRC's footprint straddles the equator, the boundary between them.
+@pytest.mark.skipif(len(REAL_DEM) < 2, reason="SLDEM tiles not downloaded")
 def test_dem_coverage_reports_the_truth_about_our_elevation_data():
     """OHRC's 25 km footprint is covered; the 1,000 km strips are not."""
     ohrc = dem_coverage(meta("OHRC"), REAL_DEM)

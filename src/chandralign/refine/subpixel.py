@@ -284,7 +284,7 @@ def estimate(ref: np.ndarray, mov: np.ndarray, method: str = "phase") -> ShiftEs
 
 
 def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
-                  ref_pts: np.ndarray, method: Optional[str] = None, half: int = 16,
+                  ref_pts: np.ndarray, method: Optional[str] = None, half: Optional[int] = None,
                   max_move: float = 1.5) -> tuple[np.ndarray, np.ndarray]:
     """Refine each match's position in `ref_img` to sub-pixel precision.
 
@@ -295,6 +295,7 @@ def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
     a sub-pixel step should correct a matcher's rounding, not relocate a match.
     """
     method = method or str(config.get("subpixel.method", "ncc_gaussian_iter"))
+    half = int(half if half is not None else config.get("subpixel.refine_half_px", 16))
     src_pts = np.asarray(src_pts, float).reshape(-1, 2)
     out = np.asarray(ref_pts, float).reshape(-1, 2).copy()
     moved = np.zeros(len(out), bool)

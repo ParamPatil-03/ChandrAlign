@@ -8,6 +8,36 @@ Organisation: ISRO / Department of Space · Theme: Space Technology · Category:
 
 ---
 
+## ⚠ ACCEPTANCE-CRITERIA CORRECTIONS (2026-09-23) — read before trusting any "Accept" line
+
+Several **Accept** lines in this file were written before anything was built,
+and some of them **cannot fail**. A bar that cannot fail is not a test: anything
+accepted under it was never actually validated. That is how the default matcher
+shipped for four days without ever being compared to an alternative.
+
+**Rule from now on:** an Accept line below is a *starting intent*, not a pass
+bar. Where a line is marked **CORRECTED**, the replacement criterion — frozen in
+a committed protocol before the measurement ran — is what governs. New criteria
+must be written and committed *before* measuring, with thresholds from sources
+outside the data being measured.
+
+| task | original bar | why it could not discriminate | what governs now |
+|---|---|---|---|
+| P0 (CI) | "GitHub Actions runs `make test` on every PR and blocks merge on red" | **not met** — no workflow exists | open; `main` went red on 2026-09-23 when #13 and #16 merged separately |
+| P1 (registry) | `gsd_ratio("OHRC","IIRS") ≈ 320` | checks the registry against itself; nominal OHRC 0.25 m and IIRS 80 m are both wrong | routing uses `estimate.scale.pixel_scale` (measured > corners > footprint > label) |
+| P2-T03 | "beats SIFT on the illumination-shifted pair" | SIFT scores **zero** there, so beating it is automatic | `docs/default_matcher_protocol.md`; decision wired in `matching/routing.py` |
+| P2-T06 / ALIGN-01 | "MAGSAC beats plain RANSAC at 70% outliers" | at 70% **every** estimator succeeds | `tests/test_estimators.py` — MAGSAC's advantage is cost, not accuracy |
+| P2-T07 / ALIGN-04 | clustered set: coverage <0.15 → >0.6 | met by the **module**, but `uniformity.enforce` is called by **no pipeline** | open — a passing bar is not a delivered feature |
+| P2-T08 / PREC | "< 0.1 px for at least two of the four methods" | two of four can be broken and it still passes | the configured default, measured on real OHRC; per-point 33 px window **not yet measured** |
+| P2-T12 | "false positives drop **measurably**" | "measurably" is not a number | `docs/experiment3_protocol.md` |
+| P2-T13 (MI) | "MI higher when aligned than misaligned" | MI is *defined* to peak at alignment | open — see the note under that task |
+| MATCH-06 | "vendored SHA recorded in docs/LICENSE_AUDIT.md" | RIFT2 is **our own** implementation; the reference repo has no licence and is never vendored | `matching/rift.py`, PR #12 |
+| CHECK-10 (CI) | "a deliberately added GPL package fails the build" | **not met** — no CI | open |
+
+Full account of how these were found: `docs/part2_evidence_summary.md`.
+
+---
+
 ## 0. HOW TO USE THIS FILE (read this first)
 
 ### 0.1 For Claude Code
@@ -699,6 +729,8 @@ report:  ## python -m chandralign.product.report --latest
 ```
 **Accept** GitHub Actions runs `make test` on every PR and blocks merge on red.
 
+> ⚠ **NOT MET.** No `.github/workflows/` exists. On 2026-09-23 `main` went red when PRs #13 and #16 each passed alone and conflicted once both merged — exactly what this bar exists to prevent.
+
 ---
 
 ## 10. PART 1 — MEMBER A · DETAILED TASKS
@@ -738,6 +770,8 @@ Windowed reads throughout so we never load 1.5 GB.
 **File** `io/instruments.py`
 **Steps** Load `instruments.yaml`; `detect_instrument(product_id) -> Instrument` from the naming convention (`ch2_ohr_*`, `ch2_tmc_*`, `ch2_iir_*`, `M*RC.IMG` for NAC…); expose `gsd_ratio(a, b)`.
 **Accept** `gsd_ratio("OHRC","IIRS") ≈ 320`; every instrument in §1.2 resolves.
+
+> ⚠ **CORRECTED.** This checks the registry against itself. The nominal figures are wrong (OHRC 0.30 m not 0.25, IIRS 97.15 m not 80, TMC-2 4.92 m not 5.0). Routing uses `estimate.scale.pixel_scale`, which prefers measured, then corner, then footprint, then label values.
 
 ### P1-T05 · Tiling
 **File** `io/tiling.py` → `iter_tiles(meta, tile=1024, overlap=128)`
@@ -857,6 +891,8 @@ Diagram of §6, module ownership table, `data/manifest.json` with checksums for 
 **What we write** is a ~60-line adapter that (a) converts `ImagePlane` → the tensor form `vismatch` expects, (b) converts its result → our `MatchSet`, (c) routes every call through the model-name licence gate from §2.3, and (d) pins `skip_ransac=True` so **our** estimator (P2-T06) does the geometry, not theirs — we need the inlier mask and the scale sanity check under our control.
 **Accept** three different matchers run through the identical adapter call path; `tests/test_licence_gate.py` proves `superpoint-lightglue` is unavailable while `ship_mode` is true and available when it is false.
 
+> ⚠ **CORRECTED.** `tests/test_licence_gate.py` does not exist; the licence tests live in `tests/test_part2_foundation.py`.
+
 ### P2-T02 · Classical baseline — SIFT + RANSAC
 **File** `matching/filters.py` (the detectors come from `vismatch` / OpenCV)
 **Why** This is the field's own documented baseline and our ablation floor. Every real lunar paper uses it as the comparison floor. We must have it working before anything else.
@@ -874,6 +910,8 @@ Member B still *consumes* `Metrics`, but no longer owns the module. This removes
 **CPU fallback must work** — LightGlue and XFeat are both CPU-capable, and the demo machine may have no GPU.
 **Accept** the chosen default runs on CPU and GPU, returns a conforming `MatchSet`, and beats SIFT on the synthetic illumination-shifted pair.
 
+> ⚠ **CORRECTED — this bar cannot fail.** SIFT scores zero successful seeds at every sun difference of 30° or more. Governed by `docs/default_matcher_protocol.md`; the decision (`eloftr` default, tiled `xoftr` for cross-modal) is wired in `matching/routing.py`.
+
 ### P2-T05 · SuperGlue benchmark run *(licence-gated, never shipped)*
 **File** `scripts/bench_external.py` (no adapter needed — `vismatch` already carries SuperGlue)
 **Why** SuperGlue has the strongest direct real-Chandrayaan-2 evidence of any method — lowest RMSE and fastest runtime among SIFT/ASIFT/AKAZE/RIFT2/SuperGlue on real OHRC/IIRS/DFSAR data, and it did not degrade at the poles where the classical methods did. We must benchmark honestly against the field's strongest known baseline. But its licence is non-commercial research only, so it can never be in the deliverable.
@@ -883,6 +921,8 @@ Member B still *consumes* `Metrics`, but no longer owns the module. This removes
 **File** `estimate/robust.py`, `estimate/models.py`
 **Steps** MAGSAC comes free: `cv2.findHomography(..., method=cv2.USAC_MAGSAC)` and `cv2.USAC_ACCURATE`. TPS via `cv2.createThinPlateSplineShapeTransformer` or `scipy.interpolate.RBFInterpolator`. **What we write** is the model-selection logic (affine vs homography vs TPS by residual structure) and the **scale sanity check against the known GSD ratio** (failure mode #13), rejecting an estimate that disagrees by more than a configured factor. That check exists nowhere off the shelf because it needs our instrument registry.
 **Accept** MAGSAC beats plain RANSAC on a synthetic set with 70% outliers; a deliberately wrong-scale match set is rejected.
+
+> ⚠ **CORRECTED.** At 70% scattered outliers every estimator succeeds on every seed, so the first half cannot discriminate. Measured result: accuracy is a tie, MAGSAC is ~150× cheaper at 90% outliers. See `tests/test_estimators.py`.
 
 ### P2-T07 · Spatial uniformity enforcement *(PS mandate)*
 **File** `refine/uniformity.py`
@@ -895,6 +935,8 @@ Member B still *consumes* `Metrics`, but no longer owns the module. This removes
 Provide farthest-point sampling as an alternative selector.
 **Accept** on a synthetic match set deliberately clustered in one corner, coverage rises from <0.15 to >0.6 after enforcement, and the visual matches the PS's illustrated *target* (evenly spaced with local structure) rather than its illustrated *failure* (a dense cluster plus empty regions).
 
+> ⚠ **MET BY THE MODULE, NOT DELIVERED.** `refine/uniformity.py::enforce` passes this bar but is called by **no pipeline** — the TMC-2 → SELENE script only *measures* coverage. The PS mandates uniform points; until a pipeline calls `enforce`, it does not provide them.
+
 ### P2-T08 · Sub-pixel refinement *(PS mandate)*
 **File** `refine/subpixel.py` — **four methods, two of them free:**
 1. **Quadratic NCC peak fitting** — ours, ~40 lines: fit a parabola to the NCC surface around each integer-pixel match, interpolate the sub-pixel peak.
@@ -902,6 +944,8 @@ Provide farthest-point sampling as an alternative selector.
 3. **`cv2.cornerSubPix`** — straight OpenCV, no work.
 4. **Iterative least-squares homography refinement** — ours, `scipy.optimize.least_squares` over the 8 homography parameters. Refines the *global transform*, not individual point locations.
 **Accept** on the P0-T05 fixture with known shift `(0.37, -0.62)`, recovery error < 0.1 px for at least two of the four methods.
+
+> ⚠ **CORRECTED.** "Two of four" passes with two methods broken — `cornerSubPix` silently left ~60% of points unrefined and this bar would not have noticed. The configured default (`ncc_gaussian_iter`) was measured on real OHRC 64×64 patches. The per-point refinement window (33 px, `subpixel.refine_half_px`) has **not** been measured.
 
 ### P2-T09 · Ground truth derivation → **reassigned to Member A (see P1-T20)**
 It is data work built on label geometry and DEM reprojection, both already owned by A. B consumes the derived ground truth through the tier manifest.
@@ -952,10 +996,14 @@ any   ────────────────────────�
 5. Degrade gracefully: with no DEM available, become a no-op and say so in `notes`.
 **Accept** on a repetitive-crater-field subset, false-positive inliers drop measurably versus RANSAC-only, and **inlier precision** (not just count) is the reported metric. This experiment is Ablation Experiment 3 — it is the novel-contribution measurement, so it must be isolated cleanly.
 
+> ⚠ **CORRECTED.** "Measurably" is not a threshold and "RANSAC-only" is not a baseline. Governed by `docs/experiment3_protocol.md`: five conjunctive gates including a count-matched blind thinner.
+
 ### P2-T22 · Mutual information cross-modal similarity *(Phase 3)*
 **File** `matching/similarity.py`
 **Why** The document names MI as the classical gold standard for cross-modal similarity, with a real precedent in Sentinel SAR/optical sub-pixel registration at 1.0–2.3 px. It has **no inherent scale or rotation invariance**, so it is a *validation score* for cross-modal alignment quality where no ground truth exists, not an initial correspondence method. Do not confuse the two roles.
 **Accept** MI on an aligned cross-modal pair exceeds MI on a deliberately misaligned one; exposed as a post-hoc alignment-quality metric.
+
+> ⚠ **CORRECTED — tautology.** MI is defined to peak at alignment, so this cannot fail. A useful bar: MI must rank known misalignments (0, 1, 2, 4 px) monotonically on real cross-modal pairs, and flag a 2 px error the control gates miss. Not yet measured.
 
 ### P2-T23 · ECC alignment refinement *(Phase 2)*
 **File** `refine/subpixel.py` → `cv2.findTransformECC`
@@ -972,6 +1020,8 @@ any   ────────────────────────�
 **Steps** **`RIFT2-python` exists** — a Python implementation of RIFT2 built on PhasePack, optimised for high-resolution acquisitions. The research file said "MATLAB, needs porting"; that is out of date. **Vendor it** into `third_party/rift2/` with attribution and a pinned commit SHA (it has no tagged releases, so a pip dependency could shift under us). Our `matching/rift.py` wraps it to the `MatchSet` contract and feeds it the phase-congruency maps from P1-T13.
 **Validate before trusting it:** run it on a fixture and confirm the descriptor behaves as the RIFT2 paper describes. A small unvalidated port is a risk; a small *validated* one is a gift.
 **Accept** beats SIFT on a synthetic cross-modal pair (strong nonlinear intensity remap) by inlier ratio; vendored SHA recorded in `docs/LICENSE_AUDIT.md`.
+
+> ⚠ **CORRECTED.** RIFT2 is our own implementation (`matching/rift.py`). The reference repository has no licence and is used for benchmarking only, never vendored.
 
 ### P2-T14 · Extreme-rotation & large-displacement handling
 **File** `matching/filters.py`
@@ -1138,6 +1188,8 @@ Every output carries: input product IDs + checksums, config hash, package versio
 **Why** We now depend on ten-plus third-party packages and one vendored repo. Failure mode #14 (licence contamination) is no longer theoretical.
 **Steps** Walk the installed environment, emit package → licence → ship/no-ship, fail CI on any non-permissive entry, and assert the vendored `third_party/rift2/` SHA matches the one recorded in `docs/LICENSE_AUDIT.md`.
 **Accept** runs in CI on every PR; a deliberately added GPL package fails the build.
+
+> ⚠ **NOT MET.** No CI exists.
 
 ### P3-T16 · Ablation runner & comparison tables *(was P2-T18 / P2-T20)*
 **Files** `evaluate/ablation.py`, plus the comparison section of `product/report.py`

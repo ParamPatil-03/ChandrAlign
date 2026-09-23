@@ -6,6 +6,12 @@
     "direct": "OHRC -24x-> TC"
   },
   "priors": "system-level only (OHRC system grid, TMC-2 system corners, TC map)",
+  "run": {
+    "command": "python scripts/cascade_ohrc_tc.py --windows 9",
+    "commit": "a213a48d1bbb52ca1cd8156d8d37ce45f0855c14",
+    "uncommitted_changes": true,
+    "utc": "2026-09-23T18:41:59+00:00"
+  },
   "rows": [
     {
       "ohrc_row": 48572,
@@ -65,7 +71,7 @@
           "subpixel_ok": "9/11"
         }
       },
-      "seconds": 10.7
+      "seconds": 17.5
     },
     {
       "ohrc_row": 52072,
@@ -140,13 +146,13 @@
           },
           {
             "step": "TMC2 -> TC",
-            "rmse_px_own": 0.1957,
-            "rmse_m": 1.449,
-            "rmse_px_final": 0.1957
+            "rmse_px_own": 0.1962,
+            "rmse_m": 1.452,
+            "rmse_px_final": 0.1962
           }
         ],
-        "total_tc_px": 0.2712,
-        "total_m": 2.008
+        "total_tc_px": 0.2715,
+        "total_m": 2.01
       },
       "direct_error_tc_px": 0.5797,
       "ohrc_system_offset_m": {
@@ -154,7 +160,7 @@
         "north": 2229,
         "total": 2296
       },
-      "seconds": 12.2
+      "seconds": 17.3
     },
     {
       "ohrc_row": 55572,
@@ -215,7 +221,7 @@
         }
       },
       "cascade_vs_direct_tc_px": {
-        "rmse": 0.391,
+        "rmse": 0.39,
         "max": 0.449
       },
       "cascade_vs_direct_m": 2.89,
@@ -229,13 +235,13 @@
           },
           {
             "step": "TMC2 -> TC",
-            "rmse_px_own": 0.5375,
-            "rmse_m": 3.979,
-            "rmse_px_final": 0.5375
+            "rmse_px_own": 0.5372,
+            "rmse_m": 3.977,
+            "rmse_px_final": 0.5372
           }
         ],
-        "total_tc_px": 0.5462,
-        "total_m": 4.044
+        "total_tc_px": 0.5459,
+        "total_m": 4.042
       },
       "direct_error_tc_px": 0.7265,
       "ohrc_system_offset_m": {
@@ -243,7 +249,7 @@
         "north": 2231,
         "total": 2298
       },
-      "seconds": 12.4
+      "seconds": 18.3
     },
     {
       "ohrc_row": 59072,
@@ -304,7 +310,7 @@
         }
       },
       "cascade_vs_direct_tc_px": {
-        "rmse": 0.377,
+        "rmse": 0.376,
         "max": 0.396
       },
       "cascade_vs_direct_m": 2.79,
@@ -318,9 +324,9 @@
           },
           {
             "step": "TMC2 -> TC",
-            "rmse_px_own": 0.6452,
+            "rmse_px_own": 0.6451,
             "rmse_m": 4.776,
-            "rmse_px_final": 0.6452
+            "rmse_px_final": 0.6451
           }
         ],
         "total_tc_px": 0.6665,
@@ -332,7 +338,7 @@
         "north": 2229,
         "total": 2296
       },
-      "seconds": 12.8
+      "seconds": 19.7
     },
     {
       "ohrc_row": 62572,
@@ -407,13 +413,13 @@
           },
           {
             "step": "TMC2 -> TC",
-            "rmse_px_own": 0.2777,
-            "rmse_m": 2.056,
-            "rmse_px_final": 0.2777
+            "rmse_px_own": 0.2781,
+            "rmse_m": 2.059,
+            "rmse_px_final": 0.2781
           }
         ],
-        "total_tc_px": 0.325,
-        "total_m": 2.406
+        "total_tc_px": 0.3253,
+        "total_m": 2.408
       },
       "direct_error_tc_px": 0.5945,
       "ohrc_system_offset_m": {
@@ -421,7 +427,7 @@
         "north": 2232,
         "total": 2299
       },
-      "seconds": 14.1
+      "seconds": 22.9
     },
     {
       "ohrc_row": 66072,
@@ -468,7 +474,7 @@
           "failed": "ambiguous match: z 7.5 below cascade.min_z"
         }
       },
-      "seconds": 10.1
+      "seconds": 14.8
     },
     {
       "ohrc_row": 69572,
@@ -528,7 +534,7 @@
           "failed": "ambiguous match: z 9.0 below cascade.min_z"
         }
       },
-      "seconds": 15.4
+      "seconds": 21.2
     },
     {
       "ohrc_row": 73072,
@@ -575,7 +581,7 @@
           "failed": "ambiguous match: z 7.7 below cascade.min_z"
         }
       },
-      "seconds": 10.2
+      "seconds": 15.1
     },
     {
       "ohrc_row": 76572,
@@ -621,7 +627,7 @@
           "failed": "ambiguous match: z 7.9 below cascade.min_z"
         }
       },
-      "seconds": 10.2
+      "seconds": 15.3
     }
   ]
 }

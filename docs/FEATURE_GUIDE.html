@@ -313,7 +313,7 @@ html{scroll-behavior:smooth}
     <li><b>Prepare the images</b>Contrast boost, phase-congruency transform, IIRS composite, shadow mask, terrain texture scores. <span class="ids">PREP-01 … PREP-08</span></li>
     <li class="gate"><span class="gate-line">GATE A · a clean, geometry-tagged tile pair (ImagePlane) is handed over</span></li>
     <li class="star"><b>Scale-bridging cascade</b>Cross large resolution gaps in steps (OHRC → TMC-2 → SELENE TC / IIRS → LRO), never in one jump. <span class="ids">MATCH-10, MATCH-11</span></li>
-    <li class="star"><b>Automatic matcher choice</b>Pick LightGlue, LoFTR, RIFT2 or the cascade based on lighting difference, scale and sensor type. <span class="ids">MATCH-01 … MATCH-09, MATCH-12 … MATCH-15</span></li>
+    <li class="star"><b>Automatic matcher choice</b>Pick EfficientLoFTR, tiled XoFTR or the cascade based on scale and sensor type. <span class="ids">MATCH-01 … MATCH-09, MATCH-12 … MATCH-15</span></li>
     <li><b>Fit the transform</b>MAGSAC++ throws away wrong matches, then affine, homography or TPS fits the shape. <span class="ids">ALIGN-01, ALIGN-02</span></li>
     <li class="star"><b>Physics-based filtering</b>Reject matches that are physically impossible given terrain slope and sun angle. <span class="ids">ALIGN-03</span></li>
     <li><b>Spread the points evenly</b>Grid top-k, refill empty cells, Delaunay coverage check. <span class="ids">ALIGN-04 … ALIGN-07</span></li>
@@ -390,7 +390,7 @@ html{scroll-behavior:smooth}
       <tr><td class="num">14</td><td>Non-commercial licence leaks in</td><td>Licence audit in CI</td><td>Licence gate (CHECK-10)</td></tr>
       <tr><td class="num">15</td><td>Fake PDS parser (generic image load)</td><td>Test asserts real label fields</td><td>Real parser (DATA-01)</td></tr>
       <tr><td class="num">16</td><td>Classical methods fail at the poles</td><td>Sun elevation check</td><td>Route to the learned path (MATCH-09)</td></tr>
-      <tr><td class="num">17</td><td>LoFTR fails at very low sun</td><td>Same sun check</td><td>Never route LoFTR there (MATCH-04)</td></tr>
+      <tr><td class="num">17</td><td>LoFTR fails at very low sun</td><td>Same sun check</td><td>Checked on real data instead: EfficientLoFTR 19/20 on LRO NAC up to 54.5° incidence; very low sun remains flagged (MATCH-04)</td></tr>
       <tr><td class="num">18</td><td>ISIS/ASP tooling breaks</td><td>Build/CI failure</td><td>Pipeline works without ISIS</td></tr>
       <tr><td class="num">19</td><td>Fake or inflated metrics</td><td>Null and perturbation tests</td><td>Control gates on every run (CHECK-01 … 06)</td></tr>
       <tr><td class="num">20</td><td>Token "fine-tuning" oversold</td><td>Compare against training logs</td><td>We say "pretrained weights, no fine-tuning"</td></tr>
@@ -680,17 +680,17 @@ e:`AKAZE is competitive with SIFT near the equator but also degrades at the pole
 s:`"We compare several classical detectors instead of assuming one is best."`,
 d:`All three run and are selectable via config.`, c:`matching/adapter.py, configs/regimes.yaml`},
 {id:"MATCH-03",n:"LightGlue AI matching",p:"P0",ps:0,st:0,
-w:`A learned (AI) matcher and our shipped default. It runs on CPU or GPU.`,
+w:`A learned (AI) matcher. It runs on CPU or GPU. It was our default until real TMC-2 ↔ SELENE TC evidence moved the default to EfficientLoFTR (MATCH-04).`,
 h:`Run through vismatch (one get_matcher(name) call; weights auto-download). Our ~60-line adapter converts ImagePlane to the input format, converts the output to MatchSet, routes through the licence gate, and sets skip_ransac=True so our own estimator does the geometry. Published speed (external, not ours): 44.2 ms/pair on GPU.`,
 e:`SuperGlue has the strongest lunar evidence, but its licence is non-commercial. LightGlue is its successor, Apache-2.0 including weights, and it beat SuperGlue on satellite stereo (arXiv:2405.06246). It has no lunar validation yet, which we measure ourselves.`,
-s:`"LightGlue is SuperGlue's faster successor, and it's licence-safe for ISRO. That's why it's our default."`,
+s:`"LightGlue is SuperGlue's licence-safe successor. It was our first default; we replaced it with EfficientLoFTR when real TMC-2 data showed EfficientLoFTR was better."`,
 d:`Runs on CPU and GPU, returns a valid MatchSet, and beats SIFT on a synthetic lighting-shifted pair.`, c:`matching/adapter.py, configs/regimes.yaml`},
 {id:"MATCH-04",n:"LoFTR AI matching",p:"P1",ps:0,st:0,
-w:`A dense transformer matcher (LoFTR / EfficientLoFTR) that needs no keypoint detector. It is never used alone for extreme low-sun images.`,
-h:`Through vismatch; the regime selector only routes it to non-extreme lighting, or runs it on phase-congruency input.`,
+w:`A dense transformer matcher (EfficientLoFTR) that needs no keypoint detector. It is our shipped default for every same-sensor pair.`,
+h:`Through vismatch, pinned to vismatch<=1.3.2 so the code and weights stay Apache-2.0 (upstream relicensed on 2026-09-15). Routing picks it for every same-sensor pair.`,
 e:`Strong on low-texture ground, but documented to fail almost completely at very low sun elevation (Geo-LoFTR, EL=2°; failure mode #17).`,
-s:`"LoFTR is good on smooth ground, but we know it collapses in very low sun, so we never send it there."`,
-d:`Runs, and the regime selector only routes it to non-extreme lighting.`, c:`matching/adapter.py, configs/regimes.yaml`},
+s:`"On real LRO NAC pairs 15-60 degrees apart in sun incidence it registered 19 of 20, so we use it everywhere same-sensor. Sun azimuth is the part not yet validated on real data, and we say so."`,
+d:`Runs, is the routed default, and is licence-pinned. (The original 'non-extreme lighting only' rule was dropped on measured evidence.)`, c:`matching/adapter.py, matching/routing.py, configs/regimes.yaml`},
 {id:"MATCH-05",n:"XFeat lightweight matching",p:"P2",ps:0,st:0,
 w:`A small, fast matcher for machines with no GPU.`,
 h:`Through vismatch; Apache-2.0.`,
@@ -716,11 +716,11 @@ e:`A lunar-specific idea: a 2025 crater-neighbourhood paper and several competit
 s:`"Craters don't move with the sun. We use their layout to catch false matches RANSAC lets through."`,
 d:`Crater-neighbourhood checks reject matches RANSAC alone accepts on a repetitive-terrain subset.`, c:`matching/craters.py`},
 {id:"MATCH-09",n:"Automatic matcher routing (regime selector)",p:"P0",ps:0,st:1,
-w:`Picks the matcher automatically from the sun-angle difference, scale ratio and sensor types.`,
-h:`Rules in configs/regimes.yaml. Same sensor with Δincidence under 30° and scale under 4× gives LightGlue. Δincidence of 30° or more, or incidence above 70° (polar), gives LightGlue/LoFTR on phase-congruency input. Camera vs spectrometer gives RIFT2. Scale gap of 4× or more gives the cascade. The inputs come from GEO-01 and GEO-06, not from a hard-coded camera pair.`,
+w:`Picks the route and matcher automatically from the scale ratio and sensor types.`,
+h:`matching/routing.py over configs/regimes.yaml. Scale gap of 4× or more: the cascade, never a direct match. Camera vs spectrometer: XoFTR, tiled at 640 px. Everything else: EfficientLoFTR. Sun geometry is recorded as an expectation, but never switches the matcher, because sun azimuth is not validated on real data.`,
 e:`The evidence is genuinely mixed: SuperGlue-class wins at the lunar poles (arXiv:2509.04775), while classical RIFT wins at high resolution (MultiResSAR). No single matcher wins everywhere, so we route instead of hardcoding. No competitor does this.`,
-s:`"We don't pick 'the newest model'. The measured lighting and scale decide which method runs, because the evidence shows each wins in a different situation."`,
-d:`A polar-lighting pair routes to the polar path; an OHRC ↔ IIRS request routes to the cascade, never to a direct match.`, c:`matching/regime.py, configs/regimes.yaml`},
+s:`"The measured scale gap and sensor type decide the method. We deliberately do NOT route on lighting, because we could not validate that on real data; we report it as an expectation instead."`,
+d:`An OHRC ↔ IIRS request routes to the cascade, never to a direct match, and the real entry point goes through routing. (The 'polar path' was dropped: low sun alone did not break matching.)`, c:`matching/routing.py, matching/regime.py, configs/regimes.yaml`},
 {id:"MATCH-10",n:"Scale-bridging cascade",p:"P0",ps:0,st:1,
 w:`Crosses huge resolution gaps in steps instead of one jump: OHRC → TMC-2 (~20:1) → SELENE TC (~2:1) or IIRS (~16:1) → LRO NAC/WAC. It chains the transforms together and adds up the uncertainty from each step.`,
 h:`Plans a stage graph from GSD ratios, runs each hop, composes the transforms, and propagates error across hops, so a 3-hop chain never reports a 1-hop error bar. Per-step and total error are both reported.`,

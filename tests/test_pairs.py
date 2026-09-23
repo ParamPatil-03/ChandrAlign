@@ -16,11 +16,12 @@ from chandralign.io.pds_label import parse_label
 ROOT = Path(__file__).resolve().parents[1]
 PAIRS_FILE = ROOT / "data" / "pairs" / "registered_pairs.json"
 
-# registered_pairs.json is COMMITTED, but the products it names are not, so
-# the file existing says nothing about whether these tests can run. Guarding on
-# it alone meant a checkout without the CH-2/SELENE rasters went red rather than
-# skipping. Require the labels the file actually points at.
-def _labels_present() -> bool:
+# registered_pairs.json is COMMITTED; the products it names are not. So only the
+# tests that re-read LABELS are gated on the labels. The rest read the committed
+# file alone and run everywhere. (A module-wide gate used to skip all 12 whenever
+# ANY named label was missing -- one absent WAC product hid the TMC-2 <-> TC
+# headline, whose own labels were present.)
+def _labels_present(pairing: str | None = None) -> bool:
     if not PAIRS_FILE.exists():
         return False
     try:
@@ -28,6 +29,8 @@ def _labels_present() -> bool:
     except (OSError, ValueError):
         return False
     for pair in doc.get("pairs", []):
+        if pairing is not None and pair.get("pairing") != pairing:
+            continue
         for side in ("source", "reference"):
             label = pair.get(side, {}).get("label")
             if label and not (ROOT / label).is_file():
@@ -35,9 +38,11 @@ def _labels_present() -> bool:
     return True
 
 
-pytestmark = pytest.mark.skipif(
-    not _labels_present(),
-    reason="run scripts/build_pairs.py, or the products it names are not downloaded")
+pytestmark = pytest.mark.skipif(not PAIRS_FILE.exists(), reason="run scripts/build_pairs.py")
+needs_all_labels = pytest.mark.skipif(
+    not _labels_present(), reason="some products the file names are not downloaded")
+needs_headline_labels = pytest.mark.skipif(
+    not _labels_present("TMC2<->TC"), reason="the TMC-2 / SELENE TC products are not downloaded")
 
 
 @pytest.fixture(scope="module")
@@ -72,7 +77,12 @@ def test_the_headline_pairs_are_three_different_pieces_of_ground(doc):
 
 
 def test_the_scale_ratio_is_the_two_to_one_case_we_claim(doc):
-    """TMC-2 4.41 m against TC 7.403 m is 1.68:1 -- the regime the project is about."""
+    """TMC-2 4.41 m against TC 7.403 m is 1.68:1 -- the regime the project is about.
+
+    These are LABEL pixel sizes, which is what the file records. TMC-2's label
+    value is wrong: measured from pixels it is 4.920 m (configs/measured_scales.yaml),
+    so the physical ratio is ~1.50:1. Still the ~2:1 regime; not the same number.
+    """
     for p in headline(doc):
         assert p["scale_ratio"] == pytest.approx(1.679, abs=0.01), p
         assert p["source"]["gsd_m"] == pytest.approx(4.41)
@@ -86,18 +96,31 @@ def test_the_headline_pairs_are_listed_first(doc):
 
 # ----------------------------------------------------------------------------- the file matches the data
 
+def _rederive(doc, p):
+    src = parse_label(ROOT / p["source"]["label"])
+    ref = parse_label(ROOT / p["reference"]["label"])
+    again = check_overlap(src, ref, min_overlap=doc["min_overlap"])
+    assert again.ok, p
+    # the file stores km2 rounded to 2 dp, so allow half a unit in the last place
+    assert again.overlap_km2 == pytest.approx(p["overlap_km2"], abs=0.005), p
+    assert again.fraction_of_smaller == pytest.approx(p["fraction_of_smaller"], abs=1e-4), p
+
+
+@needs_headline_labels
+def test_the_headline_overlaps_are_reproducible_from_the_labels(doc):
+    """DATA-08's own pairs, re-derived whenever THEIR labels are present."""
+    for p in headline(doc):
+        _rederive(doc, p)
+
+
+@needs_all_labels
 def test_every_recorded_overlap_is_reproducible_from_the_labels(doc):
     """The recorded numbers are re-derived here, so the file cannot go stale silently."""
     for p in doc["pairs"]:
-        src = parse_label(ROOT / p["source"]["label"])
-        ref = parse_label(ROOT / p["reference"]["label"])
-        again = check_overlap(src, ref, min_overlap=doc["min_overlap"])
-        assert again.ok, p
-        # the file stores km2 rounded to 2 dp, so allow half a unit in the last place
-        assert again.overlap_km2 == pytest.approx(p["overlap_km2"], abs=0.005), p
-        assert again.fraction_of_smaller == pytest.approx(p["fraction_of_smaller"], abs=1e-4), p
+        _rederive(doc, p)
 
 
+@needs_all_labels
 def test_every_label_named_in_the_file_exists(doc):
     for p in doc["pairs"]:
         assert (ROOT / p["source"]["label"]).is_file(), p["source"]["label"]

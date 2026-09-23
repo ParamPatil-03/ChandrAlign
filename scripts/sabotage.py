@@ -74,9 +74,9 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    name = "xoftr"'),
             "routing upgrades an unknown expectation": (
                 "            expectation=decision.expectation,\n"
-                '            reason="scale gap too wide',
+                '            reason="scale gap at or above',
                 '            expectation="solved",\n'
-                '            reason="scale gap too wide'),
+                '            reason="scale gap at or above'),
         },
     ),
     "routing-entry": (
@@ -330,7 +330,36 @@ def run(test_file: str) -> bool:
     return r.returncode == 0
 
 
+BACKUP_SUFFIX = ".sabotage-orig"
+
+
+def _backup_of(source: Path) -> Path:
+    return source.with_name(source.name + BACKUP_SUFFIX)
+
+
+def recover() -> list[str]:
+    """Restore any source file a previous run left mutated.
+
+    A `finally` does not run when the process is KILLED. On 2026-09-23 a run was
+    stopped mid-target and left `rel = ori % 180` (missing `- theta_deg`) in
+    matching/rift.py; four RIFT2 tests failed and it looked like a merge bug.
+    Worse, the NEXT run would have read that broken file as "the original" and
+    restored the damage permanently. So every mutation is preceded by a backup,
+    and every run begins by restoring any backup it finds.
+    """
+    restored = []
+    for source_rel, _, _ in TARGETS.values():
+        backup = _backup_of(ROOT / source_rel)
+        if backup.exists():
+            (ROOT / source_rel).write_text(backup.read_text(encoding="utf-8"), encoding="utf-8")
+            backup.unlink()
+            restored.append(source_rel)
+            print(f"  RECOVERED {source_rel}: a previous run was killed mid-sabotage")
+    return restored
+
+
 def check(target: str) -> list[str]:
+    recover()                                   # before reading the "original"
     source_rel, test_rel, sabotages = TARGETS[target]
     source = ROOT / source_rel
     original = source.read_text(encoding="utf-8")
@@ -346,6 +375,7 @@ def check(target: str) -> list[str]:
                 print(f"  {label:<52} ANCHOR MISSING (code moved; update this script)")
                 slipped.append(f"{label} (anchor missing)")
                 continue
+            _backup_of(source).write_text(original, encoding="utf-8")
             source.write_text(original.replace(find, replace, 1), encoding="utf-8")
             caught = not run(test_rel)
             print(f"  {label:<52} {'caught' if caught else '*** SLIPPED THROUGH ***'}")
@@ -353,6 +383,7 @@ def check(target: str) -> list[str]:
                 slipped.append(label)
     finally:
         source.write_text(original, encoding="utf-8")
+        _backup_of(source).unlink(missing_ok=True)
     return slipped
 
 

@@ -12,10 +12,18 @@ routing logic was, in effect, dead code with a config value attached.
 decision lives here rather than being re-implemented at each entry point.
 
 WHAT IT ROUTES, AND WHAT IT DELIBERATELY DOES NOT
-  extreme scale gap   -> route "cascade", NO direct matcher. The cascade
-                         (MATCH-10) chooses per step; returning a matcher here
-                         would invite a caller to match directly across a gap
-                         measured to be infeasible.
+  extreme scale gap   -> route "cascade", NO matcher name. The caller must hand
+                         the pair to cascade.plan(), which decides BY FOOTPRINT
+                         whether one step suffices or an intermediate product is
+                         needed -- TMC-2 -> NAC, for instance, is a single step,
+                         because a NAC swath spans ~400-1300 TMC-2 pixels.
+                         NOTHING chooses a matcher per cascade step: the step is
+                         run by cascade.register_step_dense (MIND template
+                         search, the method the feasibility threshold was
+                         measured with) unless the caller picks
+                         cascade.register_step with a named matcher. Returning a
+                         matcher here would invite a caller to match directly
+                         across a gap routing has flagged.
   cross-modality      -> `cross_modal_matcher` (xoftr), tiled in the fine stage.
                          Measured: xoftr is the only candidate at 10/10 on
                          cross-modal, and tiled it runs 9 real windows in 80 s.
@@ -68,7 +76,8 @@ def choose(src: SceneMeta | str, ref: SceneMeta | str) -> MatcherChoice:
         return MatcherChoice(
             route="cascade", model_name=None, regime=decision.regime,
             expectation=decision.expectation,
-            reason="scale gap too wide for one step; the cascade chooses per step. "
+            reason="scale gap at or above the routing threshold; cascade.plan() decides "
+                   "by footprint how many steps, and each runs register_step_dense. "
                    + decision.reason)
 
     if decision.regime == "cross_modal":
