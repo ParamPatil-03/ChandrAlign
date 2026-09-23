@@ -248,6 +248,48 @@ def shared_mask_gate(src_plane, ref_plane) -> GateResult:
 
 
 # ---------------------------------------------------------------------------
+# Independent cross-check: a second method that fails DIFFERENTLY
+# ---------------------------------------------------------------------------
+def transform_gap_px(m1: np.ndarray, m2: np.ndarray, shape: tuple[int, int]) -> float:
+    """RMS distance between where two transforms send a 16 x 16 grid of source pixels."""
+    h, w = shape
+    ys, xs = np.mgrid[0:h:complex(16), 0:w:complex(16)]
+    p = np.stack([xs.ravel(), ys.ravel(), np.ones(xs.size)])
+    a, b = np.asarray(m1, float) @ p, np.asarray(m2, float) @ p
+    return float(np.sqrt(np.mean(np.sum((a[:2] / a[2] - b[:2] / b[2]) ** 2, axis=0))))
+
+
+def crosscheck_gate(primary: np.ndarray, checker: Optional[np.ndarray], checker_accepted: bool,
+                    shape: tuple[int, int], flag_px: Optional[float] = None,
+                    name: str = "independent_crosscheck") -> Optional[GateResult]:
+    """Does an independent method agree with the primary result?
+
+    Why it exists, measured (scripts/rift_crosscheck.py, 192 synthetic runs):
+    the quality gate accepted 12 results that were 2.2-5.7 px wrong, all from
+    learned matchers. They were CONSISTENTLY wrong -- shift the input 5 px and
+    the wrong answer shifts 5 px -- so the control gates above caught only 2.
+    RIFT2 (classical, untrained, phase-based) fails differently, and as a
+    checker it caught 8 of the 12 with 0 false alarms on 64 correct results.
+
+    Returns None -- NOT a pass, NOT a fail -- when the checker has no confident
+    answer of its own. An abstaining checker has no opinion: counting it as a
+    pass would claim a check that never happened, and counting it as a fail
+    would reject every correct result in a regime the checker cannot handle
+    (29 correct results at +30 deg lighting, where RIFT2 fails). Callers add the
+    gate to RegistrationResult.gates only when it returns a result.
+    """
+    if checker is None or not checker_accepted:
+        return None
+    limit = float(_cfg("crosscheck_flag_px", 2.0)) if flag_px is None else float(flag_px)
+    gap = transform_gap_px(primary, checker, shape)
+    detail = {"gap_px": round(gap, 3), "flag_px": limit}
+    if gap > limit:
+        return GateResult(name, False, f"an independent method disagrees by {gap:.2f} px "
+                                       f"(> {limit} px): the primary may be consistently wrong", detail)
+    return GateResult(name, True, f"independent method agrees to {gap:.2f} px", detail)
+
+
+# ---------------------------------------------------------------------------
 # The real pipeline, wrapped so the gates can drive it
 # ---------------------------------------------------------------------------
 def pipeline_from(matcher: str = "sift", device: Optional[str] = None,

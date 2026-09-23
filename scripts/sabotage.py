@@ -190,6 +190,11 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "an ungated result is allowed through": (
                 "    if not gates:\n        raise UngatedResultError(",
                 "    if False:\n        raise UngatedResultError("),
+            "an abstaining cross-check counts as a pass": (
+                "    if checker is None or not checker_accepted:\n        return None",
+                "    if checker is None or not checker_accepted:\n        return GateResult(name, True, \"abstained\")"),
+            "the cross-check ignores disagreement": (
+                "    if gap > limit:", "    if False:"),
             "noise ignores the reference's brightness": (
                 "    noise = rng.normal(float(ref.mean()), float(ref.std()) or 1.0, np.asarray(src).shape)",
                 "    noise = rng.normal(0.0, 1.0, np.asarray(src).shape)"),
@@ -218,6 +223,20 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    return np.array([[1 / f, 0, 0.0], [0, 1 / f, 0.0], [0, 0, 1]], float)"),
             "a failed step is bridged over": (
                 "    if missing:\n", "    if False:\n"),
+        },
+    ),
+    "rift": (
+        "src/chandralign/matching/rift.py",
+        "tests/test_rift.py",
+        {
+            "the sampling grid turns the wrong way": (
+                "    t = np.deg2rad(-theta_deg)", "    t = np.deg2rad(theta_deg)"),
+            "the MIM index shift has the wrong sign": (
+                "_INDEX_SHIFT_SIGN = -1", "_INDEX_SHIFT_SIGN = 1"),
+            "orientation is not made relative to the patch": (
+                "        rel = (ori[ys, xs] - theta_deg) % 180.0", "        rel = ori[ys, xs] % 180.0"),
+            "the published MIM becomes the default again": (
+                '    orientation: str = "ori"', '    orientation: str = "mim"'),
         },
     ),
     "subpixel": (
