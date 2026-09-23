@@ -79,3 +79,54 @@ register, drops a tier, or fails a gate.
 Nine windows of one TMC-2 strip against one reference product, one matcher.
 A null or small effect here says nothing about harder pairings (NAC, cross-modal),
 where the filter and the refinement could matter more.
+
+---
+
+## Result of runs A-US, and why v1's rules are NOT applied (2026-09-23)
+
+| run | perturbation error median / max (px, truth) | ISRO-grid proxy median (m) | s / window |
+|---|---|---|---|
+| A old warp | 0.082 / 0.464 | 312.4 | 10.5 |
+| B anti-aliased | 0.081 / 0.208 | 312.4 | 10.9 |
+| U + uniformity | **0.261 / 1.069** | 312.6 | 10.9 |
+| S + sub-pixel (all inliers) | 0.082 / 0.154 | 312.4 | 50.1 |
+| US both | **0.206 / 0.830** | 312.4 | 11.7 |
+
+All nine windows register, at the same tiers, with every gate passing, in every run.
+
+- Rule 1 (anti-aliasing): **kept**. Median unchanged, worst window 0.464 -> 0.208 px.
+- Rule 2 (uniformity) says ON: it loses no window and moves the proxy by 0.2 m.
+  **But rule 2 checked only the proxy, and the truth got 3x worse**, with one window
+  past 1 px -- no longer sub-pixel. That is a defect in the rule as written, not a
+  property the rule was meant to allow. Cause: the final fit on ~384 thinned points
+  discards ~97% of ~15,000 correct matches. Coverage was already 1.0, so there was
+  no clustering bias for thinning to remove; there was only precision to lose.
+- Rule 3 (sub-pixel) says ON: no loss, +0.001 px. No gain either, at 5x the runtime.
+- Rule 4 would switch both on: US loses no window, but carries the same 2.5x
+  regression of the truth metric.
+
+Applying v1 literally would ship a measured accuracy regression, so it is not
+applied. As section "Question" of v1 allows, a v2 is written below and frozen
+before its run.
+
+## v2 (frozen before run V2)
+
+**Design change.** The MODEL is always the first robust estimate on all (filtered)
+inliers -- the evidence is not thrown away. Uniformity and sub-pixel refinement act
+on the DELIVERED match points only: the problem statement's "match points ... with
+uniform distribution" and "sub-pixel accuracy" are properties of what is delivered,
+and the model keeps its full precision.
+
+**Run V2:** anti-aliased warp, `uniformity=on`, `subpixel=on`, `geometry_filter=off`,
+same nine windows, same command otherwise.
+
+**Rules.**
+1. V2 loses no window against B, and its perturbation error per window equals B's
+   within the run-to-run noise seen between A and B on unchanged windows
+   (|difference| <= 0.02 px at the median). By construction the model is B's; a
+   larger difference means the construction is wrong.
+2. Delivered points: coverage equal to B's; no grid cell holds more than top-k;
+   at least 90% of delivered points refined; RMS residual of the refined delivered
+   points to the model lower than of the same points unrefined.
+3. If 1 and 2 hold: `uniformity: true`, `subpixel: true` become the defaults.
+   `geometry_filter` is still decided by v1 rule 5 (run USG, on the v2 design).
