@@ -86,7 +86,19 @@ def test_uniformity_thins_the_crowded_corner_and_keeps_coverage():
     assert on.coverage == pytest.approx(off.coverage)      # thinning never empties a cell
     # the tier signals still come from the FIRST estimate, not the thinned set
     assert on.inlier_count == off.inlier_count
-    assert np.allclose(on.model.matrix, A, atol=0.02)
+    m = np.asarray(on.model.matrix)
+    assert np.allclose(m[:2, :2], A[:2, :2], atol=0.01) and np.allclose(m[:2, 2], A[:2, 2], atol=0.1)
+
+
+def test_delivery_stages_never_change_the_model():
+    """Measured on real data: refitting on the thinned points made the known-shift
+    error 3x worse (docs/pipeline_stages_protocol.md). The model is the first
+    estimate on every inlier, whatever the delivery stages do."""
+    src, ref, conf = clustered_pairs()
+    off = fine_stage(matchset(src, ref, conf), blank(), blank(), centre=(200, 200), flags=OFF)
+    for flags in ({"uniformity": True}, {"subpixel": True}, {"uniformity": True, "subpixel": True}):
+        on = fine_stage(matchset(src, ref, conf), blank(), blank(), centre=(200, 200), flags={**OFF, **flags})
+        assert np.array_equal(on.model.matrix, off.model.matrix), flags
 
 
 def _textured_pair(shift=(0.37, -0.62), blk=50, n=160, seed=3):
@@ -110,10 +122,12 @@ def test_subpixel_moves_integer_matches_onto_the_true_position():
     off = fine_stage(matchset(src, ref), a, b, centre=(80, 80), flags=OFF)
     on = fine_stage(matchset(src, ref), a, b, centre=(80, 80), flags={**OFF, "subpixel": True})
     assert on.stages["subpixel"]["moved"] > 0.9 * len(src)
-    err_off = np.abs(np.asarray(off.model.matrix)[:2, 2] - shift).max()
-    err_on = np.abs(np.asarray(on.model.matrix)[:2, 2] - shift).max()
+    # The DELIVERED points: each (ref - src) should be the true shift.
+    err_off = np.abs(np.median(off.control_ref - off.control_src, axis=0) - shift).max()
+    err_on = np.abs(np.median(on.control_ref - on.control_src, axis=0) - shift).max()
     assert err_off > 0.3                           # integer matches: off by the rounding
     assert err_on < 0.05                           # refined: sub-pixel
+    assert np.percentile(np.hypot(*(on.control_ref - on.control_src - shift).T), 90) < 0.1
 
 
 class _Identity:

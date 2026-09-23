@@ -11,10 +11,18 @@ THE ORDER (SIH26166_Deep_Technical_Research.md section 28, "recommended architec
 
     matches
       -> [terrain filter]        drop matches whose two ends are different ground
-      -> robust estimate         ALIGN-01; its inlier count and ratio grade the result
-      -> [uniform control pts]   top-k per grid cell OF THE INLIERS (section 30)
-      -> [sub-pixel refinement]  each control point, NCC on a local patch (section 31)
-      -> final fit               on the control points
+      -> robust estimate         ALIGN-01: THE MODEL, fitted on every inlier;
+                                 its inlier count and ratio grade the result
+      -> [uniform match points]  top-k per grid cell of the inliers (section 30)
+      -> [sub-pixel refinement]  each delivered point, NCC on a local patch (section 31)
+
+THE MODEL IS NEVER REFITTED ON THE THINNED POINTS. Measured on real TMC-2 -> TC
+(docs/pipeline_stages_protocol.md): refitting on ~384 uniform points discarded
+~97% of ~15,000 correct matches and made the perturbation error 3x worse (median
+0.081 -> 0.261 px, worst 1.07 px); refining all 15,000 before refitting gained
+nothing (0.082) at 5x the runtime. So uniformity and sub-pixel refinement shape
+the DELIVERED match points -- the problem statement's "match points ... uniform
+distribution ... sub-pixel accuracy" -- and the model keeps its full evidence.
 
 Each bracketed stage is switched by `pipeline.<stage>` in configs/default.yaml
 (PLAN P2-T18: "B exposes each stage as an independently toggleable config
@@ -56,13 +64,13 @@ def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
 @dataclass
 class FineResult:
     ok: bool
-    model: Optional[TransformModel]           # the FINAL model
+    model: Optional[TransformModel]           # the first robust estimate's model, on all inliers
     first: robust.EstimateResult              # first robust estimate: grades the result
     matches: MatchSet                         # after the terrain filter
-    control_src: np.ndarray                   # the delivered control points, source frame
+    control_src: np.ndarray                   # the delivered match points, source frame
     control_ref: np.ndarray                   # ... and reference frame (sub-pixel if refined)
-    coverage: float                           # share of grid cells holding a control point
-    rmse_px: Optional[float]                  # final model on the control points
+    coverage: float                           # share of grid cells holding a delivered point
+    rmse_px: Optional[float]                  # the model's residual on the delivered points
     n_matches: int                            # before the terrain filter
     stages: dict[str, Any] = field(default_factory=dict)
     notes: list[str] = field(default_factory=list)
@@ -143,29 +151,20 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         coverage = uniformity.coverage_of(cs, shape, grid=grid) if len(cs) else 0.0
         stages["uniformity"] = {"applied": False, "reason": "off (pipeline.uniformity)"}
 
-    # 4. per-point sub-pixel refinement (PREC-01)
+    # 4. per-point sub-pixel refinement (PREC-01) of the DELIVERED points
+    model = first.model
     if flags["subpixel"] and len(cs):
         before = cr.copy()
         cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)
         shift = np.hypot(*(cr - before).T)
+        rms_before, rms_after = _rmse(model, cs, before), _rmse(model, cs, cr)
         stages["subpixel"] = {"applied": True, "points": int(len(cs)), "moved": int(moved.sum()),
                               "median_move_px": round(float(np.median(shift[moved])), 4) if moved.any() else 0.0,
+                              "residual_to_model_px": {"unrefined": rms_before, "refined": rms_after},
                               "method": str(config.get("subpixel.method", "ncc_gaussian_iter")),
                               "window_px": 2 * int(config.get("subpixel.refine_half_px", 16)) + 1}
     else:
         stages["subpixel"] = {"applied": False, "reason": "off (pipeline.subpixel)"}
 
-    # 5. final fit on the control points
-    model, notes = first.model, []
-    if stages["uniformity"]["applied"] or stages["subpixel"]["applied"]:
-        final = robust.estimate(cs, cr, kind=first.model.kind, expected_scale=expected_scale, centre=centre)
-        if final.model is not None and final.model.matrix is not None:
-            model = final.model
-            # A control point the final fit rejects is not delivered as a match point.
-            cs, cr = cs[final.inlier_mask], cr[final.inlier_mask]
-            stages["final_fit"] = {"points": int(len(final.inlier_mask)), "inliers": final.inlier_count}
-        else:
-            notes.append("final fit on the control points failed; the first-pass model is kept")
-            stages["final_fit"] = {"failed": True}
     return FineResult(True, model, first, ms, cs, cr, coverage, _rmse(model, cs, cr),
-                      n_matches, stages, notes)
+                      n_matches, stages, [])

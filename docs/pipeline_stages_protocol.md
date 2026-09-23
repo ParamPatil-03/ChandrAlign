@@ -130,3 +130,54 @@ same nine windows, same command otherwise.
    points to the model lower than of the same points unrefined.
 3. If 1 and 2 hold: `uniformity: true`, `subpixel: true` become the defaults.
    `geometry_filter` is still decided by v1 rule 5 (run USG, on the v2 design).
+
+## Result of run V2 (2026-09-23)
+
+| row | B pert (px) | V2 pert | tier | coverage | delivered | refined | residual to model, unrefined -> refined (px) |
+|---|---|---|---|---|---|---|---|
+| 1562 | 0.064 | 0.064 | H | 0.984 | 378 | 378 | 1.866 -> **1.887** |
+| 3125 | 0.119 | 0.119 | M | 0.906 | 337 | 334 | 1.847 -> **1.904** |
+| 4687 | 0.208 | 0.208 | H | 0.859 | 320 | 318 | 1.742 -> **1.748** |
+| 16000 | 0.041 | 0.041 | H | 1.000 | 384 | 377 | 1.106 -> 1.042 |
+| 18750 | 0.079 | 0.079 | H | 1.000 | 384 | 377 | 0.699 -> 0.462 |
+| 21500 | 0.177 | 0.177 | H | 1.000 | 384 | 380 | 0.981 -> 0.813 |
+| 52000 | 0.081 | 0.081 | H | 1.000 | 384 | 380 | 0.632 -> 0.420 |
+| 54750 | 0.120 | 0.120 | H | 1.000 | 384 | 383 | 1.331 -> 1.196 |
+| 57500 | 0.022 | 0.022 | H | 1.000 | 384 | 379 | 0.875 -> 0.695 |
+
+- Rule 1: **holds exactly** -- every window's perturbation error is B's to the
+  last digit, so the model is untouched. Runtime 10.9 -> 16.2 s per window.
+- Rule 2: coverage equal, top-k respected, >= 90% refined -- but the refined
+  residual is HIGHER on the three N00 windows. **Rule 2 fails, so under v2 neither
+  stage becomes a default.**
+
+Recorded, not acted on: "residual to the affine model" is not a truth metric --
+v1 itself says internal precision "is not used to decide anything", and v2 should
+not have used it. The N00 windows have the largest residuals (~1.8 px), which is
+what ground the affine model does not describe would look like; moving a point
+to its TRUE position would then raise its residual. That is a hypothesis. v3
+measures the delivered points against a known truth instead.
+
+## v3 (frozen before its run)
+
+**Question:** does per-point refinement move delivered match points closer to
+their true positions on real imagery, with the real matcher?
+
+**Truth:** `scripts/verify_point_refinement.py`. Real TMC-2 windows (native
+3072 px, nine along-track positions spread over the strip) are block-averaged 4x
+twice, the second copy starting an integer number of native pixels later, so the
+pair differs by EXACTLY (0.25, -0.75) coarse px -- no interpolation, as
+scripts/verify_subpixel.py does for PREC-06. Independent sensor-realistic noise is
+added to each copy (the same noise model as verify_subpixel.py). `eloftr` matches
+the pair; `fine_stage` runs with `uniformity=on` and `subpixel` off, then on. For
+every delivered point, error = |(ref - src) - (0.25, -0.75)|.
+
+**Rule.** `subpixel` becomes a default if, on at least 8 of the 9 windows, the
+refined points' median error is lower than the unrefined points' median error
+AND the refined 90th percentile is not higher than the unrefined one.
+`uniformity` becomes a default if, on every window, it keeps coverage equal to
+all inliers' coverage and no cell exceeds top-k (it cannot change the model: v2
+rule 1). The two are decided separately.
+
+**Limits:** same image, same sun, same sensor: this measures how precisely a
+point is LOCATED, not cross-sensor accuracy -- the same limit PREC-06 states.
