@@ -147,18 +147,26 @@ def _shift_content(img: np.ndarray, sx: int, sy: int) -> np.ndarray:
 
 
 def perturbation_gate(pipeline: Pipeline, src: np.ndarray, ref: np.ndarray,
-                      shift: tuple[int, int] = (3, 4)) -> GateResult:
+                      shift: tuple[int, int] = (3, 4),
+                      base: Optional[PipelineRun] = None) -> GateResult:
     """Move the source by a known shift; the transform must move by the same amount.
 
     If the source content moves by s, a point p in the moved source is the old
     source's p - s, so T1(p) = T0(p - s) = T0(p) - J0 s. The implied shift is
     solved from J0 s = T0(c) - T1(c) at the centre, which keeps the answer in
     SOURCE pixels even when source and reference differ in scale (TMC-2 -> TC).
+
+    `base` may be the registration being certified, when it came from this same
+    pipeline on this same (src, ref). The gate then compares the moved run with
+    THAT result rather than a fresh repeat of it, which is the stronger test of
+    the two: it certifies the transform actually reported. Only the one
+    redundant call is skipped.
     """
     name = "perturbation_sensitivity"
     tol = float(_cfg("perturbation_tolerance_px", 1.5))
     s = np.array(shift, float)
-    base = _safe(pipeline, src, ref)
+    if base is None:
+        base = _safe(pipeline, src, ref)
     if not base.ok or base.matrix is None:
         return GateResult(name, False, f"cannot evaluate: the baseline registration failed "
                                        f"({base.note or 'no transform'})", {"shift": list(shift)})
@@ -285,11 +293,13 @@ def crosscheck_gate(primary: np.ndarray, checker: Optional[np.ndarray], checker_
 # The real pipeline, wrapped so the gates can drive it
 # ---------------------------------------------------------------------------
 def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
-                  gsd_m: float = 1.0) -> Pipeline:
+                  gsd_m: float = 1.0, **match_kwargs) -> Pipeline:
     """Wrap the matcher + robust estimator the registration actually uses.
 
     The gates must exercise THE SAME code path that produced the result they
     certify; a separate, simpler stand-in would test itself, not the pipeline.
+    `match_kwargs` (precision, tile_px, ...) are passed to adapter.match for that
+    reason: a result matched in fp16 or in tiles is certified in fp16 or in tiles.
     """
     from .. import synth
     from ..estimate import models, robust
@@ -309,7 +319,7 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
         if matcher in ("sift", "akaze", "orb", "brisk"):
             ms = classical.match(s, r, detector=matcher)
         else:
-            ms = adapter.match(s, r, model_name=matcher, device=device)
+            ms = adapter.match(s, r, model_name=matcher, device=device, **match_kwargs)
         n = int(len(ms.src_pts))
         if n < 4:
             return PipelineRun(False, n, 0, None, f"only {n} matches")
@@ -331,7 +341,8 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
 # All of them, and CHECK-08's guard
 # ---------------------------------------------------------------------------
 def run_all(pipeline: Pipeline, src: np.ndarray, ref: np.ndarray,
-            src_plane=None, ref_plane=None, seed: int = 0) -> GateReport:
+            src_plane=None, ref_plane=None, seed: int = 0,
+            base: Optional[PipelineRun] = None) -> GateReport:
     """Run every control gate against the pipeline that produced a result.
 
     The shared-mask gate needs the ImagePlanes; without them it is recorded as
@@ -342,7 +353,7 @@ def run_all(pipeline: Pipeline, src: np.ndarray, ref: np.ndarray,
     results = [
         blank_gate(pipeline, src, ref),
         noise_gate(pipeline, src, ref, seed=seed),
-        perturbation_gate(pipeline, src, ref, shift=shift),
+        perturbation_gate(pipeline, src, ref, shift=shift, base=base),
         identity_gate(pipeline, ref),
     ]
     if src_plane is not None and ref_plane is not None:

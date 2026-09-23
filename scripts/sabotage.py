@@ -31,6 +31,80 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # target -> (source file, test file, {description: (find, replace)})
 TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
+    "pair_tiling": (
+        "src/chandralign/matching/pair_tiling.py",
+        "tests/test_pair_tiling.py",
+        {
+            "tile matches left in tile coordinates (source)": (
+                "        src_parts.append(sp + [x0, y0])", "        src_parts.append(sp)"),
+            "reference offset ignores the margin": (
+                "        ref_parts.append(rp + [rx0, ry0])", "        ref_parts.append(rp + [x0, y0])"),
+            "reference tile gets no margin": (
+                "        ry0, ry1 = max(0, y0 - margin), min(h, y1 + margin)", "        ry0, ry1 = y0, y1"),
+            "grid over-splits the window": (
+                "    ys = np.linspace(0, h, ny + 1)", "    ys = np.linspace(0, h, ny + 2)"),
+            "an unaligned pair is tiled anyway": (
+                "    if np.asarray(ref.array).shape[:2] != (h, w):", "    if False:"),
+        },
+    ),
+    "gate_reuse": (
+        "src/chandralign/evaluate/control_gates.py",
+        "tests/test_pair_tiling.py",
+        {
+            "perturbation gate ignores the base it is given": (
+                "    if base is None:\n        base = _safe(pipeline, src, ref)",
+                "    base = _safe(pipeline, src, ref)"),
+        },
+    ),
+    "routing": (
+        "src/chandralign/matching/routing.py",
+        "tests/test_routing.py",
+        {
+            "cross-modal pairs quietly get the default matcher": (
+                '        name = str(cfg.get("cross_modal_matcher", "xoftr"))',
+                '        name = str(cfg.get("default_matcher", "eloftr"))'),
+            "the cascade route hands out a direct matcher": (
+                '            route="cascade", model_name=None, regime=decision.regime,',
+                '            route="cascade", model_name="eloftr", regime=decision.regime,'),
+            "cross-modal loses its fine-stage tiling": (
+                '        opts = {"tile_px": int(tile)} if tile else {}',
+                "        opts = {}"),
+            "the selector's answer is ignored for a hard-coded name": (
+                '    name = str(decision.matcher or cfg.get("default_matcher", "eloftr"))',
+                '    name = "xoftr"'),
+            "routing upgrades an unknown expectation": (
+                "            expectation=decision.expectation,\n"
+                '            reason="scale gap too wide',
+                '            expectation="solved",\n'
+                '            reason="scale gap too wide'),
+        },
+    ),
+    "routing-entry": (
+        "scripts/register_tmc2_tc.py",
+        "tests/test_routing.py",
+        {
+            # The failure this whole branch exists to fix: an entry point that
+            # names its own matcher while the selector sits unused.
+            "the entry point hard-codes its matcher again": (
+                "    return choice.model_name, dict(choice.fine_stage_options), choice.as_provenance()",
+                '    return "eloftr", {}, choice.as_provenance()'),
+            "--matcher defaults to a name, bypassing routing": (
+                '    ap.add_argument("--matcher", default=None,',
+                '    ap.add_argument("--matcher", default="eloftr",'),
+            "a forced matcher is recorded as a routed one": (
+                '"chosen_by": "--matcher override"}',
+                '"chosen_by": "matching.routing.choose"}'),
+        },
+    ),
+    "tiers": (
+        "configs/default.yaml",
+        "tests/test_routing.py",
+        {
+            "medium's inlier-ratio bar falls back below low's": (
+                "  medium: {min_inliers: 40,  min_inlier_ratio: 0.325, min_coverage: 0.35}",
+                "  medium: {min_inliers: 40,  min_inlier_ratio: 0.25,  min_coverage: 0.35}"),
+        },
+    ),
     "regime": (
         "src/chandralign/matching/regime.py",
         "tests/test_regime.py",

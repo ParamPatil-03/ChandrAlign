@@ -31,6 +31,40 @@ RESTRICTED_COMPONENTS: dict[str, str] = {
     "r2d2": "CC BY-NC-SA 3.0: non-commercial AND share-alike",
 }
 
+# WHY eloftr AND matchanything ARE **NOT** ON THAT LIST -- read before adding them.
+#
+# On 2026-09-23 they were added, and it was WRONG. The reasoning failed in a way
+# worth keeping, because it is the failure this whole module exists to prevent,
+# one level up: a licence was read off the CURRENT UPSTREAM REPOSITORY and
+# applied to the ARTEFACT WE INSTALL, which is a different thing, released at a
+# different time, under a different licence.
+#
+# zju3dv relicensed EfficientLoFTR and MatchAnything from Apache-2.0 to the
+# Project Registration License on 2026-09-15 (commits 07e9c14 and 8cd8c11,
+# "Adopt Project Registration License v1.0"). The PRL is not OSI-approved and
+# requires registration before organisational use -- so upstream TODAY is
+# genuinely restricted, and a future upgrade could bring that in.
+#
+# But nothing we run comes from upstream today. Apache-2.0 section 2 grants a
+# "perpetual ... irrevocable" licence, so a later relicence binds future
+# releases and cannot withdraw what was already distributed:
+#
+#   what we RUN      vismatch 1.3.2, released 2026-08-17 -- a month BEFORE the
+#                    relicence -- so its vendored copy was taken under Apache-2.0
+#   what we LOAD     HF vismatch/eloftr and vismatch/matchanything-eloftr,
+#                    both declaring apache-2.0, last modified 2026-02-10
+#
+# THE CONTROL IS THEREFORE A VERSION PIN, NOT A BAN. Banning the model would
+# have been both wrong and useless: it would discard a permissively licensed
+# artefact while doing nothing about the upgrade that would actually import the
+# PRL. pyproject.toml pins vismatch, and test_vismatch_version_is_licence_audited
+# fails if it moves past the audited release. Full chain, with dates and commit
+# SHAs, in reports/licence_audit.json.
+#
+# THE LESSON, GENERALISED: a licence attaches to an ARTEFACT AT A VERSION, not
+# to a project. Record repository, commit, weight source and date -- and read
+# the LICENSE text, not an API's summary of it, which is how this got through.
+
 
 class LicenceRestrictedError(RuntimeError):
     """Raised when a non-redistributable matcher is requested in ship mode."""

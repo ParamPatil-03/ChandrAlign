@@ -1,0 +1,102 @@
+{
+  "source": "external",
+  "what": "CHECK-10 licence verification of every default-matcher candidate, by ARTEFACT AND VERSION, not by project",
+  "checked_utc": "2026-09-23",
+  "protocol": "docs/default_matcher_protocol.md section 4.1",
+  "corrected": true,
+  "correction_note": "A first version of this file, committed earlier the same day, declared eloftr and matchanything-eloftr INELIGIBLE. That was wrong and the error is recorded below rather than quietly overwritten, because it is instructive: the licence was read off the CURRENT UPSTREAM REPOSITORY and applied to the artefact we install, which is a different thing, released at a different time, under a different licence. It was also accepted from an API's one-line summary instead of the LICENSE text.",
+
+  "the_relicence": {
+    "what_happened": "zju3dv relicensed EfficientLoFTR and MatchAnything from Apache-2.0 to the Project Registration License v1.0 on 2026-09-15, eight days before this audit.",
+    "commits": {
+      "zju3dv/EfficientLoFTR": "07e9c1401e71e9c556b1fda9d86d060af36ba176 (2026-09-15, 'Adopt Project Registration License v1.0'); LICENSE created 2024-09-18 as a2ef8b0096df2dce9154fc8e48a53ff60cadf68b, verified Apache-2.0 at that commit",
+      "zju3dv/MatchAnything": "8cd8c1129a6d22dabea9405a869e4fad6ff8b630 (2026-09-15, same message)"
+    },
+    "what_the_prl_says": "Not OSI-approved. Academic, educational and personal use is free and needs no registration. Use by a company, organization or entity as part of any product, service, system, application or development project is free of charge ONLY IF that project use is registered beforehand, 'regardless of whether the project is commercial or non-commercial'.",
+    "why_public_sources_still_say_apache": "The change is days old, so cached pages, search indexes and Hugging Face model cards still show the previous Apache-2.0 state. Either source alone gives the wrong answer; the raw LICENSE at a known commit is what settles it.",
+    "why_it_does_not_reach_us": "Apache-2.0 section 2 grants a 'perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable' copyright licence. A copyright holder may relicense future releases; they cannot withdraw the grant on releases already distributed under Apache-2.0. Every artefact we install was distributed before 2026-09-15."
+  },
+
+  "provenance_of_what_we_actually_run": {
+    "code": {
+      "artefact": "vismatch 1.3.2, which vendors EfficientLoFTR and MatchAnything in third_party/",
+      "released": "2026-08-17",
+      "vismatch_own_licence": "BSD-3-Clause",
+      "vendored_code_licence": "Apache-2.0 — the package predates the 2026-09-15 relicence by a month",
+      "caveat": "vismatch's own README warns that its wrapper licence does not determine the licences of the models it wraps, which is exactly why this is recorded per model rather than inherited from the wrapper."
+    },
+    "weights": {
+      "eloftr": {
+        "loaded_by": "vismatch/im_models/efficient_loftr.py line 24: snapshot_download('vismatch/eloftr') + '/eloftr_outdoors.safetensors'",
+        "repo": "huggingface.co/vismatch/eloftr",
+        "declared_licence": "apache-2.0 (README YAML front matter)",
+        "repo_last_modified": "2026-02-10T16:29:07Z",
+        "files": [".gitattributes", "README.md", "eloftr_outdoors.safetensors", "vismatch.yaml"]
+      },
+      "matchanything-eloftr": {
+        "repo": "huggingface.co/vismatch/matchanything-eloftr",
+        "declared_licence": "apache-2.0",
+        "repo_last_modified": "2026-02-10T16:29:25Z",
+        "files": [".gitattributes", "README.md", "model.safetensors", "vismatch.yaml"]
+      }
+    },
+    "residual_uncertainty": "Both weight repos declare Apache-2.0 via the README's YAML licence tag; neither ships a separate LICENSE file. That is the distributor's declaration rather than a licence text, which is weaker evidence than a LICENSE at a known commit. It is recorded as such rather than treated as equivalent."
+  },
+
+  "the_control": {
+    "rule": "Pin the version; do not ban the model.",
+    "why": "Banning eloftr would discard a permissively licensed artefact AND leave the real risk open, because the risk is an upgrade: a vismatch released after 2026-09-15 would vendor the relicensed code, and no model name would change.",
+    "enforced_by": [
+      "pyproject.toml: vismatch>=1.3,<=1.3.2",
+      "tests/test_part2_foundation.py::test_vismatch_version_is_licence_audited",
+      "tests/test_part2_foundation.py::test_a_licence_verdict_names_the_artefact_not_the_project"
+    ]
+  },
+
+  "method": "For each candidate: the upstream repository's LICENSE text at a named commit (not the GitHub licence API's summary, which is how the first version of this file went wrong), the LICENSE history to detect relicensing, the actual weight source read out of the installed loader code, and that weight repo's own declared licence and last-modified date.",
+
+  "candidates": [
+    {"model": "aliked-lightglue", "components": ["Shiaoming/ALIKED", "cvg/LightGlue"], "licence": "BSD-3-Clause + Apache-2.0", "verdict": "pass"},
+    {"model": "disk-lightglue", "components": ["cvlab-epfl/disk", "cvg/LightGlue"], "licence": "Apache-2.0", "verdict": "pass"},
+    {"model": "xfeat", "components": ["verlab/accelerated_features"], "licence": "Apache-2.0", "verdict": "pass"},
+    {"model": "sift-lightglue", "components": ["OpenCV SIFT", "cvg/LightGlue"], "licence": "Apache-2.0", "verdict": "pass"},
+    {"model": "sift-nn", "components": ["OpenCV SIFT"], "licence": "Apache-2.0", "verdict": "pass"},
+    {"model": "xoftr", "components": ["OnderT/XoFTR"], "licence": "Apache-2.0", "verdict": "pass"},
+    {
+      "model": "minima-loftr",
+      "components": ["LSXI7/MINIMA", "zju3dv/LoFTR"],
+      "licence": "Apache-2.0 + Apache-2.0",
+      "verdict": "pass",
+      "note": "MINIMA fine-tunes an existing matcher, so both links were checked. zju3dv/LoFTR remains Apache-2.0 and was NOT part of the 2026-09-15 relicence, which covered EfficientLoFTR and MatchAnything. minima-superpoint-lightglue stays blocked by the superpoint component rule."
+    },
+    {
+      "model": "eloftr",
+      "components": ["zju3dv/EfficientLoFTR via vismatch 1.3.2", "HF vismatch/eloftr"],
+      "licence": "Apache-2.0 as installed",
+      "verdict": "pass",
+      "conditional_on": "the vismatch pin; upstream is PRL from 2026-09-15",
+      "first_verdict_was": "FAIL — incorrect, see correction_note"
+    },
+    {
+      "model": "matchanything-eloftr",
+      "components": ["zju3dv/MatchAnything via vismatch 1.3.2", "HF vismatch/matchanything-eloftr"],
+      "licence": "Apache-2.0 as installed",
+      "verdict": "pass",
+      "conditional_on": "the vismatch pin; upstream is PRL from 2026-09-15",
+      "first_verdict_was": "FAIL — incorrect, see correction_note"
+    }
+  ],
+
+  "eliminated_before_measurement": [],
+  "restricted_unchanged": {
+    "superpoint / superglue": "Magic Leap, non-commercial research only",
+    "r2d2": "CC BY-NC-SA 3.0, non-commercial and share-alike"
+  },
+
+  "limits": [
+    "A licence attaches to an ARTEFACT AT A VERSION, not to a project. Record repository, commit, weight source, weight id and date; a project-level verdict is not a verdict.",
+    "Read the LICENSE text at a known commit. A licence API's summary, a model card, and a search result can each be stale or wrong, and the first version of this audit was produced by trusting one of them.",
+    "Licences change, and recently: two of the nine candidates here were relicensed eight days before this audit. Re-run this check before any dependency upgrade, and treat a clean past result as expiring.",
+    "Benchmark-only use is a separate question from shipping. The PRL explicitly permits academic and evaluation use without registration, so even an upstream-licensed model could still be measured against; what it could not be is the shipped default."
+  ]
+}

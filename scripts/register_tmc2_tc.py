@@ -56,7 +56,7 @@ from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
-from chandralign.matching import adapter  # noqa: E402
+from chandralign.matching import adapter, routing  # noqa: E402
 from chandralign.preprocess.phase_congruency import mind  # noqa: E402
 from chandralign.refine import uniformity  # noqa: E402
 
@@ -117,7 +117,9 @@ def tmc_pixel_from(J: np.ndarray, g_tc: tuple[float, float]) -> tuple[float, flo
 
 def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
-               prior_offset_m: tuple[float, float] = (0.0, 0.0)) -> dict:
+               prior_offset_m: tuple[float, float] = (0.0, 0.0),
+               match_kwargs: dict | None = None, gate_reuse_base: bool = False) -> dict:
+    match_kwargs = dict(match_kwargs or {})
     col_c = tmc.array_shape[1] // 2
     r0, c0 = row_c - win // 2, col_c - win // 2
     out: dict = {"tmc_row": row_c, "window_px": win}
@@ -210,7 +212,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     t0 = time.perf_counter()
     src_plane, ref_plane = plane(src_img, src_ok, tc.gsd_m), plane(ref_img, ref_ok, tc.gsd_m)
     ms = adapter.match(src_plane, ref_plane,
-                       model_name=matcher, device=device)
+                       model_name=matcher, device=device, **match_kwargs)
     out["match_seconds"] = round(time.perf_counter() - t0, 1)
     out["device"] = ms.device
     res = robust.estimate(ms.src_pts, ms.ref_pts, expected_scale=None,
@@ -227,14 +229,45 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     coverage = (uniformity.coverage_of(ms.src_pts[res.inlier_mask], (hF, wF), grid=8)
                 if res.inlier_count else 0.0)
 
+    # Tiled matching only: how the matches near an internal tile boundary behave
+    # against the interior ones (verify protocol 3.B, reported, not gated).
+    boxes = getattr(ms, "tile_boxes", None)
+    if boxes and len(boxes) > 1 and res.inlier_count:
+        margin = int(getattr(ms, "tile_margin_px", 64))
+        ys = sorted({b[0] for b in boxes if b[0] > 0})
+        xs = sorted({b[2] for b in boxes if b[2] > 0})
+        p = ms.src_pts
+        near = np.zeros(len(p), bool)
+        for y in ys:
+            near |= np.abs(p[:, 1] - y) < margin
+        for x in xs:
+            near |= np.abs(p[:, 0] - x) < margin
+        r_all = np.asarray(robust.models.residuals(res.model, ms.src_pts, ms.ref_pts))
+        inl = res.inlier_mask
+        rms = lambda m: round(float(np.sqrt(np.mean(r_all[m] ** 2))), 3) if m.any() else None  # noqa: E731
+        out["tile_edges"] = {
+            "tiles": len(boxes), "margin_px": margin,
+            "share_of_matches_near_edge": round(float(near.mean()), 4),
+            "share_of_inliers_near_edge": round(float(near[inl].mean()), 4),
+            "inlier_ratio_near_edge": round(float(inl[near].mean()), 4) if near.any() else None,
+            "inlier_ratio_interior": round(float(inl[~near].mean()), 4) if (~near).any() else None,
+            "inlier_rmse_near_edge_px": rms(inl & near),
+            "inlier_rmse_interior_px": rms(inl & ~near)}
+
     # Scale check on the COMPOSED transform, against real per-axis expectations.
     exp = scale.expected_scale(scale.pixel_scale(tmc), tc_pixel_scale(tc, lat_c))
     verdict = scale.check(T_total, exp, centre=(win / 2.0, win / 2.0))
     # CHECK-01..04, 06 on THIS pair, with the SAME matcher that produced the result,
     # recorded with it and fed to the verdict: a failed gate rejects the window.
     t_g = time.perf_counter()
-    gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=tc.gsd_m),
-                                  src_img, ref_img, src_plane, ref_plane)
+    # --gate-reuse-base: the main registration went through the same matcher and
+    # estimator call on the same arrays as the perturbation gate's own baseline,
+    # so it is handed over instead of being recomputed (G1, verify protocol 3.B).
+    base = (control_gates.PipelineRun(bool(res.ok), n, int(res.inlier_count), R)
+            if gate_reuse_base else None)
+    gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=tc.gsd_m,
+                                                              **match_kwargs),
+                                  src_img, ref_img, src_plane, ref_plane, base=base)
     out["gates"] = gates.gates
     out["gate_detail"] = gates.to_dict()
     out["gate_seconds"] = round(time.perf_counter() - t_g, 1)
@@ -299,10 +332,22 @@ def main() -> int:
                     help="explicit TMC-2 window-centre rows; the tile is chosen by latitude")
     ap.add_argument("--prior-offset-m", type=float, nargs=2, default=(0.0, 0.0), metavar=("EAST", "NORTH"),
                     help="known correction applied to the system prior, so --margin-km can shrink")
-    ap.add_argument("--matcher", default="eloftr")
+    ap.add_argument("--matcher", default=None,
+                    help="override the routed matcher; omit to let matching.routing choose")
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--precision", default="fp32", choices=["fp32", "fp16"])
+    ap.add_argument("--tile-px", type=int, default=None,
+                    help="split the coarse-aligned pair into tiles no larger than this")
+    ap.add_argument("--gate-reuse-base", action="store_true",
+                    help="perturbation gate reuses the main registration as its baseline")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
+    args.matcher, routed_opts, matcher_choice = resolve_matcher(args.matcher)
+    print(f"matcher: {args.matcher}  ({matcher_choice['chosen_by']})", flush=True)
+    # Routed fine-stage options first, explicit CLI flags on top of them.
+    mk = {**routed_opts, "precision": args.precision}
+    if args.tile_px:
+        mk["tile_px"] = args.tile_px
 
     tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
     sysm = projection.load_corner_model(tmc, corners="system")
@@ -332,7 +377,8 @@ def main() -> int:
             t = time.perf_counter()
             r = run_window(tmc, sysm, refm, tcs[key], tcms[key], int(row_c), win=args.win,
                            coarse=args.coarse, margin_km=args.margin_km, matcher=args.matcher,
-                           device=args.device, prior_offset_m=tuple(args.prior_offset_m))
+                           device=args.device, prior_offset_m=tuple(args.prior_offset_m),
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)
@@ -350,7 +396,8 @@ def main() -> int:
         for row_c in picks:
             t = time.perf_counter()
             r = run_window(tmc, sysm, refm, tc, tcm, int(row_c), win=args.win, coarse=args.coarse,
-                           margin_km=args.margin_km, matcher=args.matcher, device=args.device)
+                           margin_km=args.margin_km, matcher=args.matcher, device=args.device,
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)
@@ -362,9 +409,30 @@ def main() -> int:
         "source": "measured",
         "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) <-> SELENE TC",
         "prior": "TMC-2 SYSTEM corners only; refined geolocation used for stage-4 comparison only",
+        "match_options": {**mk, "gate_reuse_base": bool(args.gate_reuse_base)},
+        "matcher_choice": matcher_choice,
         "rows": results}, indent=2), encoding="utf-8")
     print(f"\nwrote {out}")
     return 0
+
+
+def resolve_matcher(explicit: str | None, src: str = "TMC2", ref: str = "TC"):
+    """(matcher, fine-stage options, provenance) for this run.
+
+    With no --matcher, the choice comes from matching.routing.choose -- the same
+    decision Part 3's CLI and API will use -- instead of a name hard-coded here.
+    Until routing.py existed this script named eloftr directly and the regime
+    selector had no caller outside the tests. An explicit --matcher still wins,
+    and is recorded as an override so a result never claims routing chose it.
+    """
+    if explicit:
+        return explicit, {}, {"route": "direct", "matcher": explicit,
+                              "chosen_by": "--matcher override"}
+    choice = routing.choose(src, ref)
+    if choice.route != "direct" or not choice.model_name:
+        raise SystemExit(f"routing sends {src} -> {ref} to route {choice.route!r}, not a direct "
+                         f"match; this script only runs the direct TMC-2 -> TC path")
+    return choice.model_name, dict(choice.fine_stage_options), choice.as_provenance()
 
 
 if __name__ == "__main__":

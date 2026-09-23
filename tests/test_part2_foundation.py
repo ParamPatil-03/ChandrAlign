@@ -233,6 +233,58 @@ def test_default_matcher_is_shippable():
     assert not licence.is_restricted(config.load("regimes")["default_matcher"])
 
 
+def test_vismatch_version_is_licence_audited():
+    """THE control for the EfficientLoFTR/MatchAnything relicence. Not a ban.
+
+    zju3dv relicensed both from Apache-2.0 to the Project Registration License
+    on 2026-09-15 (commits 07e9c14, 8cd8c11). The PRL is not OSI-approved and
+    requires registration before organisational use.
+
+    What we install predates that and is Apache-2.0, which section 2 makes
+    "perpetual ... irrevocable" -- vismatch 1.3.2 was released 2026-08-17 and
+    the weight repos were last modified 2026-02-10. So the models are fine and
+    an UPGRADE is the actual risk: a later vismatch would vendor the relicensed
+    code, and nothing about the model name would change.
+
+    Banning `eloftr` (which we briefly did) is both wrong and useless: it
+    discards a permissively licensed artefact and does nothing about the
+    upgrade. Pinning the version is what closes the hole.
+
+    If this fails, re-audit before raising the pin -- do not just bump it.
+    """
+    from importlib.metadata import version
+
+    audited = "1.3.2"                      # reports/licence_audit.json
+    installed = version("vismatch")
+    def parts(v):
+        return tuple(int(x) for x in v.split(".")[:3] if x.isdigit())
+    assert parts(installed) <= parts(audited), (
+        f"vismatch {installed} is newer than the audited {audited}. Releases "
+        f"after 2026-09-15 may vendor EfficientLoFTR and MatchAnything under "
+        f"the Project Registration License instead of Apache-2.0. Re-run the "
+        f"provenance check in reports/licence_audit.json before raising this.")
+
+
+def test_a_licence_verdict_names_the_artefact_not_the_project():
+    """Regression test for a WRONG exclusion, kept because the error was subtle.
+
+    On 2026-09-23 `eloftr` and `matchanything-eloftr` were removed from the
+    shippable lists after reading zju3dv's CURRENT repository licence. That
+    licence is real, but it is not the licence of anything we install: the
+    verdict was read off the project rather than off the artefact-at-a-version.
+
+    Both must stay usable, and the neighbouring names must stay unrestricted,
+    so that a future reader who finds the PRL upstream does not repeat it.
+    """
+    for name in ("eloftr", "matchanything-eloftr", "minima-loftr", "xoftr"):
+        assert not licence.is_restricted(name), (
+            f"{name} was excluded again. Its licence is fixed by the release we "
+            f"install, not by upstream's current LICENSE file -- check "
+            f"reports/licence_audit.json before restricting it.")
+    # ... while the genuinely non-commercial components stay blocked.
+    assert licence.is_restricted("minima-superpoint-lightglue")
+
+
 # ---------------------------------------------------------------------------
 # Instrument registry (feeds CHECK-05 and MATCH-10)
 # ---------------------------------------------------------------------------

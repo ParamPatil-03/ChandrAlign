@@ -1,0 +1,4292 @@
+{
+  "source": "measured",
+  "axis": "incidence_difference",
+  "azimuth_status": "not_validated",
+  "azimuth_note": "CORRECTED 2026-09-23. An earlier version of this field said azimuth 'cannot be derived' without SPICE. That was WRONG: LROC's own observation pages carry Sub solar azimuth per product (data/pairs/nac_solar_azimuth.json). The axis is still not validated, but for a MEASURED reason instead of an assumed one: among the pairs where both incidences exceed 10 deg -- below that the sun is near-overhead and azimuth is ill-defined -- the largest sub-solar azimuth difference available in these nine products is 11.2 deg, and none exceeds 60 deg. All nine are near-equatorial targets imaged near local noon, so sub-solar azimuth clusters at 170-185 deg.",
+  "protocol": "docs/nac_illumination_protocol.md",
+  "ground_truth": "none available; the accuracy measure is the perturbation gate's recovery of a known (3,4) px shift injected into the real source",
+  "products": {
+    "M1417360906LC": {
+      "incidence_deg": 7.71,
+      "bbox": [
+        -1.43,
+        -0.01,
+        23.44,
+        23.67
+      ]
+    },
+    "M1415013176LC": {
+      "incidence_deg": 35.89,
+      "bbox": [
+        -0.69,
+        0.37,
+        23.74,
+        23.94
+      ]
+    },
+    "M102000149LC": {
+      "incidence_deg": 79.56,
+      "bbox": [
+        -0.55,
+        1.5,
+        23.19,
+        23.4
+      ]
+    },
+    "M102014464RC": {
+      "incidence_deg": 81.76,
+      "bbox": [
+        -0.5,
+        1.53,
+        23.33,
+        23.61
+      ]
+    },
+    "M104362199LC": {
+      "incidence_deg": 53.78,
+      "bbox": [
+        -0.2,
+        1.86,
+        23.25,
+        23.46
+      ]
+    },
+    "M106719774LC": {
+      "incidence_deg": 27.23,
+      "bbox": [
+        -0.14,
+        2.05,
+        23.31,
+        23.53
+      ]
+    },
+    "M109080308LC": {
+      "incidence_deg": 2.21,
+      "bbox": [
+        0.15,
+        1.09,
+        23.51,
+        23.61
+      ]
+    },
+    "M172765160RC": {
+      "incidence_deg": 13.5,
+      "bbox": [
+        0.15,
+        1.1,
+        23.79,
+        23.87
+      ]
+    },
+    "M175124932LC": {
+      "incidence_deg": 40.94,
+      "bbox": [
+        0.15,
+        1.11,
+        23.49,
+        23.54
+      ]
+    }
+  },
+  "pairs": [
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_a": 79.56,
+      "inc_b": 81.76,
+      "inc_gap": 2.2,
+      "gsd_a": 1.189,
+      "gsd_b": 1.23,
+      "scale_ratio": 1.034,
+      "overlap": [
+        -0.5,
+        1.5,
+        23.33,
+        23.4
+      ],
+      "overlap_deg": [
+        2.0,
+        0.07
+      ]
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "gsd_a": 1.184,
+      "gsd_b": 1.189,
+      "scale_ratio": 1.004,
+      "overlap": [
+        -0.2,
+        1.5,
+        23.25,
+        23.4
+      ],
+      "overlap_deg": [
+        1.7,
+        0.15
+      ]
+    },
+    {
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "gsd_a": 1.269,
+      "gsd_b": 1.184,
+      "scale_ratio": 1.072,
+      "overlap": [
+        -0.14,
+        1.86,
+        23.31,
+        23.46
+      ],
+      "overlap_deg": [
+        2.0,
+        0.15
+      ]
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_a": 53.78,
+      "inc_b": 81.76,
+      "inc_gap": 27.98,
+      "gsd_a": 1.184,
+      "gsd_b": 1.23,
+      "scale_ratio": 1.039,
+      "overlap": [
+        -0.2,
+        1.53,
+        23.33,
+        23.46
+      ],
+      "overlap_deg": [
+        1.73,
+        0.13
+      ]
+    },
+    {
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "gsd_a": 0.536,
+      "gsd_b": 0.4,
+      "scale_ratio": 1.34,
+      "overlap": [
+        0.15,
+        1.09,
+        23.51,
+        23.54
+      ],
+      "overlap_deg": [
+        0.94,
+        0.03
+      ]
+    },
+    {
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "gsd_a": 1.269,
+      "gsd_b": 1.189,
+      "scale_ratio": 1.067,
+      "overlap": [
+        -0.14,
+        1.5,
+        23.31,
+        23.4
+      ],
+      "overlap_deg": [
+        1.64,
+        0.09
+      ]
+    },
+    {
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "gsd_a": 1.269,
+      "gsd_b": 1.23,
+      "scale_ratio": 1.032,
+      "overlap": [
+        -0.14,
+        1.53,
+        23.33,
+        23.53
+      ],
+      "overlap_deg": [
+        1.67,
+        0.2
+      ]
+    }
+  ],
+  "matchers": [
+    "xoftr",
+    "minima-loftr",
+    "eloftr",
+    "aliked-lightglue",
+    "sift-nn"
+  ],
+  "window_px": 512,
+  "window_fractions": [
+    0.16666666666666666,
+    0.3333333333333333,
+    0.5,
+    0.6666666666666666,
+    0.8333333333333334
+  ],
+  "thresholds": {
+    "solved": 0.9,
+    "degraded": 0.6,
+    "min_coarse_z": 6.0
+  },
+  "band_table": {
+    "0-15": {
+      "scene_pairs": 0,
+      "thin": true,
+      "matchers": {
+        "xoftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "minima-loftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "eloftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "aliked-lightglue": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "sift-nn": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        }
+      }
+    },
+    "15-30": {
+      "scene_pairs": 2,
+      "thin": true,
+      "matchers": {
+        "xoftr": {
+          "n": 10,
+          "success": 10,
+          "rate": 1.0,
+          "verdict": "solved"
+        },
+        "minima-loftr": {
+          "n": 10,
+          "success": 10,
+          "rate": 1.0,
+          "verdict": "solved"
+        },
+        "eloftr": {
+          "n": 10,
+          "success": 10,
+          "rate": 1.0,
+          "verdict": "solved"
+        },
+        "aliked-lightglue": {
+          "n": 10,
+          "success": 10,
+          "rate": 1.0,
+          "verdict": "solved"
+        },
+        "sift-nn": {
+          "n": 10,
+          "success": 10,
+          "rate": 1.0,
+          "verdict": "solved"
+        }
+      }
+    },
+    "30-60": {
+      "scene_pairs": 3,
+      "thin": false,
+      "matchers": {
+        "xoftr": {
+          "n": 10,
+          "success": 9,
+          "rate": 0.9,
+          "verdict": "solved"
+        },
+        "minima-loftr": {
+          "n": 10,
+          "success": 9,
+          "rate": 0.9,
+          "verdict": "solved"
+        },
+        "eloftr": {
+          "n": 10,
+          "success": 9,
+          "rate": 0.9,
+          "verdict": "solved"
+        },
+        "aliked-lightglue": {
+          "n": 10,
+          "success": 9,
+          "rate": 0.9,
+          "verdict": "solved"
+        },
+        "sift-nn": {
+          "n": 10,
+          "success": 3,
+          "rate": 0.3,
+          "verdict": "unsolved"
+        }
+      }
+    },
+    "60-90": {
+      "scene_pairs": 0,
+      "thin": true,
+      "matchers": {
+        "xoftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "minima-loftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "eloftr": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "aliked-lightglue": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        },
+        "sift-nn": {
+          "n": 0,
+          "success": 0,
+          "rate": null,
+          "verdict": "--"
+        }
+      }
+    }
+  },
+  "excluded": [
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_gap": 2.2,
+      "window": 0,
+      "why": "coarse lock failed (z=5.1)",
+      "coarse_z": 5.1
+    },
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_gap": 2.2,
+      "window": 1,
+      "why": "coarse lock failed (z=5.3)",
+      "coarse_z": 5.31
+    },
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_gap": 2.2,
+      "window": 2,
+      "why": "coarse lock failed (z=4.8)",
+      "coarse_z": 4.81
+    },
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_gap": 2.2,
+      "window": 3,
+      "why": "coarse lock failed (z=4.9)",
+      "coarse_z": 4.86
+    },
+    {
+      "a": "M102000149LC",
+      "b": "M102014464RC",
+      "inc_gap": 2.2,
+      "window": 4,
+      "why": "coarse lock failed (z=5.1)",
+      "coarse_z": 5.15
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_gap": 27.98,
+      "window": 0,
+      "why": "coarse lock failed (z=5.8)",
+      "coarse_z": 5.77
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_gap": 27.98,
+      "window": 1,
+      "why": "coarse lock failed (z=5.3)",
+      "coarse_z": 5.28
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_gap": 27.98,
+      "window": 2,
+      "why": "coarse lock failed (z=5.3)",
+      "coarse_z": 5.25
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_gap": 27.98,
+      "window": 3,
+      "why": "coarse lock failed (z=5.7)",
+      "coarse_z": 5.67
+    },
+    {
+      "a": "M104362199LC",
+      "b": "M102014464RC",
+      "inc_gap": 27.98,
+      "window": 4,
+      "why": "coarse lock failed (z=4.9)",
+      "coarse_z": 4.95
+    },
+    {
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_gap": 38.73,
+      "window": 0,
+      "why": "coarse lock failed (z=5.2)",
+      "coarse_z": 5.23
+    },
+    {
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_gap": 38.73,
+      "window": 1,
+      "why": "coarse lock failed (z=5.4)",
+      "coarse_z": 5.43
+    },
+    {
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_gap": 38.73,
+      "window": 3,
+      "why": "coarse lock failed (z=5.1)",
+      "coarse_z": 5.07
+    },
+    {
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_gap": 38.73,
+      "window": 4,
+      "why": "coarse lock failed (z=5.7)",
+      "coarse_z": 5.71
+    },
+    {
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_gap": 54.53,
+      "window": 4,
+      "why": "coarse lock failed (z=5.3)",
+      "coarse_z": 5.26
+    }
+  ],
+  "rows": [
+    {
+      "matcher": "xoftr",
+      "matches": 3855,
+      "inliers": 3850,
+      "inlier_ratio": 0.9987,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.001,
+        3.981
+      ],
+      "perturbation_error_px": 0.019,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 37.28,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 0,
+      "coarse_z": 52.3
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3447,
+      "inliers": 3439,
+      "inlier_ratio": 0.9977,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.018,
+        3.921
+      ],
+      "perturbation_error_px": 0.081,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 1.766,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 0,
+      "coarse_z": 52.3
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3422,
+      "inliers": 3419,
+      "inlier_ratio": 0.9991,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.021,
+        3.971
+      ],
+      "perturbation_error_px": 0.036,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 1.204,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 0,
+      "coarse_z": 52.3
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1186,
+      "inliers": 1186,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.0,
+        3.999
+      ],
+      "perturbation_error_px": 0.001,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.957,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 0,
+      "coarse_z": 52.3
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 539,
+      "inliers": 532,
+      "inlier_ratio": 0.987,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.004,
+        4.007
+      ],
+      "perturbation_error_px": 0.008,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.097,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 0,
+      "coarse_z": 52.3
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3919,
+      "inliers": 3915,
+      "inlier_ratio": 0.999,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.011,
+        4.052
+      ],
+      "perturbation_error_px": 0.053,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.631,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 1,
+      "coarse_z": 57.53
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3417,
+      "inliers": 3402,
+      "inlier_ratio": 0.9956,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.987,
+        4.116
+      ],
+      "perturbation_error_px": 0.116,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.239,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 1,
+      "coarse_z": 57.53
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3376,
+      "inliers": 3353,
+      "inlier_ratio": 0.9932,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.983,
+        4.03
+      ],
+      "perturbation_error_px": 0.035,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.118,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 1,
+      "coarse_z": 57.53
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1166,
+      "inliers": 1166,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.009,
+        3.996
+      ],
+      "perturbation_error_px": 0.01,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.175,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 1,
+      "coarse_z": 57.53
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 545,
+      "inliers": 530,
+      "inlier_ratio": 0.9725,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.007,
+        4.003
+      ],
+      "perturbation_error_px": 0.008,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.118,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 1,
+      "coarse_z": 57.53
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3814,
+      "inliers": 3813,
+      "inlier_ratio": 0.9997,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.002,
+        4.001
+      ],
+      "perturbation_error_px": 0.002,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.557,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 2,
+      "coarse_z": 56.23
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3472,
+      "inliers": 3470,
+      "inlier_ratio": 0.9994,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.04,
+        3.959
+      ],
+      "perturbation_error_px": 0.057,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.244,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 2,
+      "coarse_z": 56.23
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3466,
+      "inliers": 3459,
+      "inlier_ratio": 0.998,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.004,
+        4.005
+      ],
+      "perturbation_error_px": 0.007,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.113,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 2,
+      "coarse_z": 56.23
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1151,
+      "inliers": 1150,
+      "inlier_ratio": 0.9991,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.996,
+        3.997
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.168,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 2,
+      "coarse_z": 56.23
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 568,
+      "inliers": 557,
+      "inlier_ratio": 0.9806,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.006,
+        4.008
+      ],
+      "perturbation_error_px": 0.01,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.122,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 2,
+      "coarse_z": 56.23
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3797,
+      "inliers": 3784,
+      "inlier_ratio": 0.9966,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.996,
+        3.991
+      ],
+      "perturbation_error_px": 0.01,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.521,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 3,
+      "coarse_z": 52.52
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3414,
+      "inliers": 3401,
+      "inlier_ratio": 0.9962,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.99,
+        4.119
+      ],
+      "perturbation_error_px": 0.12,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.24,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 3,
+      "coarse_z": 52.52
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3436,
+      "inliers": 3415,
+      "inlier_ratio": 0.9939,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.99,
+        4.036
+      ],
+      "perturbation_error_px": 0.037,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.108,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 3,
+      "coarse_z": 52.52
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1211,
+      "inliers": 1211,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.996,
+        3.995
+      ],
+      "perturbation_error_px": 0.006,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.167,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 3,
+      "coarse_z": 52.52
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 400,
+      "inliers": 382,
+      "inlier_ratio": 0.955,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.978,
+        4.022
+      ],
+      "perturbation_error_px": 0.031,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.122,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 3,
+      "coarse_z": 52.52
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3840,
+      "inliers": 3840,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.005,
+        4.004
+      ],
+      "perturbation_error_px": 0.007,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.449,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 4,
+      "coarse_z": 54.66
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3466,
+      "inliers": 3464,
+      "inlier_ratio": 0.9994,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.975,
+        4.02
+      ],
+      "perturbation_error_px": 0.032,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.259,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 4,
+      "coarse_z": 54.66
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3460,
+      "inliers": 3454,
+      "inlier_ratio": 0.9983,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.017,
+        4.004
+      ],
+      "perturbation_error_px": 0.017,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.127,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 4,
+      "coarse_z": 54.66
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1030,
+      "inliers": 1030,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.999,
+        4.003
+      ],
+      "perturbation_error_px": 0.003,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.178,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 4,
+      "coarse_z": 54.66
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 639,
+      "inliers": 628,
+      "inlier_ratio": 0.9828,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.005,
+        4.005
+      ],
+      "perturbation_error_px": 0.007,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.132,
+      "a": "M104362199LC",
+      "b": "M102000149LC",
+      "inc_a": 53.78,
+      "inc_b": 79.56,
+      "inc_gap": 25.78,
+      "overlap_deg": [
+        1.7,
+        0.15
+      ],
+      "scale_ratio": 1.004,
+      "window": 4,
+      "coarse_z": 54.66
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3579,
+      "inliers": 3554,
+      "inlier_ratio": 0.993,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.01,
+        3.998
+      ],
+      "perturbation_error_px": 0.011,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.574,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 0,
+      "coarse_z": 10.54
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3046,
+      "inliers": 3044,
+      "inlier_ratio": 0.9993,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.033,
+        3.991
+      ],
+      "perturbation_error_px": 0.034,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.236,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 0,
+      "coarse_z": 10.54
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3074,
+      "inliers": 3068,
+      "inlier_ratio": 0.998,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.019,
+        4.0
+      ],
+      "perturbation_error_px": 0.019,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.117,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 0,
+      "coarse_z": 10.54
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1093,
+      "inliers": 1093,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.992,
+        3.992
+      ],
+      "perturbation_error_px": 0.011,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.176,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 0,
+      "coarse_z": 10.54
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 330,
+      "inliers": 312,
+      "inlier_ratio": 0.9455,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.991,
+        3.967
+      ],
+      "perturbation_error_px": 0.034,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.124,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 0,
+      "coarse_z": 10.54
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3054,
+      "inliers": 3017,
+      "inlier_ratio": 0.9879,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.005,
+        3.992
+      ],
+      "perturbation_error_px": 0.009,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.479,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 1,
+      "coarse_z": 8.88
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3054,
+      "inliers": 3042,
+      "inlier_ratio": 0.9961,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.02,
+        3.981
+      ],
+      "perturbation_error_px": 0.027,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.24,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 1,
+      "coarse_z": 8.88
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3075,
+      "inliers": 3060,
+      "inlier_ratio": 0.9951,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.995,
+        4.001
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.12,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 1,
+      "coarse_z": 8.88
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1095,
+      "inliers": 1095,
+      "inlier_ratio": 1.0,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.998,
+        4.0
+      ],
+      "perturbation_error_px": 0.002,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.18,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 1,
+      "coarse_z": 8.88
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 316,
+      "inliers": 298,
+      "inlier_ratio": 0.943,
+      "coverage": 0.9688,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.006,
+        4.025
+      ],
+      "perturbation_error_px": 0.026,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.125,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 1,
+      "coarse_z": 8.88
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 2765,
+      "inliers": 2699,
+      "inlier_ratio": 0.9761,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.985,
+        4.018
+      ],
+      "perturbation_error_px": 0.023,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.383,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 2,
+      "coarse_z": 10.96
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3033,
+      "inliers": 3013,
+      "inlier_ratio": 0.9934,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.987,
+        3.999
+      ],
+      "perturbation_error_px": 0.013,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.229,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 2,
+      "coarse_z": 10.96
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3059,
+      "inliers": 3029,
+      "inlier_ratio": 0.9902,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.022,
+        3.994
+      ],
+      "perturbation_error_px": 0.023,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.113,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 2,
+      "coarse_z": 10.96
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1022,
+      "inliers": 1021,
+      "inlier_ratio": 0.999,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.998,
+        3.998
+      ],
+      "perturbation_error_px": 0.003,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.169,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 2,
+      "coarse_z": 10.96
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 271,
+      "inliers": 257,
+      "inlier_ratio": 0.9483,
+      "coverage": 0.9375,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.943,
+        4.051
+      ],
+      "perturbation_error_px": 0.077,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.121,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 2,
+      "coarse_z": 10.96
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3182,
+      "inliers": 3149,
+      "inlier_ratio": 0.9896,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.011,
+        3.979
+      ],
+      "perturbation_error_px": 0.023,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.538,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 3,
+      "coarse_z": 9.94
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3002,
+      "inliers": 2991,
+      "inlier_ratio": 0.9963,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.997,
+        3.941
+      ],
+      "perturbation_error_px": 0.059,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.232,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 3,
+      "coarse_z": 9.94
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3026,
+      "inliers": 3023,
+      "inlier_ratio": 0.999,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.012,
+        4.008
+      ],
+      "perturbation_error_px": 0.015,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.112,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 3,
+      "coarse_z": 9.94
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 975,
+      "inliers": 973,
+      "inlier_ratio": 0.9979,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.999,
+        3.995
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.167,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 3,
+      "coarse_z": 9.94
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 399,
+      "inliers": 389,
+      "inlier_ratio": 0.9749,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.979,
+        3.984
+      ],
+      "perturbation_error_px": 0.026,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.12,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 3,
+      "coarse_z": 9.94
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 3429,
+      "inliers": 3386,
+      "inlier_ratio": 0.9875,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.017,
+        3.991
+      ],
+      "perturbation_error_px": 0.019,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.541,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 4,
+      "coarse_z": 9.19
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 3057,
+      "inliers": 3041,
+      "inlier_ratio": 0.9948,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.986,
+        3.981
+      ],
+      "perturbation_error_px": 0.023,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.229,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 4,
+      "coarse_z": 9.19
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 3085,
+      "inliers": 3073,
+      "inlier_ratio": 0.9961,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.999,
+        3.983
+      ],
+      "perturbation_error_px": 0.017,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.11,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 4,
+      "coarse_z": 9.19
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 1151,
+      "inliers": 1150,
+      "inlier_ratio": 0.9991,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.995,
+        3.999
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.205,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 4,
+      "coarse_z": 9.19
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 272,
+      "inliers": 259,
+      "inlier_ratio": 0.9522,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.055,
+        3.977
+      ],
+      "perturbation_error_px": 0.06,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.114,
+      "a": "M106719774LC",
+      "b": "M104362199LC",
+      "inc_a": 27.23,
+      "inc_b": 53.78,
+      "inc_gap": 26.55,
+      "overlap_deg": [
+        2.0,
+        0.15
+      ],
+      "scale_ratio": 1.072,
+      "window": 4,
+      "coarse_z": 9.19
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 125,
+      "inliers": 8,
+      "inlier_ratio": 0.064,
+      "coverage": 0.0781,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.425,
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "overlap_deg": [
+        0.94,
+        0.03
+      ],
+      "scale_ratio": 1.34,
+      "window": 2,
+      "coarse_z": 6.93
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 198,
+      "inliers": 13,
+      "inlier_ratio": 0.0657,
+      "coverage": 0.0938,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.174,
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "overlap_deg": [
+        0.94,
+        0.03
+      ],
+      "scale_ratio": 1.34,
+      "window": 2,
+      "coarse_z": 6.93
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 164,
+      "inliers": 8,
+      "inlier_ratio": 0.0488,
+      "coverage": 0.0469,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.117,
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "overlap_deg": [
+        0.94,
+        0.03
+      ],
+      "scale_ratio": 1.34,
+      "window": 2,
+      "coarse_z": 6.93
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 8,
+      "inliers": 4,
+      "inlier_ratio": 0.5,
+      "coverage": 0.0625,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.179,
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "overlap_deg": [
+        0.94,
+        0.03
+      ],
+      "scale_ratio": 1.34,
+      "window": 2,
+      "coarse_z": 6.93
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 13,
+      "inliers": 4,
+      "inlier_ratio": 0.3077,
+      "coverage": 0.0625,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.133,
+      "a": "M109080308LC",
+      "b": "M175124932LC",
+      "inc_a": 2.21,
+      "inc_b": 40.94,
+      "inc_gap": 38.73,
+      "overlap_deg": [
+        0.94,
+        0.03
+      ],
+      "scale_ratio": 1.34,
+      "window": 2,
+      "coarse_z": 6.93
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 1759,
+      "inliers": 1611,
+      "inlier_ratio": 0.9159,
+      "coverage": 0.9688,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.025,
+        3.985
+      ],
+      "perturbation_error_px": 0.029,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.412,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 0,
+      "coarse_z": 6.81
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2720,
+      "inliers": 2615,
+      "inlier_ratio": 0.9614,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.023,
+        3.904
+      ],
+      "perturbation_error_px": 0.099,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.234,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 0,
+      "coarse_z": 6.81
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2144,
+      "inliers": 2032,
+      "inlier_ratio": 0.9478,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.004,
+        3.963
+      ],
+      "perturbation_error_px": 0.037,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.12,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 0,
+      "coarse_z": 6.81
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 925,
+      "inliers": 918,
+      "inlier_ratio": 0.9924,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.004,
+        3.996
+      ],
+      "perturbation_error_px": 0.006,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.188,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 0,
+      "coarse_z": 6.81
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 30,
+      "inliers": 14,
+      "inlier_ratio": 0.4667,
+      "coverage": 0.1406,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.139,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 0,
+      "coarse_z": 6.81
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 1285,
+      "inliers": 1091,
+      "inlier_ratio": 0.849,
+      "coverage": 0.9688,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.999,
+        4.054
+      ],
+      "perturbation_error_px": 0.054,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.439,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 1,
+      "coarse_z": 7.67
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2669,
+      "inliers": 2539,
+      "inlier_ratio": 0.9513,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.103,
+        4.063
+      ],
+      "perturbation_error_px": 0.121,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.227,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 1,
+      "coarse_z": 7.67
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2450,
+      "inliers": 2389,
+      "inlier_ratio": 0.9751,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.005,
+        4.027
+      ],
+      "perturbation_error_px": 0.027,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.123,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 1,
+      "coarse_z": 7.67
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 894,
+      "inliers": 885,
+      "inlier_ratio": 0.9899,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.998,
+        3.996
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.186,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 1,
+      "coarse_z": 7.67
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 33,
+      "inliers": 19,
+      "inlier_ratio": 0.5758,
+      "coverage": 0.1875,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.13,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 1,
+      "coarse_z": 7.67
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 805,
+      "inliers": 576,
+      "inlier_ratio": 0.7155,
+      "coverage": 0.8438,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.004,
+        4.088
+      ],
+      "perturbation_error_px": 0.088,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.402,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 2,
+      "coarse_z": 6.78
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 1946,
+      "inliers": 1728,
+      "inlier_ratio": 0.888,
+      "coverage": 0.8906,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.995,
+        3.966
+      ],
+      "perturbation_error_px": 0.035,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.214,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 2,
+      "coarse_z": 6.78
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 806,
+      "inliers": 537,
+      "inlier_ratio": 0.6663,
+      "coverage": 0.8281,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.998,
+        3.946
+      ],
+      "perturbation_error_px": 0.054,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.124,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 2,
+      "coarse_z": 6.78
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 816,
+      "inliers": 792,
+      "inlier_ratio": 0.9706,
+      "coverage": 0.9062,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.978,
+        4.013
+      ],
+      "perturbation_error_px": 0.026,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.191,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 2,
+      "coarse_z": 6.78
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 39,
+      "inliers": 16,
+      "inlier_ratio": 0.4103,
+      "coverage": 0.1875,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.13,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 2,
+      "coarse_z": 6.78
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 1072,
+      "inliers": 840,
+      "inlier_ratio": 0.7836,
+      "coverage": 0.9219,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.969,
+        3.972
+      ],
+      "perturbation_error_px": 0.042,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.4,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 3,
+      "coarse_z": 6.5
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2399,
+      "inliers": 2195,
+      "inlier_ratio": 0.915,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.92,
+        4.205
+      ],
+      "perturbation_error_px": 0.22,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.224,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 3,
+      "coarse_z": 6.5
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 1873,
+      "inliers": 1671,
+      "inlier_ratio": 0.8922,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.956,
+        4.041
+      ],
+      "perturbation_error_px": 0.06,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.118,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 3,
+      "coarse_z": 6.5
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 840,
+      "inliers": 825,
+      "inlier_ratio": 0.9821,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.979,
+        4.011
+      ],
+      "perturbation_error_px": 0.024,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.185,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 3,
+      "coarse_z": 6.5
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 23,
+      "inliers": 10,
+      "inlier_ratio": 0.4348,
+      "coverage": 0.1406,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.132,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 3,
+      "coarse_z": 6.5
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 2384,
+      "inliers": 2243,
+      "inlier_ratio": 0.9409,
+      "coverage": 0.9375,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.041,
+        3.967
+      ],
+      "perturbation_error_px": 0.053,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.485,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 4,
+      "coarse_z": 8.7
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2304,
+      "inliers": 2139,
+      "inlier_ratio": 0.9284,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.961,
+        3.962
+      ],
+      "perturbation_error_px": 0.054,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.224,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 4,
+      "coarse_z": 8.7
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2247,
+      "inliers": 2095,
+      "inlier_ratio": 0.9324,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.963,
+        3.984
+      ],
+      "perturbation_error_px": 0.04,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.122,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 4,
+      "coarse_z": 8.7
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 997,
+      "inliers": 994,
+      "inlier_ratio": 0.997,
+      "coverage": 0.9688,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.999,
+        4.001
+      ],
+      "perturbation_error_px": 0.002,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.181,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 4,
+      "coarse_z": 8.7
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 32,
+      "inliers": 26,
+      "inlier_ratio": 0.8125,
+      "coverage": 0.3125,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.114,
+      "a": "M106719774LC",
+      "b": "M102000149LC",
+      "inc_a": 27.23,
+      "inc_b": 79.56,
+      "inc_gap": 52.33,
+      "overlap_deg": [
+        1.64,
+        0.09
+      ],
+      "scale_ratio": 1.067,
+      "window": 4,
+      "coarse_z": 8.7
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 2387,
+      "inliers": 2233,
+      "inlier_ratio": 0.9355,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.01,
+        4.009
+      ],
+      "perturbation_error_px": 0.014,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.447,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 0,
+      "coarse_z": 15.81
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2752,
+      "inliers": 2595,
+      "inlier_ratio": 0.943,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.977,
+        3.965
+      ],
+      "perturbation_error_px": 0.042,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.236,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 0,
+      "coarse_z": 15.81
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2139,
+      "inliers": 2042,
+      "inlier_ratio": 0.9547,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.989,
+        4.081
+      ],
+      "perturbation_error_px": 0.081,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.123,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 0,
+      "coarse_z": 15.81
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 917,
+      "inliers": 904,
+      "inlier_ratio": 0.9858,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.027,
+        3.987
+      ],
+      "perturbation_error_px": 0.03,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.19,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 0,
+      "coarse_z": 15.81
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 40,
+      "inliers": 23,
+      "inlier_ratio": 0.575,
+      "coverage": 0.2656,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.0,
+        3.995
+      ],
+      "perturbation_error_px": 0.005,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.13,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 0,
+      "coarse_z": 15.81
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 2085,
+      "inliers": 1917,
+      "inlier_ratio": 0.9194,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.021,
+        3.982
+      ],
+      "perturbation_error_px": 0.028,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.516,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 1,
+      "coarse_z": 16.0
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2723,
+      "inliers": 2502,
+      "inlier_ratio": 0.9188,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.011,
+        3.935
+      ],
+      "perturbation_error_px": 0.066,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.234,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 1,
+      "coarse_z": 16.0
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2333,
+      "inliers": 2170,
+      "inlier_ratio": 0.9301,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.252,
+        3.952
+      ],
+      "perturbation_error_px": 0.256,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.122,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 1,
+      "coarse_z": 16.0
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 949,
+      "inliers": 923,
+      "inlier_ratio": 0.9726,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.986,
+        3.995
+      ],
+      "perturbation_error_px": 0.015,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.19,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 1,
+      "coarse_z": 16.0
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 42,
+      "inliers": 24,
+      "inlier_ratio": 0.5714,
+      "coverage": 0.2188,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.957,
+        3.973
+      ],
+      "perturbation_error_px": 0.05,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.132,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 1,
+      "coarse_z": 16.0
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 1680,
+      "inliers": 1454,
+      "inlier_ratio": 0.8655,
+      "coverage": 0.9844,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.002,
+        3.985
+      ],
+      "perturbation_error_px": 0.015,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.485,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 2,
+      "coarse_z": 15.6
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2719,
+      "inliers": 2510,
+      "inlier_ratio": 0.9231,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.131,
+        4.024
+      ],
+      "perturbation_error_px": 0.133,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.233,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 2,
+      "coarse_z": 15.6
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2313,
+      "inliers": 2127,
+      "inlier_ratio": 0.9196,
+      "coverage": 1.0,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.001,
+        3.955
+      ],
+      "perturbation_error_px": 0.045,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.121,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 2,
+      "coarse_z": 15.6
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 860,
+      "inliers": 829,
+      "inlier_ratio": 0.964,
+      "coverage": 0.9531,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.953,
+        3.986
+      ],
+      "perturbation_error_px": 0.049,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.189,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 2,
+      "coarse_z": 15.6
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 45,
+      "inliers": 30,
+      "inlier_ratio": 0.6667,
+      "coverage": 0.2812,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.014,
+        4.078
+      ],
+      "perturbation_error_px": 0.08,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.126,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 2,
+      "coarse_z": 15.6
+    },
+    {
+      "matcher": "xoftr",
+      "matches": 1017,
+      "inliers": 806,
+      "inlier_ratio": 0.7925,
+      "coverage": 0.8906,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.856,
+        3.966
+      ],
+      "perturbation_error_px": 0.148,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.429,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 3,
+      "coarse_z": 13.98
+    },
+    {
+      "matcher": "minima-loftr",
+      "matches": 2564,
+      "inliers": 2169,
+      "inlier_ratio": 0.8459,
+      "coverage": 0.9219,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.893,
+        3.999
+      ],
+      "perturbation_error_px": 0.107,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.23,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 3,
+      "coarse_z": 13.98
+    },
+    {
+      "matcher": "eloftr",
+      "matches": 2024,
+      "inliers": 1765,
+      "inlier_ratio": 0.872,
+      "coverage": 0.9219,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        2.878,
+        3.923
+      ],
+      "perturbation_error_px": 0.144,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.12,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 3,
+      "coarse_z": 13.98
+    },
+    {
+      "matcher": "aliked-lightglue",
+      "matches": 878,
+      "inliers": 802,
+      "inlier_ratio": 0.9134,
+      "coverage": 0.9375,
+      "tier": "LOW",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": true,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": true,
+      "perturbation_recovered": [
+        3.294,
+        4.015
+      ],
+      "perturbation_error_px": 0.295,
+      "inlier_rmse_px": null,
+      "success": true,
+      "reject_reason": null,
+      "seconds": 0.188,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 3,
+      "coarse_z": 13.98
+    },
+    {
+      "matcher": "sift-nn",
+      "matches": 22,
+      "inliers": 14,
+      "inlier_ratio": 0.6364,
+      "coverage": 0.2031,
+      "tier": "REJECTED",
+      "accepted": true,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "gate: perturbation_sensitivity",
+      "seconds": 0.128,
+      "a": "M106719774LC",
+      "b": "M102014464RC",
+      "inc_a": 27.23,
+      "inc_b": 81.76,
+      "inc_gap": 54.53,
+      "overlap_deg": [
+        1.67,
+        0.2
+      ],
+      "scale_ratio": 1.032,
+      "window": 3,
+      "coarse_z": 13.98
+    }
+  ],
+  "azimuth_span_deg": 11.2,
+  "azimuth_controlled": "the scale-clean pairs tested here differ in sub-solar azimuth by at most 5.2 deg, so this experiment varies INCIDENCE at near-constant azimuth -- a controlled single-axis test rather than a mixed one"
+}

@@ -1,0 +1,74 @@
+{
+ "M109080308LC": {
+  "sub_solar_azimuth": 73.96,
+  "sub_solar_lat": -1.49,
+  "north_azimuth": 258.57,
+  "incidence": 2.21,
+  "emission": 12.7,
+  "phase": 13.51
+ },
+ "M1417360906LC": {
+  "sub_solar_azimuth": 169.5,
+  "sub_solar_lat": 1.31,
+  "north_azimuth": 93.09,
+  "incidence": 7.71,
+  "emission": 1.72,
+  "phase": 9.4
+ },
+ "M172765160RC": {
+  "sub_solar_azimuth": 170.78,
+  "sub_solar_lat": -1.39,
+  "north_azimuth": 268.24,
+  "incidence": 13.5,
+  "emission": 1.13,
+  "phase": 12.4
+ },
+ "M106719774LC": {
+  "sub_solar_azimuth": 185.43,
+  "sub_solar_lat": -1.09,
+  "north_azimuth": 77.79,
+  "incidence": 27.23,
+  "emission": 13.5,
+  "phase": 40.7
+ },
+ "M1415013176LC": {
+  "sub_solar_azimuth": 181.98,
+  "sub_solar_lat": 1.53,
+  "north_azimuth": 93.08,
+  "incidence": 35.89,
+  "emission": 1.71,
+  "phase": 37.61
+ },
+ "M175124932LC": {
+  "sub_solar_azimuth": 177.62,
+  "sub_solar_lat": -0.86,
+  "north_azimuth": 271.35,
+  "incidence": 40.94,
+  "emission": 1.67,
+  "phase": 42.61
+ },
+ "M104362199LC": {
+  "sub_solar_azimuth": 182.14,
+  "sub_solar_lat": -0.44,
+  "north_azimuth": 81.84,
+  "incidence": 53.78,
+  "emission": 9.2,
+  "phase": 62.98
+ },
+ "M102000149LC": {
+  "sub_solar_azimuth": 180.74,
+  "sub_solar_lat": 0.3,
+  "north_azimuth": 76.66,
+  "incidence": 79.56,
+  "emission": 14.7,
+  "phase": 94.26
+ },
+ "M102014464RC": {
+  "sub_solar_azimuth": 180.24,
+  "sub_solar_lat": 0.3,
+  "north_azimuth": 111.23,
+  "incidence": 81.76,
+  "emission": 22.55,
+  "phase": 59.21
+ }
+}
