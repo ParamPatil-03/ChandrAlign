@@ -172,7 +172,9 @@ def test_a_band_names_the_matcher_that_earned_it():
     d = regime.select(with_sun(TMC2, 0.0), with_sun(TMC2, 180.0))
     assert "minima-loftr" in d.reason
     assert any("not by the default" in n for n in d.notes)
-    assert d.matcher == "aliked-lightglue"      # the default is still what runs
+    # the default is still what runs -- whatever the config names, not a literal
+    # that goes stale when the default changes (it did: aliked-lightglue -> eloftr)
+    assert d.matcher == config.load("regimes")["default_matcher"]
 
 
 def test_an_unsampled_azimuth_takes_the_worse_of_its_two_bands():
