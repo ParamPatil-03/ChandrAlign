@@ -19,7 +19,32 @@
 # Magic Leap non-commercial, so the pair is not redistributable. ALIKED is
 # BSD-3, so aliked-lightglue gives us the same matcher with a clean detector.
 # The gate in matching/licence.py enforces this on model-name components.
-default_matcher: aliked-lightglue
+#
+# DEFAULT CHANGED to eloftr (was aliked-lightglue). This key was dead until
+# matching/routing.py: nothing in the pipeline read it, and the one real
+# registration script (scripts/register_tmc2_tc.py) had named eloftr directly
+# since 22 Sept. So this aligns the config with what has actually been run and
+# tested, rather than changing behaviour. Evidence:
+#   - real TMC-2 -> SELENE TC, 9 windows: 9/9 registered, no control-gate
+#     rejection; aliked-lightglue, sift-lightglue and disk-lightglue each had a
+#     problem window (4687) -- aliked and sift-lightglue rejected by CHECK-03,
+#     disk-lightglue a false confidence no gate caught
+#   - 107.5 s for 9 real windows, inside the 180 s demo budget
+#   - reports/default_matcher_selection.json, reports/verify_default_rescore.json
+# LICENCE: Apache-2.0 only AS INSTALLED -- vismatch 1.3.2 and its weights predate
+# zju3dv's 2026-09-15 relicence. pyproject.toml pins vismatch<=1.3.2 and a test
+# fails on upgrade. MEMORY: fails to allocate at 1536 px on a 6 GB card.
+default_matcher: eloftr
+
+# Cross-modal pairs (e.g. IIRS <-> WAC) do not use the default. xoftr is the only
+# candidate measured at 10/10 on cross-modal (seven of nine score 0/10), and
+# TILED at 640 px it runs the 9 real TMC-2 windows in 80 s against 887 s whole
+# (reports/xoftr_speed_summary.json). Tiling applies to the FINE stage only --
+# it needs a pre-aligned, equal-size pair and pair_tiling raises otherwise.
+# Known cost of tiling: one window's tier fell HIGH -> MEDIUM (inlier ratio
+# 0.5032 -> 0.4985, across the 0.50 HIGH line); accuracy stayed within limits.
+cross_modal_matcher: xoftr
+cross_modal_tile_px: 640
 
 rules:
   # Order matters: the first rule whose conditions all hold wins.
@@ -47,7 +72,7 @@ rules:
       any:
         delta_incidence_gte: 30.0
         incidence_gte: 70.0
-    matcher: aliked-lightglue
+    matcher: eloftr            # follows default_matcher; this list is documentation, routing.py decides
     preprocess: [phase_congruency]
     reason: >
       Low sun / large illumination difference is where classical detectors are
@@ -55,7 +80,7 @@ rules:
 
   - regime: same_modal_normal
     when: {}                 # fallback
-    matcher: aliked-lightglue
+    matcher: eloftr            # follows default_matcher; this list is documentation, routing.py decides
 
 # ---------------------------------------------------------------------------
 # Illumination representation bands (MATCH-09, feeds PREP-02/03)

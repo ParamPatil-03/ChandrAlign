@@ -56,7 +56,7 @@ from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
-from chandralign.matching import adapter  # noqa: E402
+from chandralign.matching import adapter, routing  # noqa: E402
 from chandralign.preprocess.phase_congruency import mind  # noqa: E402
 from chandralign.refine import uniformity  # noqa: E402
 
@@ -332,7 +332,8 @@ def main() -> int:
                     help="explicit TMC-2 window-centre rows; the tile is chosen by latitude")
     ap.add_argument("--prior-offset-m", type=float, nargs=2, default=(0.0, 0.0), metavar=("EAST", "NORTH"),
                     help="known correction applied to the system prior, so --margin-km can shrink")
-    ap.add_argument("--matcher", default="eloftr")
+    ap.add_argument("--matcher", default=None,
+                    help="override the routed matcher; omit to let matching.routing choose")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--precision", default="fp32", choices=["fp32", "fp16"])
     ap.add_argument("--tile-px", type=int, default=None,
@@ -341,7 +342,10 @@ def main() -> int:
                     help="perturbation gate reuses the main registration as its baseline")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
-    mk = {"precision": args.precision}
+    args.matcher, routed_opts, matcher_choice = resolve_matcher(args.matcher)
+    print(f"matcher: {args.matcher}  ({matcher_choice['chosen_by']})", flush=True)
+    # Routed fine-stage options first, explicit CLI flags on top of them.
+    mk = {**routed_opts, "precision": args.precision}
     if args.tile_px:
         mk["tile_px"] = args.tile_px
 
@@ -406,9 +410,29 @@ def main() -> int:
         "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) <-> SELENE TC",
         "prior": "TMC-2 SYSTEM corners only; refined geolocation used for stage-4 comparison only",
         "match_options": {**mk, "gate_reuse_base": bool(args.gate_reuse_base)},
+        "matcher_choice": matcher_choice,
         "rows": results}, indent=2), encoding="utf-8")
     print(f"\nwrote {out}")
     return 0
+
+
+def resolve_matcher(explicit: str | None, src: str = "TMC2", ref: str = "TC"):
+    """(matcher, fine-stage options, provenance) for this run.
+
+    With no --matcher, the choice comes from matching.routing.choose -- the same
+    decision Part 3's CLI and API will use -- instead of a name hard-coded here.
+    Until routing.py existed this script named eloftr directly and the regime
+    selector had no caller outside the tests. An explicit --matcher still wins,
+    and is recorded as an override so a result never claims routing chose it.
+    """
+    if explicit:
+        return explicit, {}, {"route": "direct", "matcher": explicit,
+                              "chosen_by": "--matcher override"}
+    choice = routing.choose(src, ref)
+    if choice.route != "direct" or not choice.model_name:
+        raise SystemExit(f"routing sends {src} -> {ref} to route {choice.route!r}, not a direct "
+                         f"match; this script only runs the direct TMC-2 -> TC path")
+    return choice.model_name, dict(choice.fine_stage_options), choice.as_provenance()
 
 
 if __name__ == "__main__":

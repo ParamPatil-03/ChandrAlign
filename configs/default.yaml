@@ -83,8 +83,15 @@ tiers:                       # CHECK-07 confidence tiers
   # particular has only a 0.031-wide feasible window (0.1406 < c <= 0.1719) and
   # is the first value to re-derive on real Chandrayaan-2/LRO NAC pairs.
   high:   {min_inliers: 100, min_inlier_ratio: 0.50,  min_coverage: 0.60}
-  medium: {min_inliers: 40,  min_inlier_ratio: 0.25,  min_coverage: 0.35}
+  medium: {min_inliers: 40,  min_inlier_ratio: 0.325, min_coverage: 0.35}
   low:    {min_inliers: 8,   min_inlier_ratio: 0.325, min_coverage: 0.15}
+  # FIXED 2026-09-23: medium's min_inlier_ratio was 0.25, BELOW low's 0.325.
+  # quality._tier_for checks high, then medium, then low, so a ratio of 0.30
+  # was graded MEDIUM although it sits under the measured accept/reject line --
+  # the one threshold here fitted from evidence never fired on this signal.
+  # Medium is raised to meet low rather than low lowered, because low is the
+  # measured boundary and medium is an unvalidated guess (see below). Every
+  # key must now satisfy high >= medium >= low; tests/test_routing.py pins it.
   # `high` and `medium` are still UNVALIDATED guesses: the benchmark grades the
   # accept/reject decision, so it cannot say whether a MEDIUM is really medium.
   # Anything below `low`, or any failed control gate, is REJECTED (CHECK-08).
