@@ -1,0 +1,314 @@
+{
+  "source": "measured",
+  "axis": "solar_azimuth_difference",
+  "incidence_status": "held, not varied: 15/19, 84/79 and 26/28 deg",
+  "scale_status": "held: ratios 1.00, 1.00, 1.06",
+  "ninety_degree_status": "structurally unavailable -- an equatorial target imaged from a polar orbit is lit from the east or west, never from the side; 4 photometric sites scanned, 3 within 1 deg of the equator",
+  "azimuth_source": "computed by spherical trigonometry from LROC sub-solar lat/lon; LROC's own 'Sub solar azimuth' field is in an instrument frame and is not ground azimuth",
+  "protocol": "docs/nac_azimuth_protocol.md",
+  "prediction_registered_before_run": true,
+  "pairs": [
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma"
+    },
+    {
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11"
+    }
+  ],
+  "prediction": {
+    "126.7": {
+      "minima-loftr": [
+        0.7,
+        1.0
+      ],
+      "xoftr": [
+        0.0,
+        0.4
+      ],
+      "eloftr": [
+        0.0,
+        0.0
+      ],
+      "aliked-lightglue": [
+        0.0,
+        0.0
+      ],
+      "sift-nn": [
+        0.0,
+        0.0
+      ]
+    },
+    "180.0": {
+      "minima-loftr": [
+        1.0,
+        1.0
+      ],
+      "xoftr": [
+        1.0,
+        1.0
+      ],
+      "eloftr": [
+        0.0,
+        0.0
+      ],
+      "aliked-lightglue": [
+        0.0,
+        0.0
+      ],
+      "sift-nn": [
+        0.0,
+        0.0
+      ]
+    },
+    "175.3": {
+      "minima-loftr": [
+        1.0,
+        1.0
+      ],
+      "xoftr": [
+        1.0,
+        1.0
+      ],
+      "eloftr": [
+        0.0,
+        0.0
+      ],
+      "aliked-lightglue": [
+        0.0,
+        0.0
+      ],
+      "sift-nn": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "prediction_scored": [
+    {
+      "d_azimuth": 180.0,
+      "matcher": "sift-nn",
+      "n": 1,
+      "rate": 0.0,
+      "predicted": [
+        0.0,
+        0.0
+      ],
+      "verdict": "HELD"
+    }
+  ],
+  "thresholds": {
+    "solved": 0.9,
+    "degraded": 0.6
+  },
+  "excluded": [
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma",
+      "window": 0,
+      "why": "window outside the product or too much null"
+    },
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma",
+      "window": 1,
+      "why": "window outside the product or too much null"
+    },
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma",
+      "window": 2,
+      "why": "window outside the product or too much null"
+    },
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma",
+      "window": 3,
+      "why": "window outside the product or too much null"
+    },
+    {
+      "a": "M1132219897R",
+      "b": "M1180506270R",
+      "d_azimuth": 126.7,
+      "inc_a": 15,
+      "inc_b": 19,
+      "scale_ratio": 1.0,
+      "site": "ReinerGamma",
+      "window": 4,
+      "why": "window outside the product or too much null"
+    },
+    {
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11",
+      "window": 0,
+      "why": "coarse lock failed (z=5.1)"
+    },
+    {
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11",
+      "window": 1,
+      "why": "coarse lock failed (z=5.2)"
+    },
+    {
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11",
+      "window": 2,
+      "why": "coarse lock failed (z=5.0)"
+    },
+    {
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11",
+      "window": 4,
+      "why": "coarse lock failed (z=5.4)"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11",
+      "window": 0,
+      "why": "coarse lock failed (z=4.9)"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11",
+      "window": 1,
+      "why": "coarse lock failed (z=4.7)"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11",
+      "window": 2,
+      "why": "coarse lock failed (z=5.3)"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11",
+      "window": 3,
+      "why": "coarse lock failed (z=5.8)"
+    },
+    {
+      "a": "M111443315R",
+      "b": "M122054682L",
+      "d_azimuth": 175.3,
+      "inc_a": 26,
+      "inc_b": 28,
+      "scale_ratio": 1.06,
+      "site": "Apollo11",
+      "window": 4,
+      "why": "coarse lock failed (z=4.8)"
+    }
+  ],
+  "rows": [
+    {
+      "matcher": "sift-nn",
+      "matches": 12,
+      "inliers": 4,
+      "inlier_ratio": 0.3333,
+      "coverage": 0.0625,
+      "tier": "REJECTED",
+      "accepted": false,
+      "gates": {
+        "null_constant_grey": true,
+        "null_random_noise": true,
+        "perturbation_sensitivity": false,
+        "identity": true,
+        "masks_independent": true
+      },
+      "gates_all_passed": false,
+      "perturbation_recovered": null,
+      "perturbation_error_px": null,
+      "inlier_rmse_px": null,
+      "success": false,
+      "reject_reason": "estimator refused",
+      "seconds": 0.095,
+      "a": "M117338434L",
+      "b": "M131494509L",
+      "d_azimuth": 180.0,
+      "inc_a": 84,
+      "inc_b": 79,
+      "scale_ratio": 1.0,
+      "site": "Apollo11",
+      "window": 3,
+      "coarse_z": 6.32
+    }
+  ]
+}
