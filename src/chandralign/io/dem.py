@@ -200,5 +200,14 @@ def dem_patch(labels: Iterable[str | Path], bbox: tuple[float, float, float, flo
 
 
 def find_tiles(dem_dir: str | Path) -> list[Path]:
-    """All DEM labels in a folder (e.g. data/raw/dem/lola)."""
-    return sorted(Path(dem_dir).glob("*.lbl"))
+    """Every USABLE DEM tile in a folder (e.g. data/raw/dem/lola): a label whose
+    pixel file is also present.
+
+    A label alone is not a tile. fetch_dem.py fetches the small label first and
+    the 1.4 GB image last, so mid-download a folder holds labels without images;
+    counting those made callers (and test skip-guards) believe a tile was there
+    and then fail reading it.
+    """
+    folder = Path(dem_dir)
+    return sorted(lbl for lbl in folder.glob("*.lbl")
+                  if any(folder.glob(lbl.stem + ".img")) or any(folder.glob(lbl.stem + ".IMG")))

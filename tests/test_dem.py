@@ -228,3 +228,12 @@ def test_real_tiles_join_without_a_seam():
     across_join = np.abs(h[seam + 1] - h[seam]).mean()
     typical = np.abs(np.diff(h, axis=0)).mean()
     assert across_join < 2 * typical
+
+
+def test_find_tiles_ignores_a_label_whose_image_has_not_arrived(tmp_path):
+    """fetch_dem.py writes the label first and the 1.4 GB image last. Mid-download,
+    a label alone must not count as a tile (it made 15 tests error, not skip)."""
+    from chandralign.io.dem import find_tiles
+    (tmp_path / "a.lbl").write_text("x"); (tmp_path / "a.img").write_bytes(b"\0")
+    (tmp_path / "b.lbl").write_text("x"); (tmp_path / "b.img.part03").write_bytes(b"\0")
+    assert [p.name for p in find_tiles(tmp_path)] == ["a.lbl"]
