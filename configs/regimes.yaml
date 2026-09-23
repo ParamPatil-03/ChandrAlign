@@ -125,32 +125,60 @@ unsolved_illumination:
 # ---------------------------------------------------------------------------
 # Cross-modal candidates (MATCH-06)
 # ---------------------------------------------------------------------------
-# DECISION: all four are kept and benchmarked on the same tier. We do NOT drop
-# RIFT2 merely because vismatch ships newer learned cross-modal models. The
+# DECISION (made up front): all four kept and benchmarked on the same tier; RIFT2
+# not dropped merely because vismatch ships newer learned models.
+# OUTCOME (measured, below): RIFT2 kept -- as a cross-check, not as the default. The
 # research found classical RIFT competitive at high resolution, which makes it
 # worth measuring; it also gives us a non-learned baseline that needs no weights
 # and cannot silently regress when a checkpoint changes. If the measured results
 # show RIFT2 is consistently inferior AND adds no baseline value, it comes out
 # of the shipped pipeline then -- on evidence, not on recency.
 cross_modal_candidates:
+  # MEASURED (scripts/bench_rift.py, 8 regimes x 3 seeds, synthetic, exact truth).
+  # Successes /3 and median error. Candidates are listed strongest first:
+  #
+  #                     same  +30   +90   oppos  x-modal  x-mod+opp  2x   low-tex
+  #   xoftr             3     3     0     3      3        3          3    3      <- strongest
+  #   minima-loftr      3     3     2     3      3        3          0    3
+  #   rift2 (ours)      3     0     0     3      3        3          0    3
+  #   matchanything     3     3     1     0      0        3          0    3
+  #
+  # Nothing tested solves +90 deg lighting reliably (minima 2/3 at 1.5 px).
   xoftr:
     source: vismatch
     kind: learned
-    note: cross-modal transformer (thermal/visible origin)
+    note: >
+      cross-modal transformer. Best or joint-best in every regime but +90 deg
+      lighting (e.g. opposite sun 0.077 px, cross-modal 0.083 px).
   minima:
     source: vismatch
     kind: learned
-    note: cross-modality matching family; several variants available
+    note: >
+      cross-modality family (minima-loftr benchmarked): broad but less accurate
+      than xoftr (opposite 0.53 px, cross-modal 0.49 px); fails at 2x scale.
   matchanything-eloftr:
     source: vismatch
     kind: learned
-    note: trained for cross-modality generalisation
-  rift2:
-    source: vendored           # third_party/rift2, pinned SHA
-    kind: classical
     note: >
-      Phase-congruency descriptor, no weights, no download. Classical baseline
-      for the cross-modal regime.
+      fails at opposite sun and cross-modal (0/3) and was ACCEPTED while wrong
+      in 7 runs -- the reason the independent cross-check below exists.
+  rift2:
+    source: ours               # matching/rift.py -- own implementation, nothing vendored
+    kind: classical
+    reference: >
+      canyagmur/RIFT2-multimodal-matching-rotation-python @ 7d92f005f84c25dd23c07670c2aad90e0f3997e5,
+      BENCHMARK ONLY (no licence: never vendored or shipped). Ours 15/24 successes,
+      reference 11/24, SIFT 11/24; ours 3-6x more accurate where both succeed.
+      The reference handles +30 deg lighting (3/3) where ours does not (0/3);
+      ours handles opposite sun and low texture where it does not.
+    role: >
+      NOT the default: xoftr is more accurate in every regime rift2 handles.
+      Its measured value is as an INDEPENDENT CROSS-CHECK on learned matchers
+      (gates.independent_crosscheck): classical and untrained, it fails
+      differently, and caught 8/12 wrong-but-accepted learned results with 0
+      false alarms on 64 correct ones (scripts/rift_crosscheck.py). Also the
+      no-GPU, no-weights fallback for opposite light and cross-sensor pairs.
+      Never across a resolution gap (0/3 at 2x): only after the cascade.
 
 # ---------------------------------------------------------------------------
 # Shipping candidates for the same-modality path (MATCH-03/04/05)

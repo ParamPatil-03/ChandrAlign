@@ -108,6 +108,10 @@ gates:                       # CHECK-01..06 tolerances
   perturbation_tolerance_px: 1.5
   identity_max_rmse_px: 0.25
   identity_min_inlier_ratio: 0.9   # an image against itself should keep ~every match
+  # independent_crosscheck: flag a result an independent method (RIFT2)
+  # disagrees with by more than this. Measured: catches 8/12 consistently-wrong
+  # accepted results, 0 false alarms on 64 correct ones (scripts/rift_crosscheck.py).
+  crosscheck_flag_px: 2.0
 
 paths:
   data_root: data

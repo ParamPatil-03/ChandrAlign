@@ -1,0 +1,5908 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "rows": [
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 75,
+      "inliers": 74,
+      "rmse_px": 0.0641,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99038147,
+          -0.13924975,
+          38.16277578
+        ],
+        [
+          0.13913705,
+          0.99029442,
+          -33.16356035
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 66,
+      "inliers": 65,
+      "rmse_px": 0.0769,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034705,
+          -0.13899075,
+          38.10386124
+        ],
+        [
+          0.13919565,
+          0.99006877,
+          -33.1285775
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 59,
+      "inliers": 56,
+      "rmse_px": 0.0391,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034208,
+          -0.13928439,
+          38.15856819
+        ],
+        [
+          0.13919576,
+          0.99032501,
+          -33.16893224
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 1878,
+      "inliers": 1808,
+      "rmse_px": 0.0936,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.19,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99021296,
+          -0.13878744,
+          38.09405306
+        ],
+        [
+          0.13894584,
+          0.99028428,
+          -33.0665094
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 1876,
+      "inliers": 1802,
+      "rmse_px": 0.0587,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.63,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034717,
+          -0.13926712,
+          38.1313936
+        ],
+        [
+          0.13940219,
+          0.99038913,
+          -33.18963753
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 1898,
+      "inliers": 1838,
+      "rmse_px": 0.1058,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.7,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99083631,
+          -0.1390904,
+          37.974694
+        ],
+        [
+          0.13894921,
+          0.99003789,
+          -33.02844373
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 426,
+      "inliers": 396,
+      "rmse_px": 0.1231,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.03,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99027702,
+          -0.13852948,
+          37.95212702
+        ],
+        [
+          0.13931411,
+          0.98989281,
+          -33.10822353
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 686,
+      "inliers": 652,
+      "rmse_px": 0.1447,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.1,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98977679,
+          -0.138938,
+          38.1715944
+        ],
+        [
+          0.13954647,
+          0.99050799,
+          -33.20094578
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 436,
+      "inliers": 414,
+      "rmse_px": 0.1554,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.07,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99000692,
+          -0.13876542,
+          38.00590962
+        ],
+        [
+          0.13867272,
+          0.99004657,
+          -32.88079354
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 90,
+      "inliers": 90,
+      "rmse_px": 0.329,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.84,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902856,
+          -0.13913778,
+          37.9092628
+        ],
+        [
+          0.13942608,
+          0.99022927,
+          -33.45202109
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 174,
+      "inliers": 174,
+      "rmse_px": 0.2872,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99007359,
+          -0.13923398,
+          38.05665109
+        ],
+        [
+          0.13922996,
+          0.99051151,
+          -33.46553027
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 169,
+      "inliers": 169,
+      "rmse_px": 0.1632,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.18,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028532,
+          -0.13929944,
+          38.06114234
+        ],
+        [
+          0.13902705,
+          0.99036326,
+          -33.25814195
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 3213,
+      "inliers": 3213,
+      "rmse_px": 0.0574,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.73,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99025785,
+          -0.13918533,
+          38.14780488
+        ],
+        [
+          0.13916903,
+          0.9900919,
+          -33.13587357
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 3213,
+      "inliers": 3213,
+      "rmse_px": 0.083,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.25,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99015835,
+          -0.13913646,
+          38.15122752
+        ],
+        [
+          0.13912265,
+          0.9900985,
+          -33.15573983
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 3216,
+      "inliers": 3216,
+      "rmse_px": 0.0754,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.29,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99022085,
+          -0.13916506,
+          38.16265869
+        ],
+        [
+          0.13921187,
+          0.99014955,
+          -33.18101016
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 3769,
+      "inliers": 3750,
+      "rmse_px": 0.1002,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 1.59,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99017938,
+          -0.13913113,
+          38.22994937
+        ],
+        [
+          0.13910849,
+          0.99029586,
+          -33.12530196
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 3753,
+      "inliers": 3739,
+      "rmse_px": 0.0863,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026854,
+          -0.13918354,
+          38.2074599
+        ],
+        [
+          0.13912069,
+          0.99030018,
+          -33.14074751
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 3759,
+      "inliers": 3741,
+      "rmse_px": 0.0945,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026785,
+          -0.13913477,
+          38.20183807
+        ],
+        [
+          0.13906692,
+          0.99028375,
+          -33.12693534
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 3266,
+      "inliers": 3266,
+      "rmse_px": 0.1083,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 1.48,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9901472,
+          -0.1392521,
+          38.26650004
+        ],
+        [
+          0.13920924,
+          0.99040244,
+          -33.22006616
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 3229,
+      "inliers": 3229,
+      "rmse_px": 0.0975,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.18,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99038244,
+          -0.13933178,
+          38.18968991
+        ],
+        [
+          0.13928843,
+          0.99066732,
+          -33.29783999
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 3194,
+      "inliers": 3194,
+      "rmse_px": 0.1194,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.15,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99029224,
+          -0.13950417,
+          38.28728237
+        ],
+        [
+          0.13920783,
+          0.9906472,
+          -33.24018897
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 3194,
+      "inliers": 3193,
+      "rmse_px": 0.1738,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 1.33,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99042675,
+          -0.13864071,
+          38.03962321
+        ],
+        [
+          0.13889517,
+          0.99016954,
+          -33.14623681
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 3224,
+      "inliers": 3223,
+      "rmse_px": 0.1642,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.23,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99050322,
+          -0.1387353,
+          38.03515035
+        ],
+        [
+          0.13878265,
+          0.9901634,
+          -33.10634401
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 3205,
+      "inliers": 3200,
+      "rmse_px": 0.1546,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99039666,
+          -0.13887601,
+          38.11377121
+        ],
+        [
+          0.13882195,
+          0.9902542,
+          -33.13140016
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 16,
+      "inliers": 6,
+      "rmse_px": 0.7448,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99337686,
+          -0.14158871,
+          37.65604574
+        ],
+        [
+          0.13808077,
+          0.99170511,
+          -33.12507445
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 8,
+      "inliers": 4,
+      "rmse_px": 689.539,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -1.18700745,
+          -0.29558284,
+          228.13430406
+        ],
+        [
+          -1.5389193,
+          -0.66791158,
+          400.35402439
+        ],
+        [
+          -0.00476174,
+          -0.00145429,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 8,
+      "inliers": 4,
+      "rmse_px": 322.875,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.16192667,
+          -1.29580483,
+          189.65768635
+        ],
+        [
+          0.27546393,
+          -0.3398078,
+          58.70749345
+        ],
+        [
+          0.00540605,
+          -0.00628889,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 26,
+      "inliers": 12,
+      "rmse_px": 2528.7123,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.25,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.38725225,
+          -5.80751611,
+          100.08068694
+        ],
+        [
+          1.52915985,
+          -3.1763954,
+          208.71466411
+        ],
+        [
+          0.00619263,
+          -0.01373507,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 20,
+      "inliers": 10,
+      "rmse_px": 18565.979,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.19,
+      "device": "cpu",
+      "matrix": [
+        [
+          -14.26442301,
+          1.29859236,
+          2179.95755771
+        ],
+        [
+          -2.28504203,
+          -2.25112821,
+          411.64164777
+        ],
+        [
+          -0.02687979,
+          0.01765881,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.49,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 10,
+      "rmse_px": 24.6439,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.93,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.13585244,
+          -0.1963811,
+          17.40240082
+        ],
+        [
+          0.24309979,
+          0.86541328,
+          -39.88636328
+        ],
+        [
+          0.00032907,
+          -0.000407,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1072.8439,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.86,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.45937046,
+          4.7201937,
+          -1187.75341404
+        ],
+        [
+          0.14634383,
+          1.06266344,
+          -41.3494431
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 4,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.17,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 73,
+      "inliers": 70,
+      "rmse_px": 1.4711,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.48,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9901943,
+          -0.13851588,
+          38.16419916
+        ],
+        [
+          0.14065222,
+          0.98951326,
+          -34.75301643
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 144,
+      "inliers": 142,
+      "rmse_px": 1.0621,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.47,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98987051,
+          -0.14000435,
+          38.45423042
+        ],
+        [
+          0.13868327,
+          0.98980835,
+          -33.9410417
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 126,
+      "inliers": 123,
+      "rmse_px": 1.089,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.33,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98937646,
+          -0.13921175,
+          38.49209778
+        ],
+        [
+          0.13853322,
+          0.99030174,
+          -34.04882592
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 2945,
+      "inliers": 2817,
+      "rmse_px": 0.1132,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.36,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99029279,
+          -0.13900132,
+          38.01777227
+        ],
+        [
+          0.13914341,
+          0.99000487,
+          -33.14966468
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 3021,
+      "inliers": 2914,
+      "rmse_px": 0.1175,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.32,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99015805,
+          -0.13937598,
+          38.19377752
+        ],
+        [
+          0.13905385,
+          0.9904538,
+          -33.26002629
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2767,
+      "inliers": 2505,
+      "rmse_px": 0.2048,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.32,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99031398,
+          -0.13903708,
+          38.09357479
+        ],
+        [
+          0.13912866,
+          0.99004398,
+          -33.26769238
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 3043,
+      "inliers": 2722,
+      "rmse_px": 0.1713,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.5,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99009741,
+          -0.13857659,
+          38.09484774
+        ],
+        [
+          0.13933435,
+          0.99026271,
+          -33.06653306
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 3192,
+      "inliers": 2974,
+      "rmse_px": 0.1896,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99008233,
+          -0.13894439,
+          38.18444355
+        ],
+        [
+          0.13892477,
+          0.98990437,
+          -32.82795916
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2729,
+      "inliers": 2504,
+      "rmse_px": 0.1972,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99002172,
+          -0.13899481,
+          38.15882422
+        ],
+        [
+          0.13865362,
+          0.990427,
+          -32.87490507
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 2965,
+      "inliers": 2906,
+      "rmse_px": 0.1108,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.29,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98988796,
+          -0.13896909,
+          38.22298896
+        ],
+        [
+          0.1394406,
+          0.99057668,
+          -33.29755292
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 2936,
+      "inliers": 2888,
+      "rmse_px": 0.0715,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99013897,
+          -0.13891575,
+          38.07153196
+        ],
+        [
+          0.13933998,
+          0.99055526,
+          -33.26361343
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2878,
+      "inliers": 2811,
+      "rmse_px": 0.2308,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98981581,
+          -0.14012338,
+          38.50329864
+        ],
+        [
+          0.13946349,
+          0.99118955,
+          -33.39878941
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 3002,
+      "inliers": 2735,
+      "rmse_px": 0.333,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.54,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99021878,
+          -0.13716441,
+          37.60433909
+        ],
+        [
+          0.13892872,
+          0.98998305,
+          -33.08892625
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 3034,
+      "inliers": 2900,
+      "rmse_px": 0.275,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99040674,
+          -0.1377522,
+          37.71842543
+        ],
+        [
+          0.13829285,
+          0.9901364,
+          -32.95472471
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2974,
+      "inliers": 2809,
+      "rmse_px": 0.268,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98989172,
+          -0.13795415,
+          37.91860399
+        ],
+        [
+          0.13827057,
+          0.99002522,
+          -32.94411801
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 4,
+      "rmse_px": 178.2868,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.5954325,
+          -0.00291779,
+          16.98838971
+        ],
+        [
+          -0.40344637,
+          -0.07253604,
+          349.81894846
+        ],
+        [
+          -0.00066436,
+          -0.00046015,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 12,
+      "inliers": 4,
+      "rmse_px": 1745.7008,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          -3.38560243,
+          -4.06721178,
+          914.54656718
+        ],
+        [
+          -1.42173118,
+          -3.48051196,
+          409.52285472
+        ],
+        [
+          -0.00514133,
+          -0.00833745,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 11,
+      "inliers": 4,
+      "rmse_px": 5344.9664,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.20624322,
+          -2.37055061,
+          270.72271637
+        ],
+        [
+          1.10658464,
+          0.50550589,
+          72.63703324
+        ],
+        [
+          0.00631719,
+          -0.00470399,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 16,
+      "inliers": 8,
+      "rmse_px": 487.3564,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.69,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.40600635,
+          -0.33690741,
+          61.23663235
+        ],
+        [
+          0.81744899,
+          0.0268838,
+          6.86291642
+        ],
+        [
+          0.00203878,
+          -0.00230492,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 12,
+      "inliers": 6,
+      "rmse_px": 480.4092,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.79,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.70973451,
+          -1.17256637,
+          168.43451327
+        ],
+        [
+          -0.73097345,
+          -0.63274336,
+          326.92654867
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1897.8605,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.91,
+      "device": "cpu",
+      "matrix": [
+        [
+          -4.3554095,
+          1.72042467,
+          1235.50606673
+        ],
+        [
+          9.4752275,
+          -2.23356926,
+          -2153.33670374
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 4,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.64,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 10,
+      "inliers": 6,
+      "rmse_px": 441.5134,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.23,
+      "device": "cpu",
+      "matrix": [
+        [
+          2.14680711,
+          1.15569454,
+          -334.38545095
+        ],
+        [
+          -0.57867018,
+          0.08360764,
+          229.64713627
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 273.1363,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.65,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.24935897,
+          -0.24401709,
+          59.61047009
+        ],
+        [
+          -0.17435897,
+          0.62735043,
+          271.04786325
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 5,
+      "inliers": 4,
+      "rmse_px": 1797.3701,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.47,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.35311613,
+          -0.11667093,
+          -22.30327866
+        ],
+        [
+          -1.50571608,
+          0.83259813,
+          317.57506621
+        ],
+        [
+          -0.00356167,
+          0.00150872,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 70,
+      "inliers": 41,
+      "rmse_px": 2.2194,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.33,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99239055,
+          -0.14068266,
+          36.9176918
+        ],
+        [
+          0.13644508,
+          0.99200959,
+          -34.73079933
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 9,
+      "inliers": 4,
+      "rmse_px": 474.6159,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.29,
+      "device": "cuda",
+      "matrix": [
+        [
+          -0.31216022,
+          -0.91832184,
+          276.25456075
+        ],
+        [
+          -0.36099451,
+          -1.28409687,
+          363.44365649
+        ],
+        [
+          -0.00102682,
+          -0.00349828,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 271,
+      "inliers": 32,
+      "rmse_px": 3.8428,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.27,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99485317,
+          -0.16804221,
+          43.82192407
+        ],
+        [
+          0.14121892,
+          0.97519947,
+          -30.23085406
+        ],
+        [
+          2.039e-05,
+          -3.074e-05,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 359,
+      "inliers": 73,
+      "rmse_px": 3.3157,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.41,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98512362,
+          -0.13337385,
+          35.13675846
+        ],
+        [
+          0.13467911,
+          0.99155959,
+          -33.34092461
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 265,
+      "inliers": 14,
+      "rmse_px": 3.6571,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.41,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.00778669,
+          -0.13220898,
+          31.51553127
+        ],
+        [
+          0.13414473,
+          0.99785016,
+          -35.35357728
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 323,
+      "inliers": 17,
+      "rmse_px": 8.9229,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.95443485,
+          -0.11297444,
+          36.3307207
+        ],
+        [
+          0.11839806,
+          0.99989458,
+          -30.45693217
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 317,
+      "inliers": 20,
+      "rmse_px": 147.372,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.62346007,
+          0.17742895,
+          87.24395807
+        ],
+        [
+          -0.53569803,
+          0.83597241,
+          125.87822521
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 266,
+      "inliers": 19,
+      "rmse_px": 13074.0599,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          2.1503158,
+          -0.53547773,
+          -265.78871979
+        ],
+        [
+          1.07924794,
+          -0.96537942,
+          427.35539721
+        ],
+        [
+          0.00376204,
+          -0.00346351,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 1148,
+      "inliers": 432,
+      "rmse_px": 1.7641,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.38,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98938272,
+          -0.14010324,
+          36.84103628
+        ],
+        [
+          0.13816629,
+          0.98993356,
+          -32.70868193
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 1268,
+      "inliers": 496,
+      "rmse_px": 2.4907,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.39,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98756982,
+          -0.13766416,
+          36.00619137
+        ],
+        [
+          0.13977414,
+          0.99242928,
+          -33.82849842
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 1018,
+      "inliers": 351,
+      "rmse_px": 2.7591,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.38,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.97713292,
+          -0.14481764,
+          41.40644559
+        ],
+        [
+          0.14031607,
+          0.98720135,
+          -32.49274017
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 311,
+      "inliers": 89,
+      "rmse_px": 2.8187,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.43,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99129117,
+          -0.12956607,
+          33.5987467
+        ],
+        [
+          0.14013624,
+          0.98091669,
+          -30.5399207
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 247,
+      "inliers": 60,
+      "rmse_px": 1.6753,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99549143,
+          -0.13248201,
+          34.67281439
+        ],
+        [
+          0.13684314,
+          0.99345667,
+          -34.05110511
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 228,
+      "inliers": 60,
+      "rmse_px": 1.3236,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98371914,
+          -0.14107841,
+          40.675227
+        ],
+        [
+          0.13911978,
+          0.99408564,
+          -34.39681298
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 15,
+      "inliers": 7,
+      "rmse_px": 600.9673,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.60683678,
+          -0.43893747,
+          329.85325706
+        ],
+        [
+          -0.16965119,
+          -0.12510634,
+          94.2107214
+        ],
+        [
+          -0.00186826,
+          -0.00130911,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 11,
+      "inliers": 4,
+      "rmse_px": 2652.5693,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          -2.8275913,
+          -0.29318731,
+          367.05567358
+        ],
+        [
+          -1.67812538,
+          -1.51075441,
+          470.07440311
+        ],
+        [
+          -0.00644803,
+          -0.00248121,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 13,
+      "inliers": 5,
+      "rmse_px": 3387.6082,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -6.13366135,
+          3.14664313,
+          756.85130214
+        ],
+        [
+          -2.30387181,
+          1.82812712,
+          -45.40545709
+        ],
+        [
+          -0.01396097,
+          0.00877319,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 1142,
+      "inliers": 932,
+      "rmse_px": 0.241,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.14,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.990817,
+          -0.14040764,
+          38.25428454
+        ],
+        [
+          0.13920896,
+          0.99010339,
+          -33.00056995
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 1104,
+      "inliers": 918,
+      "rmse_px": 0.3206,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.38,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99170416,
+          -0.13886935,
+          37.55815489
+        ],
+        [
+          0.13890602,
+          0.99140719,
+          -33.40681929
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 1060,
+      "inliers": 866,
+      "rmse_px": 0.1383,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.39,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99050592,
+          -0.13979958,
+          38.19494851
+        ],
+        [
+          0.13885786,
+          0.99055953,
+          -33.07673411
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 298,
+      "inliers": 220,
+      "rmse_px": 0.5312,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98959924,
+          -0.13873341,
+          37.8472002
+        ],
+        [
+          0.13715452,
+          0.99068472,
+          -32.49955078
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 418,
+      "inliers": 322,
+      "rmse_px": 0.456,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.49,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99031699,
+          -0.13824082,
+          37.66015112
+        ],
+        [
+          0.1378441,
+          0.99160365,
+          -32.90349836
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 284,
+      "inliers": 206,
+      "rmse_px": 0.7801,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.21,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9885219,
+          -0.13808801,
+          37.98348839
+        ],
+        [
+          0.13705117,
+          0.98929051,
+          -31.81909847
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 23,
+      "inliers": 15,
+      "rmse_px": 5.7091,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.58,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98989761,
+          -0.13834634,
+          41.61882969
+        ],
+        [
+          0.13701282,
+          0.98462499,
+          -26.83040575
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 99,
+      "inliers": 49,
+      "rmse_px": 5.0117,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.35,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023055,
+          -0.13941558,
+          41.7159863
+        ],
+        [
+          0.1382901,
+          0.98789396,
+          -28.76449046
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 1,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.26,
+      "device": "cuda",
+      "matrix": null
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 676,
+      "inliers": 141,
+      "rmse_px": 4.85,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.27,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99493624,
+          -0.13848721,
+          33.95745235
+        ],
+        [
+          0.13894221,
+          0.98994836,
+          -36.8900866
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 754,
+      "inliers": 166,
+      "rmse_px": 4.723,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.32,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98768192,
+          -0.13976974,
+          37.01032167
+        ],
+        [
+          0.14023984,
+          0.99470676,
+          -38.77713122
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 504,
+      "inliers": 86,
+      "rmse_px": 4.9811,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99180923,
+          -0.13561051,
+          40.02369423
+        ],
+        [
+          0.14076505,
+          0.9897317,
+          -29.65449966
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 3851,
+      "inliers": 3819,
+      "rmse_px": 0.0733,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.45,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023862,
+          -0.1391292,
+          38.18437921
+        ],
+        [
+          0.13913369,
+          0.99026309,
+          -33.14999469
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 3858,
+      "inliers": 3844,
+      "rmse_px": 0.0771,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.52,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99025461,
+          -0.13899293,
+          38.14537104
+        ],
+        [
+          0.13904967,
+          0.99032577,
+          -33.11563017
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 3842,
+      "inliers": 3819,
+      "rmse_px": 0.082,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99015917,
+          -0.13919602,
+          38.22431059
+        ],
+        [
+          0.13895317,
+          0.9901865,
+          -33.06569728
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 1012,
+      "inliers": 306,
+      "rmse_px": 3.9468,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.35,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98691182,
+          -0.13486342,
+          35.53307978
+        ],
+        [
+          0.14237291,
+          0.98730937,
+          -36.17902613
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 1078,
+      "inliers": 339,
+      "rmse_px": 3.9609,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.34,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98471378,
+          -0.13436718,
+          36.08545833
+        ],
+        [
+          0.13443851,
+          0.98651777,
+          -33.88558909
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 885,
+      "inliers": 218,
+      "rmse_px": 4.2335,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.33,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98809847,
+          -0.14421776,
+          37.58574299
+        ],
+        [
+          0.13443293,
+          0.986981,
+          -34.35812149
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 2264,
+      "inliers": 1050,
+      "rmse_px": 0.2299,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.45,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99001899,
+          -0.13797506,
+          37.84824741
+        ],
+        [
+          0.13924302,
+          0.98975479,
+          -32.93162053
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 2209,
+      "inliers": 1039,
+      "rmse_px": 0.9042,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.47,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99073269,
+          -0.13484998,
+          36.87676116
+        ],
+        [
+          0.13749901,
+          0.993641,
+          -33.53403594
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 1955,
+      "inliers": 939,
+      "rmse_px": 0.5291,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9880218,
+          -0.13851613,
+          38.66413879
+        ],
+        [
+          0.13711592,
+          0.99109005,
+          -32.75301707
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 5,
+      "rmse_px": 3669.5633,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.1,
+      "device": "cpu",
+      "matrix": [
+        [
+          4.23049865,
+          -2.77545491,
+          525.94961934
+        ],
+        [
+          2.66488342,
+          1.48893586,
+          -419.76535704
+        ],
+        [
+          0.00848808,
+          -0.00255461,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 11,
+      "inliers": 5,
+      "rmse_px": 620.4398,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.35479292,
+          1.18675231,
+          74.51928044
+        ],
+        [
+          -0.41065287,
+          1.16262713,
+          59.38105251
+        ],
+        [
+          -0.00230877,
+          0.00231233,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 10,
+      "inliers": 5,
+      "rmse_px": 1729.12,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.33292184,
+          -0.70749101,
+          214.9099073
+        ],
+        [
+          0.11056329,
+          -0.50475373,
+          211.36261825
+        ],
+        [
+          -0.00015822,
+          -0.00201303,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 1410,
+      "inliers": 1298,
+      "rmse_px": 0.1138,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.59,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98980976,
+          -0.13886818,
+          38.15148969
+        ],
+        [
+          0.13889261,
+          0.99064127,
+          -33.15404657
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 1356,
+      "inliers": 1218,
+      "rmse_px": 0.1572,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.65,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99000782,
+          -0.13922732,
+          38.21311361
+        ],
+        [
+          0.13987062,
+          0.99087652,
+          -33.42985017
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 1376,
+      "inliers": 1252,
+      "rmse_px": 0.1608,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.87,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99062252,
+          -0.13969669,
+          38.17766492
+        ],
+        [
+          0.13848335,
+          0.99060565,
+          -33.01158327
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 334,
+      "inliers": 272,
+      "rmse_px": 0.2312,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.75,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98986263,
+          -0.13819024,
+          38.00908608
+        ],
+        [
+          0.13851686,
+          0.99095689,
+          -33.18891968
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 572,
+      "inliers": 482,
+      "rmse_px": 0.1572,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.21,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99037307,
+          -0.13902028,
+          38.15366748
+        ],
+        [
+          0.13886082,
+          0.9909402,
+          -33.21024651
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 356,
+      "inliers": 322,
+      "rmse_px": 0.2994,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.65,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99091761,
+          -0.13862005,
+          37.76980906
+        ],
+        [
+          0.13785277,
+          0.99131159,
+          -33.05962239
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 13,
+      "inliers": 8,
+      "rmse_px": 7.2334,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.55,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99261473,
+          -0.14613031,
+          44.58186429
+        ],
+        [
+          0.13467045,
+          0.98314336,
+          -25.54895195
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 63,
+      "inliers": 31,
+      "rmse_px": 5.3624,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.17,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9907249,
+          -0.13958935,
+          41.9703054
+        ],
+        [
+          0.13768418,
+          0.9859737,
+          -28.00841549
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 0,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.22,
+      "device": "cuda",
+      "matrix": null
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 702,
+      "inliers": 122,
+      "rmse_px": 5.5847,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.12,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.00033288,
+          -0.12647234,
+          33.38188583
+        ],
+        [
+          0.15620663,
+          1.01421088,
+          -42.10433216
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 799,
+      "inliers": 175,
+      "rmse_px": 4.6945,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.18,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98857807,
+          -0.13744761,
+          36.17477289
+        ],
+        [
+          0.13883069,
+          0.9932926,
+          -38.05523299
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 560,
+      "inliers": 98,
+      "rmse_px": 5.7745,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.13,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99453225,
+          -0.1386672,
+          40.44401717
+        ],
+        [
+          0.13887068,
+          0.99004056,
+          -28.49229902
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 3822,
+      "inliers": 3795,
+      "rmse_px": 0.0833,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.35,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99014688,
+          -0.13909568,
+          38.17861711
+        ],
+        [
+          0.13916174,
+          0.99023933,
+          -33.19095973
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 3808,
+      "inliers": 3791,
+      "rmse_px": 0.0759,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.44,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026196,
+          -0.13923322,
+          38.17379748
+        ],
+        [
+          0.13922369,
+          0.99031082,
+          -33.22542296
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 3821,
+      "inliers": 3801,
+      "rmse_px": 0.0939,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902446,
+          -0.1391153,
+          38.16953328
+        ],
+        [
+          0.13901827,
+          0.99025722,
+          -33.16313307
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 884,
+      "inliers": 299,
+      "rmse_px": 4.226,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98811703,
+          -0.13634794,
+          34.90884225
+        ],
+        [
+          0.13993958,
+          0.98428415,
+          -34.52739622
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 1078,
+      "inliers": 355,
+      "rmse_px": 4.5842,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.27,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98010813,
+          -0.13405023,
+          36.97318501
+        ],
+        [
+          0.13867427,
+          0.98671073,
+          -35.50388
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 925,
+      "inliers": 262,
+      "rmse_px": 3.7379,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 0.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98992815,
+          -0.13974771,
+          36.11359853
+        ],
+        [
+          0.14055039,
+          0.989743,
+          -36.33637961
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 2415,
+      "inliers": 1221,
+      "rmse_px": 0.2423,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.27,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99024904,
+          -0.13784532,
+          37.70436955
+        ],
+        [
+          0.13976021,
+          0.99034176,
+          -33.29793358
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 2281,
+      "inliers": 1105,
+      "rmse_px": 0.7897,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.25,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99057355,
+          -0.13544256,
+          36.99204225
+        ],
+        [
+          0.13683594,
+          0.99258477,
+          -33.17277609
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 2062,
+      "inliers": 980,
+      "rmse_px": 0.4924,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.22,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98906234,
+          -0.13839627,
+          38.37372754
+        ],
+        [
+          0.13654484,
+          0.99018915,
+          -32.46489847
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 23,
+      "inliers": 17,
+      "rmse_px": 0.2404,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98990686,
+          -0.13828324,
+          38.13337674
+        ],
+        [
+          0.13988689,
+          0.99015044,
+          -33.29285425
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 25,
+      "inliers": 20,
+      "rmse_px": 0.8332,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98000072,
+          -0.13743512,
+          39.33333369
+        ],
+        [
+          0.13336317,
+          0.98675523,
+          -31.85551286
+        ],
+        [
+          -1.772e-05,
+          2.59e-06,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 20,
+      "inliers": 13,
+      "rmse_px": 0.117,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99021758,
+          -0.13962972,
+          38.32444179
+        ],
+        [
+          0.13947258,
+          0.9903457,
+          -33.21147925
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 942,
+      "inliers": 804,
+      "rmse_px": 0.2481,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.51,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99007727,
+          -0.13840844,
+          37.85563224
+        ],
+        [
+          0.13851028,
+          0.9904988,
+          -32.88402179
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 1024,
+      "inliers": 856,
+      "rmse_px": 0.2875,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.48,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9901535,
+          -0.13833542,
+          37.82747922
+        ],
+        [
+          0.14045669,
+          0.99089152,
+          -33.6814508
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 1006,
+      "inliers": 814,
+      "rmse_px": 0.2198,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.46,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98944927,
+          -0.13972495,
+          38.40034396
+        ],
+        [
+          0.13833638,
+          0.99002835,
+          -32.83448425
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 274,
+      "inliers": 198,
+      "rmse_px": 0.6012,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.2,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9874164,
+          -0.13703709,
+          38.17097899
+        ],
+        [
+          0.13923337,
+          0.99066082,
+          -33.41766602
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 424,
+      "inliers": 316,
+      "rmse_px": 0.4181,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.35,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99097698,
+          -0.13908582,
+          37.70863503
+        ],
+        [
+          0.1377221,
+          0.99154895,
+          -32.93001645
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 288,
+      "inliers": 224,
+      "rmse_px": 0.6669,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.28,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98768087,
+          -0.14061828,
+          39.10324682
+        ],
+        [
+          0.13661646,
+          0.99039762,
+          -32.26300286
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 77,
+      "inliers": 77,
+      "rmse_px": 0.3956,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99010621,
+          -0.13879131,
+          37.90981598
+        ],
+        [
+          0.13934057,
+          0.98971891,
+          -33.3865929
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 130,
+      "inliers": 130,
+      "rmse_px": 0.4861,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.55,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99038919,
+          -0.13924628,
+          37.88587775
+        ],
+        [
+          0.13829323,
+          0.9895041,
+          -33.10832151
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 120,
+      "inliers": 118,
+      "rmse_px": 0.4449,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.38,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9894221,
+          -0.13966618,
+          38.40491096
+        ],
+        [
+          0.13818923,
+          0.99046512,
+          -33.31828943
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 3175,
+      "inliers": 3173,
+      "rmse_px": 0.077,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028322,
+          -0.13923582,
+          38.14432123
+        ],
+        [
+          0.13911254,
+          0.99004585,
+          -33.13077732
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 3190,
+      "inliers": 3185,
+      "rmse_px": 0.0793,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99009574,
+          -0.13915215,
+          38.16123117
+        ],
+        [
+          0.13915051,
+          0.99021378,
+          -33.1911639
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 3166,
+      "inliers": 3165,
+      "rmse_px": 0.097,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99012368,
+          -0.13909078,
+          38.15185333
+        ],
+        [
+          0.13928132,
+          0.99019315,
+          -33.23511529
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 3846,
+      "inliers": 3817,
+      "rmse_px": 0.1102,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99030754,
+          -0.13906413,
+          38.10452015
+        ],
+        [
+          0.13903634,
+          0.9902967,
+          -33.21324574
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 3841,
+      "inliers": 3821,
+      "rmse_px": 0.0797,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.56,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026594,
+          -0.13904133,
+          38.12129476
+        ],
+        [
+          0.13912982,
+          0.99024141,
+          -33.18726046
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 3826,
+      "inliers": 3812,
+      "rmse_px": 0.1102,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.59,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9901494,
+          -0.13916958,
+          38.19368294
+        ],
+        [
+          0.13897607,
+          0.99014269,
+          -33.14657131
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 3175,
+      "inliers": 3173,
+      "rmse_px": 0.1003,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.38,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023534,
+          -0.13924032,
+          38.24009927
+        ],
+        [
+          0.13917135,
+          0.9904331,
+          -33.19413375
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 3172,
+      "inliers": 3170,
+      "rmse_px": 0.082,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99029191,
+          -0.1392585,
+          38.17344112
+        ],
+        [
+          0.13937251,
+          0.99067612,
+          -33.29270148
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 3115,
+      "inliers": 3109,
+      "rmse_px": 0.132,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99024995,
+          -0.13950101,
+          38.30821186
+        ],
+        [
+          0.13918503,
+          0.99068049,
+          -33.22199107
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 3161,
+      "inliers": 3147,
+      "rmse_px": 0.2201,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.55,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99054134,
+          -0.13847169,
+          38.04430112
+        ],
+        [
+          0.13887011,
+          0.99005385,
+          -33.0348481
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 3187,
+      "inliers": 3184,
+      "rmse_px": 0.1985,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.5,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99063041,
+          -0.13843913,
+          37.96169676
+        ],
+        [
+          0.13861602,
+          0.99022323,
+          -32.99934878
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 3164,
+      "inliers": 3162,
+      "rmse_px": 0.1924,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.52,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99025502,
+          -0.13867751,
+          38.15036701
+        ],
+        [
+          0.13874596,
+          0.99012706,
+          -33.03929718
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 42,
+      "inliers": 32,
+      "rmse_px": 0.4563,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.1,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.98009597,
+          -0.2781572,
+          -179.93364559
+        ],
+        [
+          0.27868528,
+          1.98036854,
+          -322.69550561
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 49,
+      "inliers": 38,
+      "rmse_px": 0.4258,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.98080012,
+          -0.27812149,
+          -180.086374
+        ],
+        [
+          0.27846223,
+          1.98100802,
+          -322.78763576
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 46,
+      "inliers": 34,
+      "rmse_px": 0.4108,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.07,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.97948631,
+          -0.27797892,
+          -179.72753416
+        ],
+        [
+          0.27788332,
+          1.9806834,
+          -322.52864019
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1197.2739,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.35,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.19484241,
+          -0.18624642,
+          419.62750716
+        ],
+        [
+          -3.96111339,
+          -1.99154046,
+          1083.15977623
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 310.4448,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.94,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.10714286,
+          -0.11607143,
+          154.57142857
+        ],
+        [
+          0.41666667,
+          0.9375,
+          -253.33333333
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 8,
+      "rmse_px": 2141.2896,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.29,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.63576606,
+          -0.63679158,
+          352.78133004
+        ],
+        [
+          -0.07565368,
+          -0.066656,
+          41.39074427
+        ],
+        [
+          -0.00183437,
+          -0.00166928,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 8,
+      "rmse_px": 685.3972,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.1,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.11659943,
+          0.31444262,
+          -35.77826719
+        ],
+        [
+          -0.36970132,
+          0.19013557,
+          162.03130354
+        ],
+        [
+          -0.0021386,
+          0.00082472,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 8,
+      "inliers": 6,
+      "rmse_px": 359.9309,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.32,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.88968973,
+          1.31164195,
+          -139.23242724
+        ],
+        [
+          0.69295717,
+          1.51647446,
+          -317.68739703
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 6,
+      "rmse_px": 559.3971,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.26,
+      "device": "cpu",
+      "matrix": [
+        [
+          -1.0296911,
+          -0.93822038,
+          857.94633472
+        ],
+        [
+          0.7846473,
+          0.42946058,
+          -110.70290456
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 65,
+      "inliers": 64,
+      "rmse_px": 0.8299,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.97949437,
+          -0.27805418,
+          -179.83614114
+        ],
+        [
+          0.27914202,
+          1.97974022,
+          -323.02035198
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 74,
+      "inliers": 68,
+      "rmse_px": 0.7963,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.33,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98146495,
+          -0.27880269,
+          -180.18003645
+        ],
+        [
+          0.27856582,
+          1.98345919,
+          -323.63043959
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 62,
+      "inliers": 57,
+      "rmse_px": 0.3591,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.27,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.97994715,
+          -0.27747264,
+          -180.03324447
+        ],
+        [
+          0.27706366,
+          1.98001414,
+          -321.93254425
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 849,
+      "inliers": 733,
+      "rmse_px": 0.6121,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.97957632,
+          -0.27840952,
+          -179.88560368
+        ],
+        [
+          0.27871364,
+          1.97963504,
+          -322.56085534
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 974,
+      "inliers": 880,
+      "rmse_px": 0.6137,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.39,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98014466,
+          -0.27809732,
+          -180.10841665
+        ],
+        [
+          0.27890895,
+          1.97992626,
+          -322.7164912
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 913,
+      "inliers": 821,
+      "rmse_px": 0.6089,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.34,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98060527,
+          -0.27762909,
+          -180.34529845
+        ],
+        [
+          0.27839472,
+          1.97995284,
+          -322.58695142
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 1054,
+      "inliers": 651,
+      "rmse_px": 0.3004,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.97986106,
+          -0.27865501,
+          -179.48815024
+        ],
+        [
+          0.2775724,
+          1.97950088,
+          -321.62460717
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 1677,
+      "inliers": 1296,
+      "rmse_px": 0.2409,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.4,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98060697,
+          -0.27821764,
+          -179.78011643
+        ],
+        [
+          0.27779082,
+          1.98021495,
+          -321.83454252
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 1480,
+      "inliers": 1029,
+      "rmse_px": 0.2222,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98026014,
+          -0.27791572,
+          -179.82260848
+        ],
+        [
+          0.2783763,
+          1.97953723,
+          -321.8929206
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 8,
+      "inliers": 5,
+      "rmse_px": 2092.8726,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.35,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.0685297,
+          0.19052113,
+          1.43829643
+        ],
+        [
+          -0.89219209,
+          -0.13150072,
+          483.62241582
+        ],
+        [
+          -0.00165469,
+          -0.00036682,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 2,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.46,
+      "device": "cuda",
+      "matrix": null
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 15,
+      "inliers": 6,
+      "rmse_px": 742.8531,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.44,
+      "device": "cuda",
+      "matrix": [
+        [
+          -0.05892142,
+          -0.30439873,
+          136.9227022
+        ],
+        [
+          -0.02574214,
+          -0.33127768,
+          139.53716813
+        ],
+        [
+          0.00042831,
+          -0.00307983,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 443,
+      "inliers": 39,
+      "rmse_px": 236.3534,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.56225184,
+          -0.19142024,
+          66.88029273
+        ],
+        [
+          0.63114066,
+          2.14810445,
+          -249.17218275
+        ],
+        [
+          0.00128422,
+          0.00130848,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 539,
+      "inliers": 68,
+      "rmse_px": 214.6329,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.36,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.68629122,
+          -0.49465026,
+          132.16472746
+        ],
+        [
+          0.10291566,
+          0.82760381,
+          -34.66691992
+        ],
+        [
+          -0.00026886,
+          -0.00108034,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 475,
+      "inliers": 32,
+      "rmse_px": 248.813,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.95567821,
+          0.09687847,
+          -38.02350301
+        ],
+        [
+          -0.0972589,
+          0.9081407,
+          37.46454205
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 15,
+      "inliers": 14,
+      "rmse_px": 0.0827,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99020111,
+          -0.13912006,
+          38.16648623
+        ],
+        [
+          0.13899597,
+          0.99040237,
+          -33.18578877
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 18,
+      "inliers": 16,
+      "rmse_px": 0.09,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99072018,
+          -0.1394948,
+          38.09695381
+        ],
+        [
+          0.13913704,
+          0.99021142,
+          -33.13029963
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 11,
+      "rmse_px": 0.0625,
+      "accepted": false,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99037856,
+          -0.13941297,
+          38.18216381
+        ],
+        [
+          0.13915314,
+          0.99014138,
+          -33.12980919
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 1940,
+      "inliers": 1856,
+      "rmse_px": 0.1037,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.58,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98988954,
+          -0.13891869,
+          38.14715377
+        ],
+        [
+          0.13953298,
+          0.98999979,
+          -33.18550872
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 1952,
+      "inliers": 1860,
+      "rmse_px": 0.0849,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 3.93,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98993293,
+          -0.13940187,
+          38.30293321
+        ],
+        [
+          0.13938131,
+          0.99041644,
+          -33.22976467
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 1906,
+      "inliers": 1848,
+      "rmse_px": 0.0385,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.3,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99015757,
+          -0.13914802,
+          38.16358443
+        ],
+        [
+          0.13927377,
+          0.99032054,
+          -33.19495598
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 584,
+      "inliers": 554,
+      "rmse_px": 0.1066,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 3.26,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99014888,
+          -0.13879762,
+          38.09507066
+        ],
+        [
+          0.13922687,
+          0.99028532,
+          -33.2312028
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 688,
+      "inliers": 648,
+      "rmse_px": 0.0966,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 3.95,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98986851,
+          -0.13900512,
+          38.16173483
+        ],
+        [
+          0.13898403,
+          0.99010276,
+          -32.99300258
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 442,
+      "inliers": 422,
+      "rmse_px": 0.1407,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.3,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98984137,
+          -0.13919537,
+          38.24625851
+        ],
+        [
+          0.13896158,
+          0.98951541,
+          -32.8814634
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 231,
+      "inliers": 231,
+      "rmse_px": 0.1723,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.45,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902781,
+          -0.13914312,
+          38.13090191
+        ],
+        [
+          0.13910466,
+          0.99040169,
+          -33.32286933
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 121,
+      "inliers": 121,
+      "rmse_px": 0.2033,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.18,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99061643,
+          -0.13911166,
+          38.08078254
+        ],
+        [
+          0.13901423,
+          0.99052592,
+          -33.34016654
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 330,
+      "inliers": 330,
+      "rmse_px": 0.1815,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.18,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98999787,
+          -0.13940023,
+          38.25697036
+        ],
+        [
+          0.13927202,
+          0.99030002,
+          -33.34210351
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 3210,
+      "inliers": 3209,
+      "rmse_px": 0.0908,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.12,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99014273,
+          -0.13920022,
+          38.18110703
+        ],
+        [
+          0.13911346,
+          0.99007744,
+          -33.15269799
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 3201,
+      "inliers": 3201,
+      "rmse_px": 0.1225,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99007173,
+          -0.13912558,
+          38.14499346
+        ],
+        [
+          0.13893912,
+          0.9900325,
+          -33.12241056
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "eloftr",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 3205,
+      "inliers": 3205,
+      "rmse_px": 0.086,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.13,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99015919,
+          -0.13920076,
+          38.18107982
+        ],
+        [
+          0.13919341,
+          0.99014375,
+          -33.1877864
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 3732,
+      "inliers": 3724,
+      "rmse_px": 0.0867,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.44,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99029615,
+          -0.13911312,
+          38.18264116
+        ],
+        [
+          0.13915515,
+          0.99033113,
+          -33.14849022
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 3730,
+      "inliers": 3723,
+      "rmse_px": 0.0845,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.3,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027619,
+          -0.13914961,
+          38.19529624
+        ],
+        [
+          0.13917981,
+          0.99031186,
+          -33.15812818
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "xoftr",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 3737,
+      "inliers": 3726,
+      "rmse_px": 0.0826,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.29,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026306,
+          -0.13911226,
+          38.1866228
+        ],
+        [
+          0.13914585,
+          0.99027414,
+          -33.1424113
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 3143,
+      "inliers": 3142,
+      "rmse_px": 0.1497,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99058102,
+          -0.13941478,
+          38.15471
+        ],
+        [
+          0.13935145,
+          0.99103952,
+          -33.39587299
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 3161,
+      "inliers": 3160,
+      "rmse_px": 0.14,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99044039,
+          -0.13952082,
+          38.19349867
+        ],
+        [
+          0.13929077,
+          0.99103241,
+          -33.37983308
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 2992,
+      "inliers": 2991,
+      "rmse_px": 0.1726,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.22,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99059088,
+          -0.13945831,
+          38.17096572
+        ],
+        [
+          0.13928435,
+          0.99115604,
+          -33.35033019
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 3221,
+      "inliers": 3219,
+      "rmse_px": 0.1538,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.28,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99043681,
+          -0.13889717,
+          38.10890616
+        ],
+        [
+          0.13887139,
+          0.99029411,
+          -33.15719663
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 3216,
+      "inliers": 3215,
+      "rmse_px": 0.1544,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99051744,
+          -0.13881134,
+          38.05897945
+        ],
+        [
+          0.13882025,
+          0.99012455,
+          -33.09006333
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 3217,
+      "inliers": 3214,
+      "rmse_px": 0.1466,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99045355,
+          -0.13898798,
+          38.12549365
+        ],
+        [
+          0.13885942,
+          0.99022851,
+          -33.13169696
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ]
+}

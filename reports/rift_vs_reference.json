@@ -1,0 +1,2980 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "rows": [
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 1878,
+      "inliers": 1808,
+      "rmse_px": 0.0936,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.67,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99021296,
+          -0.13878744,
+          38.09405306
+        ],
+        [
+          0.13894584,
+          0.99028428,
+          -33.0665094
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 1876,
+      "inliers": 1802,
+      "rmse_px": 0.0587,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.59,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034717,
+          -0.13926712,
+          38.1313936
+        ],
+        [
+          0.13940219,
+          0.99038913,
+          -33.18963753
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 1898,
+      "inliers": 1838,
+      "rmse_px": 0.1058,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.66,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99083631,
+          -0.1390904,
+          37.974694
+        ],
+        [
+          0.13894921,
+          0.99003789,
+          -33.02844373
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 548,
+      "inliers": 196,
+      "rmse_px": 0.6471,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.12,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.989292,
+          -0.13934491,
+          38.5659258
+        ],
+        [
+          0.13613939,
+          0.9893895,
+          -32.49109981
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 782,
+      "inliers": 494,
+      "rmse_px": 277.3977,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.5,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.0,
+          -0.0,
+          154.0
+        ],
+        [
+          0.0,
+          -0.0,
+          387.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 517,
+      "inliers": 212,
+      "rmse_px": 0.2669,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.18,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98992662,
+          -0.14038223,
+          38.42541265
+        ],
+        [
+          0.13981408,
+          0.9895281,
+          -33.08942036
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 426,
+      "inliers": 396,
+      "rmse_px": 0.1231,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.36,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99027702,
+          -0.13852948,
+          37.95212702
+        ],
+        [
+          0.13931411,
+          0.98989281,
+          -33.10822353
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 686,
+      "inliers": 652,
+      "rmse_px": 0.1447,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.52,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98977679,
+          -0.138938,
+          38.1715944
+        ],
+        [
+          0.13954647,
+          0.99050799,
+          -33.20094578
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 436,
+      "inliers": 414,
+      "rmse_px": 0.1554,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.4,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99000692,
+          -0.13876542,
+          38.00590962
+        ],
+        [
+          0.13867272,
+          0.99004657,
+          -32.88079354
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 75,
+      "inliers": 74,
+      "rmse_px": 0.0641,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99038147,
+          -0.13924975,
+          38.16277578
+        ],
+        [
+          0.13913705,
+          0.99029442,
+          -33.16356035
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 66,
+      "inliers": 65,
+      "rmse_px": 0.0769,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034705,
+          -0.13899075,
+          38.10386124
+        ],
+        [
+          0.13919565,
+          0.99006877,
+          -33.1285775
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 59,
+      "inliers": 56,
+      "rmse_px": 0.0391,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99034208,
+          -0.13928439,
+          38.15856819
+        ],
+        [
+          0.13919576,
+          0.99032501,
+          -33.16893224
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 26,
+      "inliers": 12,
+      "rmse_px": 2528.7123,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.7,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.38725225,
+          -5.80751611,
+          100.08068694
+        ],
+        [
+          1.52915985,
+          -3.1763954,
+          208.71466411
+        ],
+        [
+          0.00619263,
+          -0.01373507,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 20,
+      "inliers": 10,
+      "rmse_px": 18565.979,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.76,
+      "device": "cpu",
+      "matrix": [
+        [
+          -14.26442301,
+          1.29859236,
+          2179.95755771
+        ],
+        [
+          -2.28504203,
+          -2.25112821,
+          411.64164777
+        ],
+        [
+          -0.02687979,
+          0.01765881,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 2,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.62,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 420,
+      "inliers": 177,
+      "rmse_px": 0.6343,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98878728,
+          -0.13958652,
+          38.79298569
+        ],
+        [
+          0.13568334,
+          0.98985232,
+          -32.0790988
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 405,
+      "inliers": 157,
+      "rmse_px": 0.4096,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.35,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98948352,
+          -0.1390142,
+          38.38903858
+        ],
+        [
+          0.13727027,
+          0.98997005,
+          -32.35445423
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 429,
+      "inliers": 194,
+      "rmse_px": 0.5605,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.91,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98785901,
+          -0.14065945,
+          38.79830253
+        ],
+        [
+          0.13954963,
+          0.99097777,
+          -33.39481201
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 10,
+      "rmse_px": 24.6439,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.34,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.13585244,
+          -0.1963811,
+          17.40240082
+        ],
+        [
+          0.24309979,
+          0.86541328,
+          -39.88636328
+        ],
+        [
+          0.00032907,
+          -0.000407,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1072.8439,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.2,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.45937046,
+          4.7201937,
+          -1187.75341404
+        ],
+        [
+          0.14634383,
+          1.06266344,
+          -41.3494431
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 4,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.5,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 16,
+      "inliers": 6,
+      "rmse_px": 0.7448,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.07,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99337686,
+          -0.14158871,
+          37.65604574
+        ],
+        [
+          0.13808077,
+          0.99170511,
+          -33.12507445
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 8,
+      "inliers": 4,
+      "rmse_px": 689.539,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          -1.18700745,
+          -0.29558284,
+          228.13430406
+        ],
+        [
+          -1.5389193,
+          -0.66791158,
+          400.35402439
+        ],
+        [
+          -0.00476174,
+          -0.00145429,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 8,
+      "inliers": 4,
+      "rmse_px": 322.875,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.07,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.16192667,
+          -1.29580483,
+          189.65768635
+        ],
+        [
+          0.27546393,
+          -0.3398078,
+          58.70749345
+        ],
+        [
+          0.00540605,
+          -0.00628889,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 16,
+      "inliers": 8,
+      "rmse_px": 487.3564,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.44,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.40600635,
+          -0.33690741,
+          61.23663235
+        ],
+        [
+          0.81744899,
+          0.0268838,
+          6.86291642
+        ],
+        [
+          0.00203878,
+          -0.00230492,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 12,
+      "inliers": 6,
+      "rmse_px": 480.4092,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.34,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.70973451,
+          -1.17256637,
+          168.43451327
+        ],
+        [
+          -0.73097345,
+          -0.63274336,
+          326.92654867
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1897.8605,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.33,
+      "device": "cpu",
+      "matrix": [
+        [
+          -4.3554095,
+          1.72042467,
+          1235.50606673
+        ],
+        [
+          9.4752275,
+          -2.23356926,
+          -2153.33670374
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 390,
+      "inliers": 199,
+      "rmse_px": 287.8323,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.85,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          74.0
+        ],
+        [
+          -0.0,
+          0.0,
+          279.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 464,
+      "inliers": 411,
+      "rmse_px": 277.3977,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.33,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          154.0
+        ],
+        [
+          -0.0,
+          0.0,
+          387.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 378,
+      "inliers": 155,
+      "rmse_px": 267.6605,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.37,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          166.0
+        ],
+        [
+          -0.0,
+          0.0,
+          375.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 4,
+      "inliers": 0,
+      "rmse_px": null,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.5,
+      "device": "cpu",
+      "matrix": null
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 10,
+      "inliers": 6,
+      "rmse_px": 441.5134,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.4,
+      "device": "cpu",
+      "matrix": [
+        [
+          2.14680711,
+          1.15569454,
+          -334.38545095
+        ],
+        [
+          -0.57867018,
+          0.08360764,
+          229.64713627
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 273.1363,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.29,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.24935897,
+          -0.24401709,
+          59.61047009
+        ],
+        [
+          -0.17435897,
+          0.62735043,
+          271.04786325
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 4,
+      "rmse_px": 178.2868,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.08,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.5954325,
+          -0.00291779,
+          16.98838971
+        ],
+        [
+          -0.40344637,
+          -0.07253604,
+          349.81894846
+        ],
+        [
+          -0.00066436,
+          -0.00046015,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 12,
+      "inliers": 4,
+      "rmse_px": 1745.7008,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -3.38560243,
+          -4.06721178,
+          914.54656718
+        ],
+        [
+          -1.42173118,
+          -3.48051196,
+          409.52285472
+        ],
+        [
+          -0.00514133,
+          -0.00833745,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 11,
+      "inliers": 4,
+      "rmse_px": 5344.9664,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          3.20624322,
+          -2.37055061,
+          270.72271637
+        ],
+        [
+          1.10658464,
+          0.50550589,
+          72.63703324
+        ],
+        [
+          0.00631719,
+          -0.00470399,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 1142,
+      "inliers": 932,
+      "rmse_px": 0.241,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.69,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.990817,
+          -0.14040764,
+          38.25428454
+        ],
+        [
+          0.13920896,
+          0.99010339,
+          -33.00056995
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 1104,
+      "inliers": 918,
+      "rmse_px": 0.3206,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.79,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99170416,
+          -0.13886935,
+          37.55815489
+        ],
+        [
+          0.13890602,
+          0.99140719,
+          -33.40681929
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 1060,
+      "inliers": 866,
+      "rmse_px": 0.1383,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.74,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99050592,
+          -0.13979958,
+          38.19494851
+        ],
+        [
+          0.13885786,
+          0.99055953,
+          -33.07673411
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 454,
+      "inliers": 143,
+      "rmse_px": 287.8323,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.78,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          74.0
+        ],
+        [
+          -0.0,
+          0.0,
+          279.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 655,
+      "inliers": 451,
+      "rmse_px": 277.3977,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.52,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.0,
+          -0.0,
+          154.0
+        ],
+        [
+          0.0,
+          -0.0,
+          387.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 498,
+      "inliers": 151,
+      "rmse_px": 267.6605,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.29,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          166.0
+        ],
+        [
+          -0.0,
+          0.0,
+          375.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 298,
+      "inliers": 220,
+      "rmse_px": 0.5312,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.33,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98959924,
+          -0.13873341,
+          37.8472002
+        ],
+        [
+          0.13715452,
+          0.99068472,
+          -32.49955078
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 418,
+      "inliers": 322,
+      "rmse_px": 0.456,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.38,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99031699,
+          -0.13824082,
+          37.66015112
+        ],
+        [
+          0.1378441,
+          0.99160365,
+          -32.90349836
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 284,
+      "inliers": 206,
+      "rmse_px": 0.7801,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.58,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9885219,
+          -0.13808801,
+          37.98348839
+        ],
+        [
+          0.13705117,
+          0.98929051,
+          -31.81909847
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 15,
+      "inliers": 7,
+      "rmse_px": 600.9673,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.60683678,
+          -0.43893747,
+          329.85325706
+        ],
+        [
+          -0.16965119,
+          -0.12510634,
+          94.2107214
+        ],
+        [
+          -0.00186826,
+          -0.00130911,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 11,
+      "inliers": 4,
+      "rmse_px": 2652.5693,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -2.8275913,
+          -0.29318731,
+          367.05567358
+        ],
+        [
+          -1.67812538,
+          -1.51075441,
+          470.07440311
+        ],
+        [
+          -0.00644803,
+          -0.00248121,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 13,
+      "inliers": 5,
+      "rmse_px": 3387.6082,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          -6.13366135,
+          3.14664313,
+          756.85130214
+        ],
+        [
+          -2.30387181,
+          1.82812712,
+          -45.40545709
+        ],
+        [
+          -0.01396097,
+          0.00877319,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 1410,
+      "inliers": 1298,
+      "rmse_px": 0.1138,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.5,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98980976,
+          -0.13886818,
+          38.15148969
+        ],
+        [
+          0.13889261,
+          0.99064127,
+          -33.15404657
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 1356,
+      "inliers": 1218,
+      "rmse_px": 0.1572,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.89,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99000782,
+          -0.13922732,
+          38.21311361
+        ],
+        [
+          0.13987062,
+          0.99087652,
+          -33.42985017
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 1376,
+      "inliers": 1252,
+      "rmse_px": 0.1608,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.71,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99062252,
+          -0.13969669,
+          38.17766492
+        ],
+        [
+          0.13848335,
+          0.99060565,
+          -33.01158327
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 524,
+      "inliers": 173,
+      "rmse_px": 1.2461,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.84,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99172257,
+          -0.13750706,
+          38.26145778
+        ],
+        [
+          0.13643788,
+          0.99283905,
+          -31.94671287
+        ],
+        [
+          2.66e-06,
+          1.342e-05,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 761,
+      "inliers": 329,
+      "rmse_px": 0.5734,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.53,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99022782,
+          -0.13838397,
+          37.7938514
+        ],
+        [
+          0.13565054,
+          0.99063842,
+          -32.1154122
+        ],
+        [
+          -5.8e-06,
+          3.98e-06,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 669,
+      "inliers": 306,
+      "rmse_px": 0.3117,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.44,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99051642,
+          -0.14080469,
+          38.39949578
+        ],
+        [
+          0.13897974,
+          0.98935729,
+          -32.9113584
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 334,
+      "inliers": 272,
+      "rmse_px": 0.2312,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.47,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98986263,
+          -0.13819024,
+          38.00908608
+        ],
+        [
+          0.13851686,
+          0.99095689,
+          -33.18891968
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 572,
+      "inliers": 482,
+      "rmse_px": 0.1572,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.45,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99037307,
+          -0.13902028,
+          38.15366748
+        ],
+        [
+          0.13886082,
+          0.9909402,
+          -33.21024651
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 356,
+      "inliers": 322,
+      "rmse_px": 0.2994,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.35,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99091761,
+          -0.13862005,
+          37.76980906
+        ],
+        [
+          0.13785277,
+          0.99131159,
+          -33.05962239
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 5,
+      "rmse_px": 3669.5633,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          4.23049865,
+          -2.77545491,
+          525.94961934
+        ],
+        [
+          2.66488342,
+          1.48893586,
+          -419.76535704
+        ],
+        [
+          0.00848808,
+          -0.00255461,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 11,
+      "inliers": 5,
+      "rmse_px": 620.4398,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.35479292,
+          1.18675231,
+          74.51928044
+        ],
+        [
+          -0.41065287,
+          1.16262713,
+          59.38105251
+        ],
+        [
+          -0.00230877,
+          0.00231233,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 10,
+      "inliers": 5,
+      "rmse_px": 1729.12,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.33292184,
+          -0.70749101,
+          214.9099073
+        ],
+        [
+          0.11056329,
+          -0.50475373,
+          211.36261825
+        ],
+        [
+          -0.00015822,
+          -0.00201303,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 942,
+      "inliers": 804,
+      "rmse_px": 0.2481,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.89,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99007727,
+          -0.13840844,
+          37.85563224
+        ],
+        [
+          0.13851028,
+          0.9904988,
+          -32.88402179
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 1024,
+      "inliers": 856,
+      "rmse_px": 0.2875,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.82,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9901535,
+          -0.13833542,
+          37.82747922
+        ],
+        [
+          0.14045669,
+          0.99089152,
+          -33.6814508
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 1006,
+      "inliers": 814,
+      "rmse_px": 0.2198,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.24,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98944927,
+          -0.13972495,
+          38.40034396
+        ],
+        [
+          0.13833638,
+          0.99002835,
+          -32.83448425
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 578,
+      "inliers": 195,
+      "rmse_px": 1.8854,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.76,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.96223724,
+          -0.14099681,
+          42.28751466
+        ],
+        [
+          0.12674306,
+          0.97614982,
+          -30.56405561
+        ],
+        [
+          -4.071e-05,
+          -9.31e-06,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 711,
+      "inliers": 382,
+      "rmse_px": 277.3977,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.65,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          154.0
+        ],
+        [
+          -0.0,
+          0.0,
+          387.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 542,
+      "inliers": 185,
+      "rmse_px": 0.8654,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.27,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99039324,
+          -0.1441002,
+          39.24899565
+        ],
+        [
+          0.13759534,
+          0.98939275,
+          -32.26501235
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 274,
+      "inliers": 198,
+      "rmse_px": 0.6012,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.56,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.9874164,
+          -0.13703709,
+          38.17097899
+        ],
+        [
+          0.13923337,
+          0.99066082,
+          -33.41766602
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 424,
+      "inliers": 316,
+      "rmse_px": 0.4181,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.28,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99097698,
+          -0.13908582,
+          37.70863503
+        ],
+        [
+          0.1377221,
+          0.99154895,
+          -32.93001645
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 288,
+      "inliers": 224,
+      "rmse_px": 0.6669,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.36,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98768087,
+          -0.14061828,
+          39.10324682
+        ],
+        [
+          0.13661646,
+          0.99039762,
+          -32.26300286
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 23,
+      "inliers": 17,
+      "rmse_px": 0.2404,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98990686,
+          -0.13828324,
+          38.13337674
+        ],
+        [
+          0.13988689,
+          0.99015044,
+          -33.29285425
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 25,
+      "inliers": 20,
+      "rmse_px": 0.8332,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98000072,
+          -0.13743512,
+          39.33333369
+        ],
+        [
+          0.13336317,
+          0.98675523,
+          -31.85551286
+        ],
+        [
+          -1.772e-05,
+          2.59e-06,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 20,
+      "inliers": 13,
+      "rmse_px": 0.117,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99021758,
+          -0.13962972,
+          38.32444179
+        ],
+        [
+          0.13947258,
+          0.9903457,
+          -33.21147925
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 1197.2739,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 6.59,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.19484241,
+          -0.18624642,
+          419.62750716
+        ],
+        [
+          -3.96111339,
+          -1.99154046,
+          1083.15977623
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 6,
+      "inliers": 6,
+      "rmse_px": 310.4448,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 7.01,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.10714286,
+          -0.11607143,
+          154.57142857
+        ],
+        [
+          0.41666667,
+          0.9375,
+          -253.33333333
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 8,
+      "rmse_px": 2141.2896,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 7.12,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.63576606,
+          -0.63679158,
+          352.78133004
+        ],
+        [
+          -0.07565368,
+          -0.066656,
+          41.39074427
+        ],
+        [
+          -0.00183437,
+          -0.00166928,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 707,
+      "inliers": 646,
+      "rmse_px": 492.9727,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.12,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          322.0
+        ],
+        [
+          -0.0,
+          0.0,
+          458.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 549,
+      "inliers": 320,
+      "rmse_px": 479.6462,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.41,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          377.0
+        ],
+        [
+          -0.0,
+          0.0,
+          121.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 99,
+      "inliers": 32,
+      "rmse_px": 507.0186,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.34,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.0,
+          -0.0,
+          67.0
+        ],
+        [
+          0.0,
+          -0.0,
+          411.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 12,
+      "inliers": 8,
+      "rmse_px": 685.3972,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.26,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.11659943,
+          0.31444262,
+          -35.77826719
+        ],
+        [
+          -0.36970132,
+          0.19013557,
+          162.03130354
+        ],
+        [
+          -0.0021386,
+          0.00082472,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 8,
+      "inliers": 6,
+      "rmse_px": 359.9309,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.48,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.88968973,
+          1.31164195,
+          -139.23242724
+        ],
+        [
+          0.69295717,
+          1.51647446,
+          -317.68739703
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 6,
+      "rmse_px": 559.3971,
+      "accepted": false,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.39,
+      "device": "cpu",
+      "matrix": [
+        [
+          -1.0296911,
+          -0.93822038,
+          857.94633472
+        ],
+        [
+          0.7846473,
+          0.42946058,
+          -110.70290456
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 42,
+      "inliers": 32,
+      "rmse_px": 0.4563,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.98009597,
+          -0.2781572,
+          -179.93364559
+        ],
+        [
+          0.27868528,
+          1.98036854,
+          -322.69550561
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 49,
+      "inliers": 38,
+      "rmse_px": 0.4258,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.98080012,
+          -0.27812149,
+          -180.086374
+        ],
+        [
+          0.27846223,
+          1.98100802,
+          -322.78763576
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 46,
+      "inliers": 34,
+      "rmse_px": 0.4108,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.06,
+      "device": "cpu",
+      "matrix": [
+        [
+          1.97948631,
+          -0.27797892,
+          -179.72753416
+        ],
+        [
+          0.27788332,
+          1.9806834,
+          -322.52864019
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 1940,
+      "inliers": 1856,
+      "rmse_px": 0.1037,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.07,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98988954,
+          -0.13891869,
+          38.14715377
+        ],
+        [
+          0.13953298,
+          0.98999979,
+          -33.18550872
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 1952,
+      "inliers": 1860,
+      "rmse_px": 0.0849,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.7,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98993293,
+          -0.13940187,
+          38.30293321
+        ],
+        [
+          0.13938131,
+          0.99041644,
+          -33.22976467
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 1906,
+      "inliers": 1848,
+      "rmse_px": 0.0385,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.75,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99015757,
+          -0.13914802,
+          38.16358443
+        ],
+        [
+          0.13927377,
+          0.99032054,
+          -33.19495598
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 451,
+      "inliers": 75,
+      "rmse_px": 289.767,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 4.9,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.00836728,
+          -0.15115501,
+          69.73024254
+        ],
+        [
+          -0.037052,
+          -0.57732326,
+          267.15819412
+        ],
+        [
+          -0.00013562,
+          -0.00216292,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 481,
+      "inliers": 111,
+      "rmse_px": 0.974,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.83,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98628935,
+          -0.13695628,
+          38.10510703
+        ],
+        [
+          0.14019658,
+          0.98762448,
+          -32.57136003
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-ref",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 566,
+      "inliers": 103,
+      "rmse_px": 267.6605,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 5.03,
+      "device": "cpu",
+      "matrix": [
+        [
+          -0.0,
+          0.0,
+          166.0
+        ],
+        [
+          -0.0,
+          0.0,
+          375.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 584,
+      "inliers": 554,
+      "rmse_px": 0.1066,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.6,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99014888,
+          -0.13879762,
+          38.09507066
+        ],
+        [
+          0.13922687,
+          0.99028532,
+          -33.2312028
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 688,
+      "inliers": 648,
+      "rmse_px": 0.0966,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.38,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98986851,
+          -0.13900512,
+          38.16173483
+        ],
+        [
+          0.13898403,
+          0.99010276,
+          -32.99300258
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "rift2-mim",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 442,
+      "inliers": 422,
+      "rmse_px": 0.1407,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.56,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.98984137,
+          -0.13919537,
+          38.24625851
+        ],
+        [
+          0.13896158,
+          0.98951541,
+          -32.8814634
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 15,
+      "inliers": 14,
+      "rmse_px": 0.0827,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.1,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99020111,
+          -0.13912006,
+          38.16648623
+        ],
+        [
+          0.13899597,
+          0.99040237,
+          -33.18578877
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 18,
+      "inliers": 16,
+      "rmse_px": 0.09,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99072018,
+          -0.1394948,
+          38.09695381
+        ],
+        [
+          0.13913704,
+          0.99021142,
+          -33.13029963
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "sift",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 12,
+      "inliers": 11,
+      "rmse_px": 0.0625,
+      "accepted": false,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 0.09,
+      "device": "cpu",
+      "matrix": [
+        [
+          0.99037856,
+          -0.13941297,
+          38.18216381
+        ],
+        [
+          0.13915314,
+          0.99014138,
+          -33.12980919
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "source": "synthetic",
+  "flag_px": 2.0,
+  "rule": "RIFT2 checks only when its own result passed the gate",
+  "totals": {
+    "confirmed": 64,
+    "unchecked_correct": 29,
+    "missed": 4,
+    "caught": 8
+  },
+  "per_regime": {
+    "same_lighting": {
+      "confirmed": 18
+    },
+    "lighting_+30": {
+      "unchecked_correct": 15
+    },
+    "lighting_+90": {
+      "missed": 4,
+      "unchecked_correct": 2
+    },
+    "lighting_opposite": {
+      "caught": 4,
+      "confirmed": 6
+    },
+    "cross_modal": {
+      "caught": 4,
+      "confirmed": 6
+    },
+    "cross_modal+opposite": {
+      "confirmed": 18
+    },
+    "resolution_2x": {
+      "unchecked_correct": 12
+    },
+    "low_texture": {
+      "confirmed": 16
+    }
+  },
+  "detail": [
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "rmse_px": 2.2194,
+      "rift2": "abstain",
+      "outcome": "missed"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "rmse_px": 2.4907,
+      "rift2": "abstain",
+      "outcome": "missed"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "rmse_px": 2.7591,
+      "rift2": "abstain",
+      "outcome": "missed"
+    },
+    {
+      "method": "minima-loftr",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "rmse_px": 2.8187,
+      "rift2": "abstain",
+      "outcome": "missed"
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "rmse_px": 5.7091,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "rmse_px": 5.0117,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "rmse_px": 3.9468,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "rmse_px": 3.9609,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "aliked-lightglue",
+      "regime": "cross_modal",
+      "seed": 11,
+      "rmse_px": 5.3624,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 3,
+      "rmse_px": 4.226,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 11,
+      "rmse_px": 4.5842,
+      "rift2": "flag",
+      "outcome": "caught"
+    },
+    {
+      "method": "matchanything-eloftr",
+      "regime": "cross_modal",
+      "seed": 29,
+      "rmse_px": 3.7379,
+      "rift2": "flag",
+      "outcome": "caught"
+    }
+  ]
+}
