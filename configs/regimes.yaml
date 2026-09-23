@@ -109,18 +109,126 @@ representation_bands:
     representation: mind
     reason: an opposed sun approaches contrast inversion, which MIND is invariant to
 
-# Regimes where NO tested configuration has reached the 2 px accuracy bar.
-# The selector still returns a best effort, but flags the expectation so a
-# caller never reads a returned transform as a supported one. From the 60-run
-# matcher benchmark: at d_azimuth 90 and 180 every one of sift, xfeat,
-# aliked-lightglue and eloftr failed on every seed, best case 3.4 px.
+# ---------------------------------------------------------------------------
+# What the system can actually do, as a function of sun azimuth difference
+# ---------------------------------------------------------------------------
+# WHAT THIS REPLACED. Until MATCH-09 this was a single threshold:
+#
+#     unsolved_illumination:
+#       min_d_azimuth_deg: 60.0
+#       evidence: reports/synthetic_matcher_bench.json
+#
+# It was fitted on a four-matcher benchmark -- sift, xfeat, aliked-lightglue,
+# eloftr -- in which all four fail above 60 deg. A pool where nothing can pass
+# cannot locate where passing stops, so the band recorded where those four
+# matchers stop, not where the system stops. That is the same defect this
+# project has now caught three times: "beat SIFT on the illumination-shifted
+# pair" (SIFT scores zero there) and "MAGSAC beats RANSAC at 70% outliers"
+# (every estimator succeeds there) failed the same way.
+#
+# It also contradicted the representation_bands comment forty lines above,
+# which states that difficulty is NOT monotonic in azimuth. A min_ threshold
+# cannot express "harder in the middle than at the end"; it necessarily calls
+# 180 deg at least as hard as 90.
+#
+# RE-DERIVED. Criterion frozen BEFORE measuring, in
+# docs/unsolved_band_protocol.md; evidence reports/illumination_sweep.json.
+# 600 runs = 5 matchers x 12 azimuths x 10 seeds (201-210), elevation held at
+# 45 deg so azimuth difference is the only variable. A run succeeds when the
+# estimator accepts it AND the transform is within 2.0 px of the known truth
+# (BAD_PX, scripts/bench_matchers.py). Successes out of 10 seeds:
+#
+#   d_az   xoftr  minima-loftr  aliked-lightglue  eloftr  sift-nn   verdict
+#     0     10/10     10/10          10/10         10/10   10/10    solved
+#    30     10/10     10/10          10/10         10/10    0/10    solved
+#    45     10/10     10/10          10/10         10/10    0/10    solved
+#    60     10/10     10/10           8/10          9/10    0/10    solved
+#    75      0/10     10/10           2/10          3/10    0/10    solved
+#    90      0/10      6/10           0/10          0/10    0/10    degraded
+#   105      1/10      8/10           0/10          0/10    0/10    degraded
+#   120      0/10      7/10           0/10          0/10    0/10    degraded
+#   135      4/10     10/10           0/10          0/10    0/10    solved
+#   150     10/10     10/10           0/10          0/10    0/10    solved
+#   165     10/10     10/10           0/10          0/10    0/10    solved
+#   180     10/10     10/10           0/10          0/10    0/10    solved
+#
+# THE OLD BAND WAS WRONG IN BOTH DIRECTIONS, and the second error is the one
+# that matters:
+#
+#  1. 60 and 75 deg were flagged unsolved and are solved (10/10).
+#  2. 135-180 deg were flagged unsolved and are solved (10/10). The angle the
+#     old rule treated as the worst case is one of the EASIEST. This is the
+#     contrast-inversion effect representation_bands already predicted: at 180
+#     deg the scene is close to a straight inversion, which MIND-style
+#     descriptors are invariant to.
+#  3. The genuinely hard band is 90-120 deg, where lit and shadowed facets
+#     swap. minima-loftr's median error traces the U exactly: 0.16 px at 0 deg,
+#     0.85 at 75, peaking at 1.44 at 90, then back down to 0.47 at 180.
+#
+# NOTHING MEASURED AS `unsolved`. Even in the hard band minima-loftr reaches
+# 6-8 of 10 seeds, which is `degraded` under the frozen rule (>= 9/10 solved,
+# >= 6/10 degraded, sources in the protocol section 7). The key keeps the name
+# `unsolved_illumination` anyway: matching/regime.py and scripts/sabotage.py
+# both reference it by that string, and renaming it would silently disarm the
+# sabotage that checks the tests still notice when the flag stops firing.
+#
+# THE CONTROL BEHAVED. sift-nn scores 10/10 at 0 deg and 0/10 at every other
+# azimuth -- the floor failed exactly where it was predicted to, which is what
+# says the harness measures illumination rather than something else.
+#
+# EVERY BAND ABOVE 60 DEG IS EARNED BY minima-loftr, NOT BY THE DEFAULT.
+# aliked-lightglue manages 2/10 at 75 deg and 0/10 from 90 deg up. A caller who
+# runs the default in these bands does not get the behaviour the band promises,
+# so regime.py attaches a note naming the matcher that earned it.
+#
+# HONEST WARNING FOR MATCH-03/04/05, not acted on here. 22 of the 30 confident
+# wrong answers in the sweep (accepted by the quality gate, above 2 px) came
+# from the default: 7/10 at 75 deg and 6/10 at 180 deg. Failing loudly is a
+# nuisance; passing the gate while wrong is failure mode #12/#19. That is
+# evidence for the default-matcher decision, which this experiment does not own.
+#
+# DEPENDENCY. minima-loftr and xoftr are licence-clean (matching/licence.py
+# clears them) but are NOT yet on shippable_matchers below -- promotion is
+# MATCH-03/04/05's decision. Bands here rest on minima-loftr; if its promotion
+# is refused, they must be re-derived.
+#
+# STATUS: SYNTHETIC. Both views are re-lightings of one hillshaded height field
+# under a Lambertian model, so they differ in illumination and in nothing else.
+# Real pairs differ in sensor, noise and geolocation too. Still a HYPOTHESIS
+# pending the real LRO NAC illumination ladder, exactly as representation_bands
+# above. Do not present it as a result on real data.
+#
+# Bands cover only the SAMPLED azimuths. regime.py resolves an angle that falls
+# between two bands by taking the WORSE of the two, a rule fixed in the
+# protocol before anything was measured.
 unsolved_illumination:
-  min_d_azimuth_deg: 60.0
-  evidence: reports/synthetic_matcher_bench.json
-  note: >
-    All four matchers failed across three seeds above 60 deg of sun azimuth
-    difference. Phase congruency is the best available representation there but
-    has not yet been shown to recover the failure end to end.
+  evidence: reports/illumination_sweep.json
+  protocol: docs/unsolved_band_protocol.md
+  supersedes: reports/synthetic_matcher_bench.json
+  bands:
+    - d_azimuth_deg: [0.0, 75.0]
+      expectation: solved
+      solved_by: [minima-loftr]
+      best_seeds: 10
+      reason: >
+        Up to 75 deg at least one licence-clean matcher meets the 2 px bar on
+        every seed. The old rule called everything from 60 deg unsolved.
+    - d_azimuth_deg: [90.0, 120.0]
+      expectation: degraded
+      solved_by: [minima-loftr]
+      best_seeds: 6
+      reason: >
+        The real hard band: lit and shadowed facets swap, raw correlation
+        collapses to +0.010 at 90 deg. Best licence-clean matcher reaches 6-8
+        of 10 seeds, so it runs and often works, but is not reliable.
+    - d_azimuth_deg: [135.0, 180.0]
+      expectation: solved
+      solved_by: [minima-loftr]
+      best_seeds: 10
+      reason: >
+        An opposed sun approaches contrast inversion, which MIND-style
+        descriptors are invariant to. 10/10 seeds. The old rule's worst case is
+        one of the easiest.
 
 # ---------------------------------------------------------------------------
 # Cross-modal candidates (MATCH-06)

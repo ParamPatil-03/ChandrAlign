@@ -35,12 +35,25 @@ Two results here are easy to get backwards:
 So the selector interpolates a band structure rather than sorting a list.
 
 WHAT IT REFUSES TO PRETEND
-Above 60 degrees of azimuth difference, every matcher we have benchmarked
-(sift, xfeat, aliked-lightglue, eloftr) failed on every seed, best case 3.4 px
-against a 2 px bar. The selector still returns its best effort there, but marks
-the expectation `unsolved` so that no caller can read the result as supported.
-That flag is advisory only: it is never allowed to stand in for the quality
-gate, which re-decides the question from the actual match evidence.
+The selector marks an `expectation` on every decision so that no caller reads a
+returned transform as supported on the strength of the route alone. That flag
+is advisory only: it is never allowed to stand in for the quality gate, which
+re-decides the question from the actual match evidence.
+
+The illumination bands behind that flag were re-derived in MATCH-09 (criterion
+frozen first in docs/unsolved_band_protocol.md; 600 runs in
+reports/illumination_sweep.json) because the previous rule was a single
+threshold, "unsolved at or above 60 degrees", fitted on four matchers that all
+fail above 60 degrees. A pool where nothing can pass cannot locate where
+passing stops, and a min_ threshold cannot express a difficulty curve that
+turns back down. Measured, best licence-clean matcher out of 10 seeds:
+
+    0-75 deg     10/10   solved
+   90-120 deg   6-8/10   degraded    <- the hard band, not 180
+  135-180 deg    10/10   solved      <- the old rule called this unsolved
+
+So the flag is no longer "past a point of no return". It is a band lookup, and
+an azimuth between two measured bands takes the WORSE of the two.
 
 HONEST STATUS OF THE NUMBERS
 The bands are measured on SYNTHETIC hillshaded relief. Fitting a rule on
@@ -174,12 +187,78 @@ def representation_for(d_azimuth_deg: Optional[float]) -> tuple[Representation, 
     return "raw", "no band matched; defaulting to raw pixels"
 
 
+# Worst last. Used to resolve an azimuth that falls between two measured bands.
+_SEVERITY: dict[str, int] = {"solved": 0, "degraded": 1, "unsolved": 2}
+
+
+def _worse(a: Expectation, b: Expectation) -> Expectation:
+    return a if _SEVERITY[a] >= _SEVERITY[b] else b
+
+
+def illumination_band(d_azimuth_deg: Optional[float]) -> Optional[dict]:
+    """The measured band covering this sun-azimuth difference, or None.
+
+    The sweep measured twelve azimuths, so most real angles fall BETWEEN two
+    bands. Such an angle takes the WORSE of its two neighbours -- fixed in
+    docs/unsolved_band_protocol.md 7.1 before anything was measured, because
+    interpolating upward would promote an angle nobody sampled. The returned
+    band then carries `interpolated_between` so the decision can say so.
+    """
+    if d_azimuth_deg is None:
+        return None
+    bands = (config.load("regimes").get("unsolved_illumination") or {}).get("bands") or []
+    if not bands:
+        return None
+
+    d_az = float(d_azimuth_deg)
+    below = above = None
+    for band in bands:
+        lo, hi = (float(v) for v in band["d_azimuth_deg"])
+        if lo <= d_az <= hi:
+            return band
+        if hi < d_az:
+            below = band
+        elif above is None:
+            above = band
+
+    if below is None or above is None:        # outside the sampled range
+        return above or below
+    worst = _worse(str(below["expectation"]), str(above["expectation"]))
+    keep = below if str(below["expectation"]) == worst else above
+    return {**keep, "interpolated_between": [below["d_azimuth_deg"], above["d_azimuth_deg"]]}
+
+
 def _expectation_for(cond: SceneConditions) -> tuple[Expectation, str]:
     """How much confidence the ROUTE alone justifies, before any matching runs."""
     if not cond.illumination_known:
         return "unknown", "sun geometry incomplete, so the regime cannot be identified"
 
     unsolved = config.load("regimes").get("unsolved_illumination") or {}
+    band = illumination_band(cond.d_azimuth_deg)
+    if band is not None:
+        expectation = str(band["expectation"])
+        lo, hi = (float(v) for v in band["d_azimuth_deg"])
+        span = f"{lo:.0f}" if lo == hi else f"{lo:.0f}-{hi:.0f}"
+        seeds = band.get("best_seeds")
+        who = ", ".join(band.get("solved_by") or ())
+        if expectation == "unsolved":
+            detail = ("no licence-clean matcher reached a majority of seeds at "
+                      "the 2 px bar")
+        else:
+            detail = (f"{who or 'a licence-clean matcher'} met the 2 px bar"
+                      + (f" on {seeds}/10 seeds" if seeds is not None else ""))
+        reason = (f"{cond.d_azimuth_deg:.0f} deg of sun azimuth difference falls in "
+                  f"the measured {span} deg band, where {detail}")
+        if "interpolated_between" in band:
+            a, b = band["interpolated_between"]
+            reason += (f"; {cond.d_azimuth_deg:.0f} deg itself was not sampled, so it "
+                       f"takes the worse of the {a[0]:.0f}-{a[1]:.0f} and "
+                       f"{b[0]:.0f}-{b[1]:.0f} deg bands")
+        return expectation, reason
+
+    # Pre-MATCH-09 config shape: one monotonic threshold. Kept so that a config
+    # missing `bands` degrades to the old rule instead of silently calling
+    # everything solved, which is the failure scripts/sabotage.py injects.
     limit = unsolved.get("min_d_azimuth_deg")
     if limit is not None and cond.d_azimuth_deg is not None \
             and float(cond.d_azimuth_deg) >= float(limit):
@@ -246,11 +325,26 @@ def select(src: SceneMeta | str, ref: SceneMeta | str) -> Decision:
     if cond.d_azimuth_deg is None:
         regime = "same_modal_unknown_illumination"
     elif expectation == "unsolved":
-        regime = "same_modal_opposed_sun"
+        # NOT "opposed sun", which is what this was called while the band was a
+        # single threshold. The measured unsolved band is in the MIDDLE of the
+        # azimuth range (reports/illumination_sweep.json); an opposed sun is one
+        # of the solved cases.
+        regime = "same_modal_unsolved_illumination"
     elif float(cond.d_azimuth_deg) >= 30.0:
         regime = "same_modal_shifted_sun"
     else:
         regime = "same_modal_normal"
+
+    # The band may have been earned by a matcher that is not the default. Saying
+    # so is the point of the flag: a caller who runs the default here does not
+    # get the behaviour the band promises.
+    band = illumination_band(cond.d_azimuth_deg)
+    if band is not None and band.get("solved_by") \
+            and default_matcher not in band["solved_by"]:
+        notes.append(
+            f"this band was earned by {', '.join(band['solved_by'])}, not by the "
+            f"default {default_matcher}; the caller must route to one of them to "
+            f"get the measured behaviour")
 
     if (cond.max_incidence_deg is not None
             and float(cond.max_incidence_deg) >= 70.0):
