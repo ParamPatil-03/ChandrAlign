@@ -61,3 +61,33 @@ Tested only if Q1 produces accepted locks on M175124932LC; otherwise it stays un
 
 Five products, 25 windows, one site. Candidate selection and evaluation use the same
 windows, so the winner's success rate is optimistic; it is reported as such.
+
+## Q5 (added after Q1-Q4, frozen before its run): the geodetic bridge
+
+Q1 left two products with no lock under any descriptor (z ~5 everywhere). A +-4 km
+search needs a clear peak; weak similarity may exist without one. Q5 separates "no
+similarity" from "search too wide" by removing the search.
+
+**Bridge prediction (research doc opportunity #9, FEATURES MATCH-11), all from measurements
+independent of the OHRC <-> NAC pair:** OHRC's system error against SELENE TC,
+(+551, +2229) m east/north (`reports/cascade_ohrc_tc.json`), plus each NAC product's
+geolocation difference from TC, measured through TMC-2 in PR #18 (median per product of
+system_offset - tc_measured_offset): M106719774LC (+557, -143), M175124932LC (+217, -288),
+and for validation M102014464RC (-597, +75).
+
+**Method:** the OHRC window is placed at its bridge-predicted position in the NAC (no
+coarse search) and the fine frame is widened by 200 m on every side; the matcher then
+has to find the residual itself. Matchers: `eloftr`, `minima-loftr`.
+
+**Success per window:** fine stage returns a model; all five gates pass; tier >= LOW;
+and the window's implied OHRC offset (from the FINAL transform) is within 150 m of the
+median over that product's gate-passing windows for that matcher (>= 3 such windows
+required, else no window counts). Verdicts as before.
+
+**Validation first:** the same run on the control (M102014464RC) must give 5/5 for
+eloftr, and its bridge prediction must lie within 200 m of its Q2-measured offset;
+otherwise the bridge is not trusted and the two products are not interpreted.
+
+**Interpretation:** success on a product => its earlier failure was the search, and the
+bridge fixes it; failure => no usable similarity at that sun geometry for these
+matchers, and the product is recorded as unsolved by the methods available.
