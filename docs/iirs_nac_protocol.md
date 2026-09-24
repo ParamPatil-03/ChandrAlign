@@ -1,0 +1,62 @@
+# Protocol: IIRS -> LRO NAC on real data (frozen before any measurement)
+
+Research doc: IIRS <-> LRO NAC is open (no paper; "~40-160x scale gap"). Routing sends it to
+the cascade (`routing.choose("IIRS", "NAC")`: 80 m vs 0.5 m, 160x, past the 4x limit).
+The information is bounded by IIRS: a NAC strip (~5 km wide) is ~60 IIRS pixels across,
+so the answer can only be located to about an IIRS pixel (80 m).
+
+## Data
+
+- IIRS `ch2_iir_nci_20240523T1600301891` (13,101 x 250 px), its PREP-06 composite, SYSTEM
+  corners.
+- NAC CDRs already held whose footprint lies >= 50% inside the IIRS strip (after the IIRS
+  offset below): **M1415013176LC** (100%, incidence 36 deg, 0.76 m), **M172765160RC** (100%,
+  13.5 deg, 0.49 m), **M1417360906LC** (60%, 7.7 deg, 0.79 m). M109080308LC (28%) is excluded
+  by that rule.
+- NAC ground geometry: LROC's four corners (`view_lroc` metadata pages; fetched 2026-09-25 for
+  the two not already in `data/pairs/tmc2_nac_lroc_meta.json`), bilinear in (line, sample)
+  with each product's OWN line/sample count. **The corners are rounded to 0.01 deg (~300 m)**,
+  so NAC geolocation from them carries up to ~150-200 m of error per point.
+
+## Prior (the geodetic bridge, MATCH-11 style; declared)
+
+IIRS's system geolocation is ~12.8 km off. The prior corrects it by our own measured IIRS ->
+WAC offset (`reports/iirs_wac_mosaic.json`, xoftr, 5/5 HIGH), linearly interpolated in IIRS
+line (east 1195-1478 m, north 12766-12876 m over lines 2112-4160). Position is still searched.
+
+## Method (`scripts/register_iirs_nac.py`)
+
+- **Windows:** per NAC, the NAC lines whose ground lies inside the (corrected) IIRS strip,
+  split into 3 equal windows along the line axis. A window = that NAC crop (all samples).
+- **Coarse lock:** `cascade.register_step_dense` (MIND): the NAC crop block-averaged to the
+  IIRS pixel size (the finer image is the template) searched over the IIRS composite lines
+  that cover it +- 60 lines (~5 km), full width. Accepted if z >= 10 (`cascade.min_z`).
+- **Fine stage:** the NAC crop block-averaged and warped (anti-aliased) onto the IIRS grid of
+  the covered region; the IIRS region is the source, the warped NAC the reference. Matchers:
+  the routed matcher of the 80-100 m cross-modal regime, **xoftr tiled 640** (this is what the
+  pair becomes once NAC is at IIRS scale: IIRS vs a broadband image, the IIRS <-> WAC regime),
+  plus `minima-loftr` and `sift` on identical windows. `pipeline.fine_stage` with the
+  configured defaults; all five control gates; tier (NAC pixel size is unverified, so the
+  tier is expected to be capped as for OHRC -> NAC).
+
+## Success (per window, per matcher)
+
+Coarse lock accepted; fine model returned; all five gates pass (incl. the known (3, 4) px
+shift within 1.5 px); tier >= LOW; and the implied IIRS offset (NAC ground of the fine frame
+centre minus IIRS system ground there) within **350 m** of the IIRS -> WAC offset at that line.
+350 m = one IIRS pixel diagonal (113 m) + the NAC corner rounding (~212 m) + slack. It is a
+false-lock guard between two independent registrations, not an accuracy measure: a false
+lock at this scale is off by many IIRS pixels.
+
+Verdict per NAC: solved 3/3, degraded 2/3, else unsolved. Overall: solved on >= 2 of 3 NACs.
+
+## Predictions
+
+1. The coarse lock succeeds on at least 2 NACs (the NAC template, ~60 x 100+ px at IIRS scale,
+   is smaller than IIRS <-> WAC's but the IIRS <-> WAC locks had z 50-64).
+2. xoftr >= sift on success count. No prediction for minima-loftr.
+
+## Limits
+
+One IIRS scene; three NACs; three windows each. The known-shift gate measures precision of the
+lock, not absolute accuracy. NAC corners at 0.01 deg limit the absolute check to ~300 m.
