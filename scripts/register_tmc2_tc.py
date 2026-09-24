@@ -159,6 +159,7 @@ def _dem_grid(dem, tcm, o_f, w: int, h: int, step: int = 16) -> dict:
 DEM_DIRS = {"sldem2015": "data/raw/dem/sldem2015", "tc_dtm": "data/raw/selene/tc_dtm"}
 DEM = "sldem2015"  # --dem: the height model for the terrain filter (and parallax, by default)
 PARALLAX_DEM = None  # --parallax-dem: a separate height model for the parallax stage only
+PAIRING_STAGES = {"parallax": True}  # stage defaults for TMC-2 -> TC, over configs/default.yaml
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
@@ -417,8 +418,9 @@ def main() -> int:
                     help="with --rows: move the window this many TMC-2 columns off the strip centre")
     ap.add_argument("--dem", choices=sorted(DEM_DIRS), default="sldem2015",
                     help="height model (tc_dtm: SELENE TC stereo DTM, ~7.4 m, only where a tile is held)")
-    ap.add_argument("--parallax-dem", choices=sorted(DEM_DIRS), default=None,
-                    help="height model for the parallax stage only (falls back to --dem where not held)")
+    ap.add_argument("--parallax-dem", choices=sorted(DEM_DIRS), default="tc_dtm",
+                    help="height model for the parallax stage only (falls back to --dem where not held); "
+                         "tc_dtm is the adopted default (docs/parallax_protocol.md amendment 3)")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
@@ -430,8 +432,11 @@ def main() -> int:
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
-    stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in
-                          (item.split("=", 1) for item in args.stage)})
+    # ALIGN-08: parallax is ON for this pairing (TMC-2 fore/aft views are 26 deg oblique),
+    # adopted by docs/parallax_protocol.md amendment 3. Only here: the global default stays
+    # off because no other pairing has been measured. --stage parallax=off still wins.
+    stages = stage_flags({**PAIRING_STAGES, **{k: v.lower() in ("on", "1", "true") for k, v in
+                                               (item.split("=", 1) for item in args.stage)}})
     print(f"pipeline stages: {stages}", flush=True)
     args.matcher, routed_opts, matcher_choice = resolve_matcher(args.matcher)
     print(f"matcher: {args.matcher}  ({matcher_choice['chosen_by']})", flush=True)

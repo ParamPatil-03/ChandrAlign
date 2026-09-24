@@ -204,3 +204,31 @@ Decision (all must hold to adopt `pipeline.parallax: true` with the TC DTM where
 (d) p along-track and 0.5-1.5x the 26 deg prediction on every hilly window.
 A flat window has no parallax DTM (N03/N09 tiles not held): there the stage uses SLDEM, as
 the stage's fallback rule says (the same DEM as the terrain filter).
+
+## Amendment 3 result (2026-09-25): ADOPTED for TMC-2 -> TC
+
+`reports/tmc2_tc_parallax_a3.json` (raw run: `reports/tmc2_tc_registration_a3.json`). All four
+rules hold on the 15 windows.
+
+| | hilly N00 (9) | flat N03/N09 (6) |
+|---|---|---|
+| median probe error, affine | 2.18-3.50 px | 0.26-0.81 px |
+| median probe error, affine + parallax | **0.36-0.62 px** | 0.24-0.29 px |
+| 90th percentile, affine -> parallax | 5.97-13.11 -> 0.85-1.88 px | 0.47-1.90 -> 0.44-0.69 px |
+| empty cells | 49 -> 0 | 0 -> 0 |
+| tier / registration / gates | all unchanged | all unchanged |
+| p / 26 deg prediction | 0.97-1.04 | (not ruled) |
+
+334-425 accepted probes per window. The earlier failures were the two confounds amendment 3
+removed (the coarse DEM, the fine DEM reaching the terrain filter) and the per-cell measure.
+
+Adopted **for TMC-2 -> TC only**: `register_tmc2_tc.py` turns `parallax` on with
+`--parallax-dem tc_dtm` by default (SLDEM where no TC DTM tile is held, as tested on N03/N09).
+The global `pipeline.parallax` stays **off**: OHRC -> NAC and IIRS -> WAC also pass a DEM to
+the fine stage and have not been measured with it.
+
+Limits: one TMC-2 product (aft view); a TC DTM tile is held for N00 only; the probes are a
+proxy (NCC on 31 px templates), not ground truth. What changes is WHICH points are delivered
+(and the TPS through them); the delivered AFFINE is still the first estimate and is still off
+by up to ~25 px on relief. The accurate description of the geometry is the stage's affine + p
+with the DEM (`stages["parallax"]`); it is reported, not yet a first-class output.
