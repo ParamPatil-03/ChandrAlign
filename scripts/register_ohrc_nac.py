@@ -198,6 +198,8 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
     o[0], o[1] = max(o[0], 0), max(o[1], 0)
     e_[0], e_[1] = min(e_[0], Sn), min(e_[1], L)
     wF, hF = int(e_[0] - o[0]), int(e_[1] - o[1])
+    if wF < 64 or hF < 64:
+        out["status"] = "skipped: fine frame falls outside the NAC strip"; out["results"] = {}; return out
     Wf = T(-o[0], -o[1]) @ T_c
     src = warp_affine(ohrc_n, Wf, (wF, hF))
     src_ok = cv2.warpAffine(o_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
@@ -312,6 +314,10 @@ def main() -> int:
         best = {}
         for cc in cols_all:                                   # nearest-to-centre first
             la, lo = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, float(cc)))
+            if args.bridge and pid in BRIDGE:        # Q5: place by the PREDICTED true position
+                k = math.pi / 180 * MOON_R_M
+                la = np.asarray(la) + BRIDGE[pid][1] / k
+                lo = np.asarray(lo) + BRIDGE[pid][0] / (k * np.cos(np.radians(la)))
             x, y = geo.to_px(la, lo)
             ok = (x > pad) & (x < Sn - pad) & (y > pad) & (y < Ln - pad)
             for rc in rows_all[ok]:
