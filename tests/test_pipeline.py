@@ -184,3 +184,18 @@ def test_gate_pipeline_passes_its_stage_switches_to_fine_stage(monkeypatch):
     run = control_gates.pipeline_from("sift", stages={**OFF, "uniformity": True})
     run(a, b)
     assert seen == [{**OFF, "uniformity": True}], "the gate did not run the registration's fine stage"
+
+
+def test_dense_refine_moves_an_off_model_onto_a_known_shift():
+    """The model starts 0.37 / 0.62 px wrong; dense refinement must find the true shift."""
+    shift = np.array([0.37, -0.62])
+    a, b = _textured_pair(tuple(shift))
+    g = np.arange(30, 130, 10, dtype=float)
+    src = np.stack(np.meshgrid(g, g), -1).reshape(-1, 2)
+    ref = src + np.round(shift)                      # integer matches: the model is off
+    off = fine_stage(matchset(src, ref), a, b, centre=(80, 80), flags=OFF)
+    on = fine_stage(matchset(src, ref), a, b, centre=(80, 80), flags={**OFF, "dense_refine": True})
+    assert on.stages["dense_refine"]["applied"]
+    assert np.abs(np.asarray(off.model.matrix)[:2, 2] - shift).max() > 0.3
+    assert np.abs(np.asarray(on.model.matrix)[:2, 2] - shift).max() < 0.05
+    assert on.inlier_count == off.inlier_count          # grading signals unchanged

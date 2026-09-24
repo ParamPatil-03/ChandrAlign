@@ -321,6 +321,9 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
         s, r = plane(src), plane(ref)
         if matcher in ("sift", "akaze", "orb", "brisk"):
             ms = classical.match(s, r, detector=matcher)
+        elif matcher == "rift2":                    # our own RIFT2 (MATCH-06), not a vismatch model
+            from ..matching import rift
+            ms = rift.match(s, r)
         else:
             ms = adapter.match(s, r, model_name=matcher, device=device, **match_kwargs)
         n = int(len(ms.src_pts))

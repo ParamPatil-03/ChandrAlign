@@ -1,0 +1,822 @@
+{
+  "source": "measured",
+  "protocol": "docs/ohrc_nac_protocol.md",
+  "ohrc": "ch2_ohr_ncp_20240330T0035085365_d_img_d18",
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "uniformity": true,
+    "subpixel": true
+  },
+  "run": {
+    "command": "python scripts/register_ohrc_nac.py --bridge --products M175124932LC --matchers eloftr minima-loftr --out reports/ohrc_nac_bridge_opposed.json",
+    "commit": "dc7f3458103b8c312123fddf25c72bf1066bee98",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T14:15:46+00:00"
+  },
+  "summary": {
+    "M175124932LC": {
+      "eloftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      }
+    }
+  },
+  "windows": [
+    {
+      "nac": "M175124932LC",
+      "ohrc_row": 2048,
+      "ohrc_col": 2560,
+      "lat": 0.3506,
+      "lon": 23.4983,
+      "coarse": {
+        "mode": "bridge",
+        "offset_m": [
+          768,
+          1941
+        ]
+      },
+      "system_offset_m": {
+        "east": 768.0,
+        "north": 1941.0
+      },
+      "fine_frame_px": [
+        1301,
+        928
+      ],
+      "fine_block": [
+        3,
+        2
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 130,
+          "inliers": 7,
+          "inlier_ratio": 0.0538,
+          "control_points": 7,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.96,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 130,
+              "n_kept": 130,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 130
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 7,
+              "of_inliers": 7,
+              "empty_cells": 60,
+              "max_delaunay_gap_px": 283.6704244469708
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 7,
+              "moved": 4,
+              "median_move_px": 1.1818,
+              "residual_to_model_px": {
+                "unrefined": 0.7355525915820924,
+                "refined": 0.9597926195713501
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 653.5,
+            "north": -1111.9
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 17.9,
+          "consistent": false,
+          "success": false
+        },
+        "minima-loftr": {
+          "matches": 563,
+          "inliers": 376,
+          "inlier_ratio": 0.6679,
+          "control_points": 70,
+          "coverage": 0.203,
+          "inlier_rmse_px": 1.576,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 563,
+              "n_kept": 563,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 563
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 70,
+              "of_inliers": 376,
+              "empty_cells": 51,
+              "max_delaunay_gap_px": 763.2449124429281
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 70,
+              "moved": 2,
+              "median_move_px": 1.0815,
+              "residual_to_model_px": {
+                "unrefined": 1.5753604995425077,
+                "refined": 1.575971456786743
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 672.3,
+            "north": 2027.9
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 1.76,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 32.0,
+          "consistent": false,
+          "success": false
+        }
+      },
+      "status": "locked",
+      "sun": {
+        "incidence": 40.94,
+        "sub_solar_lat": -0.86,
+        "sub_solar_lon": 64.43,
+        "target_lat": 0.63,
+        "target_lon": 23.515,
+        "sun_azimuth_deg": 92.04
+      },
+      "seconds": 50.3,
+      "offset_from_product_median_m": 0.0,
+      "consistent": true
+    },
+    {
+      "nac": "M175124932LC",
+      "ohrc_row": 7798,
+      "ohrc_col": 2816,
+      "lat": 0.2919,
+      "lon": 23.4995,
+      "coarse": {
+        "mode": "bridge",
+        "offset_m": [
+          768,
+          1941
+        ]
+      },
+      "system_offset_m": {
+        "east": 768.0,
+        "north": 1941.0
+      },
+      "fine_frame_px": [
+        1274,
+        928
+      ],
+      "fine_block": [
+        3,
+        2
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 156,
+          "inliers": 6,
+          "inlier_ratio": 0.0385,
+          "control_points": 6,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.469,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 156,
+              "n_kept": 156,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 156
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 6,
+              "of_inliers": 6,
+              "empty_cells": 60,
+              "max_delaunay_gap_px": 382.37357113277324
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 6,
+              "moved": 0,
+              "median_move_px": 0.0,
+              "residual_to_model_px": {
+                "unrefined": 0.4692634796735544,
+                "refined": 0.4692634796735544
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 751.3,
+            "north": -1705.7
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 13.3,
+          "consistent": false,
+          "success": false
+        },
+        "minima-loftr": {
+          "matches": 1006,
+          "inliers": 841,
+          "inlier_ratio": 0.836,
+          "control_points": 107,
+          "coverage": 0.312,
+          "inlier_rmse_px": 1.383,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 1006,
+              "n_kept": 1006,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 1006
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 107,
+              "of_inliers": 841,
+              "empty_cells": 44,
+              "max_delaunay_gap_px": 223.65389446318375
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 107,
+              "moved": 1,
+              "median_move_px": 1.2229,
+              "residual_to_model_px": {
+                "unrefined": 1.3702266022162088,
+                "refined": 1.3830847957502592
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 678.8,
+            "north": 2038.7
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 2.084,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 64.7,
+          "consistent": false,
+          "success": false
+        }
+      },
+      "status": "locked",
+      "sun": {
+        "incidence": 40.94,
+        "sub_solar_lat": -0.86,
+        "sub_solar_lon": 64.43,
+        "target_lat": 0.63,
+        "target_lon": 23.515,
+        "sun_azimuth_deg": 92.04
+      },
+      "seconds": 78.4,
+      "offset_from_product_median_m": 0.0,
+      "consistent": true
+    },
+    {
+      "nac": "M175124932LC",
+      "ohrc_row": 13548,
+      "ohrc_col": 3072,
+      "lat": 0.2333,
+      "lon": 23.5008,
+      "coarse": {
+        "mode": "bridge",
+        "offset_m": [
+          768,
+          1941
+        ]
+      },
+      "system_offset_m": {
+        "east": 768.0,
+        "north": 1941.0
+      },
+      "fine_frame_px": [
+        1246,
+        928
+      ],
+      "fine_block": [
+        3,
+        2
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 131,
+          "inliers": 7,
+          "inlier_ratio": 0.0534,
+          "control_points": 7,
+          "coverage": 0.062,
+          "inlier_rmse_px": 1.274,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 131,
+              "n_kept": 131,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 131
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 7,
+              "of_inliers": 7,
+              "empty_cells": 60,
+              "max_delaunay_gap_px": 329.9968377764182
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 7,
+              "moved": 2,
+              "median_move_px": 1.2027,
+              "residual_to_model_px": {
+                "unrefined": 1.1030857250272998,
+                "refined": 1.2744174533866781
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 674.6,
+            "north": 71572.6
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 12.8,
+          "consistent": false,
+          "success": false
+        },
+        "minima-loftr": {
+          "matches": 1250,
+          "inliers": 1045,
+          "inlier_ratio": 0.836,
+          "control_points": 113,
+          "coverage": 0.312,
+          "inlier_rmse_px": 1.241,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 1250,
+              "n_kept": 1250,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 1250
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 113,
+              "of_inliers": 1045,
+              "empty_cells": 44,
+              "max_delaunay_gap_px": 514.0813755840992
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 113,
+              "moved": 2,
+              "median_move_px": 1.0635,
+              "residual_to_model_px": {
+                "unrefined": 1.2151089558685313,
+                "refined": 1.2413323898476618
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 684.7,
+            "north": 2049.5
+          },
+          "status": "registered",
+          "tier": "LOW",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 1.481,
+          "gates_pass": true,
+          "tier_ok": true,
+          "seconds": 64.4,
+          "consistent": false,
+          "success": false
+        }
+      },
+      "status": "locked",
+      "sun": {
+        "incidence": 40.94,
+        "sub_solar_lat": -0.86,
+        "sub_solar_lon": 64.43,
+        "target_lat": 0.63,
+        "target_lon": 23.515,
+        "sun_azimuth_deg": 92.04
+      },
+      "seconds": 77.6,
+      "offset_from_product_median_m": 0.0,
+      "consistent": true
+    },
+    {
+      "nac": "M175124932LC",
+      "ohrc_row": 19548,
+      "ohrc_col": 3328,
+      "lat": 0.172,
+      "lon": 23.502,
+      "coarse": {
+        "mode": "bridge",
+        "offset_m": [
+          768,
+          1941
+        ]
+      },
+      "system_offset_m": {
+        "east": 768.0,
+        "north": 1941.0
+      },
+      "fine_frame_px": [
+        1223,
+        928
+      ],
+      "fine_block": [
+        3,
+        2
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 172,
+          "inliers": 16,
+          "inlier_ratio": 0.093,
+          "control_points": 16,
+          "coverage": 0.109,
+          "inlier_rmse_px": 1.591,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 172,
+              "n_kept": 172,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 172
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 16,
+              "of_inliers": 16,
+              "empty_cells": 57,
+              "max_delaunay_gap_px": 276.857906832257
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 16,
+              "moved": 4,
+              "median_move_px": 0.978,
+              "residual_to_model_px": {
+                "unrefined": 1.5502979211195789,
+                "refined": 1.5905955583087992
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 695.1,
+            "north": 2065.5
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 14.0,
+          "consistent": false,
+          "success": false
+        },
+        "minima-loftr": {
+          "matches": 866,
+          "inliers": 674,
+          "inlier_ratio": 0.7783,
+          "control_points": 96,
+          "coverage": 0.281,
+          "inlier_rmse_px": 1.588,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 866,
+              "n_kept": 866,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 866
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 96,
+              "of_inliers": 674,
+              "empty_cells": 46,
+              "max_delaunay_gap_px": 437.6617275337298
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 96,
+              "moved": 1,
+              "median_move_px": 0.5804,
+              "residual_to_model_px": {
+                "unrefined": 1.5933106969138402,
+                "refined": 1.5881175330651383
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 691.4,
+            "north": 2063.9
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 2.151,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 60.7,
+          "consistent": false,
+          "success": false
+        }
+      },
+      "status": "locked",
+      "sun": {
+        "incidence": 40.94,
+        "sub_solar_lat": -0.86,
+        "sub_solar_lon": 64.43,
+        "target_lat": 0.63,
+        "target_lon": 23.515,
+        "sun_azimuth_deg": 92.04
+      },
+      "seconds": 75.1,
+      "offset_from_product_median_m": 0.0,
+      "consistent": true
+    },
+    {
+      "nac": "M175124932LC",
+      "ohrc_row": 25298,
+      "ohrc_col": 3584,
+      "lat": 0.1133,
+      "lon": 23.5032,
+      "coarse": {
+        "mode": "bridge",
+        "offset_m": [
+          768,
+          1941
+        ]
+      },
+      "system_offset_m": {
+        "east": 768.0,
+        "north": 1941.0
+      },
+      "fine_frame_px": [
+        1195,
+        929
+      ],
+      "fine_block": [
+        3,
+        2
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 182,
+          "inliers": 34,
+          "inlier_ratio": 0.1868,
+          "control_points": 32,
+          "coverage": 0.188,
+          "inlier_rmse_px": 1.525,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 182,
+              "n_kept": 182,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 182
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 32,
+              "of_inliers": 34,
+              "empty_cells": 52,
+              "max_delaunay_gap_px": 355.98746036872234
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 32,
+              "moved": 10,
+              "median_move_px": 1.0273,
+              "residual_to_model_px": {
+                "unrefined": 1.5104363733455795,
+                "refined": 1.525299611485981
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 700.6,
+            "north": 2075.3
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 10.203,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 15.5,
+          "consistent": false,
+          "success": false
+        },
+        "minima-loftr": {
+          "matches": 414,
+          "inliers": 303,
+          "inlier_ratio": 0.7319,
+          "control_points": 82,
+          "coverage": 0.266,
+          "inlier_rmse_px": 1.343,
+          "pipeline": {
+            "geometry_filter": {
+              "applied": false,
+              "reason": "no match endpoint falls inside the DEM",
+              "n_in": 414,
+              "n_kept": 414,
+              "rejected_slope": 0,
+              "rejected_aspect": 0,
+              "unknown_terrain": 414
+            },
+            "uniformity": {
+              "applied": true,
+              "grid": 8,
+              "kept": 82,
+              "of_inliers": 303,
+              "empty_cells": 47,
+              "max_delaunay_gap_px": 399.68782118970597
+            },
+            "subpixel": {
+              "applied": true,
+              "points": 82,
+              "moved": 3,
+              "median_move_px": 1.0929,
+              "residual_to_model_px": {
+                "unrefined": 1.291796389190159,
+                "refined": 1.3432475065964309
+              },
+              "method": "ncc_gaussian_iter",
+              "window_px": 33
+            }
+          },
+          "implied_offset_m": {
+            "east": 697.7,
+            "north": 2074.5
+          },
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 2.288,
+          "gates_pass": false,
+          "tier_ok": false,
+          "seconds": 37.9,
+          "consistent": false,
+          "success": false
+        }
+      },
+      "status": "locked",
+      "sun": {
+        "incidence": 40.94,
+        "sub_solar_lat": -0.86,
+        "sub_solar_lon": 64.43,
+        "target_lat": 0.63,
+        "target_lon": 23.515,
+        "sun_azimuth_deg": 92.04
+      },
+      "seconds": 53.7,
+      "offset_from_product_median_m": 0.0,
+      "consistent": true
+    }
+  ]
+}
