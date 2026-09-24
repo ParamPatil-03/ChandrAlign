@@ -52,11 +52,25 @@ COARSE_M = 2.0                # coarse lock resolution. Was 4.0; 2 m chosen by d
 MIN_Z = float(config.get("cascade.min_z", 10.0))
 CONSISTENT_M = 150.0          # offset within this of the product's median
 OHRC_PX = 0.30
-# docs/illumination_fix_protocol.md Q5: bridge-predicted OHRC offset in each NAC, metres
-# east/north = OHRC vs SELENE TC (+551, +2229) + NAC vs TC measured through TMC-2 (PR #18).
-BRIDGE = {"M102014464RC": (551 - 597, 2229 + 75),
-          "M106719774LC": (551 + 557, 2229 - 143),
-          "M175124932LC": (551 + 217, 2229 - 288)}
+
+
+def bridge_predictions() -> dict:
+    """OHRC's predicted offset in each NAC product, metres east/north (MATCH-11 geodetic
+    bridge; docs/illumination_fix_protocol.md Q5/Q8), COMPUTED from committed reports:
+    OHRC vs SELENE TC (cascade_ohrc_tc) + that NAC vs TC measured through TMC-2 (PR #18)."""
+    c = json.loads((ROOT / "reports/cascade_ohrc_tc.json").read_text(encoding="utf-8"))
+    o = np.median([[r["ohrc_system_offset_m"]["east"], r["ohrc_system_offset_m"]["north"]]
+                   for r in c["rows"] if r.get("ohrc_system_offset_m")], axis=0)
+    d = json.loads((ROOT / "reports/tmc2_nac_registration.json").read_text(encoding="utf-8"))
+    by = {}
+    for w in d["windows"]:
+        g = w.get("geolocation")
+        if w.get("success") and g:
+            by.setdefault(w["nac"], []).append(
+                [g["system_offset_m"]["east"] - g["tc_measured_offset_m"]["east"],
+                 g["system_offset_m"]["north"] - g["tc_measured_offset_m"]["north"]])
+    return {p: tuple(float(v) for v in (o + np.median(x, axis=0))) for p, x in by.items()}
+
 BRIDGE_MARGIN_M = 200.0
 FINE_MIN_M = 0.5              # Q5 amendment 1: no fine-grid axis finer than this
 FINE_MAX_PX = 1.5e6           # Q5 amendment 2: fine frame at most this many pixels (GPU memory)
@@ -303,6 +317,8 @@ def main() -> int:
     ap.add_argument("--coarse-only", action="store_true", help="stop after the coarse lock (protocol Q1)")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage; defaults from configs/default.yaml pipeline.*")
+    ap.add_argument("--auto-bridge", action="store_true",
+                    help="protocol Q8: use the bridge ONLY for windows whose coarse lock fails")
     ap.add_argument("--bridge", action="store_true",
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
     args = ap.parse_args()
@@ -312,6 +328,7 @@ def main() -> int:
     assert om.independent_of_references
     lroc = json.loads((ROOT / "data/pairs/tmc2_nac_lroc_meta.json").read_text(encoding="utf-8"))["products"]
     sun = json.loads((ROOT / "data/pairs/nac_sun_azimuth_computed.json").read_text(encoding="utf-8"))
+    BRIDGE = bridge_predictions()
     stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in (i.split("=", 1) for i in args.stage)})
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
     L, S = ohrc.array_shape
@@ -353,6 +370,11 @@ def main() -> int:
                            coarse_descriptor=args.coarse_descriptor, coarse_m=args.coarse_m,
                            coarse_only=args.coarse_only,
                            bridge=BRIDGE.get(pid) if args.bridge else None)
+            if args.auto_bridge and w.get("status") == "no coarse lock" and pid in BRIDGE:
+                failed = w.get("coarse")
+                w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages,
+                               dem_tiles, bridge=BRIDGE[pid])
+                w["coarse_lock_failed"] = failed
             w["sun"] = sun.get(pid)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
@@ -376,8 +398,8 @@ def main() -> int:
         ws = [w for w in windows if w["nac"] == pid]
         for name in args.matchers:
             ok = 0
-            if args.bridge:
-                # Q5: consistency from each matcher's FINAL transform, over its gate-passing
+            if args.bridge or args.auto_bridge:
+                # Q5/Q8: consistency from each matcher's FINAL transform, over its gate-passing
                 # windows; needs >= 3 of them, else no window counts.
                 gp = [(w, (w.get("results") or {}).get(name, {})) for w in ws]
                 gp = [(w, r) for w, r in gp if r.get("status") == "registered" and r.get("gates_pass")
@@ -386,7 +408,7 @@ def main() -> int:
                        if len(gp) >= 3 else None)
             for w in ws:
                 r = (w.get("results") or {}).get(name, {})
-                if args.bridge:
+                if args.bridge or args.auto_bridge:
                     io = r.get("implied_offset_m")
                     cons = (med is not None and io is not None
                             and np.hypot(io["east"] - med[0], io["north"] - med[1]) <= CONSISTENT_M)

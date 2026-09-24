@@ -178,3 +178,24 @@ Nine TMC-2 -> TC windows, dense_refine on: no window lost; median known-shift er
 window whose residual to the affine model is largest). **Rule 3 fails -> not adopted.**
 A single translation update cannot fix a non-affine residual; this is ALIGN-02's (TPS)
 question, and dense_refine should be re-tested together with TPS.
+
+## Q8 (frozen before its run): the geodetic bridge as an automatic fallback
+
+Option considered and rejected first: rendering each image's sun from a high-resolution
+DEM. The only one near (LROC NAC_DTM_APOLLO11, 2 m) covers 0.68 km2 of the OHRC /
+M175124932LC overlap (about one window; the rules need 3) and none of M1417360906LC's.
+
+**Shipped behaviour under test:** the 2 m MIND coarse lock; ONLY if it fails (z < 10) and a
+bridge prediction exists for the NAC product, the window is re-run at the bridge-predicted
+position (Q5 method); then the routed matcher (eloftr, falling back to minima-loftr).
+Bridge predictions are COMPUTED from committed reports, never typed in: OHRC vs SELENE TC
+= median `ohrc_system_offset_m` of `reports/cascade_ohrc_tc.json`; NAC vs TC = median
+(system_offset - tc_measured_offset) over the successful windows of that product in
+`reports/tmc2_nac_registration.json`. Products without a TMC-2 measurement get no bridge.
+
+**Success per window:** as Q5 (gates, tier >= LOW, and the FINAL transform's implied offset
+within 150 m of the median over that product's gate-passing windows, >= 3 required),
+applied to every window whether it was locked or bridged.
+
+**Adopt automatic bridging** if, on all five products, no window that succeeds without it
+fails with it, and it adds at least one success.
