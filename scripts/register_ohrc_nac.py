@@ -52,6 +52,12 @@ COARSE_M = 2.0                # coarse lock resolution. Was 4.0; 2 m chosen by d
 MIN_Z = float(config.get("cascade.min_z", 10.0))
 CONSISTENT_M = 150.0          # offset within this of the product's median
 OHRC_PX = 0.30
+# docs/illumination_fix_protocol.md Q5: bridge-predicted OHRC offset in each NAC, metres
+# east/north = OHRC vs SELENE TC (+551, +2229) + NAC vs TC measured through TMC-2 (PR #18).
+BRIDGE = {"M102014464RC": (551 - 597, 2229 + 75),
+          "M106719774LC": (551 + 557, 2229 - 143),
+          "M175124932LC": (551 + 217, 2229 - 288)}
+BRIDGE_MARGIN_M = 200.0
 
 
 def T(x, y):
@@ -117,7 +123,7 @@ def match(name, a, b, device, gsd):
 
 
 def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_tiles,
-               coarse_descriptor="mind", coarse_m=COARSE_M, coarse_only=False):
+               coarse_descriptor="mind", coarse_m=COARSE_M, coarse_only=False, bridge=None):
     out = {"nac": nac.pid, "ohrc_row": int(rc), "ohrc_col": int(cc)}
     r0, c0 = int(rc) - WIN // 2, int(cc) - WIN // 2
     o_raw = pds_raster.read_raster(ohrc, pds_raster.Window(r0, c0, WIN, WIN)).astype(np.float32)
@@ -130,13 +136,23 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
     g = np.linspace(0, WIN - 1, 9)
     gx, gy = np.meshgrid(g, g)
     lat, lon = om.pixel_to_latlon(r0 + gy.ravel(), c0 + gx.ravel())
+    if bridge is not None:                  # Q5: place the window at its predicted true position
+        k = math.pi / 180 * MOON_R_M
+        lat = np.asarray(lat) + bridge[1] / k
+        lon = np.asarray(lon) + bridge[0] / (k * np.cos(np.radians(lat)))
     nx, ny = geo.to_px(lat, lon)
     A_sys = affine_fit(np.c_[gx.ravel(), gy.ravel()], np.c_[nx, ny])
     lat_c, lon_c = (float(v) for v in om.pixel_to_latlon(np.array([r0 + WIN / 2]), np.array([c0 + WIN / 2])))
     out.update(lat=round(lat_c, 4), lon=round(lon_c, 4))
 
-    # 2. coarse lock over +-MARGIN at ~COARSE_M
+    # 2. coarse lock over +-MARGIN at ~COARSE_M (skipped in bridge mode)
     L, Sn = nacm.array_shape
+    if bridge is not None:
+        T_c = A_sys
+        out["coarse"] = {"mode": "bridge", "offset_m": list(bridge)}
+        out["system_offset_m"] = {"east": float(bridge[0]), "north": float(bridge[1])}
+        return _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages,
+                     dem_tiles, exp_margin_m=BRIDGE_MARGIN_M)
     cx, cy = (A_sys @ [WIN / 2, WIN / 2, 1])[:2]
     half = int(MARGIN_M / nac.px_h) + WIN
     l0, l1 = max(0, int(cy) - half), min(L, int(cy) + half)
@@ -168,10 +184,17 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
     if coarse_only:
         out["status"] = "locked"; out["results"] = {}; return out
 
+    return _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles)
+
+
+def _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles,
+          exp_margin_m=0.0):
+    L, Sn = nacm.array_shape
     # 3. fine frame on the NAC grid
     cor = np.array([[0, 0, 1], [WIN, 0, 1], [0, WIN, 1], [WIN, WIN, 1]], float) @ T_c.T
-    o = np.floor(cor[:, :2].min(0)).astype(int) + 8
-    e_ = np.ceil(cor[:, :2].max(0)).astype(int) - 8
+    grow = np.array([exp_margin_m / nac.px_w, exp_margin_m / nac.px_h])
+    o = (np.floor(cor[:, :2].min(0) - grow).astype(int) + 8)
+    e_ = (np.ceil(cor[:, :2].max(0) + grow).astype(int) - 8)
     o[0], o[1] = max(o[0], 0), max(o[1], 0)
     e_[0], e_[1] = min(e_[0], Sn), min(e_[1], L)
     wF, hF = int(e_[0] - o[0]), int(e_[1] - o[1])
@@ -213,6 +236,10 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
                 results[name] = {**r, "status": "fine stage: no transform", "success": False}
                 return results[name]
             T_total = T(o[0], o[1]) @ np.asarray(fr.model.matrix, float) @ Wf
+            fx, fy = (T_total @ [WIN / 2, WIN / 2, 1])[:2]
+            la_f, lo_f = geo.pixel_to_latlon([fy], [fx])
+            ef = enu(float(la_f[0]), float(lo_f[0]), lat_c, lon_c)
+            r["implied_offset_m"] = {"east": round(float(ef[0]), 1), "north": round(float(ef[1]), 1)}
             verdict = scale.check(T_total, exp, centre=(WIN / 2, WIN / 2))
             gates = control_gates.run_all(control_gates.pipeline_from(name, device=device, gsd_m=gsd, stages=stages),
                                           src, ref, pa, pb)
@@ -255,6 +282,8 @@ def main() -> int:
     ap.add_argument("--coarse-descriptor", default="mind", choices=["mind", "phase_congruency"])
     ap.add_argument("--coarse-m", type=float, default=COARSE_M, help="coarse-lock resolution, metres")
     ap.add_argument("--coarse-only", action="store_true", help="stop after the coarse lock (protocol Q1)")
+    ap.add_argument("--bridge", action="store_true",
+                    help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
     args = ap.parse_args()
 
     ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
@@ -297,7 +326,8 @@ def main() -> int:
             t = time.perf_counter()
             w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages, dem_tiles,
                            coarse_descriptor=args.coarse_descriptor, coarse_m=args.coarse_m,
-                           coarse_only=args.coarse_only)
+                           coarse_only=args.coarse_only,
+                           bridge=BRIDGE.get(pid) if args.bridge else None)
             w["sun"] = sun.get(pid)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
@@ -321,10 +351,24 @@ def main() -> int:
         ws = [w for w in windows if w["nac"] == pid]
         for name in args.matchers:
             ok = 0
+            if args.bridge:
+                # Q5: consistency from each matcher's FINAL transform, over its gate-passing
+                # windows; needs >= 3 of them, else no window counts.
+                gp = [(w, (w.get("results") or {}).get(name, {})) for w in ws]
+                gp = [(w, r) for w, r in gp if r.get("status") == "registered" and r.get("gates_pass")
+                      and r.get("tier_ok") and r.get("implied_offset_m")]
+                med = (np.median([[r["implied_offset_m"]["east"], r["implied_offset_m"]["north"]] for _, r in gp], axis=0)
+                       if len(gp) >= 3 else None)
             for w in ws:
                 r = (w.get("results") or {}).get(name, {})
-                s = (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
-                     and w.get("consistent", False))
+                if args.bridge:
+                    io = r.get("implied_offset_m")
+                    cons = (med is not None and io is not None
+                            and np.hypot(io["east"] - med[0], io["north"] - med[1]) <= CONSISTENT_M)
+                    r["consistent"] = bool(cons)
+                else:
+                    cons = w.get("consistent", False)
+                s = (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok") and cons)
                 r["success"] = bool(s)
                 ok += bool(s)
             rate = ok / len(ws) if ws else 0.0
