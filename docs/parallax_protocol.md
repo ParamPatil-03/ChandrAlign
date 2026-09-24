@@ -149,3 +149,30 @@ best-fit plane) over the window's REGISTERED position in its baseline (parallax-
 >= 100 m. This uses only the DEM and the baseline registration, nothing from the parallax
 runs. Result, computed now: 9 selected (178-526 m); **4687/col 768 excluded (15 m)**.
 Everything else in amendment 2 unchanged.
+
+## Amendment 2 result (2026-09-25): NOT adopted (fails b, c) -- the cause of (c) is the terrain filter
+
+`reports/tmc2_tc_parallax_tcdtm.json` (9 selected windows, TC DTM, parallax on; baselines
+are the SLDEM parallax-off runs).
+
+- (a) pass: empty cells 53 -> 0. (d) pass: p = 0.97-1.04x the 26 deg prediction on all 9
+  (0.82-1.02x with SLDEM). Fit residual on the stage's inliers 0.74-0.98 px (1.0-1.3 with SLDEM).
+- (b) fail: phase-correlation RMS ratio 0.31-0.48 on 7 windows, but 0.57 (1562) and 0.94 (6250).
+- (c) fail: 7 of 9 windows lose tier, two to REJECTED (3125/768, 4687/3232). **Every drop is
+  the terrain filter (ALIGN-03), not parallax:** fed the 7.4 m DTM it discards 33-40% of matches
+  (1-2% with SLDEM), which lowers the FIRST estimate's inlier ratio, and the tier is graded
+  on that first estimate, before the parallax stage runs. Amendment 2 coupled the two by
+  declaring one DEM for both; that coupling, not the correction, is what failed.
+
+Third failure: work stops here and is reported.
+
+Observed, not tested:
+1. The terrain filter's slope/aspect thresholds were set against 59 m slopes; at 7.4 m, local
+   slopes are steeper and a third of real matches fail them.
+2. The phase-correlation measure seems to have a ~2 px floor on hilly ground (2.1-2.5 px
+   left even where the stage's inliers fit to < 1 px): a 200 px cell spans several heights,
+   so it has no single offset. Rule (b)'s 50% cannot be met by a window whose affine RMS is
+   below ~4 px (1562: 3.6 px). At 6250 the measure barely moves (8.8 -> 8.3 px) while empty
+   cells go 11 -> 0 and the fit is 0.79 px, so that measure is unreliable there.
+A clean test would use the TC DTM for the parallax stage only (SLDEM for the terrain filter)
+and held-out matches (as docs/tps_protocol.md) instead of per-cell phase correlation.
