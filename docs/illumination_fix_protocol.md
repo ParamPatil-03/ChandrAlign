@@ -250,3 +250,14 @@ Success rules as Q8 (consistency from the final transforms, >= 3 gate-passing wi
 **Adopt** if, over all five NAC products, no window that succeeds under Q8 fails under Q9,
 and Q9 adds at least one success. Evidence it should: the exploratory 4096 px check on
 M1417360906LC (4/5).
+
+## Q9 result: not adopted
+
+All windows that succeeded under Q8 still succeed (20/25, none lost); no success added.
+On M1417360906LC (75 deg) enlargement triggered on all 5 windows: 1 no lock at 4096 px;
+2 now pass every gate (known-shift 0.23 and 0.55 px); 2 are still rejected (2.5 and 3.1 px).
+Two gate-passing windows are fewer than the 3 the consistency rule needs, so none counts
+-> 0/5. The exploratory 4/5 used windows CENTRED to fit 4096 px inside the strip; Q9 keeps
+the 2048-px centres, and 2 of its enlarged windows run past the strip edge. **By the frozen
+rule, automatic enlargement is not adopted; the 75 deg case remains unsolved in the
+shipped behaviour** (solvable in principle: exploratory 4/5).
