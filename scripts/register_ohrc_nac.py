@@ -45,7 +45,7 @@ from register_tmc2_nac import MOON_R_M, NULL_BELOW, Nac, enu  # noqa: E402
 
 # ---- frozen in docs/ohrc_nac_protocol.md -------------------------------------------
 PRODUCTS = ("M102014464RC", "M106719774LC", "M175124932LC", "M1417360906LC", "M109080308LC")
-WIN = 2048                    # OHRC native px per window side (~0.61 km)
+WIN = 2048                    # OHRC native px per window side (~0.61 km); --win overrides
 N_WIN = 5
 MARGIN_M = 4000.0             # position search, each side
 COARSE_M = 2.0                # coarse lock resolution. Was 4.0; 2 m chosen by docs/illumination_fix_protocol.md Q1
@@ -307,6 +307,7 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
 
 
 def main() -> int:
+    global WIN
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--products", nargs="+", default=list(PRODUCTS))
     ap.add_argument("--matchers", nargs="+", default=["eloftr", "minima-loftr", "sift"])
@@ -317,6 +318,7 @@ def main() -> int:
     ap.add_argument("--coarse-only", action="store_true", help="stop after the coarse lock (protocol Q1)")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage; defaults from configs/default.yaml pipeline.*")
+    ap.add_argument("--win", type=int, default=WIN, help="OHRC window side, native px")
     ap.add_argument("--auto-bridge", action="store_true",
                     help="protocol Q8: use the bridge ONLY for windows whose coarse lock fails")
     ap.add_argument("--bridge", action="store_true",
@@ -328,6 +330,7 @@ def main() -> int:
     assert om.independent_of_references
     lroc = json.loads((ROOT / "data/pairs/tmc2_nac_lroc_meta.json").read_text(encoding="utf-8"))["products"]
     sun = json.loads((ROOT / "data/pairs/nac_sun_azimuth_computed.json").read_text(encoding="utf-8"))
+    WIN = args.win
     BRIDGE = bridge_predictions()
     stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in (i.split("=", 1) for i in args.stage)})
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")

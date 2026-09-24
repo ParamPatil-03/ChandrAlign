@@ -122,3 +122,12 @@ Every success is location-consistent (final transforms within 150 m of their pro
 median; in practice within ~50 m). On real data the default matcher fails beyond ~60-75 deg
 of sun difference and minima-loftr, the fallback, succeeds -- including the opposed sun.
 Remaining: M1417360906LC (NAC sun near overhead against OHRC's grazing sun).
+
+## Solvability check for the last case (exploratory, NOT pre-registered, not adopted)
+
+M1417360906LC (75 deg incidence) locked correctly at 2048 px windows but missed the 1.5 px
+known-shift gate (2-3 px). One check with 4x the area (`--win 4096`,
+`reports/ohrc_nac_m1417_win4096.json`): routed **4/5**, known-shift error 0.50-1.27 px
+(minima-loftr). So the case is solvable -- it needs more image content at this sun
+geometry, not a different method. The default window is unchanged; an adaptive window
+(enlarge when the default is rejected) would need its own frozen test.
