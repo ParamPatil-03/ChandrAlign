@@ -32,3 +32,24 @@ the affine model (which still drives the gates and scale check, as TPS cannot be
 as a matrix). Otherwise TPS stays unused and the result is recorded.
 
 Held-out residuals include matcher noise, so this bounds, not measures, the non-affine part.
+
+## Result (2026-09-24) -- adopted
+
+`reports/tps_heldout.json`. Held-out RMS, TPS vs affine, per window (control points 310-384,
+held-out points 6,600-15,400):
+
+| window | affine | TPS | change |
+|---|---|---|---|
+| 1562 (N00) | 1.575 | 0.993 | -37% |
+| 3125 (N00) | 1.626 | 0.932 | -43% |
+| 4687 (N00) | 1.484 | 0.815 | -45% |
+| 16000 | 1.060 | 0.792 | -25% |
+| 21500 | 1.002 | 0.746 | -25% |
+| 54750 | 1.273 | 0.669 | -47% |
+| 18750 | 0.719 | 0.736 | +2.4% |
+| 52000 | 0.713 | 0.692 | -3% |
+| 57500 | 0.842 | 0.676 | -20% |
+
+Six windows have affine held-out RMS > 1 px; median improvement there **40%**; worst window
++2.4% (limit 5%). **Adopted:** `pipeline.tps: true`. The N00 windows, whose large affine
+residual prompted this, improve most.

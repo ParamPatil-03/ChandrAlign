@@ -48,7 +48,7 @@ from . import config
 from .contracts import MatchSet, TransformModel
 from .estimate import models, robust
 
-STAGES = ("geometry_filter", "dense_refine", "uniformity", "subpixel")
+STAGES = ("geometry_filter", "dense_refine", "uniformity", "subpixel", "tps")
 
 
 def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
@@ -74,6 +74,11 @@ class FineResult:
     n_matches: int                            # before the terrain filter
     stages: dict[str, Any] = field(default_factory=dict)
     notes: list[str] = field(default_factory=list)
+    # ALIGN-02: a thin-plate spline through the delivered points, carried ALONGSIDE the
+    # affine model (which drives the gates and scale check; a TPS has no matrix). Measured
+    # to cut held-out residual by a median 40% where the affine leaves > 1 px
+    # (docs/tps_protocol.md, reports/tps_heldout.json).
+    tps: Optional[TransformModel] = None
 
     @property
     def inlier_count(self) -> int:
@@ -225,5 +230,13 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     else:
         stages["subpixel"] = {"applied": False, "reason": "off (pipeline.subpixel)"}
 
+    # 5. TPS through the delivered points (ALIGN-02)
+    tps = None
+    if flags["tps"] and len(cs) >= 15:
+        tps = models.fit_tps_cv(cs, cr)
+        stages["tps"] = {"applied": True, "control_points": int(len(cs)),
+                         "smoothing": tps.tps_params["smoothing"], "cv_rms_px": tps.tps_params.get("cv_rms_px")}
+    else:
+        stages["tps"] = {"applied": False, "reason": "off (pipeline.tps)" if not flags["tps"] else "too few points"}
     return FineResult(True, model, first, ms, cs, cr, coverage, _rmse(model, cs, cr),
-                      n_matches, stages, [])
+                      n_matches, stages, [], tps)

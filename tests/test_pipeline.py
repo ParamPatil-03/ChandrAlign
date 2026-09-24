@@ -199,3 +199,23 @@ def test_dense_refine_moves_an_off_model_onto_a_known_shift():
     assert np.abs(np.asarray(off.model.matrix)[:2, 2] - shift).max() > 0.3
     assert np.abs(np.asarray(on.model.matrix)[:2, 2] - shift).max() < 0.05
     assert on.inlier_count == off.inlier_count          # grading signals unchanged
+
+
+def test_tps_beats_affine_on_held_out_points_of_a_relief_distorted_pair():
+    """ALIGN-02 done_when: on a synthetic pair bent by smooth relief, TPS fitted on the
+    delivered points leaves less error than the affine model on points it never saw --
+    and switching TPS on never changes the affine model the gates rely on."""
+    rng = np.random.default_rng(7)
+    def truth(p):                                          # affine + smooth bending
+        q = p @ A[:2, :2].T + A[:2, 2]
+        return q + np.c_[3 * np.sin(p[:, 1] / 60.0), 2.5 * np.cos(p[:, 0] / 70.0)]
+    src = rng.uniform(0, 400, (3000, 2))
+    ref = truth(src) + rng.normal(0, 0.2, src.shape)
+    off = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "uniformity": True})
+    on = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "uniformity": True, "tps": True})
+    assert np.array_equal(on.model.matrix, off.model.matrix)
+    assert on.tps is not None and on.stages["tps"]["applied"]
+    test = rng.uniform(20, 380, (2000, 2))
+    e_aff = np.sqrt(np.mean(np.sum((models.apply(on.model, test) - truth(test)) ** 2, axis=1)))
+    e_tps = np.sqrt(np.mean(np.sum((models.apply(on.tps, test) - truth(test)) ** 2, axis=1)))
+    assert e_tps < 0.5 * e_aff, (e_tps, e_aff)
