@@ -66,3 +66,14 @@ footprint corners, which gives the wrong local scale/shape at each window, and M
 match a template of the wrong scale. The published IIRS <-> WAC result is understood to use
 map-projected WAC. Test: repeat with the map-projected LROC WAC Global Morphologic Mosaic
 (100 m/px, 643 nm) clipped to this area -- a download, pending approval.
+
+## Amendment 1 (approved download; before any mosaic measurement)
+
+Reference changed to test the run-1 hypothesis: the **LROC WAC Global Morphologic Mosaic**
+(643 nm, 100 m/px, simple cylindrical, north up; USGS/ASC
+`Lunar_LRO_LROC-WAC_Mosaic_global_100m_June2013.tif`), a clip 4 S - 4 N, 22.3 - 25.3 E
+read by byte ranges (`data/raw/lro/wac_mosaic/wac_mosaic_100m_clip.{npy,json}`, SHA-256 in
+the sidecar). The geometry is exact, so there is ONE orientation: the "2 above the
+runner-up" condition no longer applies (lock = z >= 10). Windows: 5, spread along the IIRS
+strip inside the clip (0.3 deg margin). Consistency bound 240 m (~2.4 mosaic pixels) is
+unchanged. Everything else unchanged. Run 1 (raw CDR frames) stays recorded.

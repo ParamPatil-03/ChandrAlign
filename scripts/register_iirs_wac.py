@@ -85,6 +85,26 @@ class WacGeo:
         return ll[:, 0], ll[:, 1]
 
 
+class MosaicGeo:
+    """The map-projected WAC mosaic clip: simple cylindrical, north up (amendment 1)."""
+
+    def __init__(self, meta):
+        self.m = meta
+        self.name = "mosaic"
+        self.lat_top, self.lon_left, self.dpp = meta["pixel_centre_lat_of_row0"], meta["pixel_centre_lon_of_col0"], meta["deg_per_px"]
+        lat_c = self.lat_top - meta["shape"][0] / 2 * self.dpp
+        self.px_x, self.px_y = 100.0 * float(np.cos(np.radians(lat_c))), 100.0
+
+    def to_px(self, lat, lon):
+        return (np.asarray(lon, float) - self.lon_left) / self.dpp, (self.lat_top - np.asarray(lat, float)) / self.dpp
+
+    def to_latlon(self, x, y):
+        return self.lat_top - y * self.dpp, self.lon_left + x * self.dpp
+
+    def pixel_to_latlon(self, rows, cols):
+        return self.lat_top - np.asarray(rows, float) * self.dpp, self.lon_left + np.asarray(cols, float) * self.dpp
+
+
 class Offset:
     def __init__(self, geo, ox, oy):
         self.geo, self.ox, self.oy = geo, ox, oy
@@ -122,9 +142,9 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
                                          ref_pixel_m=max(geo.px_x, geo.px_y), prior=prior, diag=diag)
         tries.append((float(diag.get("z") or 0.0), geo, st))
     tries.sort(key=lambda t: -t[0])
-    (z1, geo, st), z2 = tries[0], tries[1][0]
-    out["coarse"] = {"best": geo.name, "z": round(z1, 1), "runner_up_z": round(z2, 1)}
-    if st is None or z1 < MIN_Z or z1 - z2 < Z_MARGIN:
+    (z1, geo, st), z2 = tries[0], (tries[1][0] if len(tries) > 1 else float("-inf"))
+    out["coarse"] = {"best": geo.name, "z": round(z1, 1), "runner_up_z": None if len(tries) == 1 else round(z2, 1)}
+    if st is None or z1 < MIN_Z or (len(tries) > 1 and z1 - z2 < Z_MARGIN):
         out["status"] = "no coarse lock"; out["results"] = {}; return out
     T_c = np.asarray(st.model.matrix, float)                   # IIRS window px -> WAC px
     h, w = wimg.shape
@@ -202,6 +222,8 @@ def main() -> int:
     ap.add_argument("--matchers", nargs="+", default=["xoftr", "minima-loftr", "rift2", "sift"])
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default="reports/iirs_wac_registration.json")
+    ap.add_argument("--reference", choices=["cdr", "mosaic"], default="cdr",
+                    help="cdr: raw WAC frames (run 1); mosaic: the map-projected WAC mosaic clip (amendment 1)")
     args = ap.parse_args()
 
     iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
@@ -215,7 +237,32 @@ def main() -> int:
     rows = np.arange(0, L - LINES, 64)
     lat_all, lon_all = im.pixel_to_latlon(rows + LINES / 2, np.full(rows.shape, S / 2))
     windows = []
-    for pid in args.products:
+    if args.reference == "mosaic":
+        mdir = ROOT / "data/raw/lro/wac_mosaic"
+        mmeta = json.loads((mdir / "wac_mosaic_100m_clip.json").read_text(encoding="utf-8"))
+        raw = np.load(mdir / "wac_mosaic_100m_clip.npy").astype(np.float32)
+        wok = raw > mmeta["nodata"]
+        wimg = norm(raw, wok)
+        geo = MosaicGeo(mmeta)
+        H, W = wimg.shape
+        la_top, lo_l = geo.to_latlon(0, 0); la_bot, lo_r = geo.to_latlon(W - 1, H - 1)
+        box_ok = [(la_bot + 0.3 < la < la_top - 0.3) and (lo_l + 0.3 < lo < lo_r - 0.3) for la, lo in zip(lat_all, lon_all)]
+        inside = rows[box_ok]
+        print(f"mosaic: {len(inside)} candidate IIRS windows inside the clip", flush=True)
+        wac = type("Ref", (), {"product_id": "WAC_GLOBAL_MOSAIC_100M"})()
+        args.products = ["WAC_GLOBAL_MOSAIC_100M"]
+        picks = np.linspace(inside.min(), inside.max(), N_WIN).astype(int)
+        picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
+        for r0 in picks:
+            t = time.perf_counter()
+            wdw = run_window(iirs, im, sel, wac, wimg, wok, [geo], r0, args.matchers, args.device, stages, dem_tiles,
+                             dict(choice.fine_stage_options))
+            wdw["wac"] = "WAC_GLOBAL_MOSAIC_100M"; wdw["seconds"] = round(time.perf_counter() - t, 1)
+            windows.append(wdw)
+            print(json.dumps({k: wdw.get(k) for k in ("iirs_line0", "status", "coarse")} |
+                             {"ok": {m: (v.get("status", "")[:20], v.get("tier"), v.get("known_shift_error_px"))
+                                     for m, v in (wdw.get("results") or {}).items()}}), flush=True)
+    for pid in ([] if args.reference == "mosaic" else args.products):
         xml = next((ROOT / "data/raw/lro/wac").rglob(f"{pid}.XML"))
         wac = parse_label(xml)
         rec = json.loads((xml.parent / "ode_metadata.json").read_text(encoding="utf-8"))["record"]
