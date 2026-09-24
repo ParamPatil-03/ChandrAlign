@@ -161,9 +161,11 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
     dem = None
     if stages["geometry_filter"] and dem_tiles:
         dem = dem_patch(dem_tiles, (lat_c - 0.4, lat_c + 0.4, lon_c - 0.4, lon_c + 0.4))
+    mapped = isinstance(geo, MosaicGeo)                       # a map grid is exact by construction
     exp = scale.expected_scale(scale.pixel_scale(iirs),
                                PixelScale(wac.product_id, geo.px_x, geo.px_y, (geo.px_x,) * 2, (geo.px_y,) * 2,
-                                          ("ode_footprint",), False, ("from ODE's footprint polygon",)))
+                                          ("map_projection",) if mapped else ("ode_footprint",), mapped,
+                                          ("map-projected mosaic grid",) if mapped else ("from ODE's footprint polygon",)))
     gsd = max(geo.px_x, geo.px_y)
     results = {}
     for name in matchers:
@@ -246,7 +248,8 @@ def main() -> int:
         geo = MosaicGeo(mmeta)
         H, W = wimg.shape
         la_top, lo_l = geo.to_latlon(0, 0); la_bot, lo_r = geo.to_latlon(W - 1, H - 1)
-        box_ok = [(la_bot + 0.3 < la < la_top - 0.3) and (lo_l + 0.3 < lo < lo_r - 0.3) for la, lo in zip(lat_all, lon_all)]
+        M = 0.6            # amendment 2: > IIRS's measured ~12.8 km system error
+        box_ok = [(la_bot + M < la < la_top - M) and (lo_l + 0.3 < lo < lo_r - 0.3) for la, lo in zip(lat_all, lon_all)]
         inside = rows[box_ok]
         print(f"mosaic: {len(inside)} candidate IIRS windows inside the clip", flush=True)
         wac = type("Ref", (), {"product_id": "WAC_GLOBAL_MOSAIC_100M"})()

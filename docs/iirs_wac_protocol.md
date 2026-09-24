@@ -77,3 +77,18 @@ the sidecar). The geometry is exact, so there is ONE orientation: the "2 above t
 runner-up" condition no longer applies (lock = z >= 10). Windows: 5, spread along the IIRS
 strip inside the clip (0.3 deg margin). Consistency bound 240 m (~2.4 mosaic pixels) is
 unchanged. Everything else unchanged. Run 1 (raw CDR frames) stays recorded.
+
+## Mosaic run 1 result, and amendment 2
+
+Run 1 on the mosaic: 4/5 windows lock (z 50-64) and xoftr and sift register 4/5, minima-loftr
+and rift2 3/5 (`reports/iirs_wac_mosaic_run1.json`). **The run-1 hypothesis is confirmed:
+the raw WAC frames were the problem.** The locked windows measure IIRS's system
+geolocation error at ~12.8 km north, ~1.2-1.5 km east, consistent along the strip.
+
+Two harness errors, fixed for run 2 (all 5 windows re-run; run 1 kept for the record):
+1. The one unlocked window (z 7.1) is the northernmost: windows were kept 0.3 deg (~9 km)
+   inside the clip by IIRS's SYSTEM position, less than its measured 12.8 km error, so its
+   true ground fell outside the clip. Margin -> 0.6 deg (~18 km).
+2. The mosaic's pixel size was passed as `unverified`; a map-projected grid is exact by
+   construction and is treated as verified everywhere else (`tc_pixel_scale`). This only
+   affects the reported tier, never success (tier >= LOW either way).
