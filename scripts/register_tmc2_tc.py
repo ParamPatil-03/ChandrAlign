@@ -158,12 +158,14 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
                prior_offset_m: tuple[float, float] = (0.0, 0.0),
                match_kwargs: dict | None = None, gate_reuse_base: bool = False,
-               stages: dict | None = None) -> dict:
+               stages: dict | None = None, col_offset: int = 0) -> dict:
     match_kwargs = dict(match_kwargs or {})
     stages = stage_flags(stages)
-    col_c = tmc.array_shape[1] // 2
+    col_c = tmc.array_shape[1] // 2 + int(col_offset)
     r0, c0 = row_c - win // 2, col_c - win // 2
     out: dict = {"tmc_row": row_c, "window_px": win}
+    if col_offset:
+        out["tmc_col"] = col_c
 
     # ---- stage 1: prior from SYSTEM corners only --------------------------------
     g = np.linspace(0, win - 1, 11)
@@ -278,7 +280,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
         return out
     if DUMP_DIR is not None:
         inl = fr.first.inlier_mask
-        np.savez_compressed(Path(DUMP_DIR) / f"window_{row_c}.npz",
+        np.savez_compressed(Path(DUMP_DIR) / (f"window_{row_c}.npz" if not col_offset else f"window_{row_c}_c{col_c}.npz"),
                             control_src=fr.control_src, control_ref=fr.control_ref,
                             inlier_src=fr.matches.src_pts[inl], inlier_ref=fr.matches.ref_pts[inl],
                             model=np.asarray(fr.model.matrix, float), src_ok=src_ok, ref_ok=ref_ok,
@@ -398,6 +400,8 @@ def main() -> int:
                     help="split the coarse-aligned pair into tiles no larger than this")
     ap.add_argument("--gate-reuse-base", action="store_true",
                     help="perturbation gate reuses the main registration as its baseline")
+    ap.add_argument("--col-offset", type=int, default=0,
+                    help="with --rows: move the window this many TMC-2 columns off the strip centre")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
@@ -447,7 +451,8 @@ def main() -> int:
             r = run_window(tmc, sysm, refm, tcs[key], tcms[key], int(row_c), win=args.win,
                            coarse=args.coarse, margin_km=args.margin_km, matcher=args.matcher,
                            device=args.device, prior_offset_m=tuple(args.prior_offset_m),
-                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages)
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages,
+                           col_offset=args.col_offset)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)

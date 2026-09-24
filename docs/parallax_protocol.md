@@ -76,3 +76,19 @@ Observed, not tested: all three N00 windows keep ~2.2-2.6 px after the correctio
 0.2-0.5 px on flat ground. SLDEM2015 is 59 m/px (8 TC px), so relief finer than that is not
 modelled; a finer DEM would test this. The inlier re-selection hit its 5-round cap on N00
 (still growing), so its inlier counts are a lower bound.
+
+## Amendment 1 (2026-09-25, frozen BEFORE any run on these windows): replication on fresh windows
+
+The run above stays the record and stays "not adopted". Rules (a)-(d), their thresholds and
+the stage (incl. its 5-round cap) are **unchanged**. Only the data is new.
+
+Fresh N00 windows (all hilly, chosen from SLDEM relief alone, before any registration):
+- rows 1562, 3125, 4687 moved to the strip's LEFT and RIGHT edges (`--col-offset -1232` and
+  `+1232`: TMC-2 columns 0-1536 and 2464-4000). Each shares 20% of its area with the old
+  centre window at that row, and none with any other.
+- row 6250, centre (rows 5482-7018): no overlap with any earlier window; relief ~+-90 m.
+
+Each window is run with parallax off (baseline) and on. Rules (a), (b) (N00 clause), (c)
+and (d) are applied to these 7 windows. **Adopt (`pipeline.parallax: true`) only if all
+four hold on the fresh set**; the first run's 1562 shortfall is reported next to it either way.
+A window that fails to register in the BASELINE is excluded from (a), (b), (d) and reported.

@@ -59,13 +59,14 @@ def main() -> int:
     d, run = Path(sys.argv[1]), json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
     base = json.loads(Path(sys.argv[3] if len(sys.argv) > 3 else ROOT / "reports/tmc2_tc_registration.json")
                       .read_text(encoding="utf-8"))
-    before = {w["tmc_row"]: w for w in base["rows"]}
+    key = lambda w: (w["tmc_row"], w.get("tmc_col"))  # noqa: E731
+    before = {key(w): w for w in base["rows"]}
     out = []
     for w in run["rows"]:
-        row, b = w["tmc_row"], before.get(w["tmc_row"], {})
-        f = d / f"window_{row}.npz"
+        row, col, b = w["tmc_row"], w.get("tmc_col"), before.get(key(w), {})
+        f = d / (f"window_{row}.npz" if col is None else f"window_{row}_c{col}.npz")
         par = (w.get("pipeline") or {}).get("parallax", {})
-        rec = {"tile": w.get("tile"), "tmc_row": row, "status": w.get("status"), "tier": w.get("tier"),
+        rec = {"tile": w.get("tile"), "tmc_row": row, "tmc_col": col, "status": w.get("status"), "tier": w.get("tier"),
                "tier_before": b.get("tier"), "status_before": b.get("status"),
                "gates_pass": all(w.get("gates", {}).values()) if w.get("gates") else None,
                "gates_pass_before": all(b.get("gates", {}).values()) if b.get("gates") else None,
@@ -99,7 +100,7 @@ def main() -> int:
     verdict = {"a_empty_cells": a, "b_offsets": b, "c_nothing_lost": c, "d_physical_p": dd,
                "adopt": bool(a and b and c and dd)}
     print(json.dumps(verdict))
-    dst = ROOT / "reports/tmc2_tc_parallax.json"
+    dst = ROOT / (sys.argv[4] if len(sys.argv) > 4 else "reports/tmc2_tc_parallax.json")
     dst.write_text(json.dumps({"source": "measured", "protocol": "docs/parallax_protocol.md", "run": run_record(),
                                "verdict": verdict, "windows": out}, indent=2), encoding="utf-8")
     print(f"wrote {dst}")
