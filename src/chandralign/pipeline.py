@@ -48,7 +48,7 @@ from . import config
 from .contracts import MatchSet, TransformModel
 from .estimate import models, robust
 
-STAGES = ("geometry_filter", "uniformity", "subpixel")
+STAGES = ("geometry_filter", "dense_refine", "uniformity", "subpixel")
 
 
 def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
@@ -90,6 +90,53 @@ def _rmse(model: Optional[TransformModel], src: np.ndarray, ref: np.ndarray) -> 
         return None
     r = np.asarray(models.residuals(model, src, ref), float)
     return float(np.sqrt(np.mean(r ** 2)))
+
+
+def _dense_refine(model: TransformModel, src_img: np.ndarray, ref_img: np.ndarray,
+                  rounds: int = 2) -> tuple[TransformModel, dict]:
+    """Refine the model's TRANSLATION on the whole overlap, robustly to illumination.
+
+    The estimator of cascade.register_step_dense step 4, applied at the fine level: warp
+    the source with the model, estimate the residual shift with NCC and phase on raw
+    intensity AND NCC on every MIND channel (raw intensity fails under a lighting change;
+    MIND does not), take the median of the estimates that succeed (at least 3, each
+    within 1.5 px), and move the model by it. Two rounds. Chosen by measurement:
+    docs/illumination_fix_protocol.md Q6.
+    """
+    import cv2
+    from .preprocess.phase_congruency import mind
+    from .refine import subpixel
+
+    M = np.asarray(model.matrix, float).copy()
+    h, w = np.asarray(ref_img).shape[:2]
+    src = np.asarray(src_img, np.float32)
+    ref = np.asarray(ref_img, np.float32)
+    nz = lambda a: (a - a.min()) / max(float(a.max() - a.min()), 1e-9)   # noqa: E731
+    moves = []
+    for _ in range(rounds):
+        warped = cv2.warpAffine(src, M[:2], (w, h), flags=cv2.INTER_LINEAR)
+        valid = cv2.warpAffine(np.ones(src.shape[:2], np.float32), M[:2], (w, h), flags=cv2.INTER_NEAREST) > 0.5
+        ys, xs = np.where(valid)
+        if len(ys) < 64 * 64:
+            return model, {"applied": False, "reason": "overlap too small", "moves_px": moves}
+        y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+        while not valid[y0:y1, x0:x1].all() and y1 - y0 > 64 and x1 - x0 > 64:
+            y0, y1, x0, x1 = y0 + 1, y1 - 1, x0 + 1, x1 - 1
+        a, b = warped[y0:y1, x0:x1], ref[y0:y1, x0:x1]
+        ests = [subpixel.estimate(a, b, m) for m in ("ncc_gaussian_iter", "phase_iter")]
+        ma, mb = mind(nz(a)).astype(np.float32), mind(nz(b)).astype(np.float32)
+        ests += [subpixel.estimate(ma[..., i], mb[..., i], "ncc_gaussian_iter") for i in range(ma.shape[-1])]
+        ok = [e for e in ests if e.ok and np.all(np.isfinite(e.d)) and np.hypot(*e.d) <= 1.5]
+        if len(ok) < 3:
+            return (TransformModel(kind=model.kind, matrix=M, scale_estimated=model.scale_estimated),
+                    {"applied": bool(moves), "reason": f"only {len(ok)} of {len(ests)} estimates succeeded",
+                     "moves_px": moves})
+        d = np.median(np.array([e.d for e in ok]), axis=0)
+        step = np.eye(3); step[:2, 2] = d
+        M = step @ M
+        moves.append([round(float(d[0]), 4), round(float(d[1]), 4)])
+    return (TransformModel(kind=model.kind, matrix=M, scale_estimated=model.scale_estimated),
+            {"applied": True, "moves_px": moves, "overlap_px": [int(x1 - x0), int(y1 - y0)]})
 
 
 def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
@@ -144,6 +191,13 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
     conf = np.asarray(ms.confidence, float)[inl] if len(ms.confidence) == len(inl) else np.ones(len(cs))
 
+    # 2b. illumination-robust dense refinement of the MODEL's translation
+    model = first.model
+    if flags["dense_refine"]:
+        model, stages["dense_refine"] = _dense_refine(model, src_img, ref_img)
+    else:
+        stages["dense_refine"] = {"applied": False, "reason": "off (pipeline.dense_refine)"}
+
     # 3. uniform control points (ALIGN-04) -- of the inliers, as section 30 prescribes
     grid = int(config.get("uniformity.grid", 8))
     if flags["uniformity"] and len(cs):
@@ -158,7 +212,6 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         stages["uniformity"] = {"applied": False, "reason": "off (pipeline.uniformity)"}
 
     # 4. per-point sub-pixel refinement (PREC-01) of the DELIVERED points
-    model = first.model
     if flags["subpixel"] and len(cs):
         before = cr.copy()
         cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)

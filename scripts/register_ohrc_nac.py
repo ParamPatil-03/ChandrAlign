@@ -301,6 +301,8 @@ def main() -> int:
     ap.add_argument("--coarse-descriptor", default="mind", choices=["mind", "phase_congruency"])
     ap.add_argument("--coarse-m", type=float, default=COARSE_M, help="coarse-lock resolution, metres")
     ap.add_argument("--coarse-only", action="store_true", help="stop after the coarse lock (protocol Q1)")
+    ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
+                    help="override a pipeline stage; defaults from configs/default.yaml pipeline.*")
     ap.add_argument("--bridge", action="store_true",
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
     args = ap.parse_args()
@@ -310,7 +312,7 @@ def main() -> int:
     assert om.independent_of_references
     lroc = json.loads((ROOT / "data/pairs/tmc2_nac_lroc_meta.json").read_text(encoding="utf-8"))["products"]
     sun = json.loads((ROOT / "data/pairs/nac_sun_azimuth_computed.json").read_text(encoding="utf-8"))
-    stages = stage_flags()
+    stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in (i.split("=", 1) for i in args.stage)})
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
     L, S = ohrc.array_shape
     rows_all = np.arange(WIN, L - WIN, 250)
