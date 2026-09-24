@@ -350,7 +350,7 @@ def main() -> int:
         best = {}
         for cc in cols_all:                                   # nearest-to-centre first
             la, lo = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, float(cc)))
-            if args.bridge and pid in BRIDGE:        # Q5: place by the PREDICTED true position
+            if (args.bridge or args.auto_bridge) and pid in BRIDGE:   # Q5/Q8: place by the PREDICTED position
                 k = math.pi / 180 * MOON_R_M
                 la = np.asarray(la) + BRIDGE[pid][1] / k
                 lo = np.asarray(lo) + BRIDGE[pid][0] / (k * np.cos(np.radians(la)))

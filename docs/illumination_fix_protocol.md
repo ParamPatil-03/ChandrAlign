@@ -199,3 +199,13 @@ applied to every window whether it was locked or bridged.
 
 **Adopt automatic bridging** if, on all five products, no window that succeeds without it
 fails with it, and it adds at least one success.
+
+### Q8 amendment 1 (after run 1, which is void)
+
+Run 1 placed windows by OHRC's APPARENT (system) position. For the two bridged products the
+bridge moves each window ~2 km, off their narrow NAC strips: M106719774LC's frames fell
+entirely outside (5 skipped) and M175124932LC's were clipped to 111-182 px (0 matches).
+Nothing was measured for either. Change, placement only: for every product WITH a bridge
+prediction, windows are placed by the predicted true position (as Q5 did). The coarse lock
+still runs first on each window; the bridge is still used only if it fails. Products
+without a prediction are placed as before. Run 2 is the result; all five are re-run.
