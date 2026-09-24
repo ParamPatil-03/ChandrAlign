@@ -142,3 +142,31 @@ each within 1.5 px), update the model's translation, repeat once. New pipeline s
 and its median known-shift error rises by no more than 0.05 px, AND (b) it adds at least
 one success on M175124932LC or M1417360906LC. Otherwise it stays off and both products
 are recorded unsolved.
+
+## Q6 result
+
+| product | matcher | known-shift error, stage off -> on | successes off -> on |
+|---|---|---|---|
+| control | eloftr | median **0.568 -> 0.053 px** | 5/5 -> 5/5 |
+| control | minima-loftr | 0.14-1.83 -> 0.04-0.68 px | 4/5 -> 5/5 |
+| M175124932LC (opposed) | minima-loftr | one window 1.76 -> 0.59; elsewhere the estimator fails (0-1 of 10 estimates succeed) | 0 -> 0 |
+| M1417360906LC (75 deg) | minima-loftr | mixed (0.66 -> 0.32; 2.18 -> 2.89) | 0 -> 0 |
+
+Rule (a) holds (control 5/5, median error far lower); rule (b) fails (no new success on
+either hard product). **By the frozen rule `dense_refine` stays OFF, and both products are
+recorded unsolved at the precision stage**: under opposed sun / 75 deg the illumination-
+robust estimators themselves fail, not only the matchers.
+
+The 10x precision gain on same-sun data was seen on the control, i.e. on data used to
+look at the result, so it is NOT adopted on that basis. Q7 tests it on data it has not
+seen.
+
+## Q7 (frozen before its run): dense_refine as a PRECISION stage, on unseen data
+
+Data: the nine committed TMC-2 -> SELENE TC windows (`scripts/register_tmc2_tc.py --tile
+all --windows 3`), current defaults, with `--stage dense_refine=on`; compared with the
+committed `reports/tmc2_tc_registration.json` (same code, stage off).
+
+Adopt `dense_refine: true` as a default iff ALL hold: no window loses registration, tier
+or a gate; the median known-shift error falls by at least 20%; the largest known-shift
+error does not rise.
