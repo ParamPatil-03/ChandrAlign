@@ -92,3 +92,29 @@ Each window is run with parallax off (baseline) and on. Rules (a), (b) (N00 clau
 and (d) are applied to these 7 windows. **Adopt (`pipeline.parallax: true`) only if all
 four hold on the fresh set**; the first run's 1562 shortfall is reported next to it either way.
 A window that fails to register in the BASELINE is excluded from (a), (b), (d) and reported.
+
+## Amendment 1 result (2026-09-25): NOT adopted again
+
+`reports/tmc2_tc_parallax_fresh.json` (7 fresh N00 windows, off vs on).
+
+| window (row, col) | empty cells | RMS affine | RMS affine+parallax | ratio | p / predicted |
+|---|---|---|---|---|---|
+| 1562, 768 | 4 -> 0 | 4.92 px | 2.69 px | 0.55 | 0.87 |
+| 3125, 768 | 4 -> 0 | 5.80 | 2.94 | 0.51 | 1.02 |
+| 4687, 768 | 0 -> 0 | 0.21 | 0.19 | 0.89 | 0.44, not along-track |
+| 1562, 3232 | 0 -> 0 | 3.33 | 1.67 | 0.50 | 0.97 |
+| 3125, 3232 | 5 -> 0 | 5.34 | 2.84 | 0.53 | 0.97 |
+| 4687, 3232 | 12 -> 2 | 12.25 | 6.00 | 0.49 | 0.82 |
+| 6250, centre | 11 -> 1 | 8.86 | 7.87 | 0.89 | 0.98 |
+
+(c) passes (nothing lost). (a) fails (4687/3232 keeps 2 empty cells), (b) fails (4 of 7
+windows cut the error by less than 50%), (d) fails on 4687/768 -- which turned out flat
+(0.21 px), because relief was checked at the strip centre, not at that column. **Stays off.**
+This is the second failure; per the standing rule, work on it stops here and is reported.
+
+What both runs show together (16 windows): no window got worse on any measure, empty
+cells 53 -> 3, inliers up ~50-95% on hilly windows, p matches the 26 deg geometry. But the
+correction typically halves the error rather than removing it (2-3 px left on most hilly
+windows, 6-8 px on two). Not tested: whether a finer DEM than SLDEM2015 (59 m/px) removes
+the rest; row 6250's small gain (8.9 -> 7.9 px) with a physical p suggests something else
+there too.
