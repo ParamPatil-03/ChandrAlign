@@ -58,6 +58,7 @@ BRIDGE = {"M102014464RC": (551 - 597, 2229 + 75),
           "M106719774LC": (551 + 557, 2229 - 143),
           "M175124932LC": (551 + 217, 2229 - 288)}
 BRIDGE_MARGIN_M = 200.0
+FINE_MIN_M = 0.5              # Q5 amendment 1: no fine-grid axis finer than this
 
 
 def T(x, y):
@@ -103,13 +104,15 @@ class NacGeo:
 
 
 class Shifted:
-    """Ground model for fine-frame px: NAC px offset by the frame origin."""
+    """Ground model for fine-frame px: (blocked) frame px -> NAC native px -> lat/lon."""
 
-    def __init__(self, geo, ox, oy):
-        self.geo, self.ox, self.oy = geo, ox, oy
+    def __init__(self, geo, ox, oy, bx=1, by=1):
+        self.geo, self.ox, self.oy, self.bx, self.by = geo, ox, oy, bx, by
 
     def pixel_to_latlon(self, rows, cols):
-        return self.geo.pixel_to_latlon(np.asarray(rows, float) + self.oy, np.asarray(cols, float) + self.ox)
+        rows = (np.asarray(rows, float) + 0.5) * self.by - 0.5 + self.oy
+        cols = (np.asarray(cols, float) + 0.5) * self.bx - 0.5 + self.ox
+        return self.geo.pixel_to_latlon(rows, cols)
 
 
 def match(name, a, b, device, gsd):
@@ -200,13 +203,21 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
     wF, hF = int(e_[0] - o[0]), int(e_[1] - o[1])
     if wF < 64 or hF < 64:
         out["status"] = "skipped: fine frame falls outside the NAC strip"; out["results"] = {}; return out
-    Wf = T(-o[0], -o[1]) @ T_c
-    src = warp_affine(ohrc_n, Wf, (wF, hF))
-    src_ok = cv2.warpAffine(o_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
+    # Fine grid: NAC native, block-averaged per axis so no axis is finer than FINE_MIN_M.
+    bx, by = max(1, math.ceil(FINE_MIN_M / nac.px_w - 1e-9)), max(1, math.ceil(FINE_MIN_M / nac.px_h - 1e-9))
+    wF, hF = (wF // bx) * bx, (hF // by) * by
+    D = np.array([[1 / bx, 0, 0.5 / bx - 0.5], [0, 1 / by, 0.5 / by - 0.5], [0, 0, 1]], float)
+    Wf = D @ T(-o[0], -o[1]) @ T_c                                   # OHRC px -> fine-grid px
+    wG, hG = wF // bx, hF // by
+    src = warp_affine(ohrc_n, Wf, (wG, hG))
     ref_raw = pds_raster.read_raster(nacm, pds_raster.Window(int(o[1]), int(o[0]), hF, wF)).astype(np.float32)
     ref_ok = ref_raw > NULL_BELOW
     ref = norm(ref_raw, ref_ok)
-    out["fine_frame_px"] = [wF, hF]
+    if bx > 1 or by > 1:
+        ref = ref.reshape(hG, by, wG, bx).mean(axis=(1, 3)).astype(np.float32)
+    out["fine_frame_px"] = [wG, hG]
+    out["fine_block"] = [bx, by]
+    wF, hF = wG, hG
 
     dem = None
     if stages["geometry_filter"] and dem_tiles:
@@ -215,7 +226,7 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
     exp = scale.expected_scale(scale.pixel_scale(ohrc),
                                PixelScale(nac.pid, nac.px_w, nac.px_h, (nac.px_w, nac.px_w), (nac.px_h, nac.px_h),
                                           ("lroc_scaled_pixel",), False, ("LROC scaled pixel size",)))
-    gsd = max(nac.px_w, nac.px_h)
+    gsd = max(nac.px_w * bx, nac.px_h * by)
     results = {}
 
     def evaluate(name):
@@ -230,14 +241,14 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
                 results[name] = {"status": f"only {n} matches", "matches": n, "success": False}
                 return results[name]
             fr = fine_stage(ms, src, ref, centre=(wF / 2, hF / 2), flags=stages,
-                            ground_model=Shifted(geo, o[0], o[1]), dem=dem)
+                            ground_model=Shifted(geo, o[0], o[1], bx, by), dem=dem)
             r.update(matches=n, inliers=fr.inlier_count, inlier_ratio=round(fr.inlier_ratio, 4),
                      control_points=int(len(fr.control_src)), coverage=round(fr.coverage, 3),
                      inlier_rmse_px=None if fr.rmse_px is None else round(fr.rmse_px, 3), pipeline=fr.stages)
             if not fr.ok:
                 results[name] = {**r, "status": "fine stage: no transform", "success": False}
                 return results[name]
-            T_total = T(o[0], o[1]) @ np.asarray(fr.model.matrix, float) @ Wf
+            T_total = T(o[0], o[1]) @ np.linalg.inv(D) @ np.asarray(fr.model.matrix, float) @ Wf
             fx, fy = (T_total @ [WIN / 2, WIN / 2, 1])[:2]
             la_f, lo_f = geo.pixel_to_latlon([fy], [fx])
             ef = enu(float(la_f[0]), float(lo_f[0]), lat_c, lon_c)

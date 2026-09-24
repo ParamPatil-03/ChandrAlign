@@ -91,3 +91,15 @@ otherwise the bridge is not trusted and the two products are not interpreted.
 **Interpretation:** success on a product => its earlier failure was the search, and the
 bridge fixes it; failure => no usable similarity at that sun geometry for these
 matchers, and the product is recorded as unsolved by the methods available.
+
+### Q5 amendment 1 (before M175124932LC was measured)
+
+The first complete Q5 run measured the control and M106719774LC, but every
+M175124932LC window died of CUDA out-of-memory: its NAC pixels are 0.24 m across, so the
+bridge frame (+200 m each side) was ~4,200 px wide and eloftr asked for ~45 GB. No
+result exists for that product; the harness could not run it.
+
+Change, harness only: the fine stage works on the NAC grid block-averaged per axis so no
+axis is finer than 0.5 m (`FINE_MIN_M`). Only M175124932LC changes (0.24 x 0.56 m ->
+0.72 x 0.56 m); every other product's pixels are already >= 0.5 m, so their measured
+results stand. Success rules unchanged. Only M175124932LC is re-run.
