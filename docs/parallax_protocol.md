@@ -52,3 +52,27 @@ per 8x8 cell with full valid data, the phase-correlation offset between the two 
 Limits: one TMC-2 product (aft view), one DEM (SLDEM2015, 59 m/px, coarser than the 7.4 m
 grid, so relief finer than ~8 px is not modelled). The DEM is also an input to the model;
 the phase-correlation measure is not, so (b) is not circular. It does not check the TPS.
+
+## Result (2026-09-25): NOT adopted by rule (b) -- one window short
+
+`reports/tmc2_tc_parallax.json` (all 9 windows, parallax on; baseline
+`reports/tmc2_tc_registration.json`). RMS = phase-correlation offset minus model, per cell.
+
+| window | empty cells | RMS affine | RMS affine+parallax | ratio | p / predicted |
+|---|---|---|---|---|---|
+| N00 1562 | 1 -> 0 | 3.62 px | 2.24 px | **0.62** | 0.90 |
+| N00 3125 | 6 -> 0 | 7.30 | 2.57 | 0.35 | 0.95 |
+| N00 4687 | 10 -> 0 | 6.43 | 2.37 | 0.37 | 1.01 |
+| N03/N09 (6) | 0 -> 0 | 0.25-1.07 | 0.21-0.49 | 0.28-0.87 | -- |
+
+(a) pass: 17 -> 0 empty cells. (c) pass: every window keeps registration, tier and all five
+gates. (d) pass: p along-track, 0.90-1.01x the 26 deg prediction on N00. (b) **fails**: N00
+1562 improves 38%, the rule asked for 50%. Every window improves; none gets worse. Inliers
+on N00 rise 53-85% (8,743 -> 13,339; 6,941 -> 12,611; 7,742 -> 14,351).
+
+By the frozen rule the stage stays **off**. Not re-decided on these numbers.
+
+Observed, not tested: all three N00 windows keep ~2.2-2.6 px after the correction, against
+0.2-0.5 px on flat ground. SLDEM2015 is 59 m/px (8 TC px), so relief finer than that is not
+modelled; a finer DEM would test this. The inlier re-selection hit its 5-round cap on N00
+(still growing), so its inlier counts are a lower bound.

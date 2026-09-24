@@ -34,7 +34,10 @@ The local second pass filled 1 cell on 1 window (4687: coverage 0.844 -> 0.859; 
 point's residual 1.59 px vs 1.72 px for primary points). Rule (a) needs 2 of 3 windows ->
 **not adopted; `refill` stays off.** Nothing else changed (model and gates untouched).
 
-Hypothesis, NOT tested: most empty cells lie where one image has no valid data (rotated-window
+**Hypothesis below tested 2026-09-25 and WRONG** (see docs/parallax_protocol.md): the empty cells
+have 80-100% valid data and ordinary texture; they are where terrain parallax of the TMC-2
+aft view (26 deg) moves the true matches 5-25 px off the affine, so they fail its threshold.
+Original hypothesis: most empty cells lie where one image has no valid data (rotated-window
 corners, the TC tile edge near N00), where no matcher can find anything; if so, coverage should
 be reported over cells with valid overlap in both images, which is a reporting change, not a
 refill.

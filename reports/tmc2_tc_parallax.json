@@ -1,0 +1,406 @@
+{
+  "source": "measured",
+  "protocol": "docs/parallax_protocol.md",
+  "run": {
+    "command": "python scripts/parallax_eval.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/par_on C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/par_on.json",
+    "commit": "d1f83c1e4d41ff928dfe4f88fb47a5f8afd53c43",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T18:44:13+00:00"
+  },
+  "verdict": {
+    "a_empty_cells": true,
+    "b_offsets": false,
+    "c_nothing_lost": true,
+    "d_physical_p": true,
+    "adopt": false
+  },
+  "windows": [
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 1,
+      "coverage": 1.0,
+      "coverage_before": 0.984,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00103,
+          -0.05905
+        ],
+        "h0_m": -1337.7,
+        "rounds": 5,
+        "inliers_before": 8743,
+        "inliers_after": 13339,
+        "rms_px": 1.2705,
+        "affine": [
+          [
+            1.015922,
+            -0.002084,
+            -2.84326
+          ],
+          [
+            0.000883,
+            0.999343,
+            2.164542
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 3.623,
+      "rms_parallax_px": 2.239,
+      "p_along_track": true,
+      "p_over_predicted": 0.896
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "status": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 6,
+      "coverage": 1.0,
+      "coverage_before": 0.906,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.0017,
+          -0.06254
+        ],
+        "h0_m": -1342.8,
+        "rounds": 5,
+        "inliers_before": 6941,
+        "inliers_after": 12611,
+        "rms_px": 1.3284,
+        "affine": [
+          [
+            1.015106,
+            -0.002838,
+            -3.186867
+          ],
+          [
+            0.001272,
+            1.000041,
+            2.495716
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 7.297,
+      "rms_parallax_px": 2.572,
+      "p_along_track": true,
+      "p_over_predicted": 0.95
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 4687,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 10,
+      "coverage": 1.0,
+      "coverage_before": 0.844,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00119,
+          -0.06666
+        ],
+        "h0_m": -1567.5,
+        "rounds": 5,
+        "inliers_before": 7742,
+        "inliers_after": 14351,
+        "rms_px": 1.0198,
+        "affine": [
+          [
+            1.015746,
+            -0.001812,
+            -12.185279
+          ],
+          [
+            9.3e-05,
+            1.00047,
+            -1.304258
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 6.426,
+      "rms_parallax_px": 2.371,
+      "p_along_track": true,
+      "p_over_predicted": 1.012
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 16000,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00315,
+          -0.05972
+        ],
+        "h0_m": -1920.0,
+        "rounds": 5,
+        "inliers_before": 13770,
+        "inliers_after": 14053,
+        "rms_px": 0.8457,
+        "affine": [
+          [
+            1.012076,
+            -0.002249,
+            -4.999279
+          ],
+          [
+            0.000188,
+            0.999787,
+            1.224274
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.83,
+      "rms_parallax_px": 0.487,
+      "p_along_track": true,
+      "p_over_predicted": 0.908
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 18750,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00655,
+          -0.02214
+        ],
+        "h0_m": -2032.1,
+        "rounds": 3,
+        "inliers_before": 15145,
+        "inliers_after": 15158,
+        "rms_px": 0.7115,
+        "affine": [
+          [
+            1.011451,
+            -0.002486,
+            -3.404711
+          ],
+          [
+            0.00071,
+            0.997636,
+            2.004331
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.251,
+      "rms_parallax_px": 0.205,
+      "p_along_track": false,
+      "p_over_predicted": 0.35
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 21500,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00223,
+          -0.05256
+        ],
+        "h0_m": -2071.5,
+        "rounds": 5,
+        "inliers_before": 15021,
+        "inliers_after": 15023,
+        "rms_px": 0.7755,
+        "affine": [
+          [
+            1.009887,
+            -0.002032,
+            -3.838217
+          ],
+          [
+            -0.000393,
+            1.000172,
+            0.576236
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.673,
+      "rms_parallax_px": 0.258,
+      "p_along_track": true,
+      "p_over_predicted": 0.799
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 52000,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00071,
+          -0.03347
+        ],
+        "h0_m": -1896.4,
+        "rounds": 3,
+        "inliers_before": 15810,
+        "inliers_after": 15824,
+        "rms_px": 0.6832,
+        "affine": [
+          [
+            0.993912,
+            -0.000983,
+            3.954369
+          ],
+          [
+            0.000632,
+            0.999489,
+            1.127918
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.342,
+      "rms_parallax_px": 0.293,
+      "p_along_track": true,
+      "p_over_predicted": 0.508
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 54750,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.01072,
+          -0.06048
+        ],
+        "h0_m": -1940.8,
+        "rounds": 2,
+        "inliers_before": 14992,
+        "inliers_after": 15262,
+        "rms_px": 0.6864,
+        "affine": [
+          [
+            0.995186,
+            -0.001363,
+            3.68692
+          ],
+          [
+            -0.000274,
+            1.000029,
+            0.193441
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 1.067,
+      "rms_parallax_px": 0.293,
+      "p_along_track": true,
+      "p_over_predicted": 0.932
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 57500,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00607,
+          -0.04992
+        ],
+        "h0_m": -1954.9,
+        "rounds": 3,
+        "inliers_before": 15140,
+        "inliers_after": 15180,
+        "rms_px": 0.709,
+        "affine": [
+          [
+            0.993814,
+            -0.001004,
+            4.60122
+          ],
+          [
+            0.001277,
+            0.999896,
+            -0.599888
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.509,
+      "rms_parallax_px": 0.276,
+      "p_along_track": true,
+      "p_over_predicted": 0.763
+    }
+  ]
+}
