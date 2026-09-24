@@ -111,3 +111,34 @@ ran out of GPU memory; nothing was measured. Frames up to ~1.3 Mpx have run on t
 (M109080308LC, Q2). Change, harness only: after amendment 1, the finer axis is coarsened
 by further whole-pixel blocks until the frame is at most 1.5 Mpx (`FINE_MAX_PX`). No
 measured product is affected (the control and M106719774LC frames are < 0.7 Mpx).
+
+## Q5 result (recorded before Q6 was designed)
+
+- Validation: control eloftr 5/5; bridge prediction 128 m from the measured offset (< 200 m).
+- M106719774LC (55 deg incidence): eloftr 3/5, minima-loftr 3/5 (degraded); routed
+  (eloftr then minima-loftr) 4/5; every locked window within 6 m of the others.
+  **Its Q1 failure was the +-4 km search, not the illumination.**
+- M175124932LC (opposed sun): eloftr fails outright (6-34 matches, scattered offsets).
+  minima-loftr puts all 5 windows at mutually consistent positions (within ~50 m; ~130 m
+  from the bridge) with 300-1,045 matches, but its known-shift error is 1.48-2.29 px (gate
+  1.5 px): 1/5 passes, fewer than the 3 the rule needs -> unsolved. **It locates the
+  opposed-sun pair; it is not precise enough.**
+
+## Q6 (frozen before its run): illumination-robust dense refinement of the model
+
+The remaining failures (M175124932LC; M1417360906LC in Q2, errors 2.2-3.1 px) are PRECISION
+failures after a correct lock. The coarse step already refines on illumination-robust
+channels (`cascade.register_step_dense` step 4: NCC/phase on raw intensity AND NCC on each
+MIND channel, median of all that succeed). Q6 applies the same estimator to the WHOLE fine
+frame after the first robust estimate: warp the source with the model, estimate the
+residual translation (median over raw + MIND-channel estimates, at least 3 succeeding,
+each within 1.5 px), update the model's translation, repeat once. New pipeline stage
+`dense_refine` (default OFF). The control gates run it too (they call fine_stage).
+
+**Runs:** stage ON for: control and M175124932LC (bridge mode, as Q5), and M1417360906LC
+(normal 2 m lock, as Q2). Stage OFF results for the same windows already exist (Q5, Q2).
+
+**Decision:** `dense_refine` becomes a default if (a) the control stays 5/5 for eloftr
+and its median known-shift error rises by no more than 0.05 px, AND (b) it adds at least
+one success on M175124932LC or M1417360906LC. Otherwise it stays off and both products
+are recorded unsolved.
