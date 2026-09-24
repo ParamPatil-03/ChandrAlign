@@ -261,3 +261,10 @@ Two gate-passing windows are fewer than the 3 the consistency rule needs, so non
 the 2048-px centres, and 2 of its enlarged windows run past the strip edge. **By the frozen
 rule, automatic enlargement is not adopted; the 75 deg case remains unsolved in the
 shipped behaviour** (solvable in principle: exploratory 4/5).
+
+## Q10 (frozen before its run): enlargement re-centred to fit the strip
+
+As Q9, except the 4096 px window is placed at the candidate centre nearest the original
+window whose 4096 px window lies inside the NAC footprint (the placement rule of
+amendment 2, applied at 4096 px) -- what the exploratory 4/5 check did. If no such centre
+exists, no enlargement. Adopt on the Q9 rule (none lost, at least one added).

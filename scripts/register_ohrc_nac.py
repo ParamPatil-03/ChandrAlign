@@ -350,19 +350,29 @@ def main() -> int:
         geo = NacGeo(nac, *nacm.array_shape)
         # Amendment 2: the window's HALF-extent in NAC px, plus 10% (was the full extent,
         # which excluded every window on a strip narrower than two windows).
-        pad = 1.1 * (WIN / 2) * OHRC_PX / min(nac.px_w, nac.px_h)
         Ln, Sn = nacm.array_shape
-        best = {}
-        for cc in cols_all:                                   # nearest-to-centre first
-            la, lo = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, float(cc)))
-            if (args.bridge or args.auto_bridge) and pid in BRIDGE:   # Q5/Q8: place by the PREDICTED position
-                k = math.pi / 180 * MOON_R_M
-                la = np.asarray(la) + BRIDGE[pid][1] / k
-                lo = np.asarray(lo) + BRIDGE[pid][0] / (k * np.cos(np.radians(la)))
-            x, y = geo.to_px(la, lo)
-            ok = (x > pad) & (x < Sn - pad) & (y > pad) & (y < Ln - pad)
-            for rc in rows_all[ok]:
-                best.setdefault(int(rc), int(cc))
+
+        def place(win):
+            """{OHRC row: column} of centres whose win-px window lies inside the NAC footprint."""
+            pad = 1.1 * (win / 2) * OHRC_PX / min(nac.px_w, nac.px_h)
+            cols = np.arange(win // 2, S - win // 2 + 1, 256)
+            cols = cols[np.argsort(np.abs(cols - S / 2.0), kind="stable")]
+            out = {}
+            for cc in cols:                                   # nearest-to-centre first
+                la, lo = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, float(cc)))
+                if (args.bridge or args.auto_bridge) and pid in BRIDGE:   # Q5/Q8: place by the PREDICTED position
+                    k = math.pi / 180 * MOON_R_M
+                    la = np.asarray(la) + BRIDGE[pid][1] / k
+                    lo = np.asarray(lo) + BRIDGE[pid][0] / (k * np.cos(np.radians(la)))
+                x, y = geo.to_px(la, lo)
+                ok = (x > pad) & (x < Sn - pad) & (y > pad) & (y < Ln - pad)
+                for rc in rows_all[ok]:
+                    if win // 2 <= rc <= L - win // 2:
+                        out.setdefault(int(rc), int(cc))
+            return out
+
+        best = place(WIN)
+        big = None                                            # Q10: computed on first need
         inside = np.array(sorted(best))
         print(f"{pid}: {len(inside)} candidate OHRC rows inside the footprint", flush=True)
         if len(inside) == 0:
@@ -384,12 +394,17 @@ def main() -> int:
                 good = lambda r: r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")  # noqa: E731
                 if not good((w.get("results") or {}).get("routed", {})):
                     base = WIN
-                    WIN = 2 * base
-                    try:
-                        w2 = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages,
-                                        dem_tiles, bridge=BRIDGE.get(pid) if w.get("coarse_lock_failed") else None)
-                    finally:
-                        WIN = base
+                    big = place(2 * base) if big is None else big
+                    w2 = {"status": "no 4096 px window fits the strip"}
+                    if big:
+                        rc2 = min(big, key=lambda r: abs(r - rc))       # Q10: nearest centre that fits
+                        WIN = 2 * base
+                        try:
+                            w2 = run_window(ohrc, om, nacm, geo, nac, rc2, big[rc2], args.matchers, args.device,
+                                            stages, dem_tiles,
+                                            bridge=BRIDGE.get(pid) if w.get("coarse_lock_failed") else None)
+                        finally:
+                            WIN = base
                     if good((w2.get("results") or {}).get("routed", {})):
                         w2["enlarged"] = {"from_px": base, "to_px": 2 * base, "small_result": w.get("results", {}).get("routed")}
                         w = w2
