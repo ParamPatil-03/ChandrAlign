@@ -151,7 +151,7 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
         T_c = A_sys
         out["coarse"] = {"mode": "bridge", "offset_m": list(bridge)}
         out["system_offset_m"] = {"east": float(bridge[0]), "north": float(bridge[1])}
-        return _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages,
+        return _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages,
                      dem_tiles, exp_margin_m=BRIDGE_MARGIN_M)
     cx, cy = (A_sys @ [WIN / 2, WIN / 2, 1])[:2]
     half = int(MARGIN_M / nac.px_h) + WIN
@@ -184,10 +184,10 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
     if coarse_only:
         out["status"] = "locked"; out["results"] = {}; return out
 
-    return _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles)
+    return _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles)
 
 
-def _fine(out, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles,
+def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, device, stages, dem_tiles,
           exp_margin_m=0.0):
     L, Sn = nacm.array_shape
     # 3. fine frame on the NAC grid
