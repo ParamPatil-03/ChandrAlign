@@ -108,11 +108,12 @@ def head(url: str) -> int | None:
 
 
 def fetch(url: str, dest: Path) -> None:
-    """Download one file, resuming a dropped connection (fetch_dem.fetch).
+    """Download one file, retrying a dropped connection (fetch_dem.fetch).
 
-    The earlier single-shot version lost everything on a reset connection (a 302 MB
-    TC DTM tile died at 181 MB, 2026-09-25). fetch_dem.fetch keeps a .part, resumes
-    it with an HTTP Range request, and only renames a complete file.
+    The earlier single-shot version gave up on a reset connection (a 302 MB TC DTM
+    tile died at 181 MB, 2026-09-25). fetch_dem.fetch retries and only renames a
+    complete file. DARTS ignores HTTP Range (checked 2026-09-25: 200, whole file), so
+    there each retry starts from zero; a server that honours Range is resumed.
     """
     dest.parent.mkdir(parents=True, exist_ok=True)
     from fetch_dem import fetch as fetch_resumable
