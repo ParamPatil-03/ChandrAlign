@@ -248,7 +248,7 @@ def main() -> int:
         geo = MosaicGeo(mmeta)
         H, W = wimg.shape
         la_top, lo_l = geo.to_latlon(0, 0); la_bot, lo_r = geo.to_latlon(W - 1, H - 1)
-        M = 0.6            # amendment 2: > IIRS's measured ~12.8 km system error
+        M = 1.2            # amendment 3: half a window (0.34 deg) + IIRS system error (0.42 deg) + slack
         box_ok = [(la_bot + M < la < la_top - M) and (lo_l + 0.3 < lo < lo_r - 0.3) for la, lo in zip(lat_all, lon_all)]
         inside = rows[box_ok]
         print(f"mosaic: {len(inside)} candidate IIRS windows inside the clip", flush=True)

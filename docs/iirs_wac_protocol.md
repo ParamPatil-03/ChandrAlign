@@ -92,3 +92,11 @@ Two harness errors, fixed for run 2 (all 5 windows re-run; run 1 kept for the re
 2. The mosaic's pixel size was passed as `unverified`; a map-projected grid is exact by
    construction and is treated as verified everywhere else (`tc_pixel_scale`). This only
    affects the reported tier, never success (tier >= LOW either way).
+
+## Mosaic run 2 result, and amendment 3 (placement only)
+
+Run 2: the same 4 windows register (xoftr now HIGH with the map grid verified); the
+northern window again fails to lock (z 7.2) -- because a window is 512 IIRS lines
+(~0.67 deg tall): half of it (0.34 deg) plus the 0.42 deg system error exceeds a 0.6 deg
+margin measured from the window CENTRE. Margin -> 1.2 deg (half window + error + slack).
+Run 3 is the result; runs 1-2 kept (`reports/iirs_wac_mosaic_run{1,2}.json`).

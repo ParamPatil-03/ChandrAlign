@@ -1,0 +1,534 @@
+{
+  "source": "measured",
+  "protocol": "docs/iirs_wac_protocol.md",
+  "iirs": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+  "route": {
+    "route": "direct",
+    "matcher": "xoftr",
+    "fine_stage_options": {
+      "tile_px": 640
+    },
+    "regime": "cross_modal",
+    "expectation": "unknown",
+    "reason": "cross-modal pair: xoftr, the only candidate measured at 10/10 on cross-modal, tiled at 640 px in the fine stage",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "dense_refine": false,
+    "uniformity": true,
+    "subpixel": true
+  },
+  "run": {
+    "command": "python scripts/register_iirs_wac.py --reference mosaic --out reports/iirs_wac_mosaic.json",
+    "commit": "0657fecab5265a1ba8be10b8f73e41df10e95085",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T16:18:29+00:00"
+  },
+  "summary": {
+    "WAC_GLOBAL_MOSAIC_100M": {
+      "xoftr": {
+        "success": 4,
+        "windows": 5,
+        "verdict": "degraded"
+      },
+      "minima-loftr": {
+        "success": 4,
+        "windows": 5,
+        "verdict": "degraded"
+      },
+      "rift2": {
+        "success": 3,
+        "windows": 5,
+        "verdict": "degraded"
+      },
+      "sift": {
+        "success": 4,
+        "windows": 5,
+        "verdict": "degraded"
+      }
+    }
+  },
+  "windows": [
+    {
+      "iirs_line0": 1600,
+      "coarse": {
+        "best": "mosaic",
+        "z": 7.2,
+        "runner_up_z": null
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "WAC_GLOBAL_MOSAIC_100M",
+      "seconds": 1.2
+    },
+    {
+      "iirs_line0": 2240,
+      "coarse": {
+        "best": "mosaic",
+        "z": 62.1,
+        "runner_up_z": null
+      },
+      "fine_frame_px": [
+        264,
+        409
+      ],
+      "results": {
+        "xoftr": {
+          "matches": 1279,
+          "inliers": 1226,
+          "inlier_ratio": 0.9935,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.27,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.058,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1246.4,
+            "north": 12789.2
+          },
+          "seconds": 14.2,
+          "success": true
+        },
+        "minima-loftr": {
+          "matches": 1352,
+          "inliers": 1323,
+          "inlier_ratio": 0.9985,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.28,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.255,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1229.2,
+            "north": 12800.3
+          },
+          "seconds": 3.0,
+          "success": true
+        },
+        "rift2": {
+          "matches": 84,
+          "inliers": 70,
+          "inlier_ratio": 0.875,
+          "coverage": 0.25,
+          "inlier_rmse_px": 0.868,
+          "status": "registered",
+          "tier": "LOW",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.306,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1216.9,
+            "north": 12819.8
+          },
+          "seconds": 16.6,
+          "success": true
+        },
+        "sift": {
+          "matches": 98,
+          "inliers": 82,
+          "inlier_ratio": 0.9762,
+          "coverage": 0.547,
+          "inlier_rmse_px": 0.222,
+          "status": "registered",
+          "tier": "MEDIUM",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.016,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1229.1,
+            "north": 12799.4
+          },
+          "seconds": 0.5,
+          "success": true
+        }
+      },
+      "status": "locked",
+      "wac": "WAC_GLOBAL_MOSAIC_100M",
+      "seconds": 36.1
+    },
+    {
+      "iirs_line0": 2880,
+      "coarse": {
+        "best": "mosaic",
+        "z": 59.9,
+        "runner_up_z": null
+      },
+      "fine_frame_px": [
+        265,
+        409
+      ],
+      "results": {
+        "xoftr": {
+          "matches": 1391,
+          "inliers": 1326,
+          "inlier_ratio": 0.991,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.258,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.033,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1332.8,
+            "north": 12830.8
+          },
+          "seconds": 2.0,
+          "success": true
+        },
+        "minima-loftr": {
+          "matches": 1339,
+          "inliers": 1299,
+          "inlier_ratio": 0.9985,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.467,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.474,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1314.6,
+            "north": 12848.9
+          },
+          "seconds": 1.6,
+          "success": true
+        },
+        "rift2": {
+          "matches": 4,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "coverage": 0.0,
+          "inlier_rmse_px": null,
+          "status": "fine stage: no transform",
+          "success": false
+        },
+        "sift": {
+          "matches": 84,
+          "inliers": 61,
+          "inlier_ratio": 0.9104,
+          "coverage": 0.5,
+          "inlier_rmse_px": 0.226,
+          "status": "registered",
+          "tier": "MEDIUM",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.004,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1324.0,
+            "north": 12838.1
+          },
+          "seconds": 0.5,
+          "success": true
+        }
+      },
+      "status": "locked",
+      "wac": "WAC_GLOBAL_MOSAIC_100M",
+      "seconds": 8.5
+    },
+    {
+      "iirs_line0": 3520,
+      "coarse": {
+        "best": "mosaic",
+        "z": 50.8,
+        "runner_up_z": null
+      },
+      "fine_frame_px": [
+        266,
+        409
+      ],
+      "results": {
+        "xoftr": {
+          "matches": 1425,
+          "inliers": 1346,
+          "inlier_ratio": 0.997,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.484,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.02,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1424.8,
+            "north": 12865.2
+          },
+          "seconds": 2.0,
+          "success": true
+        },
+        "minima-loftr": {
+          "matches": 1239,
+          "inliers": 1191,
+          "inlier_ratio": 0.9967,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.798,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.451,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1402.4,
+            "north": 12881.2
+          },
+          "seconds": 1.5,
+          "success": true
+        },
+        "rift2": {
+          "matches": 68,
+          "inliers": 54,
+          "inlier_ratio": 0.871,
+          "coverage": 0.203,
+          "inlier_rmse_px": 1.167,
+          "status": "registered",
+          "tier": "LOW",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.385,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1446.0,
+            "north": 12846.7
+          },
+          "seconds": 16.8,
+          "success": true
+        },
+        "sift": {
+          "matches": 120,
+          "inliers": 100,
+          "inlier_ratio": 0.9524,
+          "coverage": 0.453,
+          "inlier_rmse_px": 0.508,
+          "status": "registered",
+          "tier": "MEDIUM",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.036,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1394.6,
+            "north": 12871.3
+          },
+          "seconds": 0.6,
+          "success": true
+        }
+      },
+      "status": "locked",
+      "wac": "WAC_GLOBAL_MOSAIC_100M",
+      "seconds": 22.3
+    },
+    {
+      "iirs_line0": 4160,
+      "coarse": {
+        "best": "mosaic",
+        "z": 50.5,
+        "runner_up_z": null
+      },
+      "fine_frame_px": [
+        267,
+        409
+      ],
+      "results": {
+        "xoftr": {
+          "matches": 1445,
+          "inliers": 1328,
+          "inlier_ratio": 0.9948,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.549,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.024,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1513.9,
+            "north": 12887.1
+          },
+          "seconds": 1.9,
+          "success": true
+        },
+        "minima-loftr": {
+          "matches": 1302,
+          "inliers": 1215,
+          "inlier_ratio": 0.9992,
+          "coverage": 1.0,
+          "inlier_rmse_px": 0.592,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.289,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1493.5,
+            "north": 12899.9
+          },
+          "seconds": 1.6,
+          "success": true
+        },
+        "rift2": {
+          "matches": 56,
+          "inliers": 50,
+          "inlier_ratio": 0.8929,
+          "coverage": 0.219,
+          "inlier_rmse_px": 1.495,
+          "status": "registered",
+          "tier": "LOW",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.183,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1521.1,
+            "north": 12912.6
+          },
+          "seconds": 17.1,
+          "success": true
+        },
+        "sift": {
+          "matches": 322,
+          "inliers": 278,
+          "inlier_ratio": 0.9553,
+          "coverage": 0.938,
+          "inlier_rmse_px": 0.637,
+          "status": "registered",
+          "tier": "HIGH",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "consistent",
+          "known_shift_error_px": 0.026,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1478.4,
+            "north": 12897.6
+          },
+          "seconds": 1.0,
+          "success": true
+        }
+      },
+      "status": "locked",
+      "wac": "WAC_GLOBAL_MOSAIC_100M",
+      "seconds": 22.9
+    }
+  ]
+}
