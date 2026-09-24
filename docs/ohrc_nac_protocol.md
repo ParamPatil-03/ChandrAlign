@@ -77,3 +77,16 @@ One OHRC scene, five NAC products, 5 windows each: 2-3 windows' difference is no
 meaningful. One site (~0 N, 23.5 E). The known-shift gate measures precision of the
 lock on this pair, not absolute accuracy; the consistency check guards against false
 locks, it does not measure accuracy either.
+
+## Amendment 1 (before any of the four non-control products was measured)
+
+The frozen placement ("along the OHRC centre column") found **zero** windows for four of
+the five products: the NAC strips are 1.2-6.5 km wide and cross OHRC's 3.6 km strip
+off-centre, so OHRC's centre column misses them. Nothing was measured for those four;
+this is a harness limit, not a result.
+
+Change, placement only: for each candidate OHRC row, use the OHRC column **closest to the
+centre** whose 2048 px window lies inside the NAC footprint (candidate columns every 256
+px). Rows are then spread evenly as before. Success rules, thresholds, matchers and
+predictions are unchanged. The control product's windows are unchanged (its centre
+column fits), and its already-measured result stands: all three matchers 5/5.

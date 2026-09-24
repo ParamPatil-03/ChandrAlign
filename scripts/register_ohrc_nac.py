@@ -116,10 +116,9 @@ def match(name, a, b, device, gsd):
     return adapter.match(pa, pb, model_name=name, device=device), pa, pb
 
 
-def run_window(ohrc, om, nacm, geo, nac, rc, matchers, device, stages, dem_tiles):
-    out = {"nac": nac.pid, "ohrc_row": int(rc)}
-    S = ohrc.array_shape[1]
-    r0, c0 = int(rc) - WIN // 2, S // 2 - WIN // 2
+def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_tiles):
+    out = {"nac": nac.pid, "ohrc_row": int(rc), "ohrc_col": int(cc)}
+    r0, c0 = int(rc) - WIN // 2, int(cc) - WIN // 2
     o_raw = pds_raster.read_raster(ohrc, pds_raster.Window(r0, c0, WIN, WIN)).astype(np.float32)
     o_ok = o_raw > 0
     if o_ok.mean() < 0.95:
@@ -240,23 +239,34 @@ def main() -> int:
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
     L, S = ohrc.array_shape
     rows_all = np.arange(WIN, L - WIN, 250)
-    lat_all, lon_all = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, S / 2.0))
+    # Amendment 1: candidate columns every 256 px; per row, the one closest to the centre
+    # whose window lies inside the NAC footprint.
+    cols_all = np.arange(WIN // 2, S - WIN // 2 + 1, 256)
+    cols_all = cols_all[np.argsort(np.abs(cols_all - S / 2.0), kind="stable")]
 
     windows = []
     for pid in args.products:
         nac = Nac(pid, lroc[pid])
         nacm = parse_label(next((ROOT / "data/raw/lro/nac").rglob(f"{pid}.XML")))
         geo = NacGeo(nac, *nacm.array_shape)
-        x, y = geo.to_px(lat_all, lon_all)
         pad = WIN * OHRC_PX / min(nac.px_w, nac.px_h)
-        inside = rows_all[(x > pad) & (x < nacm.array_shape[1] - pad) & (y > pad) & (y < nacm.array_shape[0] - pad)]
+        Ln, Sn = nacm.array_shape
+        best = {}
+        for cc in cols_all:                                   # nearest-to-centre first
+            la, lo = om.pixel_to_latlon(rows_all, np.full(rows_all.shape, float(cc)))
+            x, y = geo.to_px(la, lo)
+            ok = (x > pad) & (x < Sn - pad) & (y > pad) & (y < Ln - pad)
+            for rc in rows_all[ok]:
+                best.setdefault(int(rc), int(cc))
+        inside = np.array(sorted(best))
         print(f"{pid}: {len(inside)} candidate OHRC rows inside the footprint", flush=True)
         if len(inside) == 0:
             continue
         picks = np.linspace(inside.min(), inside.max(), N_WIN).astype(int) if len(inside) >= N_WIN else inside
+        picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
         for rc in picks:
             t = time.perf_counter()
-            w = run_window(ohrc, om, nacm, geo, nac, rc, args.matchers, args.device, stages, dem_tiles)
+            w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages, dem_tiles)
             w["sun"] = sun.get(pid)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
