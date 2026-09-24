@@ -26,3 +26,15 @@ Refill ON if: (a) coverage rises on at least 2 of the windows whose coverage is 
 model is within the 2 px bound by construction, and their RMS residual after sub-pixel
 refinement is no more than 1.5x that of the primary delivered points (they must not be
 worse evidence than what they supplement).
+
+## Result (2026-09-24): not adopted
+
+`reports/tmc2_tc_refill.json`. Windows with empty cells: 1562 (1 empty), 3125 (6), 4687 (10).
+The local second pass filled 1 cell on 1 window (4687: coverage 0.844 -> 0.859; the refilled
+point's residual 1.59 px vs 1.72 px for primary points). Rule (a) needs 2 of 3 windows ->
+**not adopted; `refill` stays off.** Nothing else changed (model and gates untouched).
+
+Hypothesis, NOT tested: most empty cells lie where one image has no valid data (rotated-window
+corners, the TC tile edge near N00), where no matcher can find anything; if so, coverage should
+be reported over cells with valid overlap in both images, which is a reporting change, not a
+refill.
