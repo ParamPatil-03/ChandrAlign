@@ -76,3 +76,23 @@ The real fix is a TMC-2 -> NAC run whose fine stage fits scale freely; not done 
 
 Candidate selection and evaluation used the same 25 windows, so the adopted settings'
 rates are optimistic.
+
+## Q5-Q7 (research-driven follow-up, same frozen-protocol discipline)
+
+Research consulted: crater-neighbourhood matching for multi-illumination lunar orbiter
+images (Remote Sensing 17(13):2302, 2025); rendered-DEM / LIMA matching used in lunar
+terrain-relative navigation; photoclinometry-assisted matching (ISPRS J. 159, 2020);
+Geo-LoFTR (arXiv:2502.09795). The rendering, photoclinometry and Geo-LoFTR routes need a
+DEM at the image's resolution (ours: SLDEM, 59 m) or training; not feasible here. The
+research doc's own OHRC geodetic bridge (opportunity #9) was feasible and tested first.
+
+| problem | finding | status |
+|---|---|---|
+| M106719774LC, 55 deg incidence, "no lock" | with the geodetic bridge (OHRC vs TC + NAC vs TC, both measured independently; validated on the control to 128 m) eloftr 3/5, minima-loftr 3/5, **routed 4/5**, all within 6 m of each other | **the failure was the +-4 km search, not the sun -> fixed by the bridge** |
+| M175124932LC, opposed sun 178 deg | eloftr fails outright; **minima-loftr locates all 5 windows consistently** (within ~50 m; ~130 m from the bridge) but its known-shift error is 1.5-2.3 px (gate 1.5); dense MIND refinement cannot help (0-1 of 10 estimates succeed) | **located, not precise enough: unsolved** |
+| M1417360906LC, 75 deg | locks, minima-loftr errors 2.2-3.1 px; dense refinement mixed | **unsolved (precision)** |
+| dense_refine stage | same-sun precision 10x better on the control; on unseen TMC-2 -> TC median -72% but one window worse | **built, off by the frozen rule; re-test with TPS** |
+
+What would solve the remaining two (next research step): a high-resolution DEM of the
+site (e.g. an LROC NAC DTM near Apollo 11, ~1-2 m) to render each image's own sun, or a
+precision stage robust to reversed shading; both need data or work not available here.

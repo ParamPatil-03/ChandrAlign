@@ -170,3 +170,11 @@ committed `reports/tmc2_tc_registration.json` (same code, stage off).
 Adopt `dense_refine: true` as a default iff ALL hold: no window loses registration, tier
 or a gate; the median known-shift error falls by at least 20%; the largest known-shift
 error does not rise.
+
+## Q7 result
+
+Nine TMC-2 -> TC windows, dense_refine on: no window lost; median known-shift error
+0.081 -> 0.023 px (72% lower); but the largest rose 0.208 -> 0.345 px (row 4687, the N00
+window whose residual to the affine model is largest). **Rule 3 fails -> not adopted.**
+A single translation update cannot fix a non-affine residual; this is ALIGN-02's (TPS)
+question, and dense_refine should be re-tested together with TPS.
