@@ -1,5 +1,8 @@
 # OHRC -> LRO NAC on real data: results
 
+> **Superseded in part:** the 55 deg and opposed-sun "no lock" rows below were a window-placement
+> error; see `docs/illumination_fix_results.md`, section Q8 (both register 5/5).
+
 Protocol frozen before measuring: `docs/ohrc_nac_protocol.md` (two placement-only
 amendments, both before the affected products were measured). Result = **run 3**,
 `reports/ohrc_nac_registration.json`. OHRC `ch2_ohr_ncp_20240330T0035085365`: grazing sun,

@@ -1,5 +1,11 @@
 # Fixing registration under large sun differences: results
 
+> **CORRECTION (Q8, 2026-09-24): read the Q8 section at the end first.** The "no lock"
+> failures on M106719774LC and M175124932LC reported below were a window-PLACEMENT error in
+> the harness (OHRC's 2.2 km system error put the windows' real ground outside those
+> narrow NAC strips), not illumination. With correct placement both register 5/5.
+
+
 Protocol frozen before measuring: `docs/illumination_fix_protocol.md`. Data: OHRC
 `ch2_ohr_ncp_20240330T0035085365` against five LRO NAC products, 25 windows.
 
@@ -96,3 +102,23 @@ research doc's own OHRC geodetic bridge (opportunity #9) was feasible and tested
 What would solve the remaining two (next research step): a high-resolution DEM of the
 site (e.g. an LROC NAC DTM near Apollo 11, ~1-2 m) to render each image's own sun, or a
 precision stage robust to reversed shading; both need data or work not available here.
+
+
+## Q8 -- final, with correct placement (supersedes the Q1/Q5 conclusions above)
+
+Shipped behaviour: 2 m MIND coarse lock, routed matcher (eloftr, then minima-loftr if
+rejected), windows placed at the best known position. `reports/ohrc_nac_q8_auto_bridge.json`.
+
+| NAC | sun difference vs OHRC | result | matcher that registered |
+|---|---|---|---|
+| same-sun control | ~1 deg | **5/5** | eloftr |
+| M106719774LC | 55 deg incidence | **5/5** | eloftr |
+| M175124932LC | **178 deg azimuth (opposed)** | **5/5** | minima-loftr (eloftr fails) |
+| M109080308LC | 80 deg incidence | **5/5** | minima-loftr (eloftr fails) |
+| M1417360906LC | 75 deg incidence | 0/5 | none: locks, but precision 2-3 px |
+
+**20 of 25 windows**, against 5 of 25 for the original default (4 m lock, eloftr only).
+Every success is location-consistent (final transforms within 150 m of their product's
+median; in practice within ~50 m). On real data the default matcher fails beyond ~60-75 deg
+of sun difference and minima-loftr, the fallback, succeeds -- including the opposed sun.
+Remaining: M1417360906LC (NAC sun near overhead against OHRC's grazing sun).

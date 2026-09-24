@@ -209,3 +209,32 @@ Nothing was measured for either. Change, placement only: for every product WITH 
 prediction, windows are placed by the predicted true position (as Q5 did). The coarse lock
 still runs first on each window; the bridge is still used only if it fails. Products
 without a prediction are placed as before. Run 2 is the result; all five are re-run.
+
+## Q8 result (run 2) -- and a correction to Q1, Q5 and run 3
+
+With windows placed by the PREDICTED true position, the coarse lock itself succeeded on every
+window of both "unsolvable" products; the bridge fallback was never triggered:
+
+| NAC | sun difference | coarse lock | routed result | used |
+|---|---|---|---|---|
+| M102014464RC control | ~1 deg | 5/5 | **5/5** | eloftr |
+| M106719774LC | 55 deg incidence | 5/5 | **5/5** (err 0.31-0.85 px) | eloftr |
+| M175124932LC | **178 deg azimuth** | 5/5 | **5/5** (err 0.05-0.68 px) | minima-loftr (eloftr failed first) |
+| M109080308LC | 80 deg incidence | 5/5 | **5/5** | minima-loftr |
+| M1417360906LC | 75 deg incidence | 4/5 | 0/5 (err 0.66-3.09 px) | -- |
+
+**Rule:** automatic bridging added no success (it never triggered), so the fallback is NOT
+adopted. What changed the outcome was placement.
+
+**Correction.** The Q1 / run-3 / Q5 "no lock" failures on M106719774LC and M175124932LC
+were a harness error, not illumination: windows were placed where OHRC's SYSTEM position
+fell inside the NAC strip, but OHRC's true ground is ~2.2 km away, and these strips are
+only 1.2-1.6 km wide -- the window's content was partly or wholly outside the NAC image.
+Q5 appeared to "fix" them because bridge mode also moved placement. Conclusions drawn from
+those runs ("the coarse lock breaks first", "opposed sun located but not precise") are
+withdrawn. Prediction 2 is now TESTED and CONFIRMED: at 178 deg eloftr fails and
+minima-loftr registers 5/5.
+
+The pipeline lesson: pair / window selection must use the best KNOWN geolocation (system
+position corrected by measured offsets), not the raw system position, whenever the
+reference strip is narrower than the source's system error.
