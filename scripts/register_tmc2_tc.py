@@ -130,7 +130,7 @@ class _OffsetModel:
 def _dem_for(tcm, origin_xy, w: int, h: int):
     """SLDEM covering a TC region (with a margin), or None if no tile is held."""
     from chandralign.io.dem import dem_patch, find_tiles
-    tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
+    tiles = find_tiles(ROOT / DEM_DIRS[DEM])
     if not tiles:
         return None
     x0, y0 = origin_xy
@@ -151,6 +151,8 @@ def _dem_grid(tcm, o_f, w: int, h: int, step: int = 16) -> dict:
     return {"dem_step": step, "dem_m": np.asarray(dem.sample(lat, lon), float).reshape(ys.shape)}
 
 
+DEM_DIRS = {"sldem2015": "data/raw/dem/sldem2015", "tc_dtm": "data/raw/selene/tc_dtm"}
+DEM = "sldem2015"  # --dem: the height model for the terrain filter and parallax
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
@@ -163,7 +165,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     stages = stage_flags(stages)
     col_c = tmc.array_shape[1] // 2 + int(col_offset)
     r0, c0 = row_c - win // 2, col_c - win // 2
-    out: dict = {"tmc_row": row_c, "window_px": win}
+    out: dict = {"tmc_row": row_c, "window_px": win, "dem": DEM}
     if col_offset:
         out["tmc_col"] = col_c
 
@@ -402,13 +404,16 @@ def main() -> int:
                     help="perturbation gate reuses the main registration as its baseline")
     ap.add_argument("--col-offset", type=int, default=0,
                     help="with --rows: move the window this many TMC-2 columns off the strip centre")
+    ap.add_argument("--dem", choices=sorted(DEM_DIRS), default="sldem2015",
+                    help="height model (tc_dtm: SELENE TC stereo DTM, ~7.4 m, only where a tile is held)")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
-    global DUMP_DIR
+    global DUMP_DIR, DEM
+    DEM = args.dem
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)

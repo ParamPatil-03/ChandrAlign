@@ -118,3 +118,34 @@ correction typically halves the error rather than removing it (2-3 px left on mo
 windows, 6-8 px on two). Not tested: whether a finer DEM than SLDEM2015 (59 m/px) removes
 the rest; row 6250's small gain (8.9 -> 7.9 px) with a physical p suggests something else
 there too.
+
+## Amendment 2 (2026-09-25, frozen BEFORE any run with the new DEM): a finer height model
+
+Question: is the ~2-3 px left after the correction the DEM's resolution? Only the height
+model changes: `--dem tc_dtm`, the SELENE TC stereo DTM (`DTM_MAP_02_N00E021S03E024SC`,
+4096 px/deg ~7.4 m, same grid as the TC reference; fetched by `fetch_selene.py --bundle dtm`)
+in place of SLDEM2015 (59 m). It is used for the terrain filter, for h in the stage and for h
+in the evaluation (so the model's and the evaluation's heights agree). It is NOT independent
+of TC -- it is the height model TC's ortho map was made with, which is why it is the right one
+for parallax against TC; it is recorded as not independent.
+
+Rules (a)-(d), thresholds, stage and 5-round cap unchanged. Windows: the 10 N00 windows used so
+far, filtered by ONE criterion fixed now and computed from SLDEM2015 before any run: SLDEM
+relief (p95 - p5 of height minus its best-fit plane) over the window's own footprint (TMC-2
+system corners) >= 100 m. This corrects amendment 1's selection error (relief read at the
+strip centre, not the window). Rules (a), (b) N00 clause, (c) and (d) apply to the selected
+windows; the baseline (parallax off) is the SLDEM run already recorded for each.
+**Adopt parallax, with the TC DTM where a tile is held, only if all four hold.**
+Because these windows have been seen (with SLDEM), a pass here is a replication with a new
+input, not fresh data; that is stated with the result.
+
+### Amendment 2a (same day, still BEFORE any run with the new DEM): the selection criterion was wrong
+
+Computing it showed that relief over the SYSTEM-corner footprint does not match relief where
+the windows actually registered (4687/col 768: 127 m by system corners, 15 m at its registered
+position; 3125/768: 89 m vs 243 m) -- the window-placement lesson again: use the best known
+position, not the raw system one. Criterion replaced by: SLDEM relief (p95 - p5 about the
+best-fit plane) over the window's REGISTERED position in its baseline (parallax-off) run
+>= 100 m. This uses only the DEM and the baseline registration, nothing from the parallax
+runs. Result, computed now: 9 selected (178-526 m); **4687/col 768 excluded (15 m)**.
+Everything else in amendment 2 unchanged.
