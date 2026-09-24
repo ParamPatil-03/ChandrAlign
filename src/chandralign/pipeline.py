@@ -48,7 +48,7 @@ from . import config
 from .contracts import MatchSet, TransformModel
 from .estimate import models, robust
 
-STAGES = ("geometry_filter", "dense_refine", "uniformity", "refill", "subpixel", "tps")
+STAGES = ("geometry_filter", "parallax", "dense_refine", "uniformity", "refill", "subpixel", "tps")
 
 
 def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
@@ -144,6 +144,39 @@ def _dense_refine(model: TransformModel, src_img: np.ndarray, ref_img: np.ndarra
             {"applied": True, "moves_px": moves, "overlap_px": [int(x1 - x0), int(y1 - y0)]})
 
 
+def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5):
+    """Inliers under ref = A.src + h.p, h = DEM height at the source point (ALIGN-08).
+
+    Starts from the robust estimate's inliers, fits A (affine) and p (px per metre) by least
+    squares, re-selects inliers from ALL matches at the reprojection threshold, and repeats
+    until the set is stable. Matches with no DEM height keep their original status.
+    """
+    s, r = np.asarray(ms.src_pts, float), np.asarray(ms.ref_pts, float)
+    lat, lon = ground_model.pixel_to_latlon(s[:, 1], s[:, 0])
+    h = np.asarray(dem.sample(lat, lon), float)
+    known = np.isfinite(h)
+    base = inl0 & known
+    if base.sum() < 10:
+        return inl0, {"applied": False, "reason": "fewer than 10 inliers with a DEM height"}
+    h0 = float(np.median(h[base]))
+    X = np.c_[s, np.ones(len(s)), np.where(known, h - h0, 0.0)]
+    thr = float(config.get("estimate.reproj_threshold_px", 3.0))
+    inl, n_rounds = base, 0
+    for n_rounds in range(1, rounds + 1):
+        B = np.linalg.lstsq(X[inl], r[inl], rcond=None)[0]
+        new = (known & (np.hypot(*(X @ B - r).T) <= thr)) | (~known & inl0)
+        if np.array_equal(new, inl):
+            break
+        inl = new
+    B = np.linalg.lstsq(X[inl & known], r[inl & known], rcond=None)[0]
+    res = np.hypot(*(X @ B - r).T)[inl & known]
+    return inl, {"applied": True, "p_px_per_m": [round(float(B[3, 0]), 5), round(float(B[3, 1]), 5)],
+                 "h0_m": round(h0, 1), "rounds": n_rounds,
+                 "inliers_before": int(inl0.sum()), "inliers_after": int(inl.sum()),
+                 "rms_px": round(float(np.sqrt(np.mean(res ** 2))), 4),
+                 "affine": [[round(float(v), 6) for v in row] for row in B[:3].T]}
+
+
 def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                centre: tuple[float, float],
                expected_scale=None,
@@ -194,6 +227,18 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         return FineResult(False, None, first, ms, np.zeros((0, 2)), np.zeros((0, 2)), 0.0, None,
                           n_matches, stages, ["no transform from the robust estimate"])
     inl = first.inlier_mask
+
+    # 2a. terrain parallax (ALIGN-08): an oblique view (TMC-2 fore/aft, 26 deg) moves each
+    # point along-track in proportion to its height, which a 2-D affine cannot hold, so on
+    # relief the right matches fail the affine threshold. Re-select the inliers under
+    # ref = A.src + h.p; the delivered affine model is unchanged (docs/parallax_protocol.md).
+    if flags["parallax"]:
+        if dem is None or ground_model is None:
+            stages["parallax"] = {"applied": False, "reason": "no DEM" if dem is None else "no ground model"}
+        else:
+            inl, stages["parallax"] = _parallax(ms, inl, dem, ground_model)
+    else:
+        stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
     conf = np.asarray(ms.confidence, float)[inl] if len(ms.confidence) == len(inl) else np.ones(len(cs))
 

@@ -241,3 +241,38 @@ def test_refill_fills_an_empty_cell_only_with_points_the_model_agrees_with():
     assert np.array_equal(on.model.matrix, off.model.matrix)
     assert on.stages["refill"]["refilled"] == 2 and on.coverage > off.coverage
     assert not any(np.allclose(p, [40.0, 10.0]) for p in on.control_src)
+
+
+def test_parallax_keeps_the_hill_an_affine_throws_away_and_still_refuses_outliers():
+    """ALIGN-08: an oblique view shifts a 300 m hill ~20 px along-track. The affine alone
+    drops the hill's matches; the parallax stage keeps them, recovers p, refuses the
+    outliers, and leaves the delivered model unchanged."""
+    rng = np.random.default_rng(5)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    hill = 300.0 * np.exp(-((rr - 300) ** 2 + (cc - 300) ** 2) / (2 * 50.0 ** 2))
+    dem = DemPatch(hill, lat, lon, 1000.0, "test", True, ())
+    p = np.array([0.004, -0.07])                                   # px per metre, along-track
+    src = rng.uniform([0, 0], [400, 400], (1500, 2))
+    h = hill[src[:, 1].round().astype(int), src[:, 0].round().astype(int)]
+    ref = src @ A[:2, :2].T + A[:2, 2] + h[:, None] * p + rng.normal(0, 0.3, src.shape)
+    bad = rng.random(len(src)) < 0.15
+    ref[bad] += rng.uniform(-40, 40, (bad.sum(), 2))
+    on_hill = (h > 60) & ~bad
+    kw = dict(centre=(200, 200), ground_model=_Identity(), dem=dem)
+    off = fine_stage(matchset(src, ref), blank(), blank(), flags=OFF, **kw)
+    on = fine_stage(matchset(src, ref), blank(), blank(), flags={**OFF, "parallax": True}, **kw)
+    got = np.zeros(len(src), bool)
+    for pt in on.control_src:
+        got |= np.all(src == pt, axis=1)
+    assert off.first.inlier_mask[on_hill].mean() < 0.5                         # the affine loses the hill
+    assert got[on_hill].mean() > 0.95 and got[bad].mean() < 0.05
+    st = on.stages["parallax"]
+    assert st["applied"] and np.allclose(st["p_px_per_m"], p, atol=0.005)
+    assert np.array_equal(on.model.matrix, off.model.matrix)
+
+
+def test_parallax_without_a_dem_says_so():
+    fr = fine_stage(matchset(*clustered_pairs()[:2]), blank(), blank(), centre=(200, 200),
+                    flags={**OFF, "parallax": True})
+    assert fr.stages["parallax"] == {"applied": False, "reason": "no DEM"}
