@@ -268,3 +268,13 @@ As Q9, except the 4096 px window is placed at the candidate centre nearest the o
 window whose 4096 px window lies inside the NAC footprint (the placement rule of
 amendment 2, applied at 4096 px) -- what the exploratory 4/5 check did. If no such centre
 exists, no enlargement. Adopt on the Q9 rule (none lost, at least one added).
+
+## Q10 result: not adopted -- 75 deg closed as a known limit
+
+M1417360906LC only (the other products never trigger enlargement): 1 window enlarged and
+passed (0.34 px); 3 re-centred 4096 px windows still rejected; 1 no lock -> 0/5. The
+exploratory 4/5 used windows chosen for 4096 px from the start; the outcome at this sun
+geometry depends strongly on WHICH ground a window covers. Iterating further would tune to
+one product. **Closed: the 75 deg case (NAC sun near overhead vs OHRC grazing) is a known
+limit -- sometimes registrable with larger windows, not reliably.** Shipped behaviour stays
+Q8: 20/25 OHRC -> NAC windows.
