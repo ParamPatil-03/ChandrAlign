@@ -257,7 +257,8 @@ def downsample_transform(factor: int) -> np.ndarray:
 def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *,
                         src: str, ref: str, ref_pixel_m: float,
                         prior: Optional[np.ndarray] = None,
-                        diag: Optional[dict] = None) -> Optional[StepResult]:
+                        diag: Optional[dict] = None,
+                        descriptor: str = "mind") -> Optional[StepResult]:
     """One cascade step by DENSE matching: the method the footprint threshold
     was measured with, so a step the planner calls feasible is executed the way
     feasibility was established.
@@ -276,11 +277,15 @@ def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *
     keypoints, which is why it is the default for coarse, small-footprint steps.
     Returns None if the match is ambiguous (z < cascade.min_z) -- never a guess.
     Pass a dict as `diag` to learn WHY a step failed: a bare None cannot be debugged.
+
+    `descriptor` is what the search compares: "mind" (default, self-similarity) or
+    "phase_congruency" (structure energy). Chosen by measurement for large sun
+    differences: docs/illumination_fix_protocol.md.
     """
     diag = diag if diag is not None else {}
     import cv2
 
-    from ..preprocess.phase_congruency import mind
+    from ..preprocess.phase_congruency import mind, phase_congruency
     from ..preprocess.resample import warp_affine
     from ..refine import subpixel
 
@@ -308,9 +313,16 @@ def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *
         diag["failed"] = "template is not smaller than the reference region"
         return None
 
-    # 3. MIND search
+    # 3. descriptor search
     nz = lambda a: (a - a.min()) / max(float(a.max() - a.min()), 1e-9)
-    fr, ft = mind(nz(ref_arr)).astype(np.float32), mind(nz(tpl)).astype(np.float32)
+    if descriptor == "mind":
+        describe = lambda a: mind(nz(a)).astype(np.float32)
+    elif descriptor == "phase_congruency":
+        describe = lambda a: phase_congruency(nz(a)).energy.astype(np.float32)[..., None]
+    else:
+        raise ValueError(f"descriptor must be 'mind' or 'phase_congruency', not {descriptor!r}")
+    fr, ft = describe(ref_arr), describe(tpl)
+    diag["descriptor"] = descriptor
     cmap = np.mean([cv2.matchTemplate(fr[..., i], ft[..., i], cv2.TM_CCOEFF_NORMED)
                     for i in range(fr.shape[-1])], axis=0)
     iy, ix = np.unravel_index(int(np.argmax(cmap)), cmap.shape)
@@ -337,7 +349,7 @@ def register_step_dense(src_img: np.ndarray, ref_img: np.ndarray, factor: int, *
     # (1.4826 x MAD per axis). Channel estimates share one image, so the spread
     # is a PRECISION figure, not an accuracy guarantee -- as the chain says.
     ests = [subpixel.estimate(tpl, patch, m) for m in ("ncc_gaussian_iter", "phase_iter", "ecc")]
-    mt, mp = mind(nz(tpl)).astype(np.float32), mind(nz(patch)).astype(np.float32)
+    mt, mp = describe(tpl), describe(patch)
     ests += [subpixel.estimate(mt[..., i], mp[..., i], "ncc_gaussian_iter") for i in range(mt.shape[-1])]
     ok = [e for e in ests if e.ok and np.all(np.isfinite(e.d)) and np.hypot(*e.d) <= 1.5]
     diag["subpixel_ok"] = f"{len(ok)}/{len(ests)}"

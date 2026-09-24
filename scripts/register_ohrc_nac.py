@@ -116,7 +116,8 @@ def match(name, a, b, device, gsd):
     return adapter.match(pa, pb, model_name=name, device=device), pa, pb
 
 
-def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_tiles):
+def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_tiles,
+               coarse_descriptor="mind", coarse_m=COARSE_M, coarse_only=False):
     out = {"nac": nac.pid, "ohrc_row": int(rc), "ohrc_col": int(cc)}
     r0, c0 = int(rc) - WIN // 2, int(cc) - WIN // 2
     o_raw = pds_raster.read_raster(ohrc, pds_raster.Window(r0, c0, WIN, WIN)).astype(np.float32)
@@ -143,16 +144,18 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
         out["status"] = "skipped: predicted position outside the NAC strip"; return out
     reg_raw = pds_raster.read_raster(nacm, pds_raster.Window(l0, 0, l1 - l0, Sn)).astype(np.float32)
     reg_ok = reg_raw > NULL_BELOW
-    b = max(1, round(COARSE_M / min(nac.px_w, nac.px_h)))
-    f = max(1, round(COARSE_M / OHRC_PX))
+    b = max(1, round(coarse_m / min(nac.px_w, nac.px_h)))
+    f = max(1, round(coarse_m / OHRC_PX))
     reg_small = cascade.block_average(norm(reg_raw, reg_ok), b)
     D_ref = cascade.downsample_transform(b) @ T(0, -l0)                  # NAC px -> region-small px
     U_src = np.linalg.inv(cascade.downsample_transform(f))              # OHRC-small px -> OHRC px
     prior = D_ref @ A_sys @ U_src
     diag = {}
     step = cascade.register_step_dense(ohrc_n, reg_small, f, src="OHRC", ref=nac.pid,
-                                       ref_pixel_m=COARSE_M, prior=prior, diag=diag)
-    out["coarse"] = {"z": diag.get("z"), "block_ohrc": f, "block_nac": b, **({"failed": diag["failed"]} if "failed" in diag else {})}
+                                       ref_pixel_m=coarse_m, prior=prior, diag=diag,
+                                       descriptor=coarse_descriptor)
+    out["coarse"] = {"z": diag.get("z"), "descriptor": coarse_descriptor, "resolution_m": coarse_m,
+                     "block_ohrc": f, "block_nac": b, **({"failed": diag["failed"]} if "failed" in diag else {})}
     if step is None or (diag.get("z") or 0) < MIN_Z:
         out["status"] = "no coarse lock"; out["results"] = {}; return out
     T_c = np.linalg.inv(D_ref) @ np.asarray(step.model.matrix, float)    # OHRC window px -> NAC px
@@ -162,6 +165,8 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
     la_n, lo_n = geo.pixel_to_latlon([py], [px])
     e = enu(float(la_n[0]), float(lo_n[0]), lat_c, lon_c)
     out["system_offset_m"] = {"east": round(float(e[0]), 1), "north": round(float(e[1]), 1)}
+    if coarse_only:
+        out["status"] = "locked"; out["results"] = {}; return out
 
     # 3. fine frame on the NAC grid
     cor = np.array([[0, 0, 1], [WIN, 0, 1], [0, WIN, 1], [WIN, WIN, 1]], float) @ T_c.T
@@ -228,6 +233,9 @@ def main() -> int:
     ap.add_argument("--matchers", nargs="+", default=["eloftr", "minima-loftr", "sift"])
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default="reports/ohrc_nac_registration.json")
+    ap.add_argument("--coarse-descriptor", default="mind", choices=["mind", "phase_congruency"])
+    ap.add_argument("--coarse-m", type=float, default=COARSE_M, help="coarse-lock resolution, metres")
+    ap.add_argument("--coarse-only", action="store_true", help="stop after the coarse lock (protocol Q1)")
     args = ap.parse_args()
 
     ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
@@ -268,7 +276,9 @@ def main() -> int:
         picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
         for rc in picks:
             t = time.perf_counter()
-            w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages, dem_tiles)
+            w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages, dem_tiles,
+                           coarse_descriptor=args.coarse_descriptor, coarse_m=args.coarse_m,
+                           coarse_only=args.coarse_only)
             w["sun"] = sun.get(pid)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
