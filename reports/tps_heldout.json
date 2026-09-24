@@ -1,0 +1,99 @@
+{
+  "source": "measured",
+  "protocol": "docs/tps_protocol.md",
+  "run": {
+    "command": "python scripts/tps_heldout.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/tps_points",
+    "commit": "7320364c4544d6e0d12d37379b8137870d5b7855",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T17:58:49+00:00"
+  },
+  "verdict": {
+    "windows_affine_over_1px": 6,
+    "median_improvement_there": 0.39825,
+    "worst_improvement_any": -0.0236,
+    "adopt": true
+  },
+  "windows": [
+    {
+      "window": "window_1562",
+      "control_points": 378,
+      "heldout_points": 8365,
+      "smoothing": 1.0,
+      "affine_rms_px": 1.575,
+      "tps_rms_px": 0.9927,
+      "improvement": 0.3697
+    },
+    {
+      "window": "window_16000",
+      "control_points": 384,
+      "heldout_points": 13386,
+      "smoothing": 1000.0,
+      "affine_rms_px": 1.0601,
+      "tps_rms_px": 0.7915,
+      "improvement": 0.2534
+    },
+    {
+      "window": "window_18750",
+      "control_points": 384,
+      "heldout_points": 14761,
+      "smoothing": 1000.0,
+      "affine_rms_px": 0.7192,
+      "tps_rms_px": 0.7362,
+      "improvement": -0.0236
+    },
+    {
+      "window": "window_21500",
+      "control_points": 384,
+      "heldout_points": 14637,
+      "smoothing": 1000.0,
+      "affine_rms_px": 1.0017,
+      "tps_rms_px": 0.7464,
+      "improvement": 0.2549
+    },
+    {
+      "window": "window_3125",
+      "control_points": 337,
+      "heldout_points": 6604,
+      "smoothing": 0.1,
+      "affine_rms_px": 1.626,
+      "tps_rms_px": 0.9321,
+      "improvement": 0.4268
+    },
+    {
+      "window": "window_4687",
+      "control_points": 310,
+      "heldout_points": 7432,
+      "smoothing": 100.0,
+      "affine_rms_px": 1.4838,
+      "tps_rms_px": 0.8152,
+      "improvement": 0.4506
+    },
+    {
+      "window": "window_52000",
+      "control_points": 384,
+      "heldout_points": 15426,
+      "smoothing": 1000.0,
+      "affine_rms_px": 0.7133,
+      "tps_rms_px": 0.6923,
+      "improvement": 0.0294
+    },
+    {
+      "window": "window_54750",
+      "control_points": 384,
+      "heldout_points": 14608,
+      "smoothing": 1000.0,
+      "affine_rms_px": 1.2728,
+      "tps_rms_px": 0.6686,
+      "improvement": 0.4747
+    },
+    {
+      "window": "window_57500",
+      "control_points": 384,
+      "heldout_points": 14756,
+      "smoothing": 1000.0,
+      "affine_rms_px": 0.8419,
+      "tps_rms_px": 0.6764,
+      "improvement": 0.1966
+    }
+  ]
+}

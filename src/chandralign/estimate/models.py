@@ -173,6 +173,37 @@ def fit_tps(src_pts: np.ndarray, ref_pts: np.ndarray,
                                       "smoothing": float(smoothing)})
 
 
+TPS_SMOOTHING_GRID = (0.1, 1.0, 10.0, 100.0, 1000.0)
+
+
+def fit_tps_cv(src_pts: np.ndarray, ref_pts: np.ndarray, grid=TPS_SMOOTHING_GRID,
+               folds: int = 5, seed: int = 0) -> TransformModel:
+    """fit_tps with the smoothing chosen by k-fold cross-validation on the points given.
+
+    The choice uses only these points, so the fitted warp can be judged honestly on any
+    OTHER points (docs/tps_protocol.md). The chosen value is kept in tps_params.
+    """
+    src = np.asarray(src_pts, np.float64).reshape(-1, 2)
+    ref = np.asarray(ref_pts, np.float64).reshape(-1, 2)
+    if len(src) < 3 * folds:
+        return fit_tps(src, ref, smoothing=max(grid))
+    idx = np.random.default_rng(seed).permutation(len(src))
+    parts = np.array_split(idx, folds)
+    best = None
+    for s in grid:
+        err = []
+        for k in range(folds):
+            te = parts[k]
+            tr = np.concatenate([parts[j] for j in range(folds) if j != k])
+            err.append(apply(fit_tps(src[tr], ref[tr], smoothing=s), src[te]) - ref[te])
+        e = float(np.sqrt(np.mean(np.sum(np.concatenate(err) ** 2, axis=1))))
+        if best is None or e < best[1]:
+            best = (s, e)
+    model = fit_tps(src, ref, smoothing=best[0])
+    model.tps_params["cv_rms_px"] = round(best[1], 4)
+    return model
+
+
 def _tps_apply(model: TransformModel, pts: np.ndarray) -> np.ndarray:
     params = model.tps_params or {}
     interp = params.get("interpolator")
