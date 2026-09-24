@@ -48,6 +48,10 @@ DEM_KINDS = {
     # product-id prefix: (name, source description, independent of camera references?)
     "LDEM_": ("lola", "lola_laser_altimetry", True),
     "SLDEM2015": ("sldem2015", "sldem2015_lola_plus_selene_tc", False),
+    # SELENE TC stereo DTM, same 3 deg tiles and 4096 px/deg grid as the TC ortho map it
+    # was used to make: NOT independent of TC, which is what makes it the right height
+    # model for parallax against TC (docs/parallax_protocol.md amendment 2).
+    "DTM_MAP_02": ("tc_dtm", "selene_tc_stereo_dtm", False),
 }
 
 
@@ -59,7 +63,7 @@ class DemError(ValueError):
 class DemTile:
     label_path: Path
     product_id: str
-    kind: str                       # "lola" | "sldem2015"
+    kind: str                       # "lola" | "sldem2015" | "tc_dtm"
     source: str
     independent_of_references: bool
     model: MapModel                 # pixel <-> lat/lon, from the label's map projection

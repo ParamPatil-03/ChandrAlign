@@ -40,6 +40,9 @@ BUNDLES = {
     "ortho": ("sln-l-tc-5-ortho-map-v2.0", "TCO_MAP_02", 3, "tc"),
     "morning": ("sln-l-tc-5-morning-map-v4.0", "TCO_MAPm04", 3, "tc"),
     "evening": ("sln-l-tc-5-evening-map-v4.0", "TCO_MAPe04", 3, "tc"),
+    # TC DTM: heights on the same 3 deg tiles as the ortho map (4096 px/deg, ~7.4 m);
+    # finer than SLDEM2015 (59 m) for terrain parallax (docs/parallax_protocol.md).
+    "dtm": ("sln-l-tc-5-dtm-map-v2.0", "DTM_MAP_02", 3, "tc_dtm"),
     # MI: 9-band multispectral map, 1 deg tiles, one DARTS folder per degree of longitude.
     "mi": ("sln-l-mi-5-map-v3.0", "MI_MAP_03", 1, "mi"),
 }
@@ -105,38 +108,16 @@ def head(url: str) -> int | None:
 
 
 def fetch(url: str, dest: Path) -> None:
-    """Download one file, never leaving a truncated file that looks finished.
+    """Download one file, retrying a dropped connection (fetch_dem.fetch).
 
-    Same fix as fetch_lro.py (54bf21e): a file that merely EXISTS is not a file
-    that finished, so an interrupted run used to leave a short .img that the
-    next run reported as "have". Size truth is the server's Content-Length.
+    The earlier single-shot version gave up on a reset connection (a 302 MB TC DTM
+    tile died at 181 MB, 2026-09-25). fetch_dem.fetch retries and only renames a
+    complete file. DARTS ignores HTTP Range (checked 2026-09-25: 200, whole file), so
+    there each retry starts from zero; a server that honours Range is resumed.
     """
     dest.parent.mkdir(parents=True, exist_ok=True)
-    want = head(url) or None
-    if dest.exists():
-        have = dest.stat().st_size
-        if want is None:
-            print(f"    have {dest.name} (size unverified: no Content-Length)")
-            return
-        if have == want:
-            print(f"    have {dest.name}")
-            return
-        print(f"    redo {dest.name} (have {have / 1e6:.1f} MB of {want / 1e6:.1f} MB)")
-        dest.unlink()
-    part = dest.with_suffix(dest.suffix + ".part")
-    with requests.get(url, stream=True, timeout=1800) as r:
-        r.raise_for_status()
-        declared = r.headers.get("Content-Length")
-        declared = int(declared) if declared is not None else want
-        with part.open("wb") as fh:
-            for chunk in r.iter_content(1 << 20):
-                fh.write(chunk)
-    got = part.stat().st_size
-    if declared is not None and got != declared:
-        part.unlink()
-        raise RuntimeError(f"{dest.name}: got {got} bytes, server declared {declared}")
-    part.replace(dest)
-    print(f"    got  {dest.name} ({got / 1e6:.1f} MB)")
+    from fetch_dem import fetch as fetch_resumable
+    fetch_resumable(url, dest)
 
 
 def check_manifest(dest: Path) -> None:

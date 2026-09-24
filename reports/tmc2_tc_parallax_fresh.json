@@ -1,0 +1,327 @@
+{
+  "source": "measured",
+  "protocol": "docs/parallax_protocol.md",
+  "run": {
+    "command": "python scripts/parallax_eval.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/fr_on C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/fr_on.json C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/fr_off.json reports/tmc2_tc_parallax_fresh.json",
+    "commit": "c1bdf172b8f8de597bfefd07541ad8faf2814d74",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T18:55:40+00:00"
+  },
+  "verdict": {
+    "a_empty_cells": false,
+    "b_offsets": false,
+    "c_nothing_lost": true,
+    "d_physical_p": false,
+    "adopt": false
+  },
+  "windows": [
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "tmc_col": 768,
+      "status": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 4,
+      "coverage": 1.0,
+      "coverage_before": 0.938,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00955,
+          -0.05675
+        ],
+        "h0_m": -1307.5,
+        "rounds": 5,
+        "inliers_before": 6654,
+        "inliers_after": 12305,
+        "rms_px": 1.4361,
+        "affine": [
+          [
+            1.015808,
+            -0.001222,
+            -6.741537
+          ],
+          [
+            -5.1e-05,
+            0.999095,
+            4.242289
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 4.922,
+      "rms_parallax_px": 2.687,
+      "p_along_track": true,
+      "p_over_predicted": 0.874
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "tmc_col": 768,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 4,
+      "coverage": 1.0,
+      "coverage_before": 0.938,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.01225,
+          -0.06616
+        ],
+        "h0_m": -1561.4,
+        "rounds": 5,
+        "inliers_before": 7428,
+        "inliers_after": 13124,
+        "rms_px": 1.2661,
+        "affine": [
+          [
+            1.016894,
+            -0.001233,
+            -3.585535
+          ],
+          [
+            0.000701,
+            1.000032,
+            -1.644876
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 5.799,
+      "rms_parallax_px": 2.937,
+      "p_along_track": true,
+      "p_over_predicted": 1.021
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 4687,
+      "tmc_col": 768,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00855,
+          -0.02789
+        ],
+        "h0_m": -1604.9,
+        "rounds": 2,
+        "inliers_before": 14796,
+        "inliers_after": 14798,
+        "rms_px": 0.5719,
+        "affine": [
+          [
+            1.016669,
+            -0.000871,
+            -4.337121
+          ],
+          [
+            0.001975,
+            1.001466,
+            -0.423688
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 0.211,
+      "rms_parallax_px": 0.188,
+      "p_along_track": false,
+      "p_over_predicted": 0.443
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "tmc_col": 3232,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "coverage": 1.0,
+      "coverage_before": 1.0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00791,
+          -0.06321
+        ],
+        "h0_m": -1298.4,
+        "rounds": 5,
+        "inliers_before": 7899,
+        "inliers_after": 14012,
+        "rms_px": 1.2442,
+        "affine": [
+          [
+            1.014971,
+            -0.003254,
+            -9.303502
+          ],
+          [
+            -0.003371,
+            1.000543,
+            4.306048
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 3.326,
+      "rms_parallax_px": 1.671,
+      "p_along_track": true,
+      "p_over_predicted": 0.967
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "tmc_col": 3232,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 5,
+      "coverage": 1.0,
+      "coverage_before": 0.922,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.0071,
+          -0.06321
+        ],
+        "h0_m": -1217.8,
+        "rounds": 5,
+        "inliers_before": 7571,
+        "inliers_after": 13409,
+        "rms_px": 1.3064,
+        "affine": [
+          [
+            1.013005,
+            -0.0033,
+            -3.810312
+          ],
+          [
+            -0.002932,
+            1.000381,
+            1.516156
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 5.337,
+      "rms_parallax_px": 2.837,
+      "p_along_track": true,
+      "p_over_predicted": 0.965
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 4687,
+      "tmc_col": 3232,
+      "status": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 2,
+      "empty_cells_before": 12,
+      "coverage": 0.969,
+      "coverage_before": 0.812,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00664,
+          -0.05343
+        ],
+        "h0_m": -1123.3,
+        "rounds": 5,
+        "inliers_before": 5566,
+        "inliers_after": 10811,
+        "rms_px": 1.4435,
+        "affine": [
+          [
+            1.010261,
+            -0.003172,
+            -4.024019
+          ],
+          [
+            -0.000488,
+            1.002594,
+            -0.580551
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 12.251,
+      "rms_parallax_px": 5.997,
+      "p_along_track": true,
+      "p_over_predicted": 0.817
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 6250,
+      "tmc_col": null,
+      "status": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "status_before": "registered",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 1,
+      "empty_cells_before": 11,
+      "coverage": 0.984,
+      "coverage_before": 0.828,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00045,
+          -0.06449
+        ],
+        "h0_m": -1575.1,
+        "rounds": 5,
+        "inliers_before": 7684,
+        "inliers_after": 13017,
+        "rms_px": 1.2142,
+        "affine": [
+          [
+            1.015018,
+            -0.001598,
+            -7.238046
+          ],
+          [
+            -0.000343,
+            1.000212,
+            -0.052649
+          ]
+        ]
+      },
+      "cells": 41,
+      "rms_affine_px": 8.856,
+      "rms_parallax_px": 7.871,
+      "p_along_track": true,
+      "p_over_predicted": 0.979
+    }
+  ]
+}

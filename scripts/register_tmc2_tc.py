@@ -127,20 +127,39 @@ class _OffsetModel:
         return self.tcm.pixel_to_latlon(np.asarray(rows, float) + self.y0, np.asarray(cols, float) + self.x0)
 
 
-def _dem_for(tcm, origin_xy, w: int, h: int):
-    """SLDEM covering a TC region (with a margin), or None if no tile is held."""
-    from chandralign.io.dem import dem_patch, find_tiles
-    tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
+def _dem_for(tcm, origin_xy, w: int, h: int, which: str | None = None):
+    """Heights (`which`, default --dem) covering a TC region (with a margin), or None if no
+    tile of that DEM is held there."""
+    from chandralign.io.dem import DemError, dem_patch, find_tiles
+    tiles = find_tiles(ROOT / DEM_DIRS[which or DEM])
     if not tiles:
         return None
     x0, y0 = origin_xy
     lat, lon = tcm.pixel_to_latlon(np.array([y0, y0 + h, y0, y0 + h], float),
                                    np.array([x0, x0, x0 + w, x0 + w], float))
     m = 0.02
-    return dem_patch(tiles, (float(np.min(lat)) - m, float(np.max(lat)) + m,
-                             float(np.min(lon)) - m, float(np.max(lon)) + m))
+    try:
+        return dem_patch(tiles, (float(np.min(lat)) - m, float(np.max(lat)) + m,
+                                 float(np.min(lon)) - m, float(np.max(lon)) + m))
+    except DemError:
+        if which is None:
+            raise
+        return None                    # an optional DEM (--parallax-dem) not held here
 
 
+def _dem_grid(dem, tcm, o_f, w: int, h: int, step: int = 16) -> dict:
+    """Height (m) every `step` px of a fine window, for the dump (empty if no DEM)."""
+    if dem is None:
+        return {}
+    ys, xs = np.mgrid[0:h:step, 0:w:step].astype(float)
+    lat, lon = _OffsetModel(tcm, o_f).pixel_to_latlon(ys.ravel(), xs.ravel())
+    return {"dem_step": step, "dem_m": np.asarray(dem.sample(lat, lon), float).reshape(ys.shape)}
+
+
+DEM_DIRS = {"sldem2015": "data/raw/dem/sldem2015", "tc_dtm": "data/raw/selene/tc_dtm"}
+DEM = "sldem2015"  # --dem: the height model for the terrain filter (and parallax, by default)
+PARALLAX_DEM = None  # --parallax-dem: a separate height model for the parallax stage only
+PAIRING_STAGES = {"parallax": True}  # stage defaults for TMC-2 -> TC, over configs/default.yaml
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
@@ -148,12 +167,14 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
                prior_offset_m: tuple[float, float] = (0.0, 0.0),
                match_kwargs: dict | None = None, gate_reuse_base: bool = False,
-               stages: dict | None = None) -> dict:
+               stages: dict | None = None, col_offset: int = 0) -> dict:
     match_kwargs = dict(match_kwargs or {})
     stages = stage_flags(stages)
-    col_c = tmc.array_shape[1] // 2
+    col_c = tmc.array_shape[1] // 2 + int(col_offset)
     r0, c0 = row_c - win // 2, col_c - win // 2
-    out: dict = {"tmc_row": row_c, "window_px": win}
+    out: dict = {"tmc_row": row_c, "window_px": win, "dem": DEM}
+    if col_offset:
+        out["tmc_col"] = col_c
 
     # ---- stage 1: prior from SYSTEM corners only --------------------------------
     g = np.linspace(0, win - 1, 11)
@@ -251,9 +272,19 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     # control points, per-point sub-pixel, final fit -- each switched by `stages`.
     # After the coarse lock both images are in TC's frame (offset o_f), so one
     # ground model serves both ends of every match.
-    fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages,
-                    ground_model=_OffsetModel(tcm, o_f),
-                    dem=_dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None)
+    def rematch(a, b):                                   # ALIGN-05 refill: same matcher, one cell
+        return adapter.match(plane(a, np.ones(a.shape, bool), tc.gsd_m), plane(b, np.ones(b.shape, bool), tc.gsd_m),
+                             model_name=matcher, device=device,
+                             **{k: v for k, v in match_kwargs.items() if k != "tile_px"})
+
+    t_dem = _dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None
+    p_dem, out["parallax_dem"] = t_dem, DEM
+    if stages["parallax"] and PARALLAX_DEM and PARALLAX_DEM != DEM:
+        own = _dem_for(tcm, o_f, wF, hF, which=PARALLAX_DEM)
+        if own is not None:            # where it is not held, the stage falls back to --dem
+            p_dem, out["parallax_dem"] = own, PARALLAX_DEM
+    fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages, rematch=rematch,
+                    ground_model=_OffsetModel(tcm, o_f), dem=t_dem, parallax_dem=p_dem)
     res, ms = fr.first, fr.matches
     out.update(matcher=matcher, matches=n, inliers=res.inlier_count,
                inlier_ratio=round(res.inlier_count / n, 4) if n else 0.0,
@@ -263,10 +294,12 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
         return out
     if DUMP_DIR is not None:
         inl = fr.first.inlier_mask
-        np.savez_compressed(Path(DUMP_DIR) / f"window_{row_c}.npz",
+        np.savez_compressed(Path(DUMP_DIR) / (f"window_{row_c}.npz" if not col_offset else f"window_{row_c}_c{col_c}.npz"),
                             control_src=fr.control_src, control_ref=fr.control_ref,
                             inlier_src=fr.matches.src_pts[inl], inlier_ref=fr.matches.ref_pts[inl],
-                            model=np.asarray(fr.model.matrix, float))
+                            model=np.asarray(fr.model.matrix, float), src_ok=src_ok, ref_ok=ref_ok,
+                            src_img=src_img.astype(np.float16), ref_img=ref_img.astype(np.float16),
+                            **_dem_grid(p_dem, tcm, o_f, wF, hF), gsd_m=float(tc.gsd_m))
 
     R = np.asarray(fr.model.matrix, float)
     T_total = T(o_f[0], o_f[1]) @ R @ Wf                              # window px -> TC px
@@ -381,18 +414,29 @@ def main() -> int:
                     help="split the coarse-aligned pair into tiles no larger than this")
     ap.add_argument("--gate-reuse-base", action="store_true",
                     help="perturbation gate reuses the main registration as its baseline")
+    ap.add_argument("--col-offset", type=int, default=0,
+                    help="with --rows: move the window this many TMC-2 columns off the strip centre")
+    ap.add_argument("--dem", choices=sorted(DEM_DIRS), default="sldem2015",
+                    help="height model (tc_dtm: SELENE TC stereo DTM, ~7.4 m, only where a tile is held)")
+    ap.add_argument("--parallax-dem", choices=sorted(DEM_DIRS), default="tc_dtm",
+                    help="height model for the parallax stage only (falls back to --dem where not held); "
+                         "tc_dtm is the adopted default (docs/parallax_protocol.md amendment 3)")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
-    global DUMP_DIR
+    global DUMP_DIR, DEM, PARALLAX_DEM
+    DEM, PARALLAX_DEM = args.dem, args.parallax_dem
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
-    stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in
-                          (item.split("=", 1) for item in args.stage)})
+    # ALIGN-08: parallax is ON for this pairing (TMC-2 fore/aft views are 26 deg oblique),
+    # adopted by docs/parallax_protocol.md amendment 3. Only here: the global default stays
+    # off because no other pairing has been measured. --stage parallax=off still wins.
+    stages = stage_flags({**PAIRING_STAGES, **{k: v.lower() in ("on", "1", "true") for k, v in
+                                               (item.split("=", 1) for item in args.stage)}})
     print(f"pipeline stages: {stages}", flush=True)
     args.matcher, routed_opts, matcher_choice = resolve_matcher(args.matcher)
     print(f"matcher: {args.matcher}  ({matcher_choice['chosen_by']})", flush=True)
@@ -430,7 +474,8 @@ def main() -> int:
             r = run_window(tmc, sysm, refm, tcs[key], tcms[key], int(row_c), win=args.win,
                            coarse=args.coarse, margin_km=args.margin_km, matcher=args.matcher,
                            device=args.device, prior_offset_m=tuple(args.prior_offset_m),
-                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages)
+                           match_kwargs=mk, gate_reuse_base=args.gate_reuse_base, stages=stages,
+                           col_offset=args.col_offset)
             r["tile"] = key
             r["seconds"] = round(time.perf_counter() - t, 1)
             results.append(r)

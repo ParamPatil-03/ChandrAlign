@@ -219,3 +219,69 @@ def test_tps_beats_affine_on_held_out_points_of_a_relief_distorted_pair():
     e_aff = np.sqrt(np.mean(np.sum((models.apply(on.model, test) - truth(test)) ** 2, axis=1)))
     e_tps = np.sqrt(np.mean(np.sum((models.apply(on.tps, test) - truth(test)) ** 2, axis=1)))
     assert e_tps < 0.5 * e_aff, (e_tps, e_aff)
+
+
+def test_refill_fills_an_empty_cell_only_with_points_the_model_agrees_with():
+    """ALIGN-05: an empty cell is re-searched locally; a match that disagrees with the
+    model (> 2 px) is refused; the model never changes."""
+    rng = np.random.default_rng(3)
+    src = rng.uniform([0, 0], [400, 400], (2000, 2))
+    src = src[~((src[:, 0] < 50) & (src[:, 1] < 50))]          # cell (0, 0) left empty
+    ref = src @ A[:2, :2].T + A[:2, 2]
+    def rematch(a, b):                                        # crop of cell (0, 0), padded
+        good = np.array([[20.0, 20.0], [30.0, 35.0]])
+        bad = np.array([[40.0, 10.0]])
+        s = np.vstack([good, bad])
+        r = s @ A[:2, :2].T + A[:2, 2]
+        r[-1] += 9.0                                          # disagrees with the model
+        return matchset(s, r)
+    flags = {**OFF, "uniformity": True, "refill": True}
+    off = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "uniformity": True})
+    on = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags=flags, rematch=rematch)
+    assert np.array_equal(on.model.matrix, off.model.matrix)
+    assert on.stages["refill"]["refilled"] == 2 and on.coverage > off.coverage
+    assert not any(np.allclose(p, [40.0, 10.0]) for p in on.control_src)
+
+
+def test_parallax_keeps_the_hill_an_affine_throws_away_and_still_refuses_outliers():
+    """ALIGN-08: an oblique view shifts a 300 m hill ~20 px along-track. The affine alone
+    drops the hill's matches; the parallax stage keeps them, recovers p, refuses the
+    outliers, and leaves the delivered model unchanged."""
+    rng = np.random.default_rng(5)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    hill = 300.0 * np.exp(-((rr - 300) ** 2 + (cc - 300) ** 2) / (2 * 50.0 ** 2))
+    dem = DemPatch(hill, lat, lon, 1000.0, "test", True, ())
+    p = np.array([0.004, -0.07])                                   # px per metre, along-track
+    src = rng.uniform([0, 0], [400, 400], (1500, 2))
+    h = hill[src[:, 1].round().astype(int), src[:, 0].round().astype(int)]
+    ref = src @ A[:2, :2].T + A[:2, 2] + h[:, None] * p + rng.normal(0, 0.3, src.shape)
+    bad = rng.random(len(src)) < 0.15
+    ref[bad] += rng.uniform(-40, 40, (bad.sum(), 2))
+    on_hill = (h > 60) & ~bad
+    kw = dict(centre=(200, 200), ground_model=_Identity(), dem=dem)
+    off = fine_stage(matchset(src, ref), blank(), blank(), flags=OFF, **kw)
+    on = fine_stage(matchset(src, ref), blank(), blank(), flags={**OFF, "parallax": True}, **kw)
+    got = np.zeros(len(src), bool)
+    for pt in on.control_src:
+        got |= np.all(src == pt, axis=1)
+    assert off.first.inlier_mask[on_hill].mean() < 0.5                         # the affine loses the hill
+    assert got[on_hill].mean() > 0.95 and got[bad].mean() < 0.05
+    st = on.stages["parallax"]
+    assert st["applied"] and np.allclose(st["p_px_per_m"], p, atol=0.005)
+    assert np.array_equal(on.model.matrix, off.model.matrix)
+
+
+def test_parallax_without_a_dem_says_so():
+    fr = fine_stage(matchset(*clustered_pairs()[:2]), blank(), blank(), centre=(200, 200),
+                    flags={**OFF, "parallax": True})
+    assert fr.stages["parallax"] == {"applied": False, "reason": "no DEM"}
+
+
+def test_parallax_uses_its_own_dem_when_given_one():
+    """A finer parallax DEM must not reach the terrain filter, and vice versa."""
+    src, ref = clustered_pairs()[:2]
+    fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200),
+                    flags={**OFF, "parallax": True}, ground_model=_Identity(), parallax_dem=_ridge_dem())
+    assert fr.stages["parallax"]["applied"]
+    assert fr.stages["geometry_filter"] == {"applied": False, "reason": "off (pipeline.geometry_filter)"}

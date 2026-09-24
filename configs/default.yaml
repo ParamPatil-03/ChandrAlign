@@ -52,6 +52,9 @@ pipeline:                    # P2-T16: optional fine-stage steps (src/chandralig
   # are switched only by measurement on real data: the values below are set by
   # docs/pipeline_stages_protocol.md, not by preference.
   geometry_filter: true      # ALIGN-03: drop matches whose two ends are different terrain. ON by rule 5 (needs SLDEM; skipped without)
+  parallax: false            # ALIGN-08: inliers under affine + DEM height x parallax. OFF globally; ON for TMC-2 -> TC only
+                             # (register_tmc2_tc.py, with the TC DTM), the one pairing measured (docs/parallax_protocol.md am. 3)
+  refill: false              # ALIGN-05: re-search empty cells locally (docs/refill_protocol.md)
   tps: true                  # ALIGN-02: TPS through the delivered points, ON by docs/tps_protocol.md (held-out -40% median)
   dense_refine: false        # Q6 (docs/illumination_fix_protocol.md): illumination-robust refinement of the model
   uniformity: true           # ALIGN-04: top-k per grid cell of the inliers (PS mandate). ON by v3: 9/9 windows

@@ -48,7 +48,7 @@ from . import config
 from .contracts import MatchSet, TransformModel
 from .estimate import models, robust
 
-STAGES = ("geometry_filter", "dense_refine", "uniformity", "subpixel", "tps")
+STAGES = ("geometry_filter", "parallax", "dense_refine", "uniformity", "refill", "subpixel", "tps")
 
 
 def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
@@ -144,11 +144,45 @@ def _dense_refine(model: TransformModel, src_img: np.ndarray, ref_img: np.ndarra
             {"applied": True, "moves_px": moves, "overlap_px": [int(x1 - x0), int(y1 - y0)]})
 
 
+def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5):
+    """Inliers under ref = A.src + h.p, h = DEM height at the source point (ALIGN-08).
+
+    Starts from the robust estimate's inliers, fits A (affine) and p (px per metre) by least
+    squares, re-selects inliers from ALL matches at the reprojection threshold, and repeats
+    until the set is stable. Matches with no DEM height keep their original status.
+    """
+    s, r = np.asarray(ms.src_pts, float), np.asarray(ms.ref_pts, float)
+    lat, lon = ground_model.pixel_to_latlon(s[:, 1], s[:, 0])
+    h = np.asarray(dem.sample(lat, lon), float)
+    known = np.isfinite(h)
+    base = inl0 & known
+    if base.sum() < 10:
+        return inl0, {"applied": False, "reason": "fewer than 10 inliers with a DEM height"}
+    h0 = float(np.median(h[base]))
+    X = np.c_[s, np.ones(len(s)), np.where(known, h - h0, 0.0)]
+    thr = float(config.get("estimate.reproj_threshold_px", 3.0))
+    inl, n_rounds = base, 0
+    for n_rounds in range(1, rounds + 1):
+        B = np.linalg.lstsq(X[inl], r[inl], rcond=None)[0]
+        new = (known & (np.hypot(*(X @ B - r).T) <= thr)) | (~known & inl0)
+        if np.array_equal(new, inl):
+            break
+        inl = new
+    B = np.linalg.lstsq(X[inl & known], r[inl & known], rcond=None)[0]
+    res = np.hypot(*(X @ B - r).T)[inl & known]
+    return inl, {"applied": True, "p_px_per_m": [round(float(B[3, 0]), 5), round(float(B[3, 1]), 5)],
+                 "h0_m": round(h0, 1), "rounds": n_rounds,
+                 "inliers_before": int(inl0.sum()), "inliers_after": int(inl.sum()),
+                 "rms_px": round(float(np.sqrt(np.mean(res ** 2))), 4),
+                 "affine": [[round(float(v), 6) for v in row] for row in B[:3].T]}
+
+
 def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                centre: tuple[float, float],
                expected_scale=None,
                ground_model=None, dem=None,
-               flags: Optional[dict[str, bool]] = None) -> FineResult:
+               flags: Optional[dict[str, bool]] = None,
+               rematch=None, parallax_dem=None) -> FineResult:
     """Run the fine stage on one matched pair.
 
     `src_img`/`ref_img` are the arrays the matches were found on (the refinement
@@ -156,6 +190,8 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     sets of points -- after a coarse lock both images share one frame, so one
     model serves -- and `dem` is a DemPatch covering them. Without either, the
     terrain filter is skipped and says so; it never pretends to have run.
+    `parallax_dem`, if given, is the height model for the parallax stage only (a finer DEM
+    can suit parallax but not the filter's slope thresholds); otherwise `dem` serves both.
     """
     from .estimate import geometry_filter
     from .refine import subpixel, uniformity
@@ -193,6 +229,19 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         return FineResult(False, None, first, ms, np.zeros((0, 2)), np.zeros((0, 2)), 0.0, None,
                           n_matches, stages, ["no transform from the robust estimate"])
     inl = first.inlier_mask
+
+    # 2a. terrain parallax (ALIGN-08): an oblique view (TMC-2 fore/aft, 26 deg) moves each
+    # point along-track in proportion to its height, which a 2-D affine cannot hold, so on
+    # relief the right matches fail the affine threshold. Re-select the inliers under
+    # ref = A.src + h.p; the delivered affine model is unchanged (docs/parallax_protocol.md).
+    if flags["parallax"]:
+        p_dem = parallax_dem if parallax_dem is not None else dem
+        if p_dem is None or ground_model is None:
+            stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
+        else:
+            inl, stages["parallax"] = _parallax(ms, inl, p_dem, ground_model)
+    else:
+        stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
     conf = np.asarray(ms.confidence, float)[inl] if len(ms.confidence) == len(inl) else np.ones(len(cs))
 
@@ -216,6 +265,46 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         coverage = uniformity.coverage_of(cs, shape, grid=grid) if len(cs) else 0.0
         stages["uniformity"] = {"applied": False, "reason": "off (pipeline.uniformity)"}
 
+    # 3b. refill empty cells (ALIGN-05): the same matcher, on the empty cell only; kept
+    # only where the model agrees (<= 2 px). The model is never refitted.
+    n_primary = len(cs)
+    if flags["refill"] and flags["uniformity"] and rematch is not None and len(cs) and u.empty_cells:
+        k = int(config.get("uniformity.top_k_per_cell", 6))
+        H, W = shape
+        pad, add_s, add_r, add_c, filled = 24, [], [], [], 0
+        for (y0, y1, x0, x1) in uniformity.empty_cell_regions(u, shape):
+            ya, yb, xa, xb = max(0, y0 - pad), min(H, y1 + pad), max(0, x0 - pad), min(W, x1 + pad)
+            if yb - ya < 32 or xb - xa < 32:
+                continue
+            try:
+                m2 = rematch(np.asarray(src_img)[ya:yb, xa:xb], np.asarray(ref_img)[ya:yb, xa:xb])
+            except Exception:                                   # a failed local pass adds nothing
+                continue
+            if m2 is None or len(m2.src_pts) == 0:
+                continue
+            s2 = np.asarray(m2.src_pts, float) + [xa, ya]
+            r2 = np.asarray(m2.ref_pts, float) + [xa, ya]
+            c2 = np.asarray(m2.confidence, float) if len(m2.confidence) == len(s2) else np.ones(len(s2))
+            inside = (s2[:, 0] >= x0) & (s2[:, 0] < x1) & (s2[:, 1] >= y0) & (s2[:, 1] < y1)
+            res = np.hypot(*(models.apply(model, s2) - r2).T)
+            ok = inside & (res <= 2.0)
+            if not ok.any():
+                continue
+            order = np.argsort(-c2[ok])[:k]
+            add_s.append(s2[ok][order]); add_r.append(r2[ok][order]); add_c.append(c2[ok][order]); filled += 1
+        empty_before = len(u.empty_cells)
+        if add_s:
+            new_s = np.vstack(add_s)
+            u = uniformity.merge_refill(u.keep_mask, new_s, u, shape)
+            cs, cr = np.vstack([cs, new_s]), np.vstack([cr, np.vstack(add_r)])
+            coverage = float(u.coverage)
+        stages["refill"] = {"applied": True, "empty_cells_before": empty_before, "cells_filled": filled,
+                            "refilled": int(len(cs) - n_primary), "empty_cells_after": len(u.empty_cells)}
+    else:
+        why = ("off (pipeline.refill)" if not flags["refill"] else "no rematch callable" if rematch is None
+               else "no empty cells")
+        stages["refill"] = {"applied": False, "reason": why}
+
     # 4. per-point sub-pixel refinement (PREC-01) of the DELIVERED points
     if flags["subpixel"] and len(cs):
         before = cr.copy()
@@ -229,6 +318,10 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                               "window_px": 2 * int(config.get("subpixel.refine_half_px", 16)) + 1}
     else:
         stages["subpixel"] = {"applied": False, "reason": "off (pipeline.subpixel)"}
+
+    if stages["refill"].get("refilled"):
+        stages["refill"]["residual_to_model_px"] = {"primary": _rmse(model, cs[:n_primary], cr[:n_primary]),
+                                                    "refilled": _rmse(model, cs[n_primary:], cr[n_primary:])}
 
     # 5. TPS through the delivered points (ALIGN-02)
     tps = None
