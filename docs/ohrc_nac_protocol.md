@@ -88,5 +88,16 @@ this is a harness limit, not a result.
 Change, placement only: for each candidate OHRC row, use the OHRC column **closest to the
 centre** whose 2048 px window lies inside the NAC footprint (candidate columns every 256
 px). Rows are then spread evenly as before. Success rules, thresholds, matchers and
-predictions are unchanged. The control product's windows are unchanged (its centre
-column fits), and its already-measured result stands: all three matchers 5/5.
+predictions are unchanged. (Correction, recorded after the run: the control's window rows
+also shifted by up to 125 px, because rows are now snapped to the new candidate set. Its
+result was 5/5 for all three matchers both times.)
+
+## Amendment 2 (before the opposed-sun product was measured)
+
+Run 2 (placement per amendment 1) still found **zero** windows for M175124932LC, the
+opposed-sun product and prediction 2's test. Cause, a harness bug: the inside-footprint
+test padded each side by the window's FULL extent in NAC px instead of HALF of it. On a
+strip 5064 px wide at 0.24 m (1.2 km), no window can pass that test. Fix: pad = 1.1 x the
+half-extent. Every product's placement changes, so **all five are re-run (run 3) and
+run 3 is the result**; runs 1-2 are kept in `docs/ohrc_nac_results.md` for the record,
+not counted. Success rules, thresholds, matchers and predictions are unchanged.

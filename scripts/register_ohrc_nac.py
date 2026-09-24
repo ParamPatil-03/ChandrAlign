@@ -249,7 +249,9 @@ def main() -> int:
         nac = Nac(pid, lroc[pid])
         nacm = parse_label(next((ROOT / "data/raw/lro/nac").rglob(f"{pid}.XML")))
         geo = NacGeo(nac, *nacm.array_shape)
-        pad = WIN * OHRC_PX / min(nac.px_w, nac.px_h)
+        # Amendment 2: the window's HALF-extent in NAC px, plus 10% (was the full extent,
+        # which excluded every window on a strip narrower than two windows).
+        pad = 1.1 * (WIN / 2) * OHRC_PX / min(nac.px_w, nac.px_h)
         Ln, Sn = nacm.array_shape
         best = {}
         for cc in cols_all:                                   # nearest-to-centre first
