@@ -219,3 +219,25 @@ def test_tps_beats_affine_on_held_out_points_of_a_relief_distorted_pair():
     e_aff = np.sqrt(np.mean(np.sum((models.apply(on.model, test) - truth(test)) ** 2, axis=1)))
     e_tps = np.sqrt(np.mean(np.sum((models.apply(on.tps, test) - truth(test)) ** 2, axis=1)))
     assert e_tps < 0.5 * e_aff, (e_tps, e_aff)
+
+
+def test_refill_fills_an_empty_cell_only_with_points_the_model_agrees_with():
+    """ALIGN-05: an empty cell is re-searched locally; a match that disagrees with the
+    model (> 2 px) is refused; the model never changes."""
+    rng = np.random.default_rng(3)
+    src = rng.uniform([0, 0], [400, 400], (2000, 2))
+    src = src[~((src[:, 0] < 50) & (src[:, 1] < 50))]          # cell (0, 0) left empty
+    ref = src @ A[:2, :2].T + A[:2, 2]
+    def rematch(a, b):                                        # crop of cell (0, 0), padded
+        good = np.array([[20.0, 20.0], [30.0, 35.0]])
+        bad = np.array([[40.0, 10.0]])
+        s = np.vstack([good, bad])
+        r = s @ A[:2, :2].T + A[:2, 2]
+        r[-1] += 9.0                                          # disagrees with the model
+        return matchset(s, r)
+    flags = {**OFF, "uniformity": True, "refill": True}
+    off = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "uniformity": True})
+    on = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags=flags, rematch=rematch)
+    assert np.array_equal(on.model.matrix, off.model.matrix)
+    assert on.stages["refill"]["refilled"] == 2 and on.coverage > off.coverage
+    assert not any(np.allclose(p, [40.0, 10.0]) for p in on.control_src)

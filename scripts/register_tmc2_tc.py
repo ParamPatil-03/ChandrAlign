@@ -251,7 +251,12 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     # control points, per-point sub-pixel, final fit -- each switched by `stages`.
     # After the coarse lock both images are in TC's frame (offset o_f), so one
     # ground model serves both ends of every match.
-    fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages,
+    def rematch(a, b):                                   # ALIGN-05 refill: same matcher, one cell
+        return adapter.match(plane(a, np.ones(a.shape, bool), tc.gsd_m), plane(b, np.ones(b.shape, bool), tc.gsd_m),
+                             model_name=matcher, device=device,
+                             **{k: v for k, v in match_kwargs.items() if k != "tile_px"})
+
+    fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages, rematch=rematch,
                     ground_model=_OffsetModel(tcm, o_f),
                     dem=_dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None)
     res, ms = fr.first, fr.matches
