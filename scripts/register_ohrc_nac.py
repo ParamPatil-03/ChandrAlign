@@ -38,7 +38,7 @@ from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.dem import dem_patch, find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
-from chandralign.matching import adapter, cascade, classical  # noqa: E402
+from chandralign.matching import adapter, cascade, classical, routing  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_tmc2_nac import MOON_R_M, NULL_BELOW, Nac, enu  # noqa: E402
@@ -192,21 +192,26 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
                                           ("lroc_scaled_pixel",), False, ("LROC scaled pixel size",)))
     gsd = max(nac.px_w, nac.px_h)
     results = {}
-    for name in matchers:
+
+    def evaluate(name):
+        if name in results:
+            return results[name]
         t0 = time.perf_counter()
         r = {}
         try:
             ms, pa, pb = match(name, src, ref, device, gsd)
             n = int(len(ms.src_pts))
             if n < 4:
-                results[name] = {"status": f"only {n} matches", "matches": n, "success": False}; continue
+                results[name] = {"status": f"only {n} matches", "matches": n, "success": False}
+                return results[name]
             fr = fine_stage(ms, src, ref, centre=(wF / 2, hF / 2), flags=stages,
                             ground_model=Shifted(geo, o[0], o[1]), dem=dem)
             r.update(matches=n, inliers=fr.inlier_count, inlier_ratio=round(fr.inlier_ratio, 4),
                      control_points=int(len(fr.control_src)), coverage=round(fr.coverage, 3),
                      inlier_rmse_px=None if fr.rmse_px is None else round(fr.rmse_px, 3), pipeline=fr.stages)
             if not fr.ok:
-                results[name] = {**r, "status": "fine stage: no transform", "success": False}; continue
+                results[name] = {**r, "status": "fine stage: no transform", "success": False}
+                return results[name]
             T_total = T(o[0], o[1]) @ np.asarray(fr.model.matrix, float) @ Wf
             verdict = scale.check(T_total, exp, centre=(WIN / 2, WIN / 2))
             gates = control_gates.run_all(control_gates.pipeline_from(name, device=device, gsd_m=gsd, stages=stages),
@@ -222,6 +227,20 @@ def run_window(ohrc, om, nacm, geo, nac, rc, cc, matchers, device, stages, dem_t
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)
         results[name] = r
+        return r
+
+    ok = lambda r: r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
+    for name in matchers:
+        if name != "routed":
+            evaluate(name)
+            continue
+        # The shipped behaviour: routing's matcher, then its fallbacks ONLY if rejected.
+        tried = []
+        for cand in routing.choose("OHRC", "NAC").candidates():
+            tried.append(cand)
+            if ok(evaluate(cand)):
+                break
+        results["routed"] = {**results[tried[-1]], "used": tried[-1], "tried": tried}
     out["results"] = results
     out["status"] = "locked"
     return out

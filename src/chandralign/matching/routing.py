@@ -59,12 +59,18 @@ class MatcherChoice:
     regime: str = ""
     expectation: str = ""               # passed through from regime.select, never upgraded
     reason: str = ""
+    fallbacks: tuple[str, ...] = ()     # tried in order ONLY if model_name's result is rejected
+
+    def candidates(self) -> list[str]:
+        """The matchers to try, in order: the routed one, then its fallbacks."""
+        return [m for m in (self.model_name, *self.fallbacks) if m]
 
     def as_provenance(self) -> dict[str, Any]:
         return {"route": self.route, "matcher": self.model_name,
                 "fine_stage_options": dict(self.fine_stage_options),
                 "regime": self.regime, "expectation": self.expectation,
-                "reason": self.reason, "chosen_by": "matching.routing.choose"}
+                "reason": self.reason, "fallbacks": list(self.fallbacks),
+                "chosen_by": "matching.routing.choose"}
 
 
 def choose(src: SceneMeta | str, ref: SceneMeta | str) -> MatcherChoice:
@@ -93,7 +99,11 @@ def choose(src: SceneMeta | str, ref: SceneMeta | str) -> MatcherChoice:
 
     name = str(decision.matcher or cfg.get("default_matcher", "eloftr"))
     licence.assert_allowed(name)
+    fallbacks = tuple(m for m in (cfg.get("fallback_matchers") or []) if m != name)
+    for m in fallbacks:
+        licence.assert_allowed(m)
     return MatcherChoice(
         route="direct", model_name=name, regime=decision.regime,
-        expectation=decision.expectation,
-        reason=f"same-modality pair: default matcher {name}")
+        expectation=decision.expectation, fallbacks=fallbacks,
+        reason=f"same-modality pair: default matcher {name}"
+               + (f", then {', '.join(fallbacks)} if it is rejected" if fallbacks else ""))

@@ -46,6 +46,15 @@ default_matcher: eloftr
 cross_modal_matcher: xoftr
 cross_modal_tile_px: 640
 
+# Same-modality FALLBACK, tried in order ONLY when the default's result is REJECTED
+# or fails a control gate -- so it can never change a result the default already
+# produced. Measured on real OHRC -> LRO NAC (docs/illumination_fix_protocol.md, Q2):
+# at an 80 deg incidence difference minima-loftr registered 5/5 windows where eloftr,
+# xoftr and sift registered 0/5; on the same-sun control all four were 5/5. xoftr added
+# no window the others missed, so it is not in the list. The sun reading is NOT used
+# to trigger this: the result's own gates and tier are.
+fallback_matchers: [minima-loftr]
+
 rules:
   # Order matters: the first rule whose conditions all hold wins.
 
@@ -330,6 +339,10 @@ shippable_matchers:
                              # so the pin in pyproject.toml is load-bearing.
                              # Full chain: reports/licence_audit.json
   - xfeat                    # CPU-capable fallback
+  - xoftr                    # Apache-2.0 (OnderT/XoFTR); the routed cross-modal matcher
+  - minima-loftr             # Apache-2.0 + Apache-2.0 (reports/licence_audit.json); the
+                             # same-modality fallback, promoted on real evidence (see
+                             # fallback_matchers above)
   - sift-lightglue
   - sift-nn                  # the documented classical floor (MATCH-01)
 

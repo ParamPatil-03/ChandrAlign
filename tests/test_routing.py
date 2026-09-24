@@ -175,3 +175,18 @@ def test_a_ratio_below_the_measured_line_is_not_graded_medium():
     t = config.get("tiers")
     below = t["low"]["min_inlier_ratio"] - 0.02
     assert quality._tier_for(below, t, "min_inlier_ratio") == "REJECTED"
+
+
+def test_same_modality_pairs_carry_the_measured_fallback():
+    """docs/illumination_fix_protocol.md Q2: minima-loftr, tried only when the default is rejected."""
+    c = routing.choose("TMC2", "TC")
+    assert c.fallbacks == tuple(config.load("regimes")["fallback_matchers"])
+    assert c.candidates()[0] == c.model_name == "eloftr"
+    assert c.model_name not in c.fallbacks
+    for m in c.fallbacks:
+        assert not licence.is_restricted(m), m
+
+
+def test_cascade_and_cross_modal_routes_have_no_same_modality_fallback():
+    assert routing.choose("OHRC", "IIRS").fallbacks == ()
+    assert routing.choose("IIRS", "WAC").fallbacks == ()
