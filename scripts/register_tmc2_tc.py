@@ -141,6 +141,9 @@ def _dem_for(tcm, origin_xy, w: int, h: int):
                              float(np.min(lon)) - m, float(np.max(lon)) + m))
 
 
+DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
+
+
 def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
                prior_offset_m: tuple[float, float] = (0.0, 0.0),
@@ -258,6 +261,12 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     if not fr.ok:
         out["status"] = "fine stage: no transform"
         return out
+    if DUMP_DIR is not None:
+        inl = fr.first.inlier_mask
+        np.savez_compressed(Path(DUMP_DIR) / f"window_{row_c}.npz",
+                            control_src=fr.control_src, control_ref=fr.control_ref,
+                            inlier_src=fr.matches.src_pts[inl], inlier_ref=fr.matches.ref_pts[inl],
+                            model=np.asarray(fr.model.matrix, float))
 
     R = np.asarray(fr.model.matrix, float)
     T_total = T(o_f[0], o_f[1]) @ R @ Wf                              # window px -> TC px
@@ -372,11 +381,16 @@ def main() -> int:
                     help="split the coarse-aligned pair into tiles no larger than this")
     ap.add_argument("--gate-reuse-base", action="store_true",
                     help="perturbation gate reuses the main registration as its baseline")
+    ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
+    global DUMP_DIR
+    if args.dump_points:
+        DUMP_DIR = args.dump_points
+        Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
     stages = stage_flags({k: v.lower() in ("on", "1", "true") for k, v in
                           (item.split("=", 1) for item in args.stage)})
     print(f"pipeline stages: {stages}", flush=True)
