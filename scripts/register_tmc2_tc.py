@@ -127,23 +127,28 @@ class _OffsetModel:
         return self.tcm.pixel_to_latlon(np.asarray(rows, float) + self.y0, np.asarray(cols, float) + self.x0)
 
 
-def _dem_for(tcm, origin_xy, w: int, h: int):
-    """SLDEM covering a TC region (with a margin), or None if no tile is held."""
-    from chandralign.io.dem import dem_patch, find_tiles
-    tiles = find_tiles(ROOT / DEM_DIRS[DEM])
+def _dem_for(tcm, origin_xy, w: int, h: int, which: str | None = None):
+    """Heights (`which`, default --dem) covering a TC region (with a margin), or None if no
+    tile of that DEM is held there."""
+    from chandralign.io.dem import DemError, dem_patch, find_tiles
+    tiles = find_tiles(ROOT / DEM_DIRS[which or DEM])
     if not tiles:
         return None
     x0, y0 = origin_xy
     lat, lon = tcm.pixel_to_latlon(np.array([y0, y0 + h, y0, y0 + h], float),
                                    np.array([x0, x0, x0 + w, x0 + w], float))
     m = 0.02
-    return dem_patch(tiles, (float(np.min(lat)) - m, float(np.max(lat)) + m,
-                             float(np.min(lon)) - m, float(np.max(lon)) + m))
+    try:
+        return dem_patch(tiles, (float(np.min(lat)) - m, float(np.max(lat)) + m,
+                                 float(np.min(lon)) - m, float(np.max(lon)) + m))
+    except DemError:
+        if which is None:
+            raise
+        return None                    # an optional DEM (--parallax-dem) not held here
 
 
-def _dem_grid(tcm, o_f, w: int, h: int, step: int = 16) -> dict:
-    """SLDEM height (m) every `step` px of a fine window, for the dump (empty if no DEM held)."""
-    dem = _dem_for(tcm, o_f, w, h)
+def _dem_grid(dem, tcm, o_f, w: int, h: int, step: int = 16) -> dict:
+    """Height (m) every `step` px of a fine window, for the dump (empty if no DEM)."""
     if dem is None:
         return {}
     ys, xs = np.mgrid[0:h:step, 0:w:step].astype(float)
@@ -152,7 +157,8 @@ def _dem_grid(tcm, o_f, w: int, h: int, step: int = 16) -> dict:
 
 
 DEM_DIRS = {"sldem2015": "data/raw/dem/sldem2015", "tc_dtm": "data/raw/selene/tc_dtm"}
-DEM = "sldem2015"  # --dem: the height model for the terrain filter and parallax
+DEM = "sldem2015"  # --dem: the height model for the terrain filter (and parallax, by default)
+PARALLAX_DEM = None  # --parallax-dem: a separate height model for the parallax stage only
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
@@ -270,9 +276,14 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                              model_name=matcher, device=device,
                              **{k: v for k, v in match_kwargs.items() if k != "tile_px"})
 
+    t_dem = _dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None
+    p_dem, out["parallax_dem"] = t_dem, DEM
+    if stages["parallax"] and PARALLAX_DEM and PARALLAX_DEM != DEM:
+        own = _dem_for(tcm, o_f, wF, hF, which=PARALLAX_DEM)
+        if own is not None:            # where it is not held, the stage falls back to --dem
+            p_dem, out["parallax_dem"] = own, PARALLAX_DEM
     fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages, rematch=rematch,
-                    ground_model=_OffsetModel(tcm, o_f),
-                    dem=_dem_for(tcm, o_f, wF, hF) if stages["geometry_filter"] else None)
+                    ground_model=_OffsetModel(tcm, o_f), dem=t_dem, parallax_dem=p_dem)
     res, ms = fr.first, fr.matches
     out.update(matcher=matcher, matches=n, inliers=res.inlier_count,
                inlier_ratio=round(res.inlier_count / n, 4) if n else 0.0,
@@ -287,7 +298,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                             inlier_src=fr.matches.src_pts[inl], inlier_ref=fr.matches.ref_pts[inl],
                             model=np.asarray(fr.model.matrix, float), src_ok=src_ok, ref_ok=ref_ok,
                             src_img=src_img.astype(np.float16), ref_img=ref_img.astype(np.float16),
-                            **_dem_grid(tcm, o_f, wF, hF), gsd_m=float(tc.gsd_m))
+                            **_dem_grid(p_dem, tcm, o_f, wF, hF), gsd_m=float(tc.gsd_m))
 
     R = np.asarray(fr.model.matrix, float)
     T_total = T(o_f[0], o_f[1]) @ R @ Wf                              # window px -> TC px
@@ -406,14 +417,16 @@ def main() -> int:
                     help="with --rows: move the window this many TMC-2 columns off the strip centre")
     ap.add_argument("--dem", choices=sorted(DEM_DIRS), default="sldem2015",
                     help="height model (tc_dtm: SELENE TC stereo DTM, ~7.4 m, only where a tile is held)")
+    ap.add_argument("--parallax-dem", choices=sorted(DEM_DIRS), default=None,
+                    help="height model for the parallax stage only (falls back to --dem where not held)")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
-    global DUMP_DIR, DEM
-    DEM = args.dem
+    global DUMP_DIR, DEM, PARALLAX_DEM
+    DEM, PARALLAX_DEM = args.dem, args.parallax_dem
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)

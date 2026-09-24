@@ -276,3 +276,12 @@ def test_parallax_without_a_dem_says_so():
     fr = fine_stage(matchset(*clustered_pairs()[:2]), blank(), blank(), centre=(200, 200),
                     flags={**OFF, "parallax": True})
     assert fr.stages["parallax"] == {"applied": False, "reason": "no DEM"}
+
+
+def test_parallax_uses_its_own_dem_when_given_one():
+    """A finer parallax DEM must not reach the terrain filter, and vice versa."""
+    src, ref = clustered_pairs()[:2]
+    fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200),
+                    flags={**OFF, "parallax": True}, ground_model=_Identity(), parallax_dem=_ridge_dem())
+    assert fr.stages["parallax"]["applied"]
+    assert fr.stages["geometry_filter"] == {"applied": False, "reason": "off (pipeline.geometry_filter)"}

@@ -176,3 +176,31 @@ Observed, not tested:
    cells go 11 -> 0 and the fit is 0.79 px, so that measure is unreliable there.
 A clean test would use the TC DTM for the parallax stage only (SLDEM for the terrain filter)
 and held-out matches (as docs/tps_protocol.md) instead of per-cell phase correlation.
+
+## Amendment 3 (2026-09-25, frozen BEFORE running): the clean retest (attempt 4)
+
+Fixes the two confounds found in amendment 2, changes nothing else about the stage.
+1. **Two height models.** The parallax stage gets the TC DTM (`--parallax-dem tc_dtm`); the
+   terrain filter keeps SLDEM2015, exactly as in every baseline. So the first robust estimate
+   (which sets the tier) is the baseline's; only the parallax stage sees the new DEM.
+2. **A new accuracy proxy: small NCC probes** (replaces per-cell phase correlation, which cannot
+   give one offset for a 200 px cell spanning several heights). It uses neither the matcher
+   nor any DEM. Fixed now: probe centres every 48 px where the source is valid; template
+   31x31 px of the source image; search +-32 px in the reference image around the same pixel
+   (both are in TC's frame after the coarse lock); `cv2.TM_CCOEFF_NORMED`; accept only if the
+   peak >= 0.6 AND exceeds the best value outside a 3 px radius by >= 0.1 AND is not on the
+   search border; sub-pixel by a 1-D parabola per axis. Acceptance never looks at any model.
+   Error of a model at a probe = |probe offset - model's predicted offset|.
+
+Windows: the 9 hilly N00 windows of amendment 2a + the 6 flat N03/N09 windows (harm check).
+Baselines: the SLDEM parallax-off runs already recorded.
+
+Decision (all must hold to adopt `pipeline.parallax: true` with the TC DTM where held):
+(a) every hilly window ends with <= 1 empty cell;
+(b) on every hilly window, median probe error of affine+parallax <= 1.0 px (sub-pixel) AND
+    below the affine's median probe error; on every flat window, affine+parallax median is
+    no worse than the affine's by > 0.1 px;
+(c) no window loses registration, a gate, or tier;
+(d) p along-track and 0.5-1.5x the 26 deg prediction on every hilly window.
+A flat window has no parallax DTM (N03/N09 tiles not held): there the stage uses SLDEM, as
+the stage's fallback rule says (the same DEM as the terrain filter).

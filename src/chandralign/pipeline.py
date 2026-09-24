@@ -182,7 +182,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                expected_scale=None,
                ground_model=None, dem=None,
                flags: Optional[dict[str, bool]] = None,
-               rematch=None) -> FineResult:
+               rematch=None, parallax_dem=None) -> FineResult:
     """Run the fine stage on one matched pair.
 
     `src_img`/`ref_img` are the arrays the matches were found on (the refinement
@@ -190,6 +190,8 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     sets of points -- after a coarse lock both images share one frame, so one
     model serves -- and `dem` is a DemPatch covering them. Without either, the
     terrain filter is skipped and says so; it never pretends to have run.
+    `parallax_dem`, if given, is the height model for the parallax stage only (a finer DEM
+    can suit parallax but not the filter's slope thresholds); otherwise `dem` serves both.
     """
     from .estimate import geometry_filter
     from .refine import subpixel, uniformity
@@ -233,10 +235,11 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     # relief the right matches fail the affine threshold. Re-select the inliers under
     # ref = A.src + h.p; the delivered affine model is unchanged (docs/parallax_protocol.md).
     if flags["parallax"]:
-        if dem is None or ground_model is None:
-            stages["parallax"] = {"applied": False, "reason": "no DEM" if dem is None else "no ground model"}
+        p_dem = parallax_dem if parallax_dem is not None else dem
+        if p_dem is None or ground_model is None:
+            stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
         else:
-            inl, stages["parallax"] = _parallax(ms, inl, dem, ground_model)
+            inl, stages["parallax"] = _parallax(ms, inl, p_dem, ground_model)
     else:
         stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
