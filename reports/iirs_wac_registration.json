@@ -1,0 +1,197 @@
+{
+  "source": "measured",
+  "protocol": "docs/iirs_wac_protocol.md",
+  "iirs": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+  "route": {
+    "route": "direct",
+    "matcher": "xoftr",
+    "fine_stage_options": {
+      "tile_px": 640
+    },
+    "regime": "cross_modal",
+    "expectation": "unknown",
+    "reason": "cross-modal pair: xoftr, the only candidate measured at 10/10 on cross-modal, tiled at 640 px in the fine stage",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "dense_refine": false,
+    "uniformity": true,
+    "subpixel": true
+  },
+  "run": {
+    "command": "python scripts/register_iirs_wac.py",
+    "commit": "cba99cdeae13c9e9024007f01b2f933e4d1ae1fc",
+    "uncommitted_changes": false,
+    "utc": "2026-09-24T16:04:55+00:00"
+  },
+  "summary": {
+    "M106705467MC": {
+      "xoftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "rift2": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "sift": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      }
+    },
+    "M106698280MC": {
+      "xoftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "rift2": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      },
+      "sift": {
+        "success": 0,
+        "windows": 5,
+        "verdict": "unsolved"
+      }
+    }
+  },
+  "windows": [
+    {
+      "iirs_line0": 2688,
+      "coarse": {
+        "best": "rot0",
+        "z": 10.3,
+        "runner_up_z": 9.9
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106705467MC",
+      "seconds": 2.5
+    },
+    {
+      "iirs_line0": 2816,
+      "coarse": {
+        "best": "rot2",
+        "z": 9.9,
+        "runner_up_z": 9.8
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106705467MC",
+      "seconds": 1.8
+    },
+    {
+      "iirs_line0": 2944,
+      "coarse": {
+        "best": "rot0",
+        "z": 9.6,
+        "runner_up_z": 9.6
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106705467MC",
+      "seconds": 1.8
+    },
+    {
+      "iirs_line0": 3136,
+      "coarse": {
+        "best": "rot0m",
+        "z": 8.9,
+        "runner_up_z": 8.8
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106705467MC",
+      "seconds": 1.9
+    },
+    {
+      "iirs_line0": 3264,
+      "coarse": {
+        "best": "rot0m",
+        "z": 9.9,
+        "runner_up_z": 9.3
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106705467MC",
+      "seconds": 1.9
+    },
+    {
+      "iirs_line0": 2368,
+      "coarse": {
+        "best": "rot0",
+        "z": 9.5,
+        "runner_up_z": 9.0
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106698280MC",
+      "seconds": 2.0
+    },
+    {
+      "iirs_line0": 2496,
+      "coarse": {
+        "best": "rot2m",
+        "z": 9.3,
+        "runner_up_z": 9.3
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106698280MC",
+      "seconds": 1.8
+    },
+    {
+      "iirs_line0": 2688,
+      "coarse": {
+        "best": "rot0",
+        "z": 10.4,
+        "runner_up_z": 9.3
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106698280MC",
+      "seconds": 1.9
+    },
+    {
+      "iirs_line0": 2816,
+      "coarse": {
+        "best": "rot0",
+        "z": 10.6,
+        "runner_up_z": 9.4
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106698280MC",
+      "seconds": 1.8
+    },
+    {
+      "iirs_line0": 3008,
+      "coarse": {
+        "best": "rot0",
+        "z": 9.4,
+        "runner_up_z": 8.5
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "wac": "M106698280MC",
+      "seconds": 1.7
+    }
+  ]
+}

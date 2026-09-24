@@ -52,3 +52,17 @@ No prediction for `rift2` or `minima-loftr`.
 
 One IIRS scene, two WAC products, 5 windows each. The known-shift gate measures
 precision of the lock on this pair, not absolute accuracy.
+
+## Run 1 result (2026-09-24): no coarse lock on any window
+
+10/10 windows (two WAC products): best-orientation z 8.9-10.6, runner-up within 0.0-1.3 ->
+no window passes (z >= 10 AND >= 2 above the runner-up). No fine stage ran.
+`reports/iirs_wac_registration.json`.
+
+**Not yet interpreted as a matching result.** Hypothesis, NOT tested: the WAC products used
+are raw CDR frames (not map-projected) from a ~90 deg field-of-view camera, so the pixel
+scale varies strongly across the 258 km frame; the prior fits ONE affine to ODE's four
+footprint corners, which gives the wrong local scale/shape at each window, and MIND cannot
+match a template of the wrong scale. The published IIRS <-> WAC result is understood to use
+map-projected WAC. Test: repeat with the map-projected LROC WAC Global Morphologic Mosaic
+(100 m/px, 643 nm) clipped to this area -- a download, pending approval.
