@@ -103,3 +103,11 @@ Change, harness only: the fine stage works on the NAC grid block-averaged per ax
 axis is finer than 0.5 m (`FINE_MIN_M`). Only M175124932LC changes (0.24 x 0.56 m ->
 0.72 x 0.56 m); every other product's pixels are already >= 0.5 m, so their measured
 results stand. Success rules unchanged. Only M175124932LC is re-run.
+
+### Q5 amendment 2 (before any M175124932LC result existed)
+
+With amendment 1 the M175124932LC frames were 1,195-1,301 x 1,857 px (2.4 Mpx) and still
+ran out of GPU memory; nothing was measured. Frames up to ~1.3 Mpx have run on this GPU
+(M109080308LC, Q2). Change, harness only: after amendment 1, the finer axis is coarsened
+by further whole-pixel blocks until the frame is at most 1.5 Mpx (`FINE_MAX_PX`). No
+measured product is affected (the control and M106719774LC frames are < 0.7 Mpx).

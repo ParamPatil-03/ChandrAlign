@@ -59,6 +59,7 @@ BRIDGE = {"M102014464RC": (551 - 597, 2229 + 75),
           "M175124932LC": (551 + 217, 2229 - 288)}
 BRIDGE_MARGIN_M = 200.0
 FINE_MIN_M = 0.5              # Q5 amendment 1: no fine-grid axis finer than this
+FINE_MAX_PX = 1.5e6           # Q5 amendment 2: fine frame at most this many pixels (GPU memory)
 
 
 def T(x, y):
@@ -205,6 +206,11 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
         out["status"] = "skipped: fine frame falls outside the NAC strip"; out["results"] = {}; return out
     # Fine grid: NAC native, block-averaged per axis so no axis is finer than FINE_MIN_M.
     bx, by = max(1, math.ceil(FINE_MIN_M / nac.px_w - 1e-9)), max(1, math.ceil(FINE_MIN_M / nac.px_h - 1e-9))
+    while (wF // bx) * (hF // by) > FINE_MAX_PX:                     # coarsen the finer axis
+        if nac.px_w * bx <= nac.px_h * by:
+            bx += 1
+        else:
+            by += 1
     wF, hF = (wF // bx) * bx, (hF // by) * by
     D = np.array([[1 / bx, 0, 0.5 / bx - 0.5], [0, 1 / by, 0.5 / by - 0.5], [0, 0, 1]], float)
     Wf = D @ T(-o[0], -o[1]) @ T_c                                   # OHRC px -> fine-grid px
