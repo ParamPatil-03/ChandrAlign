@@ -238,3 +238,15 @@ minima-loftr registers 5/5.
 The pipeline lesson: pair / window selection must use the best KNOWN geolocation (system
 position corrected by measured offsets), not the raw system position, whenever the
 reference strip is narrower than the source's system error.
+
+## Q9 (frozen before its run): automatic window enlargement on rejection
+
+Shipped behaviour = Q8 (2 m lock, routed matcher, best-known placement) PLUS: a window whose
+routed result is rejected (not registered, a gate failed, or tier REJECTED) is re-run ONCE
+with a window twice as large per side (2048 -> 4096 OHRC px), same centre. The larger
+result replaces the smaller only if it is registered, passes every gate and tiers >= LOW.
+Success rules as Q8 (consistency from the final transforms, >= 3 gate-passing windows).
+
+**Adopt** if, over all five NAC products, no window that succeeds under Q8 fails under Q9,
+and Q9 adds at least one success. Evidence it should: the exploratory 4096 px check on
+M1417360906LC (4/5).

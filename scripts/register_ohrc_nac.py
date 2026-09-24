@@ -319,6 +319,8 @@ def main() -> int:
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage; defaults from configs/default.yaml pipeline.*")
     ap.add_argument("--win", type=int, default=WIN, help="OHRC window side, native px")
+    ap.add_argument("--auto-enlarge", action="store_true",
+                    help="protocol Q9: re-run a rejected window once at twice the size")
     ap.add_argument("--auto-bridge", action="store_true",
                     help="protocol Q8: use the bridge ONLY for windows whose coarse lock fails")
     ap.add_argument("--bridge", action="store_true",
@@ -378,6 +380,21 @@ def main() -> int:
                 w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages,
                                dem_tiles, bridge=BRIDGE[pid])
                 w["coarse_lock_failed"] = failed
+            if args.auto_enlarge:
+                good = lambda r: r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")  # noqa: E731
+                if not good((w.get("results") or {}).get("routed", {})):
+                    base = WIN
+                    WIN = 2 * base
+                    try:
+                        w2 = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages,
+                                        dem_tiles, bridge=BRIDGE.get(pid) if w.get("coarse_lock_failed") else None)
+                    finally:
+                        WIN = base
+                    if good((w2.get("results") or {}).get("routed", {})):
+                        w2["enlarged"] = {"from_px": base, "to_px": 2 * base, "small_result": w.get("results", {}).get("routed")}
+                        w = w2
+                    else:
+                        w["enlarge_tried"] = {"to_px": 2 * base, "status": (w2.get("results") or {}).get("routed", {}).get("status") or w2.get("status")}
             w["sun"] = sun.get(pid)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
