@@ -66,3 +66,4 @@ def test_the_bundle_delivers_the_points_its_metrics_describe():
     res = np.hypot(*(models.apply(r.model, d.src_pts) - d.ref_pts).T)
     assert np.isclose(np.sqrt(np.mean(res ** 2)), r.metrics.rmse_px, atol=1e-6)
     assert bun.tps is not None and bun.src is not None
+    assert r.metrics.runtime_s is not None and r.metrics.runtime_s > 0     # the whole call, timed
