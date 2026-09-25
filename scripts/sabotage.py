@@ -301,6 +301,25 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "the fine stage ignores the estimator's refusal (I-02)": (
                 "    if not first.ok:\n        return FineResult(False,",
                 "    if False:\n        return FineResult(False,"),
+            "refinement ignores the model's Jacobian (C-02)": (
+                "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr, model=model)",
+                "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)"),
+            "the reported accuracy is the fit residual again (C-03)": (
+                '    accuracy = {"checkpoint_rmse_px_ref": sel.checkpoint_rmse_px,',
+                '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
+        },
+    ),
+    "selection": (
+        "src/chandralign/estimate/selection.py",
+        "tests/test_pipeline.py",
+        {
+            "a richer model never displaces the affine (I-01)": (
+                "                chosen = name\n", "                pass\n"),
+            "cross-validation scores models on their own fit points (C-03)": (
+                "        m = fit(tr)\n", "        m = fit(np.ones_like(tr))\n"),
+            "the delivered model is fitted without IRLS reweighting (G-02)": (
+                "        w_new = _huber_weights(np.hypot(*(X @ B - y).T))",
+                "        w_new = w"),
         },
     ),
     "quality": (

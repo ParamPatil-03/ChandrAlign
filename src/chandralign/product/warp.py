@@ -12,7 +12,17 @@ from ..estimate import models
 
 
 def best_geometry(bundle):
-    """Return ``(name, model)`` using the agreed Part 2 -> Part 3 priority."""
+    """Return ``(name, model)``: the geometry the fine stage chose by check-point error
+    (``bundle.geometry``, audit C-03 / I-01); for bundles without that choice, the old priority."""
+    chosen = getattr(bundle, "geometry", None)
+    if chosen is not None and getattr(bundle, "geometry_model", None) is not None:
+        return chosen, bundle.geometry_model
+    if chosen == "parallax" and bundle.parallax is not None:
+        return "parallax", bundle.parallax
+    if chosen == "tps" and bundle.tps is not None:
+        return "tps", bundle.tps
+    if chosen is not None and bundle.result.model is not None:
+        return bundle.result.model.kind, bundle.result.model
     if bundle.parallax is not None:
         return "parallax", bundle.parallax
     if bundle.tps is not None:
@@ -39,8 +49,11 @@ def warp_array(bundle, *, heights_at=None, interpolation: int | None = None) -> 
         delivered = bundle.delivered
         if len(delivered.src_pts) < 3:
             raise ValueError("at least three delivered points are required to invert TPS")
-        smoothing = float((model.tps_params or {}).get("smoothing", 0.0))
-        inverse = models.fit_tps(delivered.ref_pts, delivered.src_pts, smoothing=smoothing)
+        # the inverse fitted by the fine stage on the SAME points and weights as the forward TPS
+        inverse = (model.tps_params or {}).get("inverse")
+        if inverse is None:
+            smoothing = float((model.tps_params or {}).get("smoothing", 0.0))
+            inverse = models.fit_tps(delivered.ref_pts, delivered.src_pts, smoothing=smoothing)
         map_x, map_y = _tps_source_map(inverse, (h, w))
         warped = cv2.remap(src, map_x, map_y, interp, borderMode=cv2.BORDER_CONSTANT)
     else:

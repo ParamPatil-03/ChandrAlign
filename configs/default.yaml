@@ -64,6 +64,18 @@ pipeline:                    # P2-T16: optional fine-stage steps (src/chandralig
   dense_refine: false        # Q6 (docs/illumination_fix_protocol.md): illumination-robust refinement of the model
   uniformity: true           # ALIGN-04: top-k per grid cell of the inliers (PS mandate). ON by v3: 9/9 windows
   subpixel: true             # PREC-01: per-point refinement of delivered points (PS mandate). ON by v3: 9/9, median 0.32 -> 0.07 px
+  model_selection: true      # C-03 / I-01 (audit 2026-09-26): choose affine / parallax / TPS by check-point error on a
+                             # refined, grid-stratified fit set, and REPORT that error (docs/refinement_geometry_protocol.md)
+
+geometry:                    # the model_selection stage (estimate/selection.py)
+  max_fit_points: 1000       # inliers sampled evenly over the grid, refined, used to fit and score the geometry
+  cv_scheme: stratified      # each cell's points dealt into the folds. spatial_block (whole cells held out) read
+                             # 2.2-5.3x the true error on the dev harness vs 1.2-3.6x (non-rigid); chosen on dev
+  cv_folds: 5                # spatial-block CV for the TPS: whole grid cells per fold
+  min_gain: 0.05             # a richer model must beat a simpler one's check-point RMS by this fraction
+  irls_rounds: 2             # Huber reweighting rounds of the TPS fit
+  tps_smoothing_grid: [0.1, 1.0, 10.0, 100.0, 1000.0]
+  min_tps_points: 30
 
 parallax:                    # ALIGN-08 stage options
   height_at: ref             # where h is sampled: the match's ground (reference) point; ref by docs/parallax_height_protocol.md

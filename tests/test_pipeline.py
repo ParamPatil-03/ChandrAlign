@@ -394,3 +394,97 @@ def test_a_thin_estimate_the_estimator_refused_is_rejected_end_to_end(monkeypatc
     r = register(p(img), p(img.copy()), matcher="sift")
     assert r.confidence_tier == "REJECTED", (r.confidence_tier, r.notes)
     assert r.failure_modes
+
+
+# ---------------------------------------------------------------------------
+# C-03 / I-01 / G-02 (audit 2026-09-26): the delivered geometry and its reported accuracy
+# ---------------------------------------------------------------------------
+def _field_pairs(nonrigid, seed=2, n=900, shape=(512, 512), noise=0.05):
+    """Matches of a known map (affine, plus a smooth ripple if non-rigid), with point noise."""
+    rng = np.random.default_rng(seed)
+    src = rng.uniform(8, shape[0] - 8, (n, 2))
+
+    def truth(s):
+        r = s @ A[:2, :2].T + A[:2, 2]
+        if nonrigid:
+            r = r + 1.2 * np.c_[np.sin(2 * np.pi * s[:, 1] / 300.0), np.cos(2 * np.pi * s[:, 0] / 390.0)]
+        return r
+    return src, truth(src) + rng.normal(0, noise, (n, 2)), truth
+
+
+def test_a_rigid_pair_is_delivered_as_an_affine_and_a_rippled_one_as_a_tps():
+    for nonrigid, want in ((False, "affine"), (True, "tps")):
+        src, ref, truth = _field_pairs(nonrigid)
+        fr = fine_stage(matchset(src, ref), blank((512, 512)), blank((512, 512)), centre=(256, 256),
+                        flags={**OFF, "model_selection": True, "tps": True})
+        assert fr.geometry == want, (nonrigid, fr.stages["model_selection"])
+        from chandralign.pipeline import delivered_geometry
+        name, m = delivered_geometry(fr)
+        g = np.stack(np.meshgrid(np.arange(40, 470, 20.0), np.arange(40, 470, 20.0)), -1).reshape(-1, 2)
+        err = np.hypot(*(models.apply(m, g) - truth(g)).T)
+        assert np.sqrt(np.mean(err ** 2)) < 0.05, (want, np.sqrt(np.mean(err ** 2)))
+
+
+def test_the_reported_rmse_describes_the_delivered_geometry_not_the_affine_fit():
+    """The old figure (the affine's residual on its own inliers) read ~1 px on a rippled pair whose
+    delivered TPS is ~0.05 px wrong. rmse must now be a check-point bound on the DELIVERED model."""
+    src, ref, truth = _field_pairs(True)
+    fr = fine_stage(matchset(src, ref), blank((512, 512)), blank((512, 512)), centre=(256, 256),
+                    flags={**OFF, "model_selection": True, "tps": True})
+    a = fr.accuracy
+    assert a["model"] == "tps" and a["fit_residual_px"] > 0.5            # the old number, kept as such
+    assert a["checkpoint_rmse_px_ref"] < 0.2                              # the new one
+    assert a["geometry_error_lower_px_ref"] <= a["checkpoint_rmse_px_ref"]
+
+
+def test_the_gates_skip_model_selection_but_keep_every_other_switch(monkeypatch):
+    seen = {}
+    import chandralign.pipeline as pl
+    real = pl.fine_stage
+
+    def spy(*a, **k):
+        seen.update(k.get("flags") or {})
+        return real(*a, **k)
+    monkeypatch.setattr(pl, "fine_stage", spy)
+    src, ref, _ = _field_pairs(False, n=200)
+    img = np.random.default_rng(0).random((256, 256)).astype(np.float32)
+    control_gates.pipeline_from("sift", stages={"uniformity": False})(img, img)
+    assert seen.get("model_selection") is False and seen.get("uniformity") is False
+
+
+def test_refinement_improves_points_on_a_rotated_and_scaled_pair():
+    """Audit C-02: axis-aligned patches cannot refine across rotation + scale (the shipped
+    refinement made points WORSE there); patches warped through the model's Jacobian can."""
+    import cv2
+    rng = np.random.default_rng(4)
+    tex = cv2.GaussianBlur(rng.random((1200, 1200)).astype(np.float32), (0, 0), 2.5)
+    th, k = np.deg2rad(10.0), 0.8
+    M = np.array([[k * np.cos(th), -k * np.sin(th), 60.0], [k * np.sin(th), k * np.cos(th), -40.0]])
+    M[:, 2] += [0.37, -0.62]
+    src = tex[100:700, 100:700].copy()
+    ref = cv2.warpAffine(src, M, (600, 600), flags=cv2.INTER_LANCZOS4)
+    g = np.arange(120, 480, 30, dtype=float)
+    s = np.stack(np.meshgrid(g, g), -1).reshape(-1, 2)
+    true = s @ M[:, :2].T + M[:, 2]
+    keep = (true > 40).all(1) & (true < 560).all(1)
+    s, true = s[keep], true[keep]
+    noisy = true + rng.uniform(-0.4, 0.4, true.shape)            # a matcher's imprecision
+    off = fine_stage(matchset(s, noisy), src, ref, centre=(300, 300), flags=OFF)
+    on = fine_stage(matchset(s, noisy), src, ref, centre=(300, 300), flags={**OFF, "subpixel": True})
+    e_off = np.hypot(*(off.control_ref - true).T)
+    e_on = np.hypot(*(on.control_ref - true).T)
+    assert np.median(e_on) < 0.5 * np.median(e_off) and np.percentile(e_on, 95) < np.percentile(e_off, 95)
+
+
+def test_the_delivered_affine_is_not_dragged_by_inliers_a_3px_threshold_let_through():
+    """G-02: the geometry is fitted with Huber IRLS. 10% of 'inliers' 2.5 px off in one direction
+    (under the 3 px RANSAC threshold) would shift a plain least-squares affine by ~0.25 px."""
+    from chandralign.estimate import selection
+    rng = np.random.default_rng(9)
+    src = rng.uniform(0, 500, (400, 2))
+    ref = src @ A[:2, :2].T + A[:2, 2] + rng.normal(0, 0.05, src.shape)
+    ref[:40] += [2.5, 0.0]
+    fit = selection.fit_affine_robust(src, ref)
+    g = rng.uniform(0, 500, (200, 2))
+    err = np.hypot(*(models.apply(fit, g) - (g @ A[:2, :2].T + A[:2, 2])).T)
+    assert np.sqrt(np.mean(err ** 2)) < 0.05

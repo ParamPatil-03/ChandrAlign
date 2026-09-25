@@ -50,7 +50,8 @@ from . import config
 from .contracts import MatchSet, TransformModel
 from .estimate import models, robust
 
-STAGES = ("geometry_filter", "parallax", "dense_refine", "uniformity", "refill", "subpixel", "tps")
+STAGES = ("geometry_filter", "parallax", "dense_refine", "uniformity", "refill", "subpixel", "tps",
+          "model_selection")
 
 
 def stage_flags(overrides: Optional[dict[str, bool]] = None) -> dict[str, bool]:
@@ -72,7 +73,8 @@ class FineResult:
     control_src: np.ndarray                   # the delivered match points, source frame
     control_ref: np.ndarray                   # ... and reference frame (sub-pixel if refined)
     coverage: float                           # share of grid cells holding a delivered point
-    rmse_px: Optional[float]                  # the model's residual on the delivered points
+    rmse_px: Optional[float]                  # FIT RESIDUAL: the affine's residual on the delivered points
+                                              # (not an accuracy figure; see `accuracy` -- audit C-03)
     n_matches: int                            # before the terrain filter
     stages: dict[str, Any] = field(default_factory=dict)
     notes: list[str] = field(default_factory=list)
@@ -85,6 +87,11 @@ class FineResult:
     # each point's DEM height). Where it exists it is the accurate geometry on relief;
     # `model` stays the first estimate, which the gates certify.
     parallax: Optional[models.ParallaxModel] = None
+    # C-03 / I-01: which of model / parallax / tps the product should warp with, chosen by
+    # check-point error (estimate/selection.py), and that geometry's check-point accuracy.
+    geometry: str = "affine"
+    accuracy: dict = field(default_factory=dict)
+    geometry_model: Any = None                # the chosen model itself, fitted on the refined fit set (G-02)
 
     @property
     def inlier_count(self) -> int:
@@ -324,14 +331,15 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     # 4. per-point sub-pixel refinement (PREC-01) of the DELIVERED points
     if flags["subpixel"] and len(cs):
         before = cr.copy()
-        cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)
+        # C-02: the model's local Jacobian brings each source patch into the reference geometry
+        cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr, model=model)
         shift = np.hypot(*(cr - before).T)
         rms_before, rms_after = _rmse(model, cs, before), _rmse(model, cs, cr)
         stages["subpixel"] = {"applied": True, "points": int(len(cs)), "moved": int(moved.sum()),
                               "median_move_px": round(float(np.median(shift[moved])), 4) if moved.any() else 0.0,
                               "residual_to_model_px": {"unrefined": rms_before, "refined": rms_after},
-                              "method": str(config.get("subpixel.method", "ncc_gaussian_iter")),
-                              "window_px": 2 * int(config.get("subpixel.refine_half_px", 16)) + 1}
+                              "method": str(config.get("subpixel.method", "lsm")), "warped": True,
+                              "window_px": 2 * int(config.get("subpixel.refine_half_px", 20)) + 1}
     else:
         stages["subpixel"] = {"applied": False, "reason": "off (pipeline.subpixel)"}
 
@@ -339,16 +347,76 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         stages["refill"]["residual_to_model_px"] = {"primary": _rmse(model, cs[:n_primary], cr[:n_primary]),
                                                     "refilled": _rmse(model, cs[n_primary:], cr[n_primary:])}
 
-    # 5. TPS through the delivered points (ALIGN-02)
-    tps = None
-    if flags["tps"] and len(cs) >= 15:
+    # 5. the delivered geometry and its check-point accuracy (audit C-03, I-01; G-02)
+    tps, geometry, accuracy, geometry_model = None, "affine", {}, None
+    if flags["model_selection"]:
+        tps, geometry, accuracy, geometry_model = _select_geometry(ms, inl, model, src_img, ref_img, shape, flags,
+                                                   parallax_model, ground_model,
+                                                   parallax_dem if parallax_dem is not None else dem, stages)
+    # 5'. (model_selection off) TPS through the delivered points (ALIGN-02, the pre-2026-09-26 path)
+    elif flags["tps"] and len(cs) >= 15:
         tps = models.fit_tps_cv(cs, cr)
         stages["tps"] = {"applied": True, "control_points": int(len(cs)),
                          "smoothing": tps.tps_params["smoothing"], "cv_rms_px": tps.tps_params.get("cv_rms_px")}
     else:
         stages["tps"] = {"applied": False, "reason": "off (pipeline.tps)" if not flags["tps"] else "too few points"}
-    return FineResult(True, model, first, ms, cs, cr, coverage, _rmse(model, cs, cr),
-                      n_matches, stages, [], tps, parallax_model)
+    if not flags["model_selection"]:
+        stages["model_selection"] = {"applied": False, "reason": "off (pipeline.model_selection)"}
+        geometry = "parallax" if parallax_model is not None else "tps" if tps is not None else "affine"
+    fit_residual = _rmse(model, cs, cr)
+    accuracy = {"fit_residual_px": fit_residual, **accuracy}
+    return FineResult(True, model, first, ms, cs, cr, coverage, fit_residual,
+                      n_matches, stages, [], tps, parallax_model, geometry, accuracy, geometry_model)
+
+
+def _select_geometry(ms, inl, model, src_img, ref_img, shape, flags, parallax_model, ground_model, p_dem, stages):
+    """Stage 5: refine an even sample of ALL inliers, score affine / parallax / TPS on points each did
+    not use, and choose the delivered geometry (estimate/selection.py). The 384 uniform points stay the
+    exported match points; the geometry is fitted on the larger, refined, evenly spread fit set."""
+    from .estimate import selection
+    from .refine import subpixel
+
+    s_in, r_in = np.asarray(ms.src_pts, float)[inl], np.asarray(ms.ref_pts, float)[inl]
+    grid = int(config.get("uniformity.grid", 8))
+    pick = selection.stratified_sample(s_in, shape, int(config.get("geometry.max_fit_points", 1000)), grid)
+    fs, fr_ = s_in[pick], r_in[pick]
+    refined = False
+    if flags["subpixel"] and len(fs):
+        fr_, _ = subpixel.refine_points(src_img, ref_img, fs, fr_, model=model)
+        refined = True
+    heights_at = None
+    if parallax_model is not None and p_dem is not None and ground_model is not None:
+        def heights_at(p):
+            p = np.asarray(p, float).reshape(-1, 2)
+            lat, lon = ground_model.pixel_to_latlon(p[:, 1], p[:, 0])
+            return np.asarray(p_dem.sample(lat, lon), float)
+    sel = selection.select(fs, fr_, shape, parallax=parallax_model, heights_at=heights_at,
+                           with_tps=flags["tps"])
+    tps = sel.tps
+    stages["model_selection"] = {"applied": True, "refined_fit_points": refined, **sel.record()}
+    stages["tps"] = ({"applied": True, "fit_points": int(len(fs)), "smoothing": tps.tps_params["smoothing"],
+                      "cv_rms_px": tps.tps_params.get("cv_rms_px"), "robust": "huber_irls"} if tps is not None
+                     else {"applied": False, "reason": "off (pipeline.tps)" if not flags["tps"] else "too few points"})
+    point_set = (f"{len(fs)} first-estimate inliers, grid-stratified"
+                 + (", sub-pixel refined" if refined else ""))
+    accuracy = {"checkpoint_rmse_px_ref": sel.checkpoint_rmse_px, "model": sel.name, "n_check": int(len(fs)),
+                "point_set": point_set, "scored_by": sel.candidates[sel.name]["scored_by"],
+                "p50_px_ref": sel.candidates[sel.name].get("p50_px"),
+                "p95_px_ref": sel.candidates[sel.name].get("p95_px"),
+                # a LOWER bound (the fit's own variance, no point noise); the check-point RMSE is an upper bound
+                "geometry_error_lower_px_ref": sel.candidates[sel.name].get("split_half_px")}
+    return tps, sel.name, accuracy, sel.model
+
+
+def delivered_geometry(fr: FineResult):
+    """(name, model) the product should warp with: the fine stage's check-point choice (C-03, I-01)."""
+    if fr.geometry_model is not None:
+        return fr.geometry, fr.geometry_model
+    if fr.geometry == "parallax" and fr.parallax is not None:
+        return "parallax", fr.parallax
+    if fr.geometry == "tps" and fr.tps is not None:
+        return "tps", fr.tps
+    return (fr.model.kind if fr.model is not None else "affine"), fr.model
 
 
 @dataclass
@@ -373,6 +441,10 @@ class RegistrationBundle:
     stages: dict = field(default_factory=dict)
     src: Any = None                           # the ImagePlanes registered (with meta / geo for georeferencing)
     ref: Any = None
+    # C-03 / I-01: the geometry the fine stage CHOSE by check-point error ("affine" | "tps" | "parallax").
+    # product.warp.best_geometry honours it; None (older bundles) falls back to the old priority.
+    geometry: Optional[str] = None
+    geometry_model: Any = None                # ... and that model, fitted on the refined fit set (G-02)
 
 
 def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
@@ -435,22 +507,51 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                        model=fr.model if fr.ok else None, scale_ok=scale_ok, scale_status=scale_status,
                        gates=gates.gates, require_gates=True)
     n = int(len(ms.src_pts))
+    accuracy = _accuracy_record(fr, ref, (w / 2.0, h / 2.0)) if fr.ok else {}
     result = RegistrationResult(
         matches=fr.matches if fr.matches is not None else ms,
         inlier_mask=fr.first.inlier_mask if fr.first is not None else np.zeros(n, bool),
         model=fr.model if fr.ok else None,
-        metrics=Metrics(rmse_px=fr.rmse_px if fr.ok else None, inlier_count=fr.inlier_count if fr.ok else 0,
+        metrics=Metrics(rmse_px=accuracy.get("rmse_px_ref"), rmse_m=accuracy.get("rmse_m"),
+                        inlier_count=fr.inlier_count if fr.ok else 0,
                         inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
                         spatial_coverage=fr.coverage if fr.ok else 0.0,
                         runtime_s=round(time.perf_counter() - t_start, 3), source="measured"),
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=notes + list(fr.notes) + list(q.notes),
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
-                    **(provenance or {})})
+                    "accuracy": accuracy, **(provenance or {})})
     control_gates.require_gates(result)
     cs = np.asarray(fr.control_src if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
     cr = np.asarray(fr.control_ref if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
     delivered = MatchSet(src_pts=cs, ref_pts=cr, confidence=np.ones(len(cs), np.float32),
                          method=ms.method, regime=ms.regime, stage="delivered")
     return RegistrationBundle(result=result, delivered=delivered, tps=fr.tps if fr.ok else None,
-                              parallax=fr.parallax if fr.ok else None, stages=fr.stages, src=src, ref=ref)
+                              parallax=fr.parallax if fr.ok else None, stages=fr.stages, src=src, ref=ref,
+                              geometry=fr.geometry if fr.ok else None,
+                              geometry_model=fr.geometry_model if fr.ok else None)
+
+
+def _accuracy_record(fr: FineResult, ref, centre) -> dict:
+    """What `metrics.rmse_px` means now (audit C-03): the CHECK-POINT RMS error of the geometry the
+    product warps with, in reference px, tagged with its model and point set. The old number -- the
+    affine's residual on its own pre-screened inliers -- is kept as `fit_residual_px` only.
+
+    rmse_px_src divides by the model's local scale (ref px per src px) at the centre; it is in the
+    source frame the fine stage saw (a caller that resampled the source must compose back).
+    rmse_m multiplies by the reference pixel size, when that is known."""
+    a = dict(fr.accuracy or {})
+    ref_px = a.get("checkpoint_rmse_px_ref")
+    out = {"rmse_px_ref": ref_px, "fit_residual_px": a.get("fit_residual_px"), "model": a.get("model", fr.geometry),
+           "point_set": a.get("point_set"), "n_check": a.get("n_check"), "scored_by": a.get("scored_by"),
+           "p50_px_ref": a.get("p50_px_ref"), "p95_px_ref": a.get("p95_px_ref"),
+           "geometry_error_lower_px_ref": a.get("geometry_error_lower_px_ref"),
+           "rmse_px_src": None, "rmse_m": None}
+    if ref_px is not None and fr.model is not None and fr.model.matrix is not None:
+        k = models.estimated_scale(np.asarray(fr.model.matrix, float), at=centre)
+        if np.isfinite(k) and k > 0:
+            out["rmse_px_src"] = round(float(ref_px) / k, 4)
+        gsd = getattr(ref, "gsd_m", None)
+        if gsd:
+            out["rmse_m"] = round(float(ref_px) * float(gsd), 4)
+    return out

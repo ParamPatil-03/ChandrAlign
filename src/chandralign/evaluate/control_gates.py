@@ -329,7 +329,9 @@ def pipeline_from(matcher: str = "sift", device: Optional[str] = None,
         n = int(len(ms.src_pts))
         if n < 4:
             return PipelineRun(False, n, 0, None, f"only {n} matches")
-        fr = fine_stage(ms, s.array, r.array, flags=stages,
+        # model_selection cannot change the matrix a gate checks (it chooses what is DELIVERED),
+        # and it is the costliest stage, so the gates skip it.
+        fr = fine_stage(ms, s.array, r.array, flags={**(stages or {}), "model_selection": False},
                         centre=(s.array.shape[1] / 2.0, s.array.shape[0] / 2.0))
         res = fr.first
         m = None if fr.model is None or fr.model.matrix is None else np.asarray(fr.model.matrix, float)

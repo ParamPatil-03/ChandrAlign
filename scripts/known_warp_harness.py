@@ -229,12 +229,16 @@ def geometry_eval(ms, src, ref, warp, off):
         cand["tps"] = on.tps
     for k, m in cand.items():
         out[f"true_{k}"] = stats(np.hypot(*(models.apply(m, gs) - gt).T))
+    # the pre-2026-09-26 delivered TPS: through the <= 384 uniform points only
+    if len(on.control_src) >= 15:
+        old_tps = models.fit_tps_cv(on.control_src, on.control_ref)
+        out["true_tps_384_old"] = stats(np.hypot(*(models.apply(old_tps, gs) - gt).T))
     name, model = delivered_geometry(on)
     out["delivered"] = name
     out["true_delivered"] = stats(np.hypot(*(models.apply(model, gs) - gt).T))
-    out["reported"] = {k: on.stages.get("accuracy", {}).get(k) for k in
+    out["reported"] = {k: on.accuracy.get(k) for k in
                        ("checkpoint_rmse_px_ref", "fit_residual_px", "model", "n_check")}
-    out["legacy_reported_rmse_px"] = on.rmse_px
+    out["legacy_reported_rmse_px"] = on.rmse_px            # what result.json called "RMSE" before C-03
     out["selection"] = on.stages.get("model_selection")
     return out
 
@@ -281,6 +285,19 @@ def verdict(recs):
                    and r["points"][arm]["p95"] < r["points"]["unrefined"]["p95"] for r in scored)
         tight = sum(r["points"][arm]["p95"] <= 0.25 for r in scored)
         lines.append(f"{arm}: beats unrefined at p50 and p95 in {beat}/{len(scored)}; p95 <= 0.25 in {tight}/{len(scored)}")
+    geo = [r for r in scored if "geometry" in r]
+    if geo:
+        within = 0
+        sel_ok = 0
+        for r in geo:
+            g = r["geometry"]
+            true_rms = g["true_delivered"]["rms"]
+            rep = g["reported"]["checkpoint_rmse_px_ref"]
+            within += rep is not None and abs(rep - true_rms) <= 0.25 * true_rms
+            best = min(g[k]["rms"] for k in ("true_affine", "true_tps") if k in g)
+            sel_ok += true_rms <= 1.10 * best
+        lines.append(f"C-03: reported check-point RMSE within 25% of the delivered geometry's true RMS in {within}/{len(geo)}")
+        lines.append(f"I-01: delivered geometry within 10% of the best candidate in {sel_ok}/{len(geo)}")
     missing = sum(1 for r in recs if r.get("scored") and r.get("status") != "ok")
     if missing:
         lines.append(f"{missing} scored case(s) did not register")
