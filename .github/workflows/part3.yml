@@ -1,0 +1,62 @@
+# Fast, feature-by-feature checks for Member C / Part 3.
+#
+# This workflow intentionally complements ci.yml rather than replacing it:
+# part3.yml identifies which Part 3 deliverable regressed, while ci.yml runs
+# the complete Parts 1+2+3 suite on the supported OS/Python matrix.
+name: Part 3 feature checks
+
+on:
+  push:
+    paths:
+      - "src/chandralign/product/**"
+      - "src/chandralign/viz/**"
+      - "src/chandralign/ui/**"
+      - "src/chandralign/cli.py"
+      - "src/chandralign/api.py"
+      - "src/chandralign/evaluate/metrics.py"
+      - "src/chandralign/evaluate/failure_log.py"
+      - "src/chandralign/evaluate/ablation.py"
+      - "tests/**"
+      - "pyproject.toml"
+      - ".github/workflows/part3.yml"
+  pull_request:
+    paths:
+      - "src/chandralign/product/**"
+      - "src/chandralign/viz/**"
+      - "src/chandralign/ui/**"
+      - "src/chandralign/cli.py"
+      - "src/chandralign/api.py"
+      - "src/chandralign/evaluate/metrics.py"
+      - "src/chandralign/evaluate/failure_log.py"
+      - "src/chandralign/evaluate/ablation.py"
+      - "tests/**"
+      - "pyproject.toml"
+      - ".github/workflows/part3.yml"
+  workflow_dispatch:
+
+jobs:
+  feature:
+    name: ${{ matrix.feature }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {feature: metrics, test: tests/test_metrics.py}
+          - {feature: match-exports, test: tests/test_matchpoints.py}
+          - {feature: provenance, test: tests/test_provenance.py}
+          - {feature: geotiff, test: tests/test_warp_product.py}
+          - {feature: cli, test: tests/test_cli.py}
+          - {feature: visualizations, test: tests/test_visualizations.py}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Part 3 dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,product]"
+      - name: Verify ${{ matrix.feature }}
+        run: python -m pytest -q -rs ${{ matrix.test }}

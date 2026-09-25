@@ -54,6 +54,7 @@ def _register(args) -> int:
     from . import config
     from .pipeline import register_bundle
     from .product import matchpoints, provenance, warp
+    from .viz import coverage_plot, match_plot, sidebyside, swipe
 
     out = args.out.resolve()
     if out.exists() and any(out.iterdir()):
@@ -88,6 +89,12 @@ def _register(args) -> int:
     except RuntimeError as exc:
         if "rasterio" not in str(exc).lower():
             raise
+    sidebyside.render(bundle, out / "side-by-side.png")
+    match_plot.render(bundle, out / "matches.png")
+    coverage_plot.render(bundle, out / "coverage.png",
+                         grid=int(configuration.get("uniformity", {}).get("grid", 8)))
+    registered, _ = warp.warp_array(bundle)
+    swipe.render_checkerboard(bundle.ref.array, registered, out / "checkerboard.png")
     (out / "result.json").write_text(json.dumps(_result_record(bundle), indent=2,
                                                   sort_keys=True) + "\n", encoding="utf-8")
     print(f"{bundle.result.confidence_tier}: {out}")

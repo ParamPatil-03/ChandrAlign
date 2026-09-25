@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 import json
 from pathlib import Path
+import warnings
 
 import numpy as np
 
@@ -70,6 +71,7 @@ def export_bundle(path: str | Path, bundle, *, ref_model=None, crs=None,
     try:
         import rasterio
         from rasterio.control import GroundControlPoint
+        from rasterio.errors import NotGeoreferencedWarning
         from rasterio.transform import Affine
     except ImportError as exc:
         raise RuntimeError("GeoTIFF export requires the 'product' extra: pip install -e .[product]") from exc
@@ -86,16 +88,21 @@ def export_bundle(path: str | Path, bundle, *, ref_model=None, crs=None,
     if transform is not None:
         profile.update(crs=crs, transform=transform)
 
-    with rasterio.open(path, "w", **profile) as dataset:
-        if warped.ndim == 2:
-            dataset.write(warped, 1)
-        else:
-            dataset.write(np.moveaxis(warped, -1, 0))
+    with warnings.catch_warnings():
+        # The writer warns before we can assign GCPs. Suppress only that creation-
+        # time warning; the completed dataset is verified to contain lunar GCPs.
         if transform is None:
-            dataset.gcps = (_gcps_for(ref_model, warped.shape[:2], GroundControlPoint), crs)
-        dataset.update_tags(geometry=geometry_name,
-                            source_product=str(bundle.src.meta.product_id),
-                            reference_product=str(bundle.ref.meta.product_id))
+            warnings.simplefilter("ignore", NotGeoreferencedWarning)
+        with rasterio.open(path, "w", **profile) as dataset:
+            if warped.ndim == 2:
+                dataset.write(warped, 1)
+            else:
+                dataset.write(np.moveaxis(warped, -1, 0))
+            if transform is None:
+                dataset.gcps = (_gcps_for(ref_model, warped.shape[:2], GroundControlPoint), crs)
+            dataset.update_tags(geometry=geometry_name,
+                                source_product=str(bundle.src.meta.product_id),
+                                reference_product=str(bundle.ref.meta.product_id))
 
     sidecar = path.with_suffix(".json")
     sidecar.write_text(json.dumps({
