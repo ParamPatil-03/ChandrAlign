@@ -57,3 +57,14 @@ an information limit of the reference, not a pipeline defect. Sub-OHRC-pixel acc
 of ~0.5 m or finer, well lit, AND model error <= ~0.55 NAC px; the finer NACs held are near-overhead
 sun (2 deg) or give almost no probes, so it cannot be demonstrated with the data held. Terrain
 parallax could not be tested (no DEM heights in these dumps).
+
+### MI check on the same frames (matcher-free; MATCH-07's alignment_check, PR #27)
+- Coarse NACs (M102014464RC, M106719774LC; 10 windows): NMI 1.04-1.18, peak 0.07-0.23 NAC px from
+  the model = **0.29-0.95 OHRC px**: by this measure the model's GLOBAL offset is sub-OHRC-pixel on
+  10/10 windows. (The NCC probes' 1.3-4.5 OHRC px include each probe's own local noise.)
+- Finest NAC M175124932LC (0.40 m): NMI only ~1.006 at the model, but a searched (+-10 px) peak
+  sits 4.2-5.9 NAC px CROSS-TRACK away (NMI ~1.02), consistently on 3/3 windows checked. Either the
+  registration to this NAC is biased by ~2 m, or MI is misled (e.g. shadows under the two different
+  suns). Unresolved without an independent reference. Candidate: M111443315LC (LROC, 0.52 m,
+  incidence 26 deg, overlaps ~8 km of the OHRC strip; 529 MB) -- not downloaded.
+- M109080308LC (2 deg sun): NMI 1.008-1.031, peaks 0.8-4.2 NAC px: too little shared information to judge.
