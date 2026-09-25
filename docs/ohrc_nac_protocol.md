@@ -101,3 +101,27 @@ strip 5064 px wide at 0.24 m (1.2 km), no window can pass that test. Fix: pad = 
 half-extent. Every product's placement changes, so **all five are re-run (run 3) and
 run 3 is the result**; runs 1-2 are kept in `docs/ohrc_nac_results.md` for the record,
 not counted. Success rules, thresholds, matchers and predictions are unchanged.
+
+## Amendment (2026-09-26, audit I-07): the MI check counts. Frozen before the re-run.
+
+**Why.** `scripts/register_ohrc_nac.py` computed MATCH-07's MI alignment check (docs/mi_protocol.md) and then
+ignored it. This success rule predates MATCH-07. On `6389f92` the MI check flags 8 of the 20 "successes"
+(all 5 on M175124932LC and 3 of 5 on M109080308LC; peaks 2.2-2.9 OHRC px from the model). The map-pairings
+rule already requires "MI not flagged".
+
+**Rule from now on:**
+1. **Routed fallback:** a candidate whose MI check is flagged is treated like a rejected one, so routing
+   tries its next candidate (`routing.choose("OHRC","NAC").candidates()`).
+2. **Three outcomes per window.**
+   - **success:** the old rule (registered, gates pass, tier accepted, consistent) AND MI not flagged.
+   - **unconfirmed:** the old rule holds, but MI is flagged. This is neither a success nor a failure: MI is
+     weak there (NMI ~1.01-1.02), so "unconfirmed" is not "wrong".
+   - **failed:** everything else.
+3. The summary reports all three counts. "solved / degraded" is computed from successes only.
+
+**Not adopted: rule R (`similarity.abstain`).** The audit suggests switching it on. It was measured under
+its own frozen protocol and rejected (docs/mi_abstain_protocol.md, V2 93.8% < 95%: it abstains on hilly
+windows where MI is informative). Switching it on because of this audit would overturn a negative result
+after the fact, so it stays off.
+
+**Expected, from the audit (not a bar):** 12/25 success + 8 unconfirmed. The fallback may convert some.
