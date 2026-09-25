@@ -1,0 +1,116 @@
+{
+ "source": "external+derived",
+ "checked": "2026-09-23",
+ "tmc2": {
+  "product": "ch2_tmc_nca_20250207T1102039417",
+  "gsd_m": 4.99,
+  "sun_at_overlap": {
+   "azimuth_deg": 93.3,
+   "incidence_deg": 43.8,
+   "uncertainty_deg": 2
+  },
+  "note": "label sun_azimuth 104.27 is at scene centre (~11.7N); reconstructed sub-solar point gives ~93 deg at the NAC overlap (~0.6N). See data/pairs/tmc2_sun_geometry.json"
+ },
+ "nac_sun_azimuth": "ground azimuth by spherical trig from LROC sub-solar lat/lon -- NOT LROC's 'Sub solar azimuth' field, which is instrument-frame",
+ "candidates": [
+  {
+   "nac": "M175124932LC",
+   "sun_az": 92.0,
+   "inc": 40.9,
+   "d_az_vs_tmc2": 1.3,
+   "gsd_m": 0.4,
+   "scale_x": 12.5,
+   "group": "same_sun"
+  },
+  {
+   "nac": "M111443315RC",
+   "sun_az": 95.4,
+   "inc": 26.2,
+   "d_az_vs_tmc2": 2.1,
+   "gsd_m": 0.518,
+   "scale_x": 9.6,
+   "group": "same_sun"
+  },
+  {
+   "nac": "M131494509LC",
+   "sun_az": 89.8,
+   "inc": 79.2,
+   "d_az_vs_tmc2": 3.5,
+   "gsd_m": 0.476,
+   "scale_x": 10.5,
+   "group": "same_sun"
+  },
+  {
+   "nac": "M109080308LC",
+   "sun_az": 197.4,
+   "inc": 2.2,
+   "d_az_vs_tmc2": 104.1,
+   "gsd_m": 0.536,
+   "scale_x": 9.3,
+   "group": "EXCLUDE: NAC incidence 2.2, azimuth ill-defined"
+  },
+  {
+   "nac": "M1417360906LC",
+   "sun_az": 285.3,
+   "inc": 7.7,
+   "d_az_vs_tmc2": 168.0,
+   "gsd_m": 0.787,
+   "scale_x": 6.3,
+   "group": "EXCLUDE: NAC incidence 7.7, azimuth ill-defined"
+  },
+  {
+   "nac": "M106719774LC",
+   "sun_az": 265.8,
+   "inc": 27.2,
+   "d_az_vs_tmc2": 172.5,
+   "gsd_m": 1.269,
+   "scale_x": 3.9,
+   "group": "opposed_sun"
+  },
+  {
+   "nac": "M104362199LC",
+   "sun_az": 268.9,
+   "inc": 53.8,
+   "d_az_vs_tmc2": 175.6,
+   "gsd_m": 1.184,
+   "scale_x": 4.2,
+   "group": "opposed_sun"
+  },
+  {
+   "nac": "M117338434LC",
+   "sun_az": 269.7,
+   "inc": 83.6,
+   "d_az_vs_tmc2": 176.4,
+   "gsd_m": 0.483,
+   "scale_x": 10.3,
+   "group": "opposed_sun"
+  },
+  {
+   "nac": "M102000149LC",
+   "sun_az": 270.2,
+   "inc": 79.6,
+   "d_az_vs_tmc2": 176.9,
+   "gsd_m": 1.189,
+   "scale_x": 4.2,
+   "group": "opposed_sun"
+  },
+  {
+   "nac": "M102014464RC",
+   "sun_az": 270.2,
+   "inc": 81.8,
+   "d_az_vs_tmc2": 176.9,
+   "gsd_m": 1.23,
+   "scale_x": 4.1,
+   "group": "opposed_sun"
+  },
+  {
+   "nac": "M122054682LC",
+   "sun_az": 270.7,
+   "inc": 27.6,
+   "d_az_vs_tmc2": 177.4,
+   "gsd_m": 0.49,
+   "scale_x": 10.2,
+   "group": "opposed_sun"
+  }
+ ]
+}

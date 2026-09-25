@@ -36,6 +36,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from chandralign import config  # noqa: E402
 from chandralign.evaluate.control_gates import _shift_content  # noqa: E402
+from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
@@ -287,6 +288,8 @@ def main() -> int:
         "source": "measured",
         "protocol": "docs/tmc2_nac_protocol.md",
         "pairing": "TMC-2 (ch2_tmc_nca_20250207T1102039417) -> LRO NAC CDR",
+        # audit I-18: every other register_* report carries its run record; this one did not
+        "run": run_record(),
         "routing": {"route": choice.route, "model_name": choice.model_name, "regime": choice.regime},
         "method": "cascade.register_step_dense (MIND search + sub-pixel median), NAC as the finer src",
         "prior": "LROC corner coordinates through TMC-2 SYSTEM corners; position searched, never taken from the prior",
