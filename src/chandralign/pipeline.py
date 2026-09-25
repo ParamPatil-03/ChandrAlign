@@ -42,6 +42,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
+import time
+
 import numpy as np
 
 from . import config
@@ -353,6 +355,9 @@ class RegistrationBundle:
     the final control points (uniform per ALIGN-04, sub-pixel refined per PREC-01), the same points
     `result.metrics.rmse_px` and `spatial_coverage` describe. To warp the registered product, use the
     best geometry available: `parallax` (TMC-2 on relief) if set, else `tps` if set, else `result.model`.
+    Metric sources: inlier_count / inlier_ratio from the evidence (`result.matches` + `inlier_mask`);
+    rmse_px / spatial_coverage from `delivered`; runtime_s over the whole call (matching, fine stage,
+    all control gates).
     """
     result: Any                               # contracts.RegistrationResult
     delivered: MatchSet                       # final control points (export these); its `confidence` is all
@@ -388,6 +393,7 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
     from .estimate import scale as scale_mod
     from .evaluate import control_gates, quality
 
+    t_start = time.perf_counter()                            # metrics.runtime_s: the whole call
     match_kwargs = dict(match_kwargs or {})
     s_img, r_img = np.asarray(src.array, np.float32), np.asarray(ref.array, np.float32)
     notes: list[str] = []
@@ -427,7 +433,8 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
         model=fr.model if fr.ok else None,
         metrics=Metrics(rmse_px=fr.rmse_px if fr.ok else None, inlier_count=fr.inlier_count if fr.ok else 0,
                         inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
-                        spatial_coverage=fr.coverage if fr.ok else 0.0, source="measured"),
+                        spatial_coverage=fr.coverage if fr.ok else 0.0,
+                        runtime_s=round(time.perf_counter() - t_start, 3), source="measured"),
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=notes + list(fr.notes) + list(q.notes),
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
