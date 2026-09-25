@@ -60,6 +60,9 @@ pipeline:                    # P2-T16: optional fine-stage steps (src/chandralig
   uniformity: true           # ALIGN-04: top-k per grid cell of the inliers (PS mandate). ON by v3: 9/9 windows
   subpixel: true             # PREC-01: per-point refinement of delivered points (PS mandate). ON by v3: 9/9, median 0.32 -> 0.07 px
 
+parallax:                    # ALIGN-08 stage options
+  height_at: src             # where h is sampled: src (match's source point) | ref (its ground point); docs/parallax_height_protocol.md
+
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
   top_k_per_cell: 6

@@ -326,3 +326,28 @@ def test_parallax_source_map_inverts_the_model():
     s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
     back = fr.parallax.apply(s, heights_at(s))
     assert np.abs(back - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
+
+
+def test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly():
+    """docs/parallax_height_protocol.md: with h taken at the REFERENCE (ground) point, the stage
+    recovers p, predict() lands on the true positions, and the source map is the direct RPC form."""
+    rng = np.random.default_rng(7)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    hill = 300.0 * np.exp(-((rr - 300) ** 2 + (cc - 300) ** 2) / (2 * 50.0 ** 2))
+    dem = DemPatch(hill, lat, lon, 1000.0, "test", True, ())
+    p = np.array([0.004, -0.07])
+    heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
+    ref = rng.uniform([20, 20], [380, 380], (1500, 2))                 # ground points (TC is ortho)
+    Ai = np.linalg.inv(A)
+    src = (np.c_[ref - (heights_at(ref) - 0.0)[:, None] * p, np.ones(len(ref))] @ Ai.T)[:, :2]
+    ref_obs = ref + rng.normal(0, 0.2, ref.shape)
+    fr = fine_stage(matchset(src, ref_obs), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
+                    ground_model=_Identity(), dem=dem, parallax_height_at="ref")
+    m = fr.parallax
+    assert m.height_at == "ref" and np.allclose(m.p_px_per_m, p, atol=0.003)
+    assert np.median(np.hypot(*(m.predict(src, heights_at) - ref).T)) < 0.3
+    mx, my = models.parallax_source_map(m, heights_at, (400, 400), step=4)
+    ys, xs = np.mgrid[40:360:41, 40:360:41]
+    s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
+    assert np.abs(m.predict(s, heights_at) - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1

@@ -160,7 +160,8 @@ def _dem_grid(dem, tcm, o_f, w: int, h: int, step: int = 16) -> dict:
 DEM_DIRS = {"sldem2015": "data/raw/dem/sldem2015", "tc_dtm": "data/raw/selene/tc_dtm"}
 DEM = "sldem2015"  # --dem: the height model for the terrain filter (and parallax, by default)
 PARALLAX_DEM = None  # --parallax-dem: a separate height model for the parallax stage only
-PAIRING_STAGES = {"parallax": True}  # stage defaults for TMC-2 -> TC, over configs/default.yaml
+PAIRING_STAGES = {"parallax": True}
+PARALLAX_HEIGHT_AT = None  # --parallax-height-at: None -> configs/default.yaml parallax.height_at  # stage defaults for TMC-2 -> TC, over configs/default.yaml
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
@@ -285,7 +286,8 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
         if own is not None:            # where it is not held, the stage falls back to --dem
             p_dem, out["parallax_dem"] = own, PARALLAX_DEM
     fr = fine_stage(ms, src_img, ref_img, centre=(wF / 2.0, hF / 2.0), flags=stages, rematch=rematch,
-                    ground_model=_OffsetModel(tcm, o_f), dem=t_dem, parallax_dem=p_dem)
+                    ground_model=_OffsetModel(tcm, o_f), dem=t_dem, parallax_dem=p_dem,
+                    parallax_height_at=PARALLAX_HEIGHT_AT)
     res, ms = fr.first, fr.matches
     out.update(matcher=matcher, matches=n, inliers=res.inlier_count,
                inlier_ratio=round(res.inlier_count / n, 4) if n else 0.0,
@@ -370,7 +372,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     if fr.parallax is not None:
         terrain = ParallaxModel(matrix=T(o_f[0], o_f[1]) @ np.asarray(fr.parallax.matrix, float) @ Wf,
                                 p_px_per_m=fr.parallax.p_px_per_m, h0_m=fr.parallax.h0_m,
-                                dem=out["parallax_dem"])
+                                dem=out["parallax_dem"], height_at=fr.parallax.height_at)
     result = RegistrationResult(
         matches=ms, inlier_mask=res.inlier_mask,
         model=TransformModel(kind=fr.model.kind, matrix=T_total,
@@ -437,14 +439,16 @@ def main() -> int:
     ap.add_argument("--parallax-dem", choices=sorted(DEM_DIRS), default="tc_dtm",
                     help="height model for the parallax stage only (falls back to --dem where not held); "
                          "tc_dtm is the adopted default (docs/parallax_protocol.md amendment 3)")
+    ap.add_argument("--parallax-height-at", choices=["src", "ref"], default=None,
+                    help="where the parallax stage samples h (docs/parallax_height_protocol.md)")
     ap.add_argument("--dump-points", default=None, help="folder: save control points and inliers per window")
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
-    global DUMP_DIR, DEM, PARALLAX_DEM
-    DEM, PARALLAX_DEM = args.dem, args.parallax_dem
+    global DUMP_DIR, DEM, PARALLAX_DEM, PARALLAX_HEIGHT_AT
+    DEM, PARALLAX_DEM, PARALLAX_HEIGHT_AT = args.dem, args.parallax_dem, args.parallax_height_at
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
