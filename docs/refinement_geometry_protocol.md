@@ -115,3 +115,24 @@ pixel, so it is excluded).
 
 The C-02 bars 1-2 must hold on the fresh set for C-02 to be accepted. The held-out set is re-run with the
 amended setting and reported alongside, but it is labelled as post-hoc.
+
+## Result: C-02 harness bars (2026-09-26)
+
+`PYTHONPATH=src .venv/Scripts/python scripts/known_warp_harness.py --set <set> --out reports/known_warp_<set>.json`.
+Delivered-point true error in ref px (p50 / p95). Unrefined = the matcher's positions; legacy = the
+refinement shipped before; library = the refinement as it is now.
+
+| set | setting | beats unrefined at p50 AND p95 | p95 <= 0.25 | worst p95 | legacy: beats / worst p95 |
+|---|---|---|---|---|---|
+| dev (choice) | cap 0.75 | 15/15 | 15/15 | 0.172 | 4/15, 1.385 |
+| held-out | cap 0.75 | **14/15** | 14/15 | 0.790 | 3/15, 1.472 |
+| **fresh (confirmation)** | **cap 1.5** | **15/15** | **15/15** | **0.220** | 4/15, 1.356 |
+| held-out, post-hoc | cap 1.5 | 15/15 | 15/15 | 0.154 | (spent; labelled post-hoc) |
+
+**C-02 harness bars 1-2: met on the fresh set, so accepted.** Across the fresh set, library p50 is
+0.033-0.067 and p95 0.065-0.220, against unrefined p50 0.088-0.245 and p95 0.289-0.731. The
+inverted-shading proxy is unchanged by refinement wherever it registered (0.917/2.623 on held-out): the
+gate refuses moves it cannot justify.
+
+The real-data bar (>= 90% of method-windows lower their residual-to-model) is measured together with C-03
+on the committed real windows; see below.
