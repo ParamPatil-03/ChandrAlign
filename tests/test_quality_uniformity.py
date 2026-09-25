@@ -287,3 +287,10 @@ def test_a_tier_rejection_names_a_failure_mode():
     assert v.tier == "REJECTED"
     assert v.failure_modes, "a rejection with no failure mode cannot be reported or triaged"
     assert quality.FM_FALSE_CORRESPONDENCE in v.failure_modes
+
+
+def test_an_ungated_rejection_also_names_a_failure_mode():
+    """CHECK-07's contract holds on the no-gates path too: REJECTED always says why."""
+    v = quality.assess(inlier_count=500, inlier_ratio=0.9, spatial_coverage=0.9, model=good_model(),
+                       gates=None, require_gates=True)
+    assert v.tier == "REJECTED" and quality.FM_UNVERIFIED_EVALUATION in v.failure_modes

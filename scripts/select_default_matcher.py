@@ -39,7 +39,6 @@ import json
 import sys
 import time
 import warnings
-from collections import defaultdict
 from pathlib import Path
 
 warnings.filterwarnings("ignore")

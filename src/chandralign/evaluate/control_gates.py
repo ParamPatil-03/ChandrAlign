@@ -172,7 +172,7 @@ def perturbation_gate(pipeline: Pipeline, src: np.ndarray, ref: np.ndarray,
                                        f"({base.note or 'no transform'})", {"shift": list(shift)})
     moved = _safe(pipeline, _shift_content(src, int(s[0]), int(s[1])), ref)
     if not moved.ok or moved.matrix is None:
-        return GateResult(name, False, "the pipeline lost the pair after a 5 px shift",
+        return GateResult(name, False, f"the pipeline lost the pair after a {np.hypot(*s):.0f} px shift",
                           {"shift": list(shift), "note": moved.note})
     h, w = np.asarray(src).shape
     c = np.array([w / 2.0, h / 2.0, 1.0])
