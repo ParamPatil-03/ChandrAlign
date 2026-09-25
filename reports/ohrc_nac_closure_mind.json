@@ -1,0 +1,35 @@
+{
+ "source": "measured",
+ "protocol": "docs/ohrc_nac_closure_protocol.md",
+ "run": {
+  "command": "python scripts/ohrc_nac_closure.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/cl M175124932LC M111443315LC C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/cl.json mind",
+  "commit": "c814d77bcb3c11c99cf3473e9f85301f24f8d2ab",
+  "uncommitted_changes": false,
+  "utc": "2026-09-25T04:11:32+00:00"
+ },
+ "A": "M175124932LC",
+ "B": "M111443315LC",
+ "windows": [
+  {
+   "row": 13548,
+   "status": "link below the quality bar",
+   "z": 4.5,
+   "spread_px": null
+  },
+  {
+   "row": 2048,
+   "status": "link below the quality bar",
+   "z": 5.0,
+   "spread_px": null
+  },
+  {
+   "row": 7798,
+   "status": "link below the quality bar",
+   "z": 4.2,
+   "spread_px": null
+  }
+ ],
+ "median_closure_m": null,
+ "median_cross_track_m": null,
+ "reading": "inconclusive"
+}

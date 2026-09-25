@@ -43,3 +43,11 @@ A crop (half 600 A px) oriented by the prior's linear part, searched over the B 
 prior position (+-64 B px margin). The link counts ONLY if z >= 10 AND its robust sub-pixel spread
 (StepResult.rmse_px) <= 0.5 B px; windows whose link fails this are dropped, and the reading needs
 >= 2 valid windows (else inconclusive). Second attempt: if it fails, this question stops here.
+
+## Amendment 1 result (2026-09-25): inconclusive -- stop
+The MIND A -> B link did not lock on any window (z 4.2-5.0 < 10), so no window passed the link bar
+(`reports/ohrc_nac_closure_mind.json`). Second attempt; the question stops here. Whether OHRC -> NAC
+M175124932LC (0.40 m) carries a ~2 m cross-track bias (as the MI peak suggests) is UNRESOLVED: the two
+NACs (41 vs 26 deg sun) do not share enough matchable structure in these areas for an independent
+link. Stated as an open limitation for the finest NAC; the coarse-NAC result (sub-OHRC-pixel by MI
+on 10/10 windows) stands.
