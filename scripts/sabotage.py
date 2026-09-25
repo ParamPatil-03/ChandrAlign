@@ -294,6 +294,15 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "                                      ransacReprojThreshold=25.0,"),
         },
     ),
+    "pipeline": (
+        "src/chandralign/pipeline.py",
+        "tests/test_pipeline.py",
+        {
+            "the fine stage ignores the estimator's refusal (I-02)": (
+                "    if not first.ok:\n        return FineResult(False,",
+                "    if False:\n        return FineResult(False,"),
+        },
+    ),
     "quality": (
         "src/chandralign/evaluate/quality.py",
         "tests/test_quality_uniformity.py",

@@ -354,3 +354,43 @@ def test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly(
     ys, xs = np.mgrid[40:360:41, 40:360:41]
     s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
     assert np.abs(m.predict(s, heights_at) - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
+
+
+# ---------------------------------------------------------------------------
+# I-02 (audit 2026-09-26): the estimator's refusal must not be overridden
+# ---------------------------------------------------------------------------
+def _thin_pairs(seed=5, n_true=10, n_rand=14):
+    """10 true matches + 14 random ones: an estimate below estimate.min_inliers (12)."""
+    rng = np.random.default_rng(seed)
+    cells = rng.choice(64, n_true, replace=False)            # one per 50 px cell: coverage 10/64 >= LOW's 0.15
+    s_true = np.c_[cells % 8, cells // 8] * 50.0 + rng.uniform(10, 40, (n_true, 2))
+    r_true = s_true @ A[:2, :2].T + A[:2, 2]
+    s_rand, r_rand = rng.uniform(20, 380, (n_rand, 2)), rng.uniform(20, 380, (n_rand, 2))
+    return np.vstack([s_true, s_rand]), np.vstack([r_true, r_rand])
+
+
+def test_a_thin_estimate_the_estimator_refused_is_not_accepted_by_the_fine_stage():
+    src, ref = _thin_pairs()
+    first = robust.estimate(src, ref, centre=(200.0, 200.0))
+    assert first.model is not None and not first.ok, "the case must be one the estimator refuses"
+    fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200.0, 200.0), flags=OFF)
+    assert not fr.ok
+    assert any("not trustworthy" in n for n in fr.notes + first.notes)
+
+
+def test_a_thin_estimate_the_estimator_refused_is_rejected_end_to_end(monkeypatch):
+    from chandralign import synth
+    from chandralign.matching import classical
+    from chandralign.pipeline import register
+    src, ref = _thin_pairs()
+    monkeypatch.setattr(classical, "match", lambda s, r, detector="sift": matchset(src, ref))
+    # every control gate passes, so the thin estimate is the ONLY thing that can reject it
+    names = ("null_constant_grey", "null_random_noise", "perturbation_sensitivity", "identity", "masks_independent")
+    monkeypatch.setattr(control_gates, "run_all", lambda *a, **k: control_gates.GateReport(
+        [control_gates.GateResult(n, True, "stubbed") for n in names]))
+    img = np.random.default_rng(0).random((400, 400)).astype(np.float32)
+    p = lambda a: synth.ImagePlane(array=a, valid_mask=np.ones(a.shape, bool),       # noqa: E731
+                                   shadow_mask=np.zeros(a.shape, bool), gsd_m=5.0, meta=None, geo=None)
+    r = register(p(img), p(img.copy()), matcher="sift")
+    assert r.confidence_tier == "REJECTED", (r.confidence_tier, r.notes)
+    assert r.failure_modes

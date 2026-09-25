@@ -236,6 +236,12 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     if first.model is None or first.model.matrix is None:
         return FineResult(False, None, first, ms, np.zeros((0, 2)), np.zeros((0, 2)), 0.0, None,
                           n_matches, stages, ["no transform from the robust estimate"])
+    # I-02 (audit 2026-09-26): the estimator REFUSED (too few inliers, or a scale it could not
+    # accept). Its refusal stands: tiers.low accepts from 8 inliers, estimate.min_inliers
+    # requires 12, and a 10-inlier fit used to come back LOW (accepted).
+    if not first.ok:
+        return FineResult(False, None, first, ms, np.zeros((0, 2)), np.zeros((0, 2)), 0.0, None,
+                          n_matches, stages, ["the robust estimate refused the fit: " + "; ".join(first.notes[-1:])])
     inl = first.inlier_mask
     parallax_model = None
 
@@ -418,6 +424,8 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                                                               stages=flags, **match_kwargs),
                                   s_img, r_img, src, ref)
     scale_ok, scale_status = True, "not checked (no expected scale given)"
+    if not fr.ok and fr.first is not None and fr.first.scale_status in ("inconsistent", "degenerate"):
+        scale_ok, scale_status = False, fr.first.scale_status     # refused on scale: failure mode 13, not 12
     if fr.ok and isinstance(expected_scale, scale_mod.ExpectedScale):
         v = scale_mod.check(np.asarray(fr.model.matrix, float), expected_scale, centre=(w / 2.0, h / 2.0))
         scale_ok, scale_status = v.ok, v.status
