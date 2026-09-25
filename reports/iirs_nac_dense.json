@@ -1,0 +1,388 @@
+{
+  "source": "measured",
+  "protocol": "docs/iirs_nac_protocol.md",
+  "iirs": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+  "route": {
+    "route": "cascade",
+    "matcher": null,
+    "fine_stage_options": {},
+    "regime": "extreme_scale",
+    "expectation": "unknown",
+    "reason": "scale gap at or above the routing threshold; cascade.plan() decides by footprint how many steps, and each runs register_step_dense. IIRS 80 m vs NAC 0.5 m is 160.00x, at or past the 4x limit: no matcher has documented evaluation at this scale gap, so route to the cascade; at least one pixel size is UNVERIFIED, so treat the ratio as approximate",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "fine_route": {
+    "route": "direct",
+    "matcher": "xoftr",
+    "fine_stage_options": {
+      "tile_px": 640
+    },
+    "regime": "cross_modal",
+    "expectation": "unknown",
+    "reason": "cross-modal pair: xoftr, the only candidate measured at 10/10 on cross-modal, tiled at 640 px in the fine stage",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "bridge": {
+    "from": "reports/iirs_wac_mosaic.json (xoftr)",
+    "east_fit": [
+      0.1382421874999999,
+      901.5125000000007
+    ],
+    "north_fit": [
+      0.05466796874999958,
+      12655.141250000006
+    ],
+    "lines": [
+      2112.0,
+      4160.0
+    ]
+  },
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "parallax": false,
+    "dense_refine": false,
+    "uniformity": true,
+    "refill": false,
+    "subpixel": true,
+    "tps": true
+  },
+  "run": {
+    "command": "python scripts/register_iirs_nac.py --dense --out reports/iirs_nac_dense.json",
+    "commit": "9bad4b146bafbc349f906806402ebb8d7f7198d9",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T00:03:46+00:00"
+  },
+  "summary": {
+    "M1415013176LC": {
+      "dense": {
+        "success": 3,
+        "windows": 3,
+        "verdict": "solved"
+      }
+    },
+    "M172765160RC": {
+      "dense": {
+        "success": 1,
+        "windows": 3,
+        "verdict": "unsolved"
+      }
+    },
+    "M1417360906LC": {
+      "dense": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      }
+    }
+  },
+  "nacs_solved": {
+    "dense": 1
+  },
+  "windows": [
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        0,
+        13266
+      ],
+      "iirs_lines": [
+        3352,
+        3609
+      ],
+      "coarse": {
+        "z": 23.0,
+        "factor": 123,
+        "prior_error_iirs_px": 1.32
+      },
+      "dense": {
+        "checks": {
+          "known_shift": {
+            "z": 22.0,
+            "moved_px": [
+              3.0,
+              4.0
+            ],
+            "error_px": 0.0,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 3.8,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "precision_iirs_px": 0.1197,
+        "implied_offset_m": {
+          "east": 1395.2,
+          "north": 12950.0
+        },
+        "bridge_offset_m": {
+          "east": 1382.9,
+          "north": 12845.5
+        },
+        "vs_bridge_m": 105.2,
+        "success": true
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 3.6
+    },
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        13266,
+        26533
+      ],
+      "iirs_lines": [
+        3219,
+        3476
+      ],
+      "coarse": {
+        "z": 23.9,
+        "factor": 123,
+        "prior_error_iirs_px": 1.82
+      },
+      "dense": {
+        "checks": {
+          "known_shift": {
+            "z": 23.7,
+            "moved_px": [
+              3.0,
+              4.0
+            ],
+            "error_px": 0.0,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 4.0,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "precision_iirs_px": 0.0858,
+        "implied_offset_m": {
+          "east": 1356.8,
+          "north": 12983.1
+        },
+        "bridge_offset_m": {
+          "east": 1364.5,
+          "north": 12838.2
+        },
+        "vs_bridge_m": 145.1,
+        "success": true
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 1.2
+    },
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        26533,
+        39800
+      ],
+      "iirs_lines": [
+        3086,
+        3343
+      ],
+      "coarse": {
+        "z": 22.7,
+        "factor": 123,
+        "prior_error_iirs_px": 2.45
+      },
+      "dense": {
+        "checks": {
+          "known_shift": {
+            "z": 22.5,
+            "moved_px": [
+              3.0,
+              4.0
+            ],
+            "error_px": 0.0,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 3.9,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "precision_iirs_px": 0.0859,
+        "implied_offset_m": {
+          "east": 1305.9,
+          "north": 13023.1
+        },
+        "bridge_offset_m": {
+          "east": 1346.2,
+          "north": 12831.0
+        },
+        "vs_bridge_m": 196.2,
+        "success": true
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 1.4
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        0,
+        17400
+      ],
+      "iirs_lines": [
+        2805,
+        3048
+      ],
+      "coarse": {
+        "z": 7.5,
+        "factor": 177,
+        "why": "ambiguous match: z 7.5 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 1.5
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        17400,
+        34800
+      ],
+      "iirs_lines": [
+        2926,
+        3168
+      ],
+      "coarse": {
+        "z": 7.6,
+        "factor": 177,
+        "why": "ambiguous match: z 7.6 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 1.5
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        34800,
+        52200
+      ],
+      "iirs_lines": [
+        3047,
+        3289
+      ],
+      "coarse": {
+        "z": 11.2,
+        "factor": 177,
+        "prior_error_iirs_px": 1.24
+      },
+      "dense": {
+        "checks": {
+          "known_shift": {
+            "z": 10.5,
+            "moved_px": [
+              3.0,
+              4.0
+            ],
+            "error_px": 0.0,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 3.5,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "precision_iirs_px": 0.1761,
+        "implied_offset_m": {
+          "east": 1433.4,
+          "north": 12894.9
+        },
+        "bridge_offset_m": {
+          "east": 1339.6,
+          "north": 12828.4
+        },
+        "vs_bridge_m": 115.0,
+        "success": true
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 1.7
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        34800,
+        40600
+      ],
+      "iirs_lines": [
+        3351,
+        3535
+      ],
+      "coarse": {
+        "z": 4.7,
+        "factor": 118,
+        "why": "ambiguous match: z 4.7 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.5
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        40600,
+        46400
+      ],
+      "iirs_lines": [
+        3291,
+        3475
+      ],
+      "coarse": {
+        "z": 4.5,
+        "factor": 118,
+        "why": "ambiguous match: z 4.5 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.6
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        46400,
+        52200
+      ],
+      "iirs_lines": [
+        3231,
+        3415
+      ],
+      "coarse": {
+        "z": 3.8,
+        "factor": 118,
+        "why": "ambiguous match: z 3.8 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.5
+    }
+  ]
+}
