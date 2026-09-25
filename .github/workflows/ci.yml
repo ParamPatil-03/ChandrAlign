@@ -34,10 +34,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-      - name: Install (base + dev + Part 3 product export; no learned matchers)
+      - name: Install (base + dev + Part 3 product export + API; no learned matchers)
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev,product]"
+          python -m pip install -e ".[dev,product,api]"
       - name: Tests
         run: python -m pytest -q -rs
 

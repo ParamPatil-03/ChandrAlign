@@ -42,14 +42,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {feature: metrics, test: tests/test_metrics.py}
-          - {feature: match-exports, test: tests/test_matchpoints.py}
-          - {feature: provenance, test: tests/test_provenance.py}
-          - {feature: geotiff, test: tests/test_warp_product.py}
-          - {feature: cli, test: tests/test_cli.py}
+          - {feature: metrics,        test: tests/test_metrics.py}
+          - {feature: match-exports,  test: tests/test_matchpoints.py}
+          - {feature: provenance,     test: tests/test_provenance.py}
+          - {feature: geotiff,        test: tests/test_warp_product.py}
+          - {feature: cli,            test: tests/test_cli.py}
           - {feature: visualizations, test: tests/test_visualizations.py}
-          - {feature: failure-modes, test: tests/test_failure_log.py}
-          - {feature: html-report, test: tests/test_report.py}
+          - {feature: failure-modes,  test: tests/test_failure_log.py}
+          - {feature: html-report,    test: tests/test_report.py}
+          - {feature: api-backend,    test: tests/test_api.py,    extras: "[dev,product,api]"}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -59,6 +60,6 @@ jobs:
       - name: Install Part 3 dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev,product]"
+          python -m pip install -e "${{ matrix.extras || '[dev,product]' }}"
       - name: Verify ${{ matrix.feature }}
         run: python -m pytest -q -rs ${{ matrix.test }}

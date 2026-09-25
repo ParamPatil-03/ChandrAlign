@@ -29,3 +29,7 @@ dist/
 
 # Part 2 additions
 .ipynb_checkpoints/
+
+# Part 3 API test artifacts (local only; created by tests/test_api.py)
+.pytest_runs_api/
+.pytest_tmp/

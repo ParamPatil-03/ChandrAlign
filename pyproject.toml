@@ -23,7 +23,6 @@ dependencies = [
     "phasepack",                # phase congruency (PLAN.md P1-T13 pins THIS package: RIFT2 is built on it)
     "pyyaml>=6.0",              # configs/
     "requests",                 # data fetchers
-    "phasepack",                # Part 1: phase congruency (PREP-02), imported at call time
 ]
 
 [project.scripts]
@@ -32,6 +31,7 @@ chandralign = "chandralign.cli:main"
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1"]
 product = ["rasterio>=1.3", "matplotlib>=3.8", "jinja2>=3.1"]  # Part 3 exports + report
+api = ["fastapi>=0.111", "uvicorn>=0.29", "httpx2>=0.28"]       # UI-02 backend + test client
 # vismatch is CAPPED, not just floored, and the cap is a LICENCE control
 # (CHECK-10), not a compatibility one. zju3dv relicensed EfficientLoFTR and
 # MatchAnything from Apache-2.0 to the Project Registration License -- not
@@ -45,7 +45,8 @@ fast = ["pyfftw"]          # optional: ~2x faster phase congruency; phasepack fa
 # Added by the step that first needs them, so the base install stays light:
 #   geo:      rasterio, spiceypy                   (Part 1, Phase 2)
 #   prep:     spectral                            (Part 1, Phase 2)
-#   product:  fastapi, uvicorn, jinja2, matplotlib (Part 3)
+#   api:      fastapi, uvicorn, httpx              (Part 3, UI-02)
+#   product:  rasterio, jinja2, matplotlib         (Part 3, exports)
 
 [tool.setuptools.packages.find]
 where = ["src"]
