@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import cv2  # noqa: E402
 import numpy as np  # noqa: E402
 from shapely.geometry import Point, Polygon  # noqa: E402
 
@@ -53,6 +54,7 @@ MIN_Z = float(config.get("cascade.min_z", 10.0))
 Z_MARGIN = 2.0
 CONSISTENT_M = 240.0
 WAC_FILL = -1e30
+DUMP_DIR = None     # --dump-points: fine frames of the xoftr result per window (docs/mi_protocol.md)
 
 
 class WacGeo:
@@ -158,6 +160,8 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
     Wf = T(-o[0], -o[1]) @ T_c
     fsrc = warp_affine(src, Wf, (wF, hF))
     fref = wimg[o[1]:o[1] + hF, o[0]:o[0] + wF].copy()
+    fsrc_ok = cv2.warpAffine(src_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
+    fref_ok = wok[o[1]:o[1] + hF, o[0]:o[0] + wF].copy()
     out["fine_frame_px"] = [wF, hF]
     dem = None
     if stages["geometry_filter"] and dem_tiles:
@@ -196,6 +200,9 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
                      coverage=round(fr.coverage, 3), inlier_rmse_px=None if fr.rmse_px is None else round(fr.rmse_px, 3))
             if not fr.ok:
                 results[name] = {**r, "status": "fine stage: no transform", "success": False}; continue
+            if DUMP_DIR is not None and name == "xoftr":
+                np.savez_compressed(Path(DUMP_DIR) / f"window_{int(r0)}.npz", src_img=fsrc, ref_img=fref,
+                                    src_ok=fsrc_ok, ref_ok=fref_ok, model=np.asarray(fr.model.matrix, float))
             Tt = T(o[0], o[1]) @ np.asarray(fr.model.matrix, float) @ Wf
             fx, fy = (Tt @ [S / 2, LINES / 2, 1])[:2]
             la_f, lo_f = geo.to_latlon(fx, fy)
@@ -230,7 +237,12 @@ def main() -> int:
     ap.add_argument("--out", default="reports/iirs_wac_registration.json")
     ap.add_argument("--reference", choices=["cdr", "mosaic"], default="cdr",
                     help="cdr: raw WAC frames (run 1); mosaic: the map-projected WAC mosaic clip (amendment 1)")
+    ap.add_argument("--dump-points", default=None, help="folder: save the xoftr fine frames per window")
     args = ap.parse_args()
+    global DUMP_DIR
+    if args.dump_points:
+        DUMP_DIR = args.dump_points
+        Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
 
     iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
     im = projection.load_corner_model(iirs, corners="system")
