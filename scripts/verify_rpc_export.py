@@ -71,30 +71,46 @@ def main() -> int:
     ex, ey = rpc.evaluate(R, glon, glat, gh)
     t1 = float(np.nanmax(np.hypot(ex - sx.ravel(), ey - sy.ravel())))
 
-    # test 2: GDAL warps coordinate rasters through the RPC + lunar DEM
+    # test 2: GDAL warps coordinate rasters through the RPC + lunar DEM. The protocol's test
+    # uses the Moon CRS; labelling everything EPSG:4326 is run AFTER it as a diagnostic only
+    # (an RPC is pure polynomial in lat/lon/h, so the label changes no number -- but it is a
+    # workaround that asks users to call lunar coordinates terrestrial).
     res = 1.0 / dem.res_px_per_deg
-    with tempfile.TemporaryDirectory() as td:
-        dem_tif = Path(td) / "dem.tif"
-        with rasterio.open(dem_tif, "w", driver="GTiff", height=dem.heights_m.shape[0], width=dem.heights_m.shape[1],
-                           count=1, dtype="float32", crs=MOON, nodata=np.nan,
-                           transform=Affine(res, 0, dem.lon[0] - res / 2, 0, -res, dem.lat[0] + res / 2)) as ds:
-            ds.write(dem.heights_m.astype(np.float32), 1)
-        dst_tf = Affine(G[0, 0], G[0, 1], G[0, 2] - 0.5 * (G[0, 0] + G[0, 1]),
-                        G[1, 0], G[1, 1], G[1, 2] - 0.5 * (G[1, 0] + G[1, 1]))    # pixel-corner convention
-        maps = []
-        for src in (xs.astype(np.float32), ys.astype(np.float32)):
-            dst = np.full((hF, wF), np.nan, np.float32)
-            reproject(source=src, destination=dst, rpcs=rpc.to_rasterio(R), src_crs=MOON, dst_crs=MOON,
-                      dst_transform=dst_tf, dst_nodata=np.nan, resampling=Resampling.bilinear,
-                      RPC_DEM=str(dem_tif))
-            maps.append(dst)
-    gx, gy = maps
-    inner = np.zeros((hF, wF), bool); inner[BORDER:-BORDER, BORDER:-BORDER] = True
-    inner &= np.isfinite(gx) & np.isfinite(gy) & (sx > 1) & (sx < wF - 2) & (sy > 1) & (sy < hF - 2)
-    d = np.hypot(gx - sx, gy - sy)[inner]
-    t2 = {"pixels": int(inner.sum()), "rms_px": round(float(np.sqrt(np.mean(d ** 2))), 4),
-          "p99_px": round(float(np.percentile(d, 99)), 4), "max_px": round(float(d.max()), 4),
-          "mean_offset_px": [round(float(np.mean((gx - sx)[inner])), 4), round(float(np.mean((gy - sy)[inner])), 4)]}
+    dst_tf = Affine(G[0, 0], G[0, 1], G[0, 2] - 0.5 * (G[0, 0] + G[0, 1]),
+                    G[1, 0], G[1, 1], G[1, 2] - 0.5 * (G[1, 0] + G[1, 1]))        # pixel-corner convention
+    inner0 = np.zeros((hF, wF), bool); inner0[BORDER:-BORDER, BORDER:-BORDER] = True
+    inner0 &= (sx > 1) & (sx < wF - 2) & (sy > 1) & (sy < hF - 2)
+
+    def gdal_map(crs):
+        with tempfile.TemporaryDirectory() as td:
+            dem_tif = Path(td) / "dem.tif"
+            with rasterio.open(dem_tif, "w", driver="GTiff", height=dem.heights_m.shape[0],
+                               width=dem.heights_m.shape[1], count=1, dtype="float32", crs=crs, nodata=np.nan,
+                               transform=Affine(res, 0, dem.lon[0] - res / 2, 0, -res, dem.lat[0] + res / 2)) as ds:
+                ds.write(dem.heights_m.astype(np.float32), 1)
+            maps = []
+            for src in (xs.astype(np.float32), ys.astype(np.float32)):
+                dst = np.full((hF, wF), np.nan, np.float32)
+                reproject(source=src, destination=dst, rpcs=rpc.to_rasterio(R), src_crs=crs, dst_crs=crs,
+                          dst_transform=dst_tf, dst_nodata=np.nan, resampling=Resampling.bilinear,
+                          RPC_DEM=str(dem_tif))
+                maps.append(dst)
+        gx, gy = maps
+        inner = inner0 & np.isfinite(gx) & np.isfinite(gy)
+        d = np.hypot(gx - sx, gy - sy)[inner]
+        return {"pixels": int(inner.sum()), "rms_px": round(float(np.sqrt(np.mean(d ** 2))), 4),
+                "p99_px": round(float(np.percentile(d, 99)), 4), "max_px": round(float(d.max()), 4),
+                "mean_offset_px": [round(float(np.mean((gx - sx)[inner])), 4), round(float(np.mean((gy - sy)[inner])), 4)]}
+
+    try:
+        t2 = gdal_map(MOON)
+    except Exception as exc:                          # recorded, never hidden
+        t2 = {"error": f"{type(exc).__name__}: {str(exc)[:200]}"}
+    try:
+        t2_wgs84_label = gdal_map(CRS.from_epsg(4326))
+    except Exception as exc:
+        t2_wgs84_label = {"error": f"{type(exc).__name__}: {str(exc)[:200]}"}
+    inner = inner0
 
     # diagnostic (not decided): the stage's convention (h at the source pixel) vs h at the ground point
     heights_at = lambda s: dem.sample(*lonlat(s[:, 0], s[:, 1])[::-1])  # noqa: E731
@@ -104,12 +120,13 @@ def main() -> int:
             "max_px": round(float(dd.max()), 4)}
 
     verdict = {"t1_rpc_formula_max_px": t1, "t1_pass": t1 <= 1e-3, "t2_gdal_vs_formula": t2,
-               "t2_pass": t2["rms_px"] <= 0.1 and t2["p99_px"] <= 0.25}
+               "t2_pass": "rms_px" in t2 and t2["rms_px"] <= 0.1 and t2["p99_px"] <= 0.25}
     verdict["adopt"] = bool(verdict["t1_pass"] and verdict["t2_pass"])
     outp = {"source": "measured", "protocol": "docs/rpc_export_protocol.md", "run": run_record(),
             "gdal": rasterio.__gdal_version__, "rasterio": rasterio.__version__, "window": w["tmc_row"],
             "reference_grid_linearity_px": round(lin_err, 6), "dem": "TC DTM " + ",".join(dem.tiles),
-            "verdict": verdict, "diagnostic_stage_convention_vs_ground_height": diag, "rpc": R}
+            "verdict": verdict, "diagnostic_gdal_with_epsg4326_label": t2_wgs84_label,
+            "diagnostic_stage_convention_vs_ground_height": diag, "rpc": R}
     (ROOT / "reports/rpc_export_check.json").write_text(json.dumps(outp, indent=2), encoding="utf-8")
     print(json.dumps({k: v for k, v in outp.items() if k not in ("rpc", "run")}, indent=1))
     return 0

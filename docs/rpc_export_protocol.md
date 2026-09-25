@@ -29,3 +29,26 @@ GDAL's source map with the DIRECT formula s = A^-1 (r - (h(r) - h0) p), h(r) fro
 (this isolates the question asked: does GDAL's RPC + lunar DEM work?). Same thresholds.
 Reported separately, not decided here: how far the stage's convention (h at the source pixel,
 `parallax_source_map`) is from the ground-height convention on this window.
+
+## Result (2026-09-25): NOT adopted -- GDAL's RPC transformer is Earth-bound
+
+`reports/rpc_export_check.json` (window 4687, GDAL 3.12.4 / rasterio 1.5.1).
+
+- Test 1 passes: the first-order RPC reproduces the model to 7e-13 px (the export is exact).
+- Test 2 cannot run: GDAL assumes RPC lat/long are EPSG:4326 (WGS84) whatever CRS is passed, and
+  refuses the operation "EPSG:4326 -> Moon (2015)" ("Cannot find coordinate operations"). So a
+  lunar RPC is not usable in GDAL as a lunar product. **Not adopted.**
+
+Diagnostics (not part of the decision):
+- Labelling the image, DEM and output all EPSG:4326 (numbers unchanged: an RPC is pure polynomial
+  in lat/lon/h) makes GDAL orthorectify exactly as our formula: max 0.0001 px over 1,076,369 px.
+  So an RPC export WORKS numerically in GDAL, but only by calling lunar coordinates terrestrial;
+  offered as an optional export with that caveat, never as the default.
+- **Height convention: 0.91 px RMS, 2.67 px p99, 3.93 px max** between the stage's convention
+  (h sampled at the SOURCE pixel's position) and h at the ground point (the reference pixel),
+  on this hilly window. The ground point is the physical one. Which predicts the images better
+  is a separate, measurable question (next protocol).
+
+Decision on delivery: the canonical terrain model stays models.ParallaxModel +
+parallax_source_map (our code, now cross-checked against GDAL to 1e-4 px); geometry/rpc.py is
+kept as an optional, caveated GIS export.
