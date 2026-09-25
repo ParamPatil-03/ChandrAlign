@@ -368,6 +368,8 @@ def main() -> int:
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
     ap.add_argument("--rows", type=int, nargs="+", default=None,
                     help="force these OHRC window rows (must lie inside the NAC footprint)")
+    ap.add_argument("--fresh", action="store_true",
+                    help="I-16: windows at the midpoints between the default picks (never overlapping them)")
     ap.add_argument("--dump-points", default=None, help="folder: fine frames + inliers + DEM per window/matcher")
     ap.add_argument("--benchmark-models", action="store_true",
                     help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
@@ -433,6 +435,10 @@ def main() -> int:
             continue
         picks = np.linspace(inside.min(), inside.max(), N_WIN).astype(int) if len(inside) >= N_WIN else inside
         picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
+        if args.fresh:                                        # I-16: midpoints between the default picks,
+            mids = [(a + b) / 2 for a, b in zip(picks[:-1], picks[1:])]   # snapped to the grid, never
+            picks = sorted({int(inside[np.argmin(np.abs(inside - m))]) for m in mids   # overlapping a default
+                            if min(abs(inside[np.argmin(np.abs(inside - m))] - q) for q in picks) >= WIN})
         if args.rows:                                         # closure test: force OHRC rows
             picks = [int(r) for r in args.rows if int(r) in best]
         for rc in picks:
