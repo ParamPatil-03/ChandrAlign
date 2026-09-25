@@ -63,3 +63,24 @@ lighting, a 2x scale gap) cannot be HIGH. That is the rule as frozen ("HIGH need
 agree"). A second checker family (e.g. the MIND dense step) would recover them, and is listed as follow-up.
 
 Measurements 2 (real windows) and 3 (periodic trap): below, once run.
+
+## Amendment 1 (2026-09-26): compare the checker with the DELIVERED geometry, not affine with affine
+
+**Observation (measurement 2, first 9 TMC-2 -> TC windows of the Track B batch, snapshot `db3a350`).** The gate
+flagged **all 4 hilly N00 windows** (transform gap 2.7-7.1 px) and agreed on **all 5 flat windows**
+(0.6-1.6 px). On those same hilly windows the matcher-free probes put the delivered TPS at p50 ~0.2 /
+p95 0.70-0.81 fine px, while the primary AFFINE itself is off by p95 7.7-15.7 px. The windows are correct.
+The gate was comparing two affines on terrain where no affine is the geometry (26 deg parallax on relief),
+so correct registrations would be REJECTED in the product. These are false alarms caused by the statistic,
+not by the checker.
+
+**Amended statistic.** When the checker is accepted (the rule is unchanged), its own inlier matches are
+predicted by the DELIVERED geometry (`pipeline.delivered_geometry`: affine, TPS, or parallax with DEM
+heights), and the gate uses the **median residual** in reference px, flagged above
+`gates.crosscheck_flag_px` = 2.0 (unchanged). The affine-vs-affine gap is still recorded, as
+`affine_gap_px`. A consistently wrong primary delivers a wrong geometry, which the checker's correct matches
+contradict, so the catch mechanism is the same. The abstain and inconclusive rules are unchanged.
+
+**Re-measured, because it changed after results were seen:** measurement 1 (the full synthetic replay, bar
+>= 8/12, false alarms reported) and measurement 2 (every real window, in a second batch). The first batch's
+flags are kept as the record of the old statistic.
