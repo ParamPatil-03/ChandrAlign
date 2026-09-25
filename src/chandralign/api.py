@@ -370,10 +370,15 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
         redoc_url="/redoc",
     )
 
+    # The UI is served by this same app, so it needs no CORS at all. A wildcard would let any
+    # page on the venue network drive the API and read run files (audit C-06); allow only the
+    # local origins, or an explicit comma-separated CHANDRALIGN_CORS_ORIGINS.
+    origins = os.environ.get("CHANDRALIGN_CORS_ORIGINS", "")
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_methods=["*"],
+        allow_origins=[o.strip() for o in origins.split(",") if o.strip()] or
+                      ["http://127.0.0.1:8000", "http://localhost:8000"],
+        allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
 
@@ -425,8 +430,10 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
     def get_asset(run_id: str, name: str):
         """Serve a named asset (PNG, GeoTIFF, CSV, JSON …) from the run directory."""
         record = _get_or_404(run_id)
-        asset  = record.out_dir / name
-        if not asset.exists() or not asset.is_file():
+        root   = record.out_dir.resolve()
+        asset  = (root / name).resolve()
+        # `name` comes from the URL: "..\..\x" must not leave the run folder (audit C-06).
+        if not asset.is_relative_to(root) or not asset.exists() or not asset.is_file():
             raise HTTPException(
                 status_code=404,
                 detail=f"Asset '{name}' not found in run '{run_id}'. "
@@ -573,4 +580,6 @@ if __name__ == "__main__":  # pragma: no cover
         import uvicorn
     except ImportError:
         raise SystemExit("uvicorn is required: pip install uvicorn")
-    uvicorn.run("chandralign.api:app", host="0.0.0.0", port=8000, reload=True)
+    # Local only by default; set CHANDRALIGN_HOST=0.0.0.0 deliberately to expose it.
+    uvicorn.run("chandralign.api:app", host=os.environ.get("CHANDRALIGN_HOST", "127.0.0.1"),
+                port=int(os.environ.get("CHANDRALIGN_PORT", "8000")))

@@ -21,10 +21,10 @@ from pathlib import Path
 import pytest
 
 # ---------------------------------------------------------------------------
-# Guard: skip the entire module if fastapi / httpx2 are not installed.
+# Guard: skip the entire module if fastapi / httpx are not installed.
 # ---------------------------------------------------------------------------
 fastapi = pytest.importorskip("fastapi", reason="fastapi not installed")
-pytest.importorskip("httpx2", reason="httpx2 not installed (needed by TestClient)")
+pytest.importorskip("httpx", reason="httpx not installed (starlette TestClient needs it)")
 
 from starlette.testclient import TestClient  # noqa: E402
 
@@ -95,6 +95,24 @@ def test_unknown_asset_404(client):
     time.sleep(0.2)
     r = client.get(f"/runs/{run_id}/assets/no-such-file.txt")
     assert r.status_code == 404
+
+
+@pytest.mark.parametrize("escape", ["..%5C..%5Ccanary.txt", "..%2F..%2Fcanary.txt",
+                                    "..%5Ccanary.txt", "..%2Fcanary.txt"])
+def test_asset_path_cannot_escape_the_run_folder(client, escape):
+    """Audit 2026-09-26 C-06: `..` in an asset name read files outside the run folder."""
+    canary = _RUNS_TMP / "canary.txt"
+    canary.write_text("SECRET-CANARY", encoding="utf-8")
+    (_RUNS_TMP.parent / "canary.txt").write_text("SECRET-CANARY", encoding="utf-8")
+    try:
+        run_id = client.post("/register", json={"mock": True, "seed": 98}).json()["run_id"]
+        _wait_for_done(client, run_id)
+        r = client.get(f"/runs/{run_id}/assets/{escape}")
+        assert r.status_code == 404
+        assert "SECRET-CANARY" not in r.text
+    finally:
+        canary.unlink(missing_ok=True)
+        (_RUNS_TMP.parent / "canary.txt").unlink(missing_ok=True)
 
 
 # ---------------------------------------------------------------------------
