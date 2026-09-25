@@ -34,3 +34,12 @@ suns), so its closure errors (66 m, 126 m, 10.4 km) are noise, not a measurement
 automatic reading ("does not close ... biased") is NOT accepted: the protocol lacked a quality
 requirement for the A -> B link -- a protocol gap, recorded here. Bias on the 0.40 m NAC remains
 unresolved. `reports/ohrc_nac_closure.json`.
+
+## Amendment 1 (frozen BEFORE the retry): an illumination-robust A -> B link, with a quality bar
+Same windows, same T_A / T_B (the run above), same reading rules. Only the A -> B link changes:
+`cascade.register_step_dense` (MIND template search + sub-pixel median of raw and MIND-channel
+estimates, the method our cascade uses across sun differences; CPU, no GPU memory), template = the
+A crop (half 600 A px) oriented by the prior's linear part, searched over the B crop around the
+prior position (+-64 B px margin). The link counts ONLY if z >= 10 AND its robust sub-pixel spread
+(StepResult.rmse_px) <= 0.5 B px; windows whose link fails this are dropped, and the reading needs
+>= 2 valid windows (else inconclusive). Second attempt: if it fails, this question stops here.
