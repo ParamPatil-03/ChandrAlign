@@ -72,6 +72,10 @@ SETS = {
     "heldout": {"scenes": [("tmc2_r30000", "tmc2", 30000, 1000, 2, 10.0),
                            ("tmc2_r90000", "tmc2", 90000, 1000, 2, 10.0),
                            ("ohrc_r50000", "ohrc", 50000, 4000, 4, 1.2)], "seed": 11},
+    # protocol amendment 1: fixed after the held-out set was spent on the dev choice
+    "fresh": {"scenes": [("tmc2_r140000", "tmc2", 140000, 1000, 2, 10.0),
+                         ("tmc2_r10000", "tmc2", 10000, 1000, 2, 10.0),
+                         ("ohrc_r10000", "ohrc", 10000, 4000, 4, 1.2)], "seed": 13},
 }
 WARPS = {"small": (2.5, 0.93), "large": (10.0, 0.60)}
 # (warp, radiometry, non-rigid, scored)

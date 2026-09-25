@@ -94,12 +94,13 @@ subpixel:                    # PREC-01..05
   # refinement in 11/15 cases, p95 up to 1.39 px. Now: the source patch is resampled through
   # the model's local Jacobian, LSM (ECC affine) is tried and warped NCC after it, and a move
   # is applied only if it RAISES the Lanczos-scored NCC. Dev: 15/15 cases better than
-  # unrefined at p50 and p95, worst p95 0.172 px. Variants measured (dev): no gate 0.137-0.26,
+  # unrefined at p50 and p95, worst p95 0.172 px (cap 0.75; 0.145 at cap 1.5). Variants measured (dev): no gate 0.137-0.26,
   # bilinear-scored gate 0.248 (the gate's own interpolation bias), 33 px patch 0.26-0.35.
   method: lsm                # lsm|ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
   fallbacks: [ncc_gaussian_iter]   # also tried per point; the best-scoring accepted move wins
   refine_half_px: 20         # 41 px patches (33 px: worst dev p95 0.26-0.35)
-  max_move_px: 0.75          # with warped patches (audit C-02 step 3); 1.5 px when no model is given
+  max_move_px: 1.5           # warped patches. Was 0.75 (audit's advice): it froze 20/25 points with 0.6-1.9 px
+                             # matcher error on the held-out set (p95 0.79). Protocol amendment 1; the gate protects.
   require_score_gain: true   # a move must raise the NCC of the warped source vs the reference patch
   score_interp: lanczos      # bilinear scoring biased the gate: 14% of moves refused vs 8%
   score_border_px: 3

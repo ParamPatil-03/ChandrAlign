@@ -86,3 +86,32 @@ match points.
 
 Each run writes `reports/known_warp_{dev,heldout}.json` with the per-case p50/p95/RMS/max and the
 verdict lines. The PR states the command and the numbers.
+
+## Amendment 1 (2026-09-26): C-02 move cap 0.75 -> 1.5 px, re-scored on a FRESH set
+
+**What happened.** The method chosen on dev (commit `ec51334`: LSM + warped NCC, 41 px, Lanczos-scored
+gate, `max_move_px` 0.75) was run once on the held-out set (`reports/known_warp_heldout.json`). It met
+the bars in **14/15** cases. The failure was TMC-2 r90000, small warp, mild radiometry: p50 0.197 -> 0.066,
+but p95 **0.790 = the unrefined p95**, so it did not beat unrefined at p95. By this protocol C-02 is
+therefore **not accepted on the held-out set**, and that result stays recorded.
+
+**Why.** A diagnostic on that case showed that 25 of 357 delivered points carry 0.6-1.9 px of matcher
+error. The 0.75 px cap forbids moving 20 of them, so they keep their error and form the p95. With a 1.5 px
+cap the same gate and LSM correct 24 of the 25 to <= 0.12 px. The 0.75 value came from the audit's advice
+("~0.75 px"), not from measurement. On dev the 1.5 px cap had already measured better (worst p95 0.145
+vs 0.172, `E1_lz` vs `E1_lz_075`). The score gate, not the cap, is what protects points; in the
+inverted-shading case it refused every move.
+
+**Amendment.** `subpixel.max_move_px` = 1.5 (the same as the pre-existing axis-aligned cap). Nothing else
+changes. Because this was decided after seeing the held-out result, the held-out set can no longer
+confirm it. A **fresh** set is fixed now, by the same validity rule (0 invalid pixels, inside the
+product), from candidate lists written before any run: TMC-2 rows [140000, 10000, 125000] (take the first
+two valid) and OHRC rows [70000, 10000] at col 4000 (take the first valid; row 70000 has one invalid
+pixel, so it is excluded).
+
+| set | crops | noise seed |
+|---|---|---|
+| **fresh** | TMC-2 rows 140000 and 10000 (col 1000, block 2), OHRC row 10000 (col 4000, block 4) | 13 |
+
+The C-02 bars 1-2 must hold on the fresh set for C-02 to be accepted. The held-out set is re-run with the
+amended setting and reported alongside, but it is labelled as post-hoc.
