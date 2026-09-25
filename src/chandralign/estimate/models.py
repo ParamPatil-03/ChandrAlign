@@ -49,7 +49,7 @@ class ParallaxModel:
     p_px_per_m: tuple[float, float]
     h0_m: float
     dem: str = ""
-    height_at: str = "src"              # where h was sampled in the fit: "src" point or "ref" (ground) point
+    height_at: str = "ref"              # where h was sampled in the fit: "ref" (ground) point or "src" point
 
     def apply(self, pts: np.ndarray, heights) -> np.ndarray:
         """The model with GIVEN heights (at the source points for "src", at the reference points for "ref")."""

@@ -288,6 +288,8 @@ def test_parallax_uses_its_own_dem_when_given_one():
 
 
 def _hill_case(seed=5):
+    """A world whose heights are taken at the SOURCE point (the stage's earlier convention); the
+    ground-point world is test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly."""
     rng = np.random.default_rng(seed)
     lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
     rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
@@ -305,11 +307,12 @@ def test_the_parallax_model_is_delivered_and_predicts_the_hill():
     true positions; the affine alone misses them by the parallax."""
     dem, p, src, h, ref = _hill_case()
     fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
-                    ground_model=_Identity(), dem=dem)
+                    ground_model=_Identity(), dem=dem, parallax_height_at="src")   # _hill_case is a src-height world
     m = fr.parallax
     assert m is not None
     hill = h > 100
-    err_p = np.hypot(*(m.apply(src[hill], h[hill]) - ref[hill]).T)
+    heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
+    err_p = np.hypot(*(m.predict(src[hill], heights_at) - ref[hill]).T)
     err_a = np.hypot(*(models.apply(fr.model, src[hill]) - ref[hill]).T)
     assert np.median(err_p) < 0.6 and np.median(err_a) > 5.0
     with pytest.raises(ValueError):
@@ -319,12 +322,12 @@ def test_the_parallax_model_is_delivered_and_predicts_the_hill():
 def test_parallax_source_map_inverts_the_model():
     dem, p, src, h, ref = _hill_case()
     fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
-                    ground_model=_Identity(), dem=dem)
+                    ground_model=_Identity(), dem=dem, parallax_height_at="src")   # _hill_case is a src-height world
     heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
     mx, my = models.parallax_source_map(fr.parallax, heights_at, (400, 400), step=4)
     ys, xs = np.mgrid[20:380:37, 20:380:37]
     s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
-    back = fr.parallax.apply(s, heights_at(s))
+    back = fr.parallax.predict(s, heights_at)                    # in the model's own height convention
     assert np.abs(back - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
 
 

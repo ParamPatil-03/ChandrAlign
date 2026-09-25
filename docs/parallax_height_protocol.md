@@ -27,3 +27,20 @@ convention). Baseline: amendment 3's run (`height_at: src`, `reports/tmc2_tc_par
     hilly window keeps <= 1 empty cell.
 Otherwise `src` stays, and the RPC/remap delivery documents that the model's h is sampled at the
 source position.
+
+## Result (2026-09-25): `ref` ADOPTED (the default is now the ground point)
+
+`reports/tmc2_tc_parallax_height_ref.json` (15 windows, height_at ref), against amendment 3's
+`reports/tmc2_tc_parallax_a3.json` (height_at src). Median NCC-probe error of affine + parallax:
+
+| | src (before) | ref (now) |
+|---|---|---|
+| hilly, median of 9 windows | 0.415 px | **0.352 px (-15%)** |
+| hilly, per window | 0.359-0.618 | 0.282-0.507 (9/9 lower, by 0.02-0.13 px) |
+| flat, per window | 0.240-0.293 | 0.238-0.298 (within +0.005) |
+
+(a) pass, (b) pass, (c) pass: registration, gates and tier unchanged on all 15; 0 empty cells on
+every hilly window. p / 26 deg prediction on hilly windows 1.01-1.03 (0.97-1.04 with src).
+`configs/default.yaml parallax.height_at: ref`. This is also the RPC's convention, so the model,
+our remap and a GDAL RPC export now describe the same geometry (docs/rpc_export_protocol.md).
+Tests built on a source-height synthetic world now say so (parallax_height_at="src").

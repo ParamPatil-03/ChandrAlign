@@ -148,7 +148,7 @@ def _dense_refine(model: TransformModel, src_img: np.ndarray, ref_img: np.ndarra
             {"applied": True, "moves_px": moves, "overlap_px": [int(x1 - x0), int(y1 - y0)]})
 
 
-def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5, height_at: str = "src"):
+def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5, height_at: str = "ref"):
     """Inliers under ref = A.src + h.p, h = DEM height at the source point (ALIGN-08).
 
     Starts from the robust estimate's inliers, fits A (affine) and p (px per metre) by least
@@ -246,7 +246,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         if p_dem is None or ground_model is None:
             stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
         else:
-            h_at = parallax_height_at or str(config.get("parallax.height_at", "src"))
+            h_at = parallax_height_at or str(config.get("parallax.height_at", "ref"))
             inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ground_model, height_at=h_at)
     else:
         stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}

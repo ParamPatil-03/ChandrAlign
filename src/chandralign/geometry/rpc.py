@@ -10,7 +10,10 @@ with a DEM (`gdalwarp -rpc -to RPC_DEM=dem.tif`). Once the reference is a lat/lo
 which is affine in (lon, lat, h): a FIRST-ORDER RPC with unit denominators, so the export is
 exact, not a fit. Pixel convention: RPC line/sample are relative to the pixel CENTRE (RFC 22),
 the same as numpy/cv2 here (centres at integers). h is the height AT THE GROUND POINT, which is
-what an RPC means (the ALIGN-08 stage samples it at the source pixel; see the protocol).
+what an RPC means and, since docs/parallax_height_protocol.md, what the ALIGN-08 stage fits
+(parallax.height_at: ref). GDAL's RPC transformer assumes EPSG:4326 and refuses a lunar CRS
+(GDAL 3.12.4), so this export works in GDAL only with the Moon's lat/lon labelled EPSG:4326
+(numbers unchanged; verified exact to 1e-4 px): an optional export, not the default delivery.
 """
 from __future__ import annotations
 

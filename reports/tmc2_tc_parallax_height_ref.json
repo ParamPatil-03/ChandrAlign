@@ -1,0 +1,724 @@
+{
+  "source": "measured",
+  "protocol": "docs/parallax_protocol.md (amendment 3)",
+  "run": {
+    "command": "python scripts/parallax_probe_eval.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/hr C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/hr_on.json C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/a3_base.json reports/tmc2_tc_parallax_height_ref.json",
+    "commit": "7a3411ec62679dc2341054c565200021a7869119",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T01:27:19+00:00"
+  },
+  "verdict": {
+    "a_empty_cells": true,
+    "b_probe_error": true,
+    "c_nothing_lost": true,
+    "d_physical_p": true,
+    "adopt": true
+  },
+  "windows": [
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "tmc_col": null,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 1,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00239,
+          -0.06657
+        ],
+        "h0_m": -1322.7,
+        "rounds": 2,
+        "height_at": "ref",
+        "inliers_before": 8743,
+        "inliers_after": 14341,
+        "rms_px": 0.5422,
+        "affine": [
+          [
+            1.015886,
+            -0.001912,
+            -2.919161
+          ],
+          [
+            -0.000343,
+            1.000237,
+            2.191014
+          ]
+        ]
+      },
+      "probes": 377,
+      "median_err_affine_px": 2.175,
+      "median_err_parallax_px": 0.322,
+      "p90_err_affine_px": 5.973,
+      "p90_err_parallax_px": 0.653,
+      "p_along_track": true,
+      "p_over_predicted": 1.011
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "tmc_col": null,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 6,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00156,
+          -0.06773
+        ],
+        "h0_m": -1327.5,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 6941,
+        "inliers_after": 14152,
+        "rms_px": 0.6354,
+        "affine": [
+          [
+            1.015272,
+            -0.002877,
+            -3.236643
+          ],
+          [
+            -0.000407,
+            1.000382,
+            3.047618
+          ]
+        ]
+      },
+      "probes": 375,
+      "median_err_affine_px": 3.0,
+      "median_err_parallax_px": 0.406,
+      "p90_err_affine_px": 11.516,
+      "p90_err_parallax_px": 0.897,
+      "p_along_track": true,
+      "p_over_predicted": 1.028
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 4687,
+      "tmc_col": null,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 10,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00135,
+          -0.0671
+        ],
+        "h0_m": -1554.0,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 7742,
+        "inliers_after": 14443,
+        "rms_px": 0.7188,
+        "affine": [
+          [
+            1.015817,
+            -0.0018,
+            -12.249
+          ],
+          [
+            -0.0002,
+            1.000286,
+            -1.134211
+          ]
+        ]
+      },
+      "probes": 362,
+      "median_err_affine_px": 2.721,
+      "median_err_parallax_px": 0.507,
+      "p90_err_affine_px": 13.106,
+      "p90_err_parallax_px": 0.936,
+      "p_along_track": true,
+      "p_over_predicted": 1.019
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 6250,
+      "tmc_col": null,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 11,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00323,
+          -0.06707
+        ],
+        "h0_m": -1560.0,
+        "rounds": 4,
+        "height_at": "ref",
+        "inliers_before": 7684,
+        "inliers_after": 14252,
+        "rms_px": 0.7223,
+        "affine": [
+          [
+            1.015117,
+            -0.001388,
+            -7.391233
+          ],
+          [
+            -0.000579,
+            1.000426,
+            0.114302
+          ]
+        ]
+      },
+      "probes": 370,
+      "median_err_affine_px": 2.399,
+      "median_err_parallax_px": 0.391,
+      "p90_err_affine_px": 11.696,
+      "p90_err_parallax_px": 0.795,
+      "p_along_track": true,
+      "p_over_predicted": 1.019
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 16000,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00294,
+          -0.05827
+        ],
+        "h0_m": -1920.1,
+        "rounds": 5,
+        "height_at": "ref",
+        "inliers_before": 13770,
+        "inliers_after": 14010,
+        "rms_px": 0.8543,
+        "affine": [
+          [
+            1.012054,
+            -0.002226,
+            -4.998345
+          ],
+          [
+            0.000338,
+            0.9996,
+            1.234737
+          ]
+        ]
+      },
+      "probes": 388,
+      "median_err_affine_px": 0.5,
+      "median_err_parallax_px": 0.298,
+      "p90_err_affine_px": 1.542,
+      "p90_err_parallax_px": 0.694,
+      "p_along_track": true,
+      "p_over_predicted": 0.886
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 18750,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00636,
+          -0.02328
+        ],
+        "h0_m": -2032.0,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 15145,
+        "inliers_after": 15161,
+        "rms_px": 0.7115,
+        "affine": [
+          [
+            1.011446,
+            -0.002474,
+            -3.407478
+          ],
+          [
+            0.000664,
+            0.997701,
+            1.996172
+          ]
+        ]
+      },
+      "probes": 392,
+      "median_err_affine_px": 0.262,
+      "median_err_parallax_px": 0.238,
+      "p90_err_affine_px": 0.469,
+      "p90_err_parallax_px": 0.429,
+      "p_along_track": false,
+      "p_over_predicted": 0.366
+    },
+    {
+      "tile": "N03",
+      "tmc_row": 21500,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.00197,
+          -0.05158
+        ],
+        "h0_m": -2071.6,
+        "rounds": 5,
+        "height_at": "ref",
+        "inliers_before": 15021,
+        "inliers_after": 15056,
+        "rms_px": 0.7789,
+        "affine": [
+          [
+            1.009899,
+            -0.002032,
+            -3.843799
+          ],
+          [
+            -0.00035,
+            1.000175,
+            0.555234
+          ]
+        ]
+      },
+      "probes": 391,
+      "median_err_affine_px": 0.572,
+      "median_err_parallax_px": 0.268,
+      "p90_err_affine_px": 1.258,
+      "p90_err_parallax_px": 0.602,
+      "p_along_track": true,
+      "p_over_predicted": 0.783
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 52000,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.0008,
+          -0.03553
+        ],
+        "h0_m": -1896.4,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 15810,
+        "inliers_after": 15831,
+        "rms_px": 0.6822,
+        "affine": [
+          [
+            0.993907,
+            -0.000982,
+            3.956427
+          ],
+          [
+            0.000517,
+            0.999515,
+            1.176122
+          ]
+        ]
+      },
+      "probes": 407,
+      "median_err_affine_px": 0.286,
+      "median_err_parallax_px": 0.249,
+      "p90_err_affine_px": 0.599,
+      "p90_err_parallax_px": 0.469,
+      "p_along_track": true,
+      "p_over_predicted": 0.539
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 54750,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.01075,
+          -0.06083
+        ],
+        "h0_m": -1940.7,
+        "rounds": 2,
+        "height_at": "ref",
+        "inliers_before": 14992,
+        "inliers_after": 15261,
+        "rms_px": 0.6892,
+        "affine": [
+          [
+            0.995177,
+            -0.001371,
+            3.698093
+          ],
+          [
+            -0.000251,
+            1.000077,
+            0.145182
+          ]
+        ]
+      },
+      "probes": 425,
+      "median_err_affine_px": 0.813,
+      "median_err_parallax_px": 0.245,
+      "p90_err_affine_px": 1.904,
+      "p90_err_parallax_px": 0.535,
+      "p_along_track": true,
+      "p_over_predicted": 0.938
+    },
+    {
+      "tile": "N09",
+      "tmc_row": 57500,
+      "tmc_col": null,
+      "hilly": false,
+      "parallax_dem": "sldem2015",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00604,
+          -0.05062
+        ],
+        "h0_m": -1955.0,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 15140,
+        "inliers_after": 15182,
+        "rms_px": 0.7084,
+        "affine": [
+          [
+            0.993806,
+            -0.001004,
+            4.605982
+          ],
+          [
+            0.001206,
+            0.999909,
+            -0.563025
+          ]
+        ]
+      },
+      "probes": 424,
+      "median_err_affine_px": 0.437,
+      "median_err_parallax_px": 0.263,
+      "p90_err_affine_px": 0.94,
+      "p90_err_parallax_px": 0.502,
+      "p_along_track": true,
+      "p_over_predicted": 0.774
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "tmc_col": 768,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 4,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.01105,
+          -0.06701
+        ],
+        "h0_m": -1289.0,
+        "rounds": 2,
+        "height_at": "ref",
+        "inliers_before": 6654,
+        "inliers_after": 14320,
+        "rms_px": 0.5285,
+        "affine": [
+          [
+            1.016015,
+            -0.001058,
+            -6.936168
+          ],
+          [
+            5e-06,
+            1.000202,
+            3.617978
+          ]
+        ]
+      },
+      "probes": 363,
+      "median_err_affine_px": 2.992,
+      "median_err_parallax_px": 0.308,
+      "p90_err_affine_px": 9.243,
+      "p90_err_parallax_px": 0.696,
+      "p_along_track": true,
+      "p_over_predicted": 1.031
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "tmc_col": 768,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 4,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          -0.01199,
+          -0.06687
+        ],
+        "h0_m": -1536.2,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 7428,
+        "inliers_after": 14030,
+        "rms_px": 0.5686,
+        "affine": [
+          [
+            1.016781,
+            -0.001335,
+            -3.627559
+          ],
+          [
+            6.8e-05,
+            1.000204,
+            -2.136409
+          ]
+        ]
+      },
+      "probes": 376,
+      "median_err_affine_px": 2.465,
+      "median_err_parallax_px": 0.352,
+      "p90_err_affine_px": 7.528,
+      "p90_err_parallax_px": 0.688,
+      "p_along_track": true,
+      "p_over_predicted": 1.031
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 1562,
+      "tmc_col": 3232,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 0,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00839,
+          -0.06722
+        ],
+        "h0_m": -1283.0,
+        "rounds": 2,
+        "height_at": "ref",
+        "inliers_before": 7899,
+        "inliers_after": 14395,
+        "rms_px": 0.5745,
+        "affine": [
+          [
+            1.014932,
+            -0.003239,
+            -9.290999
+          ],
+          [
+            -0.002983,
+            1.000418,
+            4.157392
+          ]
+        ]
+      },
+      "probes": 367,
+      "median_err_affine_px": 2.641,
+      "median_err_parallax_px": 0.282,
+      "p90_err_affine_px": 6.211,
+      "p90_err_parallax_px": 0.602,
+      "p_along_track": true,
+      "p_over_predicted": 1.028
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 3125,
+      "tmc_col": 3232,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "HIGH",
+      "tier_before": "HIGH",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 5,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00638,
+          -0.06743
+        ],
+        "h0_m": -1208.5,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 7571,
+        "inliers_after": 14508,
+        "rms_px": 0.5687,
+        "affine": [
+          [
+            1.013111,
+            -0.003239,
+            -3.924081
+          ],
+          [
+            -0.003035,
+            1.000475,
+            1.746756
+          ]
+        ]
+      },
+      "probes": 395,
+      "median_err_affine_px": 2.862,
+      "median_err_parallax_px": 0.31,
+      "p90_err_affine_px": 7.139,
+      "p90_err_parallax_px": 0.649,
+      "p_along_track": true,
+      "p_over_predicted": 1.028
+    },
+    {
+      "tile": "N00",
+      "tmc_row": 4687,
+      "tmc_col": 3232,
+      "hilly": true,
+      "parallax_dem": "tc_dtm",
+      "status": "registered",
+      "status_before": "registered",
+      "tier": "MEDIUM",
+      "tier_before": "MEDIUM",
+      "gates_pass": true,
+      "gates_pass_before": true,
+      "empty_cells": 0,
+      "empty_cells_before": 12,
+      "parallax": {
+        "applied": true,
+        "p_px_per_m": [
+          0.00855,
+          -0.06751
+        ],
+        "h0_m": -1109.2,
+        "rounds": 3,
+        "height_at": "ref",
+        "inliers_before": 5566,
+        "inliers_after": 14320,
+        "rms_px": 0.6345,
+        "affine": [
+          [
+            1.011012,
+            -0.002806,
+            -4.566314
+          ],
+          [
+            -0.002923,
+            1.000355,
+            1.675295
+          ]
+        ]
+      },
+      "probes": 334,
+      "median_err_affine_px": 3.504,
+      "median_err_parallax_px": 0.426,
+      "p90_err_affine_px": 11.756,
+      "p90_err_parallax_px": 0.953,
+      "p_along_track": true,
+      "p_over_predicted": 1.033
+    }
+  ]
+}
