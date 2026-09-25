@@ -49,3 +49,20 @@ def test_the_process_exits_0_on_an_impossible_pair():
                          env={**__import__("os").environ, "PYTHONPATH": str(ROOT / "src")})
     assert out.returncode == 0, out.stderr[-2000:]
     assert out.stdout.strip().startswith("REJECTED")
+
+
+def test_the_bundle_delivers_the_points_its_metrics_describe():
+    """Part 3 handoff: export `delivered` (uniform, sub-pixel refined), not the pre-uniformity matches."""
+    from chandralign.estimate import models
+    from chandralign.pipeline import register_bundle
+    from chandralign.refine import uniformity
+    a = _terrain(4)
+    b = cv2.warpAffine(a, np.float32([[1, 0, 2.6], [0, 1, 1.4]]), a.shape[::-1], flags=cv2.INTER_CUBIC)
+    bun = register_bundle(_plane(a), _plane(b))
+    r, d = bun.result, bun.delivered
+    assert r.confidence_tier in ("HIGH", "MEDIUM", "LOW") and d.stage == "delivered"
+    assert 0 < len(d.src_pts) <= int(r.inlier_mask.sum())              # thinned from the inliers
+    assert np.isclose(uniformity.coverage_of(d.src_pts, a.shape, 8), r.metrics.spatial_coverage)
+    res = np.hypot(*(models.apply(r.model, d.src_pts) - d.ref_pts).T)
+    assert np.isclose(np.sqrt(np.mean(res ** 2)), r.metrics.rmse_px, atol=1e-6)
+    assert bun.tps is not None and bun.src is not None

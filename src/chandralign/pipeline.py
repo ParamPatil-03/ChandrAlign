@@ -343,9 +343,39 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                       n_matches, stages, [], tps, parallax_model)
 
 
+@dataclass
+class RegistrationBundle:
+    """Everything Part 3 needs from one registration, WITHOUT changing the frozen contract.
+
+    `result` is the RegistrationResult handoff (tier, gates, failure modes, metrics, affine model).
+    Its `matches` / `inlier_mask` are the terrain-filtered correspondences and the robust estimate's
+    inliers -- the evidence the tier was graded on. What to EXPORT as the match points is `delivered`:
+    the final control points (uniform per ALIGN-04, sub-pixel refined per PREC-01), the same points
+    `result.metrics.rmse_px` and `spatial_coverage` describe. To warp the registered product, use the
+    best geometry available: `parallax` (TMC-2 on relief) if set, else `tps` if set, else `result.model`.
+    """
+    result: Any                               # contracts.RegistrationResult
+    delivered: MatchSet                       # final control points (export these); its `confidence` is all
+                                              # ones -- the per-point score is not carried through selection
+    tps: Optional[TransformModel] = None      # ALIGN-02, through the delivered points
+    parallax: Optional[Any] = None            # ALIGN-08 models.ParallaxModel (needs DEM heights)
+    stages: dict = field(default_factory=dict)
+    src: Any = None                           # the ImagePlanes registered (with meta / geo for georeferencing)
+    ref: Any = None
+
+
 def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
              ground_model=None, dem=None, flags: Optional[dict[str, bool]] = None,
              match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None):
+    """RegistrationResult only (the frozen handoff); see `register_bundle` for the delivered points."""
+    return register_bundle(src, ref, matcher=matcher, device=device, expected_scale=expected_scale,
+                           ground_model=ground_model, dem=dem, flags=flags, match_kwargs=match_kwargs,
+                           provenance=provenance).result
+
+
+def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
+                    ground_model=None, dem=None, flags: Optional[dict[str, bool]] = None,
+                    match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None) -> RegistrationBundle:
     """One registration end to end -> RegistrationResult, THE Part 2 -> Part 3 handoff.
 
     Match, fine stage, all five control gates, quality tier. A bad or impossible pair is a RESULT,
@@ -403,4 +433,9 @@ def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, e
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
                     **(provenance or {})})
     control_gates.require_gates(result)
-    return result
+    cs = np.asarray(fr.control_src if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
+    cr = np.asarray(fr.control_ref if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
+    delivered = MatchSet(src_pts=cs, ref_pts=cr, confidence=np.ones(len(cs), np.float32),
+                         method=ms.method, regime=ms.regime, stage="delivered")
+    return RegistrationBundle(result=result, delivered=delivered, tps=fr.tps if fr.ok else None,
+                              parallax=fr.parallax if fr.ok else None, stages=fr.stages, src=src, ref=ref)
