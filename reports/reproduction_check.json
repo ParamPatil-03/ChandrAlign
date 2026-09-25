@@ -1,0 +1,867 @@
+{
+ "source": "measured",
+ "run": {
+  "command": "python scripts/verify_reproduction.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/verify",
+  "commit": "88c55159847e9c7abf3cf6e7e843a188b4073ef7",
+  "uncommitted_changes": false,
+  "utc": "2026-09-25T06:53:47+00:00"
+ },
+ "summary": {
+  "tmc2_tc": {
+   "compared": 15,
+   "not_reproduced": 0
+  },
+  "ohrc_nac": {
+   "compared": 25,
+   "not_reproduced": 0
+  },
+  "iirs_wac": {
+   "compared": 5,
+   "not_reproduced": 0
+  },
+  "iirs_nac": {
+   "compared": 9,
+   "not_reproduced": 0
+  },
+  "tmc2_nac": {
+   "compared": 4,
+   "not_reproduced": 0
+  }
+ },
+ "details": {
+  "tmc2_tc": {
+   "rows": [
+    {
+     "window": [
+      1562,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      3125,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      4687,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      6250,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      16000,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      18750,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      21500,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      52000,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      54750,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      57500,
+      null
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      1562,
+      768
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      3125,
+      768
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      1562,
+      3232
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      3125,
+      3232
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": [
+      4687,
+      3232
+     ],
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates_same": true,
+     "offset_diff_m": 0.0,
+     "parallax_rel_diff": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "ohrc_nac": {
+   "rows": [
+    {
+     "window": "('M102014464RC', 2048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 20798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 39798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 58548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 77548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 46548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 48798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 51048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 53298)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 55548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 2048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 7798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 13548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 19548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 25298)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 38798)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 48548)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 58048)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 67798)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 77548)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 2048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 6548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 11048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 15798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 20298)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "iirs_wac": {
+   "rows": [
+    {
+     "window": "1856",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "2368",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "2880",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "3392",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "3904",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "iirs_nac": {
+   "rows": [
+    {
+     "window": "('M1415013176LC', (0, 13266))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1415013176LC', (13266, 26533))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1415013176LC', (26533, 39800))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (0, 17400))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (17400, 34800))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (34800, 52200))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (34800, 40600))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (40600, 46400))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (46400, 52200))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "tmc2_nac": {
+   "rows": [
+    {
+     "group": "same_sun",
+     "success": [
+      9,
+      9
+     ],
+     "reproduced": true
+    },
+    {
+     "group": "opposed_sun",
+     "success": [
+      10,
+      10
+     ],
+     "reproduced": true
+    },
+    {
+     "group": "secondary_same_sun_12x",
+     "success": [
+      5,
+      5
+     ],
+     "reproduced": true
+    },
+    {
+     "group": "secondary_opposed_4x",
+     "success": [
+      19,
+      19
+     ],
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  }
+ }
+}
