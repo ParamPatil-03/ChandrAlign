@@ -110,3 +110,41 @@ def test_the_real_install_passes(check, monkeypatch):
     script itself; this keeps a local run honest too.)"""
     monkeypatch.setattr(sys, "argv", ["check_licences.py"])
     assert check.main() == 0
+
+
+# ---------------------------------------------------------------------------
+# Audit 2026-09-26 I-06: the gate was a 3-component denylist; four non-redistributable
+# vismatch models passed it in ship mode, and so would any model nobody had audited.
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize("name", ["master", "duster", "gim-lightglue", "omniglue"])
+def test_the_models_the_denylist_missed_are_blocked(name):
+    from chandralign.matching.licence import LicenceRestrictedError, assert_allowed, is_restricted
+    assert is_restricted(name)
+    with pytest.raises(LicenceRestrictedError):
+        assert_allowed(name, ship_mode=True)
+
+
+@pytest.mark.parametrize("name", ["roma", "minima-roma", "ufm", "romav2", "tiny-roma"])
+def test_a_model_nobody_audited_is_refused_in_ship_mode(name):
+    from chandralign.matching.licence import LicenceRestrictedError, assert_allowed
+    with pytest.raises(LicenceRestrictedError, match="allowlist"):
+        assert_allowed(name, ship_mode=True)
+    assert_allowed(name, ship_mode=False)          # benchmarking stays possible
+
+
+def test_every_shippable_model_is_allowed():
+    from chandralign.matching.licence import assert_allowed, shippable
+    assert shippable()
+    for name in shippable():
+        assert_allowed(name, ship_mode=True)
+
+
+def test_every_installed_vismatch_model_off_the_allowlist_is_refused():
+    vismatch = pytest.importorskip("vismatch")
+    from chandralign.matching.licence import LicenceRestrictedError, assert_allowed, shippable
+    allowed = set(shippable())
+    for name in vismatch.available_models:
+        if name in allowed:
+            continue
+        with pytest.raises(LicenceRestrictedError):
+            assert_allowed(name, ship_mode=True)

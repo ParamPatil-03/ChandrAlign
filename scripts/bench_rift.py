@@ -93,7 +93,7 @@ def run_method(name, src, ref):
         return rift.match(src, ref)
     if name == "rift2-mim":
         return rift.match(src, ref, params=rift.RiftParams(orientation="mim"))
-    return adapter.match(src, ref, model_name=name, device="cuda")
+    return adapter.match(src, ref, model_name=name, device="cuda", ship_mode=False)  # benchmarking candidates, not shipping
 
 
 def one(name, regime, seed):

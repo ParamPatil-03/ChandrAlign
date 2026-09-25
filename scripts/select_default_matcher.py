@@ -91,7 +91,7 @@ MAX_SECONDS = 5.0            # research doc section 38, the 3-minute live demo
 def run_method(name, src, ref):
     if name == "sift-nn":
         return classical.match(src, ref, detector="sift")
-    return adapter.match(src, ref, model_name=name, device="cuda")
+    return adapter.match(src, ref, model_name=name, device="cuda", ship_mode=False)  # benchmarking candidates, not shipping
 
 
 def one(name, regime, seed):

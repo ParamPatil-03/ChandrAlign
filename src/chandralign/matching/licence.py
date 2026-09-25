@@ -29,7 +29,18 @@ RESTRICTED_COMPONENTS: dict[str, str] = {
     "superpoint": "Magic Leap licence: non-commercial research only",
     "superglue": "Magic Leap licence: non-commercial research only",
     "r2d2": "CC BY-NC-SA 3.0: non-commercial AND share-alike",
+    # Found by the 2026-09-26 audit (I-06): these passed the three entries above.
+    "master": "NAVER MASt3R weights, CC BY-NC-SA 4.0: non-commercial AND share-alike",
+    "duster": "NAVER DUSt3R weights, CC BY-NC-SA 4.0: non-commercial AND share-alike",
+    "gim-lightglue": "loads Magic Leap superpoint_v1.pth: non-commercial research only",
+    "omniglue": "loads SuperPoint sp_v6 weights: non-commercial research only",
 }
+
+# THE DENYLIST ALONE IS NOT THE GATE. vismatch ships ~70 models and a denylist only knows the
+# ones someone thought of: four non-redistributable models passed the three entries above
+# until 2026-09-26. So in ship mode a model must ALSO be on the audited allowlist,
+# configs/regimes.yaml `shippable_matchers`, each entry with its licence chain in
+# reports/licence_audit.json. A new model (roma, ufm, ...) is refused until someone audits it.
 
 # WHY eloftr AND matchanything ARE **NOT** ON THAT LIST -- read before adding them.
 #
@@ -86,15 +97,20 @@ def is_restricted(model_name: str) -> bool:
 def assert_allowed(model_name: str, ship_mode: bool | None = None) -> None:
     """Gate a model name. Raises LicenceRestrictedError when ship_mode blocks it.
 
-    ship_mode=None reads configs/default.yaml. Only scripts/bench_external.py
-    should ever pass ship_mode=False, and its outputs are written to a directory
-    the deliverable bundler excludes.
+    ship_mode=None reads configs/default.yaml. In ship mode a model must be on the
+    audited allowlist (shippable_matchers) AND clear of the restricted components.
+    Only benchmarking code that compares candidates (scripts/select_default_matcher.py,
+    scripts/bench_rift.py) passes ship_mode=False; nothing it runs is shipped.
     """
     if ship_mode is None:
         ship_mode = bool(config.get("ship_mode", True))
     if not ship_mode:
         return
     reason = restriction_reason(model_name)
+    if reason is None and model_name.lower().strip() not in shippable():
+        reason = (f"{model_name!r} is not on the audited allowlist (configs/regimes.yaml "
+                  f"shippable_matchers); audit its code AND weight licences into "
+                  f"reports/licence_audit.json before adding it")
     if reason is not None:
         raise LicenceRestrictedError(
             f"{reason}. It may be used only for internal benchmarking with "
