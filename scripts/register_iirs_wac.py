@@ -45,6 +45,7 @@ from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_ohrc_nac import T, affine_fit, match, norm  # noqa: E402
 from register_tmc2_nac import enu  # noqa: E402
 from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
+from chandralign.matching.similarity import alignment_check  # noqa: E402
 
 # ---- frozen in docs/iirs_wac_protocol.md -------------------------------------------
 PRODUCTS = ("M106705467MC", "M106698280MC")
@@ -220,6 +221,10 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
             J_src = jacobian_from_transform(Wf)                      # IIRS px -> fine-frame (WAC) px
             r["source_px"] = {"known_shift": to_source_px(r["known_shift_error_px"], J_src, "exact (Wf)"),
                               "inlier_rmse": to_source_px(r["inlier_rmse_px"], J_src, "exact (Wf)")}
+            mi = alignment_check(fsrc, fref, np.asarray(fr.model.matrix, float), src_ok=fsrc_ok, ref_ok=fref_ok)
+            if mi.get("peak_offset_px") is not None:
+                mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
+            r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
         except Exception as exc:                                  # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)

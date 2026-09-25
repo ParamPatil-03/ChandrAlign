@@ -22,3 +22,25 @@ rerun with `--dump-points` (same code path as reports/iirs_wac_mosaic.json).
 (b) Bias detection: the delivered model offset by 2 px in each of 8 directions is flagged in >= 95%
     of cases per pairing, and the recovered offset is within 0.5 px of the injected one (median).
 (c) False flags: the delivered (unbiased) models are flagged on <= 10% of windows per pairing.
+
+## Result (2026-09-25): ADOPTED -- `reports/mi_check.json`
+
+| | TMC-2 -> TC (15) | IIRS -> WAC, cross-modal (5) |
+|---|---|---|
+| (a) NMI ranks 0 > 1 > 2 > 4 px | 15/15 | 5/5 |
+| (b) 2 px-biased model flagged | 120/120 | 40/40 |
+| (b) bias recovered, median error | 0.13 px | 0.19 px |
+| (c) delivered models falsely flagged | 0/15 | 0/5 |
+
+All pass. Every registration script (TMC-2 -> TC, OHRC -> NAC, IIRS -> WAC) now reports `mi_check`:
+NMI at the delivered model, where NMI peaks (sub-pixel, also in source px) and a flag when the
+peak is >= 1 px away. It is a matcher-free check of ACCURACY (bias), which the control gates --
+measuring only the lock's repeatability -- cannot see. Limits: global over the frame (local relief
+errors average out); needs texture; a +-3 px search, so larger errors show as `at_search_edge`.
+
+Observation on first use (not part of the decision): on OHRC -> NAC M109080308LC (sun ~2 deg
+incidence; the low-coverage windows, 0.48-0.64), the check flags 3 of 5 windows the pipeline graded
+LOW-but-successful: NMI peaks 1.2-1.6 NAC px from the model (2.2-2.9 OHRC px). But NMI there is
+~1.01-1.03 (1.0 = no shared information) vs 1.12-1.21 on the validated pairs, so the NMI surface is
+nearly flat and the flag may be noise. Neither "these windows are wrong" nor "the check is
+unreliable at low NMI" is shown; it is carried into the OHRC accuracy/coverage investigation.

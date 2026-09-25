@@ -43,6 +43,7 @@ from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_tmc2_nac import MOON_R_M, NULL_BELOW, Nac, enu  # noqa: E402
 from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
+from chandralign.matching.similarity import alignment_check  # noqa: E402
 
 # ---- frozen in docs/ohrc_nac_protocol.md -------------------------------------------
 PRODUCTS = ("M102014464RC", "M106719774LC", "M175124932LC", "M1417360906LC", "M109080308LC")
@@ -236,6 +237,8 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
     ref = norm(ref_raw, ref_ok)
     if bx > 1 or by > 1:
         ref = ref.reshape(hG, by, wG, bx).mean(axis=(1, 3)).astype(np.float32)
+    src_okf = cv2.warpAffine(o_ok.astype(np.float32), Wf[:2], (wG, hG), flags=cv2.INTER_NEAREST) > 0.5
+    ref_okf = ref_ok.reshape(hG, by, wG, bx).all(axis=(1, 3)) if (bx > 1 or by > 1) else ref_ok
     out["fine_frame_px"] = [wG, hG]
     out["fine_block"] = [bx, by]
     wF, hF = wG, hG
@@ -287,6 +290,10 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
             J_src = jacobian_from_transform(Wf)                        # OHRC px -> fine-frame (NAC) px
             r["source_px"] = {"known_shift": to_source_px(pert.get("error_px"), J_src, "exact (Wf)"),
                               "inlier_rmse": to_source_px(fr.rmse_px, J_src, "exact (Wf)")}
+            mi = alignment_check(src, ref, np.asarray(fr.model.matrix, float), src_ok=src_okf, ref_ok=ref_okf)
+            if mi.get("peak_offset_px") is not None:
+                mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
+            r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
         except Exception as exc:                                        # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)
