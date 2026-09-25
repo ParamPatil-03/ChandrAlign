@@ -1,0 +1,309 @@
+{
+  "source": "measured",
+  "protocol": "docs/map_pairings_protocol.md",
+  "pairing": "ch2_ohr_ncp_20240330T0035085365_d_img_d18 -> TCO_MAP_02_N03E021N00E024SC",
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "parallax": false,
+    "dense_refine": false,
+    "uniformity": true,
+    "refill": false,
+    "subpixel": true,
+    "tps": true
+  },
+  "run": {
+    "command": "python scripts/register_to_map.py --source ohrc --reference tc --tile N03E021N00E024SC --dense --out reports/map_ohrc_tc_N03_a2.json",
+    "commit": "5b46af5e6df4c144469d5ea2dd95f2902b0e79e4",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T05:25:58+00:00"
+  },
+  "summary": {
+    "eloftr": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    },
+    "sift": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    }
+  },
+  "windows": [
+    {
+      "src_row0": 0,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 17.3,
+        "factor": 24,
+        "template": "source"
+      },
+      "dense": {
+        "checks": {
+          "fractional_shift": {
+            "z": 17.7,
+            "error_px": 0.055,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 5.5,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "mi_check": {
+          "nmi": 1.01356,
+          "peak_offset_px": [
+            -1.436,
+            -0.034
+          ],
+          "peak_nmi": 1.0149,
+          "flag": true,
+          "at_search_edge": false
+        },
+        "precision_ref_px": 1.019,
+        "implied_offset_m": {
+          "east": 529.0,
+          "north": 2245.1
+        },
+        "known_offset_m": {
+          "east": 741.0,
+          "north": 2064.0
+        },
+        "pass_checks": false,
+        "source_px_per_ref_px": 24.2
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 4.9
+    },
+    {
+      "src_row0": 8192,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 19.1,
+        "factor": 24,
+        "template": "source"
+      },
+      "dense": {
+        "checks": {
+          "fractional_shift": {
+            "z": 19.5,
+            "error_px": 0.032,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 4.8,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "mi_check": {
+          "nmi": 1.01769,
+          "peak_offset_px": [
+            -1.125,
+            -0.057
+          ],
+          "peak_nmi": 1.01837,
+          "flag": true,
+          "at_search_edge": false
+        },
+        "precision_ref_px": 0.6195,
+        "implied_offset_m": {
+          "east": 526.4,
+          "north": 2245.5
+        },
+        "known_offset_m": {
+          "east": 741.0,
+          "north": 2064.0
+        },
+        "pass_checks": false,
+        "source_px_per_ref_px": 24.2
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 4.7
+    },
+    {
+      "src_row0": 16384,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 21.4,
+        "factor": 24,
+        "template": "source"
+      },
+      "dense": {
+        "checks": {
+          "fractional_shift": {
+            "z": 21.6,
+            "error_px": 0.042,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 4.5,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "mi_check": {
+          "nmi": 1.01273,
+          "peak_offset_px": [
+            -0.091,
+            -0.03
+          ],
+          "peak_nmi": 1.01273,
+          "flag": false,
+          "at_search_edge": false
+        },
+        "precision_ref_px": 0.8986,
+        "implied_offset_m": {
+          "east": 527.6,
+          "north": 2248.6
+        },
+        "known_offset_m": {
+          "east": 741.0,
+          "north": 2064.0
+        },
+        "pass_checks": true,
+        "source_px_per_ref_px": 24.2
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 4.6
+    },
+    {
+      "src_row0": 24576,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 22.0,
+        "factor": 24,
+        "template": "source"
+      },
+      "dense": {
+        "checks": {
+          "fractional_shift": {
+            "z": 22.1,
+            "error_px": 0.154,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 5.0,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "mi_check": {
+          "nmi": 1.02075,
+          "peak_offset_px": [
+            -1.058,
+            0.015
+          ],
+          "peak_nmi": 1.02176,
+          "flag": true,
+          "at_search_edge": false
+        },
+        "precision_ref_px": 0.8836,
+        "implied_offset_m": {
+          "east": 527.6,
+          "north": 2249.5
+        },
+        "known_offset_m": {
+          "east": 741.0,
+          "north": 2064.0
+        },
+        "pass_checks": false,
+        "source_px_per_ref_px": 24.2
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 4.6
+    },
+    {
+      "src_row0": 32768,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 22.3,
+        "factor": 24,
+        "template": "source"
+      },
+      "dense": {
+        "checks": {
+          "fractional_shift": {
+            "z": 21.8,
+            "error_px": 0.139,
+            "pass": true
+          },
+          "null_constant": {
+            "z": 0.0,
+            "pass": true
+          },
+          "null_noise": {
+            "z": 4.7,
+            "pass": true
+          },
+          "all_pass": true
+        },
+        "mi_check": {
+          "nmi": 1.01391,
+          "peak_offset_px": [
+            -1.266,
+            0.021
+          ],
+          "peak_nmi": 1.01521,
+          "flag": true,
+          "at_search_edge": false
+        },
+        "precision_ref_px": 0.9618,
+        "implied_offset_m": {
+          "east": 531.6,
+          "north": 2250.1
+        },
+        "known_offset_m": {
+          "east": 741.0,
+          "north": 2064.0
+        },
+        "pass_checks": false,
+        "source_px_per_ref_px": 24.2
+      },
+      "status": "locked",
+      "results": {},
+      "seconds": 4.0
+    }
+  ]
+}

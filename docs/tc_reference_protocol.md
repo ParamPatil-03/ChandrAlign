@@ -52,3 +52,19 @@ edge at 24 E on every window (fine: only the covered part is matched).
   MI check on the dense model not flagged; consistency: within 150 m of a linear drift fit over the
   pairing's passing windows (>= 4). Same 10 windows.
 Verdicts as before. If this fails, the TC question stops for good.
+
+## Amendment 2 result (2026-09-25) -- final for this question (`reports/tc_reference_verdict_a2.json`)
+- **IIRS -> TC: 11/15 = degraded** (was 8/15). All 15 windows lock with full-latitude placement; 14 pass
+  the gates (12 HIGH); the 11 passing gates, tier and MI sit 0-22 m from a linear drift of IIRS's
+  system error (187 m east, 53 m north per 1000 lines). Misses: 1 REJECTED, 3 MI-flagged (the N00
+  tile's south end, MI peak at the +3 px search edge).
+- **OHRC -> TC (dense lock): 0/10 by the rule, yet the lock is solid**: all 10 lock (z 12.8-24.2);
+  fractional known shift recovered to 0.01-0.16 TC px; both nulls pass on 10/10; implied offsets agree
+  to ~30 m (east 526-559, north 2229-2250 m). The MI check flags 7/10 -- at NMI ~1.00-1.04, where the
+  NMI surface is nearly flat (1.0 = no shared information), as on the finest NACs. Only 3 pass all
+  checks (< 4 needed): unsolved by the frozen rule.
+- Follow-up (a new rule, NOT applied here): the MI check should abstain ("inconclusive") when its
+  NMI surface is flat instead of flagging; it would need its own frozen test on known-good and
+  known-bad pairs.
+- TC vs the other references: OHRC offsets vs NAC-derived differ by ~(-200, +180) m; IIRS vs WAC by
+  ~+300 m north -- consistent with the reference-to-reference differences found before.
