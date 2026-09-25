@@ -13,6 +13,11 @@ matching:
   ratio_test: 0.80           # Lowe ratio; tightened adaptively on repetitive terrain
   ratio_test_repetitive: 0.70
   mutual_nn: true
+  # MATCH-12 (docs/rotation_protocol.md): image-level rotation search, for pairs WITHOUT a
+  # geometric prior (our registrations take rotation from the label corners).
+  rotation_search: false
+  rotation_step_deg: 30
+  rotation_min_inliers: 40       # early exit: a 0-deg match this strong is kept unchanged
   # vismatch does its own RANSAC by default; we always disable it so our
   # estimator owns the inlier mask and the scale sanity check (P2-T01).
   skip_library_ransac: true
