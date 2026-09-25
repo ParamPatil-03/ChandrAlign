@@ -69,6 +69,10 @@ parallax:                    # ALIGN-08 stage options
   height_at: ref             # where h is sampled: the match's ground (reference) point; ref by docs/parallax_height_protocol.md
                              # (hilly median probe error 0.415 -> 0.352 px, 9/9 better). src = the earlier convention
 
+similarity:                  # MATCH-07 MI alignment check (docs/mi_protocol.md)
+  search_px: 3               # NMI searched over +-3 px around the delivered model
+  flag_px: 1.0               # flag when NMI peaks this far from the model
+
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
   top_k_per_cell: 6

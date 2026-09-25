@@ -1,0 +1,32 @@
+{
+ "tmc2_mi": {
+  "success": 0,
+  "windows": 5,
+  "passing_all_but_consistency": 2,
+  "verdict": "unsolved"
+ },
+ "iirs_mi": {
+  "success": 3,
+  "windows": 5,
+  "passing_all_but_consistency": 3,
+  "verdict": "degraded"
+ },
+ "ohrc_mi": {
+  "success": 0,
+  "windows": 5,
+  "passing_all_but_consistency": 2,
+  "verdict": "unsolved"
+ },
+ "tmc2_wac": {
+  "success": 4,
+  "windows": 5,
+  "passing_all_but_consistency": 4,
+  "verdict": "degraded"
+ },
+ "ohrc_wac": {
+  "success": 0,
+  "windows": 5,
+  "passing_all_but_consistency": 0,
+  "verdict": "unsolved"
+ }
+}

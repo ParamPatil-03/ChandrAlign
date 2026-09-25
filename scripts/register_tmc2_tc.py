@@ -56,6 +56,7 @@ from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.estimate.models import ParallaxModel  # noqa: E402
 from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
+from chandralign.matching.similarity import alignment_check  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
@@ -402,6 +403,11 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                                     J_src, "exact (Wf)"),
         "inlier_rmse_affine": to_source_px(rmse_px, J_src, "exact (Wf)"),
         "parallax_fit_rms": to_source_px((fr.stages.get("parallax") or {}).get("rms_px"), J_src, "exact (Wf)")}
+    # MATCH-07: matcher-free check -- where NMI peaks around the delivered model (docs/mi_protocol.md)
+    mi = alignment_check(src_img, ref_img, np.asarray(fr.model.matrix, float), src_ok=src_ok, ref_ok=ref_ok)
+    if mi.get("peak_offset_px") is not None:
+        mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
+    out["mi_check"] = mi
     if terrain is not None:
         out["registration_result"]["terrain_model"] = {
             **terrain.as_dict(),
