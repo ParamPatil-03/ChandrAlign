@@ -10,6 +10,10 @@ device: auto            # auto | cpu | cuda
 
 matching:
   max_num_keypoints: 2048
+  # G-03 / audit M-06 (docs/roma_benchmark_protocol.md): dense models (roma family, dkm, ufm) sample matches
+  # from a certainty map. Give them 5000 samples, and drop samples under RoMa's own default threshold 0.05.
+  dense_max_num_keypoints: 5000
+  dense_min_certainty: 0.05
   ratio_test: 0.80           # Lowe ratio; tightened adaptively on repetitive terrain
   ratio_test_repetitive: 0.70
   mutual_nn: true

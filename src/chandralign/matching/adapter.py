@@ -95,6 +95,15 @@ def _drop_shadowed(pts_src, pts_ref, conf, src: ImagePlane, ref: ImagePlane):
     return pts_src[keep], pts_ref[keep], (conf[keep] if conf is not None else None), int((~keep).sum())
 
 
+DENSE_FAMILIES = ("roma", "dkm", "ufm")
+
+
+def is_dense(model_name: str) -> bool:
+    """Dense-warp matchers (RoMa family, DKM, UFM): they sample matches from a certainty map."""
+    n = str(model_name).lower()
+    return any(f in n for f in DENSE_FAMILIES)
+
+
 def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
           device: str | None = None, max_keypoints: int | None = None,
           ship_mode: bool | None = None, drop_shadowed: bool = True,
@@ -148,6 +157,9 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
 
     device = config.resolve_device(device)
     max_keypoints = int(max_keypoints or config.get("matching.max_num_keypoints", 2048))
+    dense = is_dense(model_name)
+    if dense:        # audit M-06: a dense model SAMPLES exactly this many matches; 2048 handicapped it
+        max_keypoints = max(max_keypoints, int(config.get("matching.dense_max_num_keypoints", 5000)))
     matcher = _load(model_name, device, max_keypoints)
 
     started = time.perf_counter()
@@ -164,6 +176,14 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
     ref_pts = np.asarray(out.get("matched_kpts1"), np.float64).reshape(-1, 2)
     conf = out.get("matched_confidences")
     conf = None if conf is None else np.asarray(conf, np.float32).ravel()
+
+    n_low_certainty = 0
+    if dense and conf is not None and len(conf) == len(src_pts):
+        # G-03: a dense model returns N samples even on noise; drop those under RoMa's own sampling
+        # threshold so a null test measures structure, not the sampler (docs/roma_benchmark_protocol.md)
+        keep = conf >= float(config.get("matching.dense_min_certainty", 0.05))
+        n_low_certainty = int((~keep).sum())
+        src_pts, ref_pts, conf = src_pts[keep], ref_pts[keep], conf[keep]
 
     n_shadowed = 0
     if drop_shadowed:
@@ -182,5 +202,6 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
     ms.n_keypoints_src = int(len(out.get("all_kpts0", [])))   # type: ignore[attr-defined]
     ms.n_keypoints_ref = int(len(out.get("all_kpts1", [])))   # type: ignore[attr-defined]
     ms.n_dropped_shadowed = int(n_shadowed)              # type: ignore[attr-defined]
+    ms.n_dropped_low_certainty = n_low_certainty         # type: ignore[attr-defined]
     ms.provenance = compute.provenance(device, stage="match")  # type: ignore[attr-defined]
     return ms

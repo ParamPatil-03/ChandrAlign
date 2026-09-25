@@ -369,7 +369,12 @@ def main() -> int:
     ap.add_argument("--rows", type=int, nargs="+", default=None,
                     help="force these OHRC window rows (must lie inside the NAC footprint)")
     ap.add_argument("--dump-points", default=None, help="folder: fine frames + inliers + DEM per window/matcher")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)

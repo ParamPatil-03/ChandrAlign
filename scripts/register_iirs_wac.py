@@ -258,7 +258,12 @@ def main() -> int:
     ap.add_argument("--reference", choices=["cdr", "mosaic"], default="cdr",
                     help="cdr: raw WAC frames (run 1); mosaic: the map-projected WAC mosaic clip (amendment 1)")
     ap.add_argument("--dump-points", default=None, help="folder: save the xoftr fine frames per window")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     global DUMP_DIR
     if args.dump_points:
         DUMP_DIR = args.dump_points

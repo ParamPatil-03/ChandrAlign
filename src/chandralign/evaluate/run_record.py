@@ -41,4 +41,14 @@ def run_record(argv: list[str] | None = None) -> dict:
         # A dirty tree means the commit alone does not reproduce the numbers.
         "uncommitted_changes": None if status is None else bool(status),
         "utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        # False means benchmark-only models were allowed (--benchmark-models): NOT a shippable result.
+        "ship_mode": _ship_mode(),
     }
+
+
+def _ship_mode():
+    try:
+        from .. import config
+        return bool(config.get("ship_mode", True))
+    except Exception:
+        return None

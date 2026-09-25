@@ -397,7 +397,12 @@ def main() -> int:
     ap.add_argument("--matchers", nargs="+", default=None,
                     help="matchers to run (default: the frozen MATCHERS[source]); 'routed' = routing + fallbacks (I-09)")
     ap.add_argument("--dense", action="store_true", help="amendment 2: the dense lock is the answer (reference-coarser case)")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     src = Source(args.source)
     ref = load_ref(args.reference, args.source, args.tile)
     stages = stage_flags()

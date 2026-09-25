@@ -139,6 +139,15 @@ def assert_allowed(model_name: str, ship_mode: bool | None = None) -> None:
         )
 
 
+def enable_benchmark_mode(reason: str = "--benchmark-models") -> None:
+    """Allow benchmark-only / unaudited models for THIS process (G-03 benchmarks). Every report records
+    it (run_record()["ship_mode"] is False), so such a result can never pass as shippable."""
+    import warnings
+    config.load("default")["ship_mode"] = False
+    warnings.warn(f"ship_mode OFF ({reason}): benchmark-only models allowed; results are not shippable",
+                  stacklevel=2)
+
+
 def shippable() -> list[str]:
     """Matchers declared shippable in configs/regimes.yaml, minus any that the
     component check rejects -- so a mistake in the config cannot defeat the gate.

@@ -135,3 +135,24 @@ def test_the_four_models_the_old_denylist_passed_are_refused_with_their_reason()
     for n, word in (("master", "NC-SA"), ("duster", "NC-SA"), ("gim-lightglue", "superpoint"), ("omniglue", "SuperPoint")):
         assert word.lower() in (licence.restriction_reason(n) or "").lower(), n
     assert licence.restriction_reason("eloftr") is None and licence.restriction_reason("rift2") is None
+
+
+def test_benchmark_mode_is_explicit_and_recorded(monkeypatch):
+    """G-03: unaudited models run only with an explicit switch, and every report then says ship_mode false."""
+    import pytest as _pt
+    from chandralign import config
+    from chandralign.evaluate.run_record import run_record
+    from chandralign.matching import licence
+    with _pt.raises(licence.LicenceRestrictedError):
+        licence.assert_allowed("minima-roma")
+    monkeypatch.setitem(config.load("default"), "ship_mode", True)
+    with _pt.warns(UserWarning):
+        licence.enable_benchmark_mode()
+    licence.assert_allowed("minima-roma")
+    assert run_record()["ship_mode"] is False
+
+
+def test_dense_models_get_the_larger_sample_budget():
+    from chandralign.matching import adapter
+    assert adapter.is_dense("minima-roma") and adapter.is_dense("gim-dkm") and adapter.is_dense("ufm")
+    assert not adapter.is_dense("eloftr") and not adapter.is_dense("minima-loftr")
