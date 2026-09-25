@@ -565,7 +565,7 @@ def _geometry_predictor(fr: FineResult, ground_model, dem):
     """src px -> ref px through the DELIVERED geometry, or None when it cannot be evaluated here
     (a parallax model with no heights)."""
     name, geo = delivered_geometry(fr)
-    if name == "parallax":
+    if name.startswith("parallax"):                           # parallax, parallax_tps: need DEM heights
         if ground_model is None or dem is None:
             return None
         return lambda p: geo.predict(p, lambda q: np.asarray(dem.sample(*ground_model.pixel_to_latlon(q[:, 1], q[:, 0])),

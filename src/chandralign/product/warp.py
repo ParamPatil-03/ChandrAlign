@@ -40,10 +40,11 @@ def warp_array(bundle, *, heights_at=None, interpolation: int | None = None) -> 
     name, model = best_geometry(bundle)
     interp = cv2.INTER_CUBIC if interpolation is None else interpolation
 
-    if name == "parallax":
+    if name in ("parallax", "parallax_tps"):
         if heights_at is None:
-            raise ValueError("heights_at is required to warp with the parallax model")
-        map_x, map_y = models.parallax_source_map(model, heights_at, (h, w))
+            raise ValueError(f"heights_at is required to warp with the {name} model")
+        source_map = models.parallax_tps_source_map if name == "parallax_tps" else models.parallax_source_map
+        map_x, map_y = source_map(model, heights_at, (h, w))
         warped = cv2.remap(src, map_x, map_y, interp, borderMode=cv2.BORDER_CONSTANT)
     elif name == "tps":
         delivered = bundle.delivered

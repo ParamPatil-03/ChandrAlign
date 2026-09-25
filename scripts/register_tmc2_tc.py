@@ -184,7 +184,7 @@ def _probe_check(fr, src_img, ref_img, src_ok, gm, p_dem) -> dict:
             return np.full(len(p), np.nan)
         lat, lon = gm.pixel_to_latlon(p[:, 1], p[:, 0])
         return np.asarray(p_dem.sample(lat, lon), float)
-    pred = geo.predict(pts, heights) if name == "parallax" else _m.apply(geo, pts)
+    pred = geo.predict(pts, heights) if name.startswith("parallax") else _m.apply(geo, pts)
     pct = lambda e: {"p50": round(float(np.median(e)), 3), "p95": round(float(np.percentile(e, 95)), 3),  # noqa: E731
                      "max": round(float(e.max()), 3)}
     e = np.hypot(*(meas - (pred - pts)).T)

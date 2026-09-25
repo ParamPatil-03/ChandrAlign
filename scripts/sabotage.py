@@ -377,6 +377,8 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
         "src/chandralign/estimate/selection.py",
         "tests/test_pipeline.py",
         {
+            "parallax + residual TPS is never delivered (G-06)": (
+                '            chosen = "parallax_tps"\n', "            pass\n"),
             "a richer model never displaces the affine (I-01)": (
                 "                chosen = name\n", "                pass\n"),
             "cross-validation scores models on their own fit points (C-03)": (

@@ -45,7 +45,7 @@ from .. import config
 from ..contracts import TransformModel
 from . import models
 
-SIMPLICITY = ("affine", "parallax", "tps")        # simplest first
+SIMPLICITY = ("affine", "parallax", "tps")        # simplest first; "parallax_tps" is judged against both parents
 
 
 @dataclass
@@ -264,12 +264,40 @@ def select(src: np.ndarray, ref: np.ndarray, shape: tuple[int, int], *,
     elif with_tps:
         notes.append(f"TPS not considered: {n} fit points < {min_tps}")
 
+    # G-06 (docs/tmc2_tail_protocol.md): parallax + a TPS on its residuals, same folds, same smoothing grid
+    if "parallax" in built and with_tps and bool(config.get("geometry.parallax_tps", True)):
+        at = ref if parallax.height_at == "ref" else src
+        h = np.asarray(heights_at(at), float)
+        kn = np.isfinite(h)
+        if kn.sum() >= min_tps:
+            s_k, r_k, h_k, f_k = src[kn], ref[kn], h[kn], folds[kn]
+
+            def fit_pt(tr, sm):
+                par = fit_parallax_robust(s_k[tr], r_k[tr], h_k[tr], parallax.h0_m, parallax.height_at, rounds)
+                res = r_k[tr] - par.apply(s_k[tr], h_k[tr])
+                return models.ParallaxTPSModel(par, fit_tps_robust(s_k[tr], res, sm, rounds), parallax.height_at)
+            best_pt = None
+            for sm in grid_s:
+                e = _cv(lambda tr: fit_pt(tr, sm), lambda m, te: m.apply(s_k[te], h_k[te]), len(s_k), f_k, r_k)
+                rms = _rms(e[np.isfinite(e)][:, None])
+                if best_pt is None or rms < best_pt[1]:
+                    best_pt = (float(sm), rms, e)
+            cand["parallax_tps"] = _summary(best_pt[2], how, smoothing=best_pt[0], n_with_height=int(kn.sum()))
+            built["parallax_tps"] = fit_pt(np.ones(len(s_k), bool), best_pt[0])
+            built["parallax_tps"].parallax.dem = parallax.dem
+
     chosen = "affine"
     for name in SIMPLICITY[1:]:
         if name in cand and cand[name]["checkpoint_rmse_px"] is not None:
             cur = cand[chosen]["checkpoint_rmse_px"]
             if cur is None or cand[name]["checkpoint_rmse_px"] < (1.0 - min_gain) * cur:
                 chosen = name
+    if "parallax_tps" in cand and cand["parallax_tps"]["checkpoint_rmse_px"] is not None:
+        parents = [cand[n]["checkpoint_rmse_px"] for n in ("parallax", "tps") if n in cand
+                   and cand[n]["checkpoint_rmse_px"] is not None]
+        best_parent = min(parents + [cand[chosen]["checkpoint_rmse_px"]])
+        if cand["parallax_tps"]["checkpoint_rmse_px"] < (1.0 - min_gain) * best_parent:
+            chosen = "parallax_tps"
     split = _split_half(chosen, src, ref, folds, k, rounds, cand, parallax, heights_at)
     if split is not None:
         cand[chosen]["split_half_px"] = _r(split)

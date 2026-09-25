@@ -77,6 +77,66 @@ class ParallaxModel:
                 "dem": self.dem, "height_at": self.height_at}
 
 
+@dataclass
+class ParallaxTPSModel:
+    """G-06: the parallax model plus a thin-plate spline fitted on ITS residuals.
+
+    ref = parallax(src, h) + t(src): the DEM explains the parallax it can predict, and the TPS absorbs what
+    the DEM gets wrong or cannot resolve (docs/tmc2_tail_protocol.md). Like ParallaxModel it is not a
+    contract TransformModel; it travels as the delivered geometry (FineResult.geometry_model)."""
+
+    parallax: ParallaxModel
+    residual: TransformModel            # kind "tps", source px -> reference-px CORRECTION
+    height_at: str = "ref"
+
+    @property
+    def matrix(self):
+        return self.parallax.matrix
+
+    def apply(self, pts: np.ndarray, heights) -> np.ndarray:
+        pts = np.asarray(pts, np.float64).reshape(-1, 2)
+        return self.parallax.apply(pts, heights) + _tps_apply(self.residual, pts)
+
+    def predict(self, pts: np.ndarray, heights_at, iters: int = 6) -> np.ndarray:
+        pts = np.asarray(pts, np.float64).reshape(-1, 2)
+        return self.parallax.predict(pts, heights_at, iters) + _tps_apply(self.residual, pts)
+
+    def as_dict(self) -> dict:
+        return {**self.parallax.as_dict(), "kind": "affine_parallax_tps",
+                "tps_residual": {"n_control": (self.residual.tps_params or {}).get("n_control"),
+                                 "smoothing": (self.residual.tps_params or {}).get("smoothing")}}
+
+
+def parallax_tps_source_map(model: ParallaxTPSModel, heights_at, shape: tuple[int, int],
+                            step: int = 8, iters: int = 6) -> tuple[np.ndarray, np.ndarray]:
+    """Source px for every reference px of a ParallaxTPSModel (export). The residual depends on the
+    SOURCE point, so each reference px is inverted by fixed point from the parallax model's own inverse:
+    s <- P^-1(r - t(s)), with P^-1 the parallax inverse (exact for height_at="ref")."""
+    from scipy.ndimage import map_coordinates
+    H, W = shape
+    ys, xs = np.mgrid[0:H + step:step, 0:W + step:step].astype(np.float64)
+    r = np.c_[np.minimum(xs.ravel(), W - 1), np.minimum(ys.ravel(), H - 1)]
+    par = model.parallax
+    Ainv = np.linalg.inv(np.asarray(par.matrix, float))
+    p, h0 = np.asarray(par.p_px_per_m, float), float(par.h0_m)
+    back = lambda q: (np.c_[q, np.ones(len(q))] @ Ainv.T)[:, :2]  # noqa: E731
+    hh = lambda q: np.where(np.isfinite(h := np.asarray(heights_at(q), np.float64)), h, h0) - h0  # noqa: E731
+    if par.height_at == "ref":                                   # height at the REFERENCE point: fixed
+        base = r - hh(r)[:, None] * p
+        s = back(base)
+        for _ in range(iters):
+            s = back(base - _tps_apply(model.residual, s))
+    else:                                                        # height at the SOURCE point: re-read each pass
+        s = back(r)
+        for _ in range(iters):
+            s = back(r - hh(s)[:, None] * p - _tps_apply(model.residual, s))
+    gy, gx = np.mgrid[0:H, 0:W].astype(np.float64)
+    at = [np.minimum(gy, H - 1).ravel() / step, np.minimum(gx, W - 1).ravel() / step]
+    mx = map_coordinates(s[:, 0].reshape(ys.shape), at, order=1).reshape(H, W)
+    my = map_coordinates(s[:, 1].reshape(ys.shape), at, order=1).reshape(H, W)
+    return mx.astype(np.float32), my.astype(np.float32)
+
+
 def parallax_source_map(model: ParallaxModel, heights_at, shape: tuple[int, int],
                         step: int = 8, iters: int = 4) -> tuple[np.ndarray, np.ndarray]:
     """For every REFERENCE pixel, the SOURCE pixel a parallax model sends there.

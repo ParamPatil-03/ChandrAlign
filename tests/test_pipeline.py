@@ -510,3 +510,50 @@ def test_reference_points_use_the_reference_ground_model_when_the_frames_differ(
                      ground_model=_Identity(), ref_ground_model=_Shifted(), dem=_ridge_dem())
     assert one.stages["geometry_filter"]["n_kept"] < 50               # the old, wrong mapping
     assert two.stages["geometry_filter"]["n_kept"] == 200             # same ground, all kept
+
+
+def test_parallax_plus_residual_tps_is_delivered_where_the_dem_explains_only_part_of_the_geometry():
+    """G-06: relief the DEM predicts (a hill, parallax) PLUS a ripple it cannot (DEM error, attitude drift).
+    Neither parent is right; the composite should be chosen and beat both on the truth."""
+    rng = np.random.default_rng(7)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    dem = DemPatch(300.0 * np.exp(-((rr - 250) ** 2 + (cc - 250) ** 2) / (2 * 60.0 ** 2)), lat, lon, 1000.0,
+                   "test", True, ())
+    p = np.array([0.004, -0.07])
+    hts = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))      # noqa: E731
+    ripple = lambda s: 0.8 * np.c_[np.sin(s[:, 1] / 45.0), np.cos(s[:, 0] / 55.0)]   # noqa: E731
+
+    def truth(s):
+        return s @ A[:2, :2].T + A[:2, 2] + hts(s)[:, None] * p + ripple(s)
+    src = rng.uniform(10, 440, (2500, 2))
+    ref = truth(src) + rng.normal(0, 0.05, src.shape)
+    fr = fine_stage(matchset(src, ref), blank((451, 451)), blank((451, 451)), centre=(225, 225),
+                    flags={**OFF, "parallax": True, "model_selection": True, "tps": True},
+                    ground_model=_Identity(), dem=dem, parallax_height_at="src")
+    sel = fr.stages["model_selection"]
+    assert fr.geometry == "parallax_tps", sel["notes"]
+    from chandralign.pipeline import delivered_geometry
+    g = rng.uniform(40, 410, (400, 2))
+    err = lambda pred: float(np.sqrt(np.mean(np.sum((pred - truth(g)) ** 2, axis=1))))   # noqa: E731
+    _, m = delivered_geometry(fr)
+    e_pt = err(m.predict(g, hts))
+    assert e_pt < 0.1, e_pt
+    assert e_pt < 0.5 * sel["candidates"]["parallax"]["checkpoint_rmse_px"]
+
+
+def test_the_parallax_tps_source_map_inverts_the_model():
+    from chandralign.estimate import models as m_
+    from chandralign.estimate.selection import fit_tps_robust
+    rng = np.random.default_rng(3)
+    dem, p, src, h, ref = _hill_case()
+    par = m_.ParallaxModel(matrix=A.copy(), p_px_per_m=tuple(p), h0_m=0.0, height_at="src")
+    s = rng.uniform(0, 400, (400, 2))
+    res = fit_tps_robust(s, 0.6 * np.c_[np.sin(s[:, 1] / 50.0), np.cos(s[:, 0] / 60.0)], 1.0)
+    model = m_.ParallaxTPSModel(par, res, "src")
+    hts = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))      # noqa: E731
+    mx, my = m_.parallax_tps_source_map(model, hts, (400, 400), step=4)
+    r = np.c_[rng.uniform(60, 340, 200), rng.uniform(60, 340, 200)]
+    s_back = np.c_[mx[r[:, 1].astype(int), r[:, 0].astype(int)], my[r[:, 1].astype(int), r[:, 0].astype(int)]]
+    r_int = np.floor(r)
+    assert np.percentile(np.hypot(*(model.predict(s_back, hts) - r_int).T), 95) < 0.1
