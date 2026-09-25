@@ -29,3 +29,25 @@ and reference; map source blobs by the model; repeatability = share with a refer
 Overlap of the held CH-2 products with the WAC mosaic clip (4S-4N, 22.3-25.3E) and the SELENE MI
 tile (0-1N, 23-24E), from system geolocation corrected by our measured offsets. A pairing is
 "testable now" if >= 1 product overlaps by >= 20% of its footprint (or of the tile).
+
+## Result (2026-09-25) -- `reports/usefulness_checks.json`
+
+| Check | Criterion | Result | Verdict |
+|---|---|---|---|
+| U1 MI score | peak at 0 and monotone on >= 14/15 | **15/15**, even at 0.5 px (e.g. 1.1521 -> 1.1478 -> 1.1369 -> 1.1100 -> 1.0646) | **USEFUL** (earlier "not useful" was wrong) |
+| U2 farthest-point sampling | max empty circle -20% | -16% normal, -11% clustered | not useful by the rule |
+| U3 craters (blob stand-in) | repeatability >= 0.30 & wrong <= 0.05 on >= 12/15 | 7/15 (0.16-0.55); wrong-model 0.000-0.007 on all 15 | not useful by the rule |
+| U4 pairings | overlap with held data | OHRC in WAC clip 100%, 55% inside the MI tile; TMC-2 21% in WAC, covers 65% of MI tile; IIRS covers 40% of MI tile | **all testable now, no download** |
+
+Reported, not ruled:
+- U2: FPS spaces points far more evenly (nearest-neighbour CV 0.73 -> 0.13) but cannot fill holes
+  (clustered coverage 0.984 -> 0.953). Evenness was not the pre-declared measure.
+- U3: even a crude blob detector separates the true model from a 10 px error completely (true >=
+  0.16 vs wrong <= 0.007 on 15/15). Its absolute repeatability is low, so the test does not show
+  that crater matching is useful; a real crater detector (rim + shadow with the sun direction) was
+  not tested and might do better.
+
+Correction to the earlier verdict: MATCH-07 and the WAC / SELENE-MI pairings are useful (MI as a
+matcher-free cross-modal quality metric; the pairings complete the "any CH-2 instrument against
+any named reference" demonstration with data already held). ALIGN-07 and MATCH-08 are not shown
+useful by these tests.
