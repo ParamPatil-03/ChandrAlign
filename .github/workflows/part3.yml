@@ -51,6 +51,8 @@ jobs:
           - {feature: failure-modes,  test: tests/test_failure_log.py}
           - {feature: html-report,    test: tests/test_report.py}
           - {feature: api-backend,    test: tests/test_api.py,    extras: "[dev,product,api]"}
+    env:
+      MPLBACKEND: Agg
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -60,6 +62,6 @@ jobs:
       - name: Install Part 3 dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e "${{ matrix.extras || '[dev,product]' }}"
+          python -m pip install -e ".${{ matrix.extras || '[dev,product]' }}"
       - name: Verify ${{ matrix.feature }}
         run: python -m pytest -q -rs ${{ matrix.test }}

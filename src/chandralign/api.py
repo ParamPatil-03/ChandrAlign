@@ -22,6 +22,7 @@ from __future__ import annotations
 import asyncio
 import io
 import json
+import os
 import threading
 import time
 import uuid
@@ -31,6 +32,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+
+# Ensure headless Agg backend for matplotlib in background tasks & API server
+os.environ.setdefault("MPLBACKEND", "Agg")
+try:
+    import matplotlib
+    matplotlib.use("Agg", force=False)
+except ImportError:  # pragma: no cover
+    pass
 
 # ---------------------------------------------------------------------------
 # FastAPI imports — installed under the ``product`` extra.
