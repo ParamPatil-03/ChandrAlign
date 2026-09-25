@@ -39,3 +39,16 @@ off -- a lock only this consistency check catches. The other 6: 2 MI-flagged, 1 
 frame too small, 1 no lock, 1 at z 10.4. Second attempt of this protocol: stops here. What is shown:
 where IIRS -> TC locks, it is coherent to tens of metres along 4000 lines and agrees with the WAC
 registration up to a near-constant ~300 m TC - WAC difference. OHRC -> TC: information-limited.
+
+## Amendment 2 (user-authorised third attempt; frozen BEFORE running)
+Diagnosis from the reports: every failing IIRS window had half its latitude span outside the held
+TC tiles (the unheld 3-6 N gap and tile edges); IIRS's 25 km width also runs past the tiles' east
+edge at 24 E on every window (fine: only the covered part is matched).
+- IIRS -> TC: windows placed only where the whole 256-line footprint lies inside a held tile in
+  LATITUDE (east clipping allowed); rerun; same success rule as amendment 1 (linear drift, 150 m).
+- OHRC -> TC: the dense MIND lock is the answer (as docs/iirs_nac_protocol.md amendment 1), checked
+  by: a FRACTIONAL known shift of the reference crop (3.5, 4.25) px, cubic, recovered within 0.5 TC
+  px (the integer shift was found tautological there); constant and noise nulls must not lock; the
+  MI check on the dense model not flagged; consistency: within 150 m of a linear drift fit over the
+  pairing's passing windows (>= 4). Same 10 windows.
+Verdicts as before. If this fails, the TC question stops for good.
