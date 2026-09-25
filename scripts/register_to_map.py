@@ -32,7 +32,7 @@ from chandralign.estimate.scale import PixelScale  # noqa: E402
 from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
-from chandralign.geometry import projection  # noqa: E402
+from chandralign.geometry import geoprior, projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.dem import dem_patch, find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
@@ -41,9 +41,8 @@ from chandralign.matching.similarity import alignment_check  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.preprocess.iirs_composite import iirs_composite_plane, product_band_selection  # noqa: E402
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
-from register_iirs_nac import Bridge  # noqa: E402
 from register_ohrc_nac import T, affine_fit, match, norm  # noqa: E402
-from register_tmc2_nac import MOON_R_M, enu, tc_offset_at  # noqa: E402
+from register_tmc2_nac import MOON_R_M, enu  # noqa: E402
 
 # ---- frozen in docs/map_pairings_protocol.md ----------------------------------------
 N_WIN = 5
@@ -51,7 +50,6 @@ WIN = {"ohrc": 8192, "tmc2": 1536, "iirs": 256}
 WIN_WAC = {"tmc2": 4000}
 MI_BAND_NM = {"ohrc": 749.0, "tmc2": 749.0, "iirs": 1548.0}
 MATCHERS = {"ohrc": ["eloftr", "sift"], "tmc2": ["eloftr", "sift"], "iirs": ["xoftr", "sift"]}
-OHRC_OFFSET_EN = (741.0, 2064.0)
 MARGIN_M, MARGIN_PX = 3000.0, 30
 MIN_Z = float(config.get("cascade.min_z", 10.0))
 K = np.pi / 180 * MOON_R_M
@@ -116,14 +114,11 @@ class Source:
         ps = scale.pixel_scale(self.meta)
         self.px_m = (ps.across_m, ps.along_m)
         self.sel = product_band_selection(self.meta) if kind == "iirs" else None
-        self.bridge = Bridge() if kind == "iirs" else None
+        # MATCH-11 default: the best-known correction, fitted from our committed registrations
+        self.prior = geoprior.load(self.meta.product_id)
 
     def offset(self, row):
-        if self.kind == "ohrc":
-            return OHRC_OFFSET_EN
-        if self.kind == "tmc2":
-            return tc_offset_at(row)
-        e, n = self.bridge.at(row)
+        e, n = self.prior.offset_at(row)
         return float(e), float(n)
 
     def ground(self, rows, cols, corrected=True):
@@ -409,6 +404,7 @@ def main() -> int:
     out = ROOT / (args.out or f"reports/map_{args.source}_{args.reference}{'_' + args.tile[:3] if args.tile else ''}.json")
     out.write_text(json.dumps({"source": "measured", "protocol": "docs/map_pairings_protocol.md",
                                "pairing": f"{src.meta.product_id} -> {ref.name}", "pipeline_stages": stages,
+                               "prior": src.prior.as_dict(),
                                "run": run_record(), "summary": summary, "windows": wins}, indent=2, default=str),
                    encoding="utf-8")
     print(f"wrote {out}")
