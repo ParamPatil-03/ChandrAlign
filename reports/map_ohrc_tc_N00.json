@@ -1,0 +1,608 @@
+{
+  "source": "measured",
+  "protocol": "docs/map_pairings_protocol.md",
+  "pairing": "ch2_ohr_ncp_20240330T0035085365_d_img_d18 -> TCO_MAP_02_N00E021S03E024SC",
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "parallax": false,
+    "dense_refine": false,
+    "uniformity": true,
+    "refill": false,
+    "subpixel": true,
+    "tps": true
+  },
+  "run": {
+    "command": "python scripts/register_to_map.py --source ohrc --reference tc --tile N00E021S03E024SC",
+    "commit": "990c4aa918ec3e44d1cc0e4bc8d5cdd87296e038",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T05:14:39+00:00"
+  },
+  "summary": {
+    "eloftr": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    },
+    "sift": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    }
+  },
+  "windows": [
+    {
+      "src_row0": 45056,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 22.3,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 87,
+          "inliers": 7,
+          "inlier_ratio": 0.0833,
+          "coverage": 0.109,
+          "inlier_rmse_px": 1.394,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00596,
+            "peak_offset_px": [
+              1.884,
+              -2.04
+            ],
+            "peak_nmi": 1.00612,
+            "flag": true,
+            "at_search_edge": false
+          },
+          "implied_offset_m": {
+            "east": 17195.3,
+            "north": 1952.6
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 16454.7,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 33.8292,
+              "typical": 33.5926,
+              "factor_worst": 24.2622,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 67.3731,
+              "typical": 66.9018,
+              "factor_worst": 24.2622,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 13.2
+        },
+        "sift": {
+          "matches": 5,
+          "inliers": 3,
+          "inlier_ratio": 0.6,
+          "coverage": 0.047,
+          "inlier_rmse_px": 0.0,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00624,
+            "peak_offset_px": [
+              -3.0,
+              2.119
+            ],
+            "peak_nmi": 1.00678,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": 2518.8,
+            "north": 1565.1
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 1846.5,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 0.0015,
+              "typical": 0.0015,
+              "factor_worst": 24.2622,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 89.1123,
+              "typical": 88.489,
+              "factor_worst": 24.2622,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.6
+        }
+      },
+      "status": "locked",
+      "seconds": 17.1
+    },
+    {
+      "src_row0": 51200,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 24.2,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 78,
+          "inliers": 7,
+          "inlier_ratio": 0.0972,
+          "coverage": 0.078,
+          "inlier_rmse_px": 1.241,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00442,
+            "peak_offset_px": [
+              -0.151,
+              3.0
+            ],
+            "peak_nmi": 1.00472,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": 194805.2,
+            "north": -6021.3
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 194232.6,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 30.099,
+              "typical": 29.8923,
+              "factor_worst": 24.2634,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 72.8824,
+              "typical": 72.3818,
+              "factor_worst": 24.2634,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.9
+        },
+        "sift": {
+          "matches": 10,
+          "inliers": 4,
+          "inlier_ratio": 0.4,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.0,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.02547,
+            "peak_offset_px": [
+              3.0,
+              -3.0
+            ],
+            "peak_nmi": 1.027,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -31533.5,
+            "north": 3319.6
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 32298.9,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 0.0027,
+              "typical": 0.0027,
+              "factor_worst": 24.2634,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 102.9409,
+              "typical": 102.2339,
+              "factor_worst": 24.2634,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.5
+        }
+      },
+      "status": "locked",
+      "seconds": 4.3
+    },
+    {
+      "src_row0": 57344,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 23.2,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        343,
+        345
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 96,
+          "inliers": 8,
+          "inlier_ratio": 0.0952,
+          "coverage": 0.078,
+          "inlier_rmse_px": 1.278,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00555,
+            "peak_offset_px": [
+              3.0,
+              -2.164
+            ],
+            "peak_nmi": 1.00618,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -17626.5,
+            "north": 3197.0
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 18402.4,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 31.0159,
+              "typical": 30.7987,
+              "factor_worst": 24.2648,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 89.7565,
+              "typical": 89.1282,
+              "factor_worst": 24.2648,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 1.0
+        },
+        "sift": {
+          "matches": 10,
+          "inliers": 4,
+          "inlier_ratio": 0.5,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.113,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00616,
+            "peak_offset_px": [
+              -1.358,
+              -1.922
+            ],
+            "peak_nmi": 1.00658,
+            "flag": true,
+            "at_search_edge": false
+          },
+          "implied_offset_m": {
+            "east": -49225.3,
+            "north": 5876.6
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 50111.5,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 2.7358,
+              "typical": 2.7167,
+              "factor_worst": 24.2648,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 57.1036,
+              "typical": 56.7038,
+              "factor_worst": 24.2648,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.5
+        }
+      },
+      "status": "locked",
+      "seconds": 4.3
+    },
+    {
+      "src_row0": 63488,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 13.5,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 74,
+          "inliers": 6,
+          "inlier_ratio": 0.15,
+          "coverage": 0.047,
+          "inlier_rmse_px": 0.572,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.02181,
+            "peak_offset_px": [
+              1.893,
+              -2.193
+            ],
+            "peak_nmi": 1.02202,
+            "flag": true,
+            "at_search_edge": false
+          },
+          "implied_offset_m": {
+            "east": -59337.1,
+            "north": 7848.9
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 60355.9,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 13.8906,
+              "typical": 13.7921,
+              "factor_worst": 24.2662,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 70.2995,
+              "typical": 69.8009,
+              "factor_worst": 24.2662,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 1.0
+        },
+        "sift": {
+          "matches": 5,
+          "inliers": 0,
+          "inlier_ratio": 0.0,
+          "coverage": 0.0,
+          "inlier_rmse_px": null,
+          "status": "fine stage: no transform",
+          "success": false
+        }
+      },
+      "status": "locked",
+      "seconds": 4.0
+    },
+    {
+      "src_row0": 69632,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 12.8,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        345
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 82,
+          "inliers": 5,
+          "inlier_ratio": 0.119,
+          "coverage": 0.078,
+          "inlier_rmse_px": 0.303,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00697,
+            "peak_offset_px": [
+              2.478,
+              -3.0
+            ],
+            "peak_nmi": 1.00728,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": 51759.5,
+            "north": -3575.9
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 51329.3,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 7.348,
+              "typical": 7.296,
+              "factor_worst": 24.2678,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 94.4278,
+              "typical": 93.76,
+              "factor_worst": 24.2678,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 1.0
+        },
+        "sift": {
+          "status": "only 3 matches",
+          "success": false
+        }
+      },
+      "status": "locked",
+      "seconds": 3.9
+    }
+  ]
+}

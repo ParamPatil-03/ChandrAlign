@@ -1,0 +1,691 @@
+{
+  "source": "measured",
+  "protocol": "docs/map_pairings_protocol.md",
+  "pairing": "ch2_ohr_ncp_20240330T0035085365_d_img_d18 -> TCO_MAP_02_N03E021N00E024SC",
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "parallax": false,
+    "dense_refine": false,
+    "uniformity": true,
+    "refill": false,
+    "subpixel": true,
+    "tps": true
+  },
+  "run": {
+    "command": "python scripts/register_to_map.py --source ohrc --reference tc --tile N03E021N00E024SC",
+    "commit": "990c4aa918ec3e44d1cc0e4bc8d5cdd87296e038",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T05:14:02+00:00"
+  },
+  "summary": {
+    "eloftr": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    },
+    "sift": {
+      "success": 0,
+      "windows": 5,
+      "verdict": "unsolved"
+    }
+  },
+  "windows": [
+    {
+      "src_row0": 0,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 17.3,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 84,
+          "inliers": 7,
+          "inlier_ratio": 0.0843,
+          "coverage": 0.094,
+          "inlier_rmse_px": 0.568,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00518,
+            "peak_offset_px": [
+              -2.159,
+              -3.0
+            ],
+            "peak_nmi": 1.00554,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -4783.0,
+            "north": 7734.8
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 7916.6,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 13.7763,
+              "typical": 13.683,
+              "factor_worst": 24.2516,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 89.6367,
+              "typical": 89.0301,
+              "factor_worst": 24.2516,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 13.1
+        },
+        "sift": {
+          "matches": 9,
+          "inliers": 4,
+          "inlier_ratio": 0.4444,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.0,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.19756,
+            "peak_offset_px": [
+              2.282,
+              -3.0
+            ],
+            "peak_nmi": 1.24421,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -367625.1,
+            "north": 378425.7
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 526632.4,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 0.0002,
+              "typical": 0.0002,
+              "factor_worst": 24.2516,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 91.4112,
+              "typical": 90.7926,
+              "factor_worst": 24.2516,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.5
+        }
+      },
+      "status": "locked",
+      "seconds": 17.2
+    },
+    {
+      "src_row0": 8192,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 19.1,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 103,
+          "inliers": 8,
+          "inlier_ratio": 0.0784,
+          "coverage": 0.094,
+          "inlier_rmse_px": 1.336,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00797,
+            "peak_offset_px": [
+              -2.082,
+              3.0
+            ],
+            "peak_nmi": 1.00845,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -189132.2,
+            "north": 200614.5
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 274725.6,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 32.4024,
+              "typical": 32.1853,
+              "factor_worst": 24.2533,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 88.5652,
+              "typical": 87.9719,
+              "factor_worst": 24.2533,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.8
+        },
+        "sift": {
+          "matches": 14,
+          "inliers": 4,
+          "inlier_ratio": 0.3077,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.371,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": null,
+            "peak_offset_px": null,
+            "peak_nmi": null,
+            "flag": null
+          },
+          "implied_offset_m": {
+            "east": 3463976.9,
+            "north": -3686529.4
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 5059617.0,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 9.0016,
+              "typical": 8.9413,
+              "factor_worst": 24.2533,
+              "method": "exact"
+            },
+            "mi_peak_offset": null
+          },
+          "success": false,
+          "seconds": 0.5
+        }
+      },
+      "status": "locked",
+      "seconds": 4.5
+    },
+    {
+      "src_row0": 16384,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 21.4,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        343,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 101,
+          "inliers": 10,
+          "inlier_ratio": 0.1031,
+          "coverage": 0.062,
+          "inlier_rmse_px": 1.349,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00395,
+            "peak_offset_px": [
+              3.0,
+              1.566
+            ],
+            "peak_nmi": 1.00428,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": 768.4,
+            "north": 2137.4
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 78.3,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 32.7294,
+              "typical": 32.5057,
+              "factor_worst": 24.2554,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 82.0834,
+              "typical": 81.5224,
+              "factor_worst": 24.2554,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.9
+        },
+        "sift": {
+          "matches": 17,
+          "inliers": 5,
+          "inlier_ratio": 0.2941,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.61,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.0333,
+            "peak_offset_px": [
+              -3.0,
+              -2.475
+            ],
+            "peak_nmi": 1.03562,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": 28100.5,
+            "north": -27803.3
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 40504.3,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 14.7943,
+              "typical": 14.6932,
+              "factor_worst": 24.2554,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 94.3332,
+              "typical": 93.6885,
+              "factor_worst": 24.2554,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.6
+        }
+      },
+      "status": "locked",
+      "seconds": 4.5
+    },
+    {
+      "src_row0": 24576,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 22.0,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 77,
+          "inliers": 6,
+          "inlier_ratio": 0.0811,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.735,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.02349,
+            "peak_offset_px": [
+              -1.636,
+              -2.028
+            ],
+            "peak_nmi": 1.02554,
+            "flag": true,
+            "at_search_edge": false
+          },
+          "implied_offset_m": {
+            "east": -335402.2,
+            "north": 373455.2
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 500922.9,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 17.8245,
+              "typical": 17.7028,
+              "factor_worst": 24.2574,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 63.2057,
+              "typical": 62.7742,
+              "factor_worst": 24.2574,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 1.1
+        },
+        "sift": {
+          "matches": 10,
+          "inliers": 4,
+          "inlier_ratio": 0.4,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.0,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.08195,
+            "peak_offset_px": [
+              -0.509,
+              -3.0
+            ],
+            "peak_nmi": 1.09619,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -111743.7,
+            "north": 127685.6
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 168622.6,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 0.0058,
+              "typical": 0.0058,
+              "factor_worst": 24.2574,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 73.8122,
+              "typical": 73.3083,
+              "factor_worst": 24.2574,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 0.6
+        }
+      },
+      "status": "locked",
+      "seconds": 4.6
+    },
+    {
+      "src_row0": 32768,
+      "src_col0": 1904,
+      "window": [
+        8192,
+        8192
+      ],
+      "coarse": {
+        "z": 22.3,
+        "factor": 24,
+        "template": "source"
+      },
+      "fine_frame_px": [
+        342,
+        346
+      ],
+      "results": {
+        "eloftr": {
+          "matches": 97,
+          "inliers": 8,
+          "inlier_ratio": 0.0833,
+          "coverage": 0.078,
+          "inlier_rmse_px": 1.044,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": 1.00543,
+            "peak_offset_px": [
+              -0.97,
+              -3.0
+            ],
+            "peak_nmi": 1.00576,
+            "flag": true,
+            "at_search_edge": true
+          },
+          "implied_offset_m": {
+            "east": -2838.2,
+            "north": 5737.5
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 5128.8,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 25.3208,
+              "typical": 25.1461,
+              "factor_worst": 24.2596,
+              "method": "exact"
+            },
+            "mi_peak_offset": {
+              "worst": 76.4884,
+              "typical": 75.9607,
+              "factor_worst": 24.2596,
+              "method": "exact"
+            }
+          },
+          "success": false,
+          "seconds": 1.2
+        },
+        "sift": {
+          "matches": 10,
+          "inliers": 4,
+          "inlier_ratio": 0.4444,
+          "coverage": 0.062,
+          "inlier_rmse_px": 0.0,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "mi_check": {
+            "nmi": null,
+            "peak_offset_px": null,
+            "peak_nmi": null,
+            "flag": null
+          },
+          "implied_offset_m": {
+            "east": -254231.0,
+            "north": 294286.4
+          },
+          "known_offset_m": {
+            "east": 741.0,
+            "north": 2064.0
+          },
+          "vs_known_m": 387820.4,
+          "bound_m": 150.0,
+          "source_px": {
+            "known_shift": null,
+            "inlier_rmse": {
+              "worst": 0.0001,
+              "typical": 0.0001,
+              "factor_worst": 24.2596,
+              "method": "exact"
+            },
+            "mi_peak_offset": null
+          },
+          "success": false,
+          "seconds": 0.6
+        }
+      },
+      "status": "locked",
+      "seconds": 4.8
+    }
+  ]
+}
