@@ -226,7 +226,9 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
                 mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
             r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
             # C-04 / C-03: recorded only
-            r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name)[1]
+            from chandralign.pipeline import _geometry_predictor
+            r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name,
+                                                                   predict=_geometry_predictor(fr, None, None))[1]
             r["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
             # I-08 / I-11: matcher-free probes vs the DELIVERED geometry (fine-frame px, and IIRS px)
             from chandralign.estimate import models as _models

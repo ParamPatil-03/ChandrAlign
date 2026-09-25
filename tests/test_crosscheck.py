@@ -75,3 +75,21 @@ def test_the_switch_turns_it_off(pair, monkeypatch):
     b = register_bundle(src, ref, matcher="sift")
     assert "independent_crosscheck" not in b.result.gates
     assert b.result.provenance["crosscheck"]["applied"] is False
+
+
+def test_on_relief_the_checker_is_compared_with_the_delivered_geometry_not_an_affine(monkeypatch, pair):
+    """Amendment 1: on hilly TMC-2 windows no affine is the geometry, and affine-vs-affine flagged all four
+    correct windows. The checker's matches must be judged against the geometry actually delivered."""
+    src, ref, _ = pair
+    rng = np.random.default_rng(1)
+    s = rng.uniform(20, 492, (800, 2))
+    curve = lambda p: p + np.c_[3.0 * np.sin(p[:, 1] / 80.0), 2.0 * np.cos(p[:, 0] / 90.0)]   # noqa: E731
+    checker = MatchSet(s, curve(s), np.ones(len(s), np.float32), "rift2", "x", "direct")
+    monkeypatch.setattr(rift, "match", lambda *a, **k: checker)
+    monkeypatch.setitem(config.load("default")["estimate"], "reproj_threshold_px", 6.0)   # the curve is one affine's inliers
+    primary_affine = np.array([[1, 0, 5.0], [0, 1, 0], [0, 0, 1]])                       # 5 px from any fit to the curve
+    g_aff, rec_aff = control_gates.independent_crosscheck(primary_affine, src, ref, "eloftr")
+    g_geo, rec_geo = control_gates.independent_crosscheck(primary_affine, src, ref, "eloftr", predict=curve)
+    assert g_aff is not None and not g_aff.passed                  # the old statistic: a false alarm
+    assert g_geo is not None and g_geo.passed and rec_geo["gap_px"] < 0.5
+    assert rec_geo["affine_gap_px"] > 2.0                          # still recorded

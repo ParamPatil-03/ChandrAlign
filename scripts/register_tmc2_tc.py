@@ -378,8 +378,10 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     out["gates"] = gates.gates
     out["gate_detail"] = gates.to_dict()
     # C-04 (docs/crosscheck_protocol.md) and C-03 (docs/refinement_geometry_protocol.md): recorded only
-    out["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), src_plane,
-                                                             ref_plane, matcher or "eloftr")[1]
+    from chandralign.pipeline import _geometry_predictor
+    out["crosscheck"] = control_gates.independent_crosscheck(
+        np.asarray(fr.model.matrix, float), src_plane, ref_plane, matcher or "eloftr",
+        predict=_geometry_predictor(fr, _OffsetModel(tcm, o_f), p_dem))[1]
     out["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
     out["probe_check"] = _probe_check(fr, src_img, ref_img, src_ok, _OffsetModel(tcm, o_f), p_dem)
     out["gate_seconds"] = round(time.perf_counter() - t_g, 1)

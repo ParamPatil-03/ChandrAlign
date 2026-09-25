@@ -509,7 +509,8 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
         crosscheck = {"applied": False, "reason": "no transform to check"}
     elif bool(config.get("gates.crosscheck", True)):
         xgate, crosscheck = control_gates.independent_crosscheck(fr.model.matrix, src, ref, matcher,
-                                                                 centre=(w / 2.0, h / 2.0))
+                                                                 centre=(w / 2.0, h / 2.0),
+                                                                 predict=_geometry_predictor(fr, ground_model, dem))
         if xgate is not None:
             gates.results.append(xgate)
     scale_ok, scale_status = True, "not checked (no expected scale given)"
@@ -560,18 +561,24 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                               geometry_model=fr.geometry_model if fr.ok else None)
 
 
-def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre) -> Optional[dict]:
-    """I-08: matcher-free probes against the DELIVERED geometry, in source px (evaluate/probes.py)."""
-    from .evaluate import probes
+def _geometry_predictor(fr: FineResult, ground_model, dem):
+    """src px -> ref px through the DELIVERED geometry, or None when it cannot be evaluated here
+    (a parallax model with no heights)."""
     name, geo = delivered_geometry(fr)
     if name == "parallax":
         if ground_model is None or dem is None:
-            return {"n": 0, "reason": "parallax geometry but no heights to evaluate it"}
-        def predict(p):
-            return geo.predict(p, lambda q: np.asarray(dem.sample(*ground_model.pixel_to_latlon(q[:, 1], q[:, 0])), float))
-    else:
-        def predict(p):
-            return models.apply(geo, p)
+            return None
+        return lambda p: geo.predict(p, lambda q: np.asarray(dem.sample(*ground_model.pixel_to_latlon(q[:, 1], q[:, 0])),
+                                                              float))
+    return lambda p: models.apply(geo, p)
+
+
+def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre) -> Optional[dict]:
+    """I-08: matcher-free probes against the DELIVERED geometry, in source px (evaluate/probes.py)."""
+    from .evaluate import probes
+    predict = _geometry_predictor(fr, ground_model, dem)
+    if predict is None:
+        return {"n": 0, "reason": "parallax geometry but no heights to evaluate it"}
     k = models.estimated_scale(np.asarray(fr.model.matrix, float), at=centre)
     ok = np.asarray(getattr(src, "valid_mask", None) if getattr(src, "valid_mask", None) is not None
                     else np.ones(np.asarray(s_img).shape, bool), bool)

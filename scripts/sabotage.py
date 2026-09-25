@@ -367,6 +367,8 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "the cross-check always passes (C-04)": (
                 "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w))",
                 "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w), flag_px=1e9)"),
+            "the cross-check compares affines again, not the delivered geometry (C-04 am. 1)": (
+                "    if predict is not None:\n        # Amendment 1", "    if False:\n        # Amendment 1"),
             "a checker with no answer of its own still votes (C-04)": (
                 '    rec.update(checker_matches=n,', '    accepted = accepted or n == 0\n    rec.update(checker_matches=n,'),
         },

@@ -293,7 +293,9 @@ CHECKER_FAMILY = {"rift2": "phase-congruency (classical)"}
 
 
 def independent_crosscheck(primary_matrix: np.ndarray, src_plane, ref_plane, primary_matcher: str,
-                           centre: Optional[tuple[float, float]] = None) -> tuple[Optional[GateResult], dict]:
+                           centre: Optional[tuple[float, float]] = None,
+                           predict: Optional[Callable[[np.ndarray], np.ndarray]] = None
+                           ) -> tuple[Optional[GateResult], dict]:
     """Audit C-04: run a checker from a DIFFERENT family and compare transforms (docs/crosscheck_protocol.md).
 
     Returns (gate, record). `gate` is None when the checker has no confident answer of its own
@@ -338,8 +340,25 @@ def independent_crosscheck(primary_matrix: np.ndarray, src_plane, ref_plane, pri
     gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w))
     if gate is None:
         rec.update(verdict="inconclusive", reason="the checker found no confident transform of its own")
-    else:
-        rec.update(verdict="agree" if gate.passed else "flag", **gate.detail)
+        return None, rec
+    rec["affine_gap_px"] = gate.detail["gap_px"]
+    if predict is not None:
+        # Amendment 1 (docs/crosscheck_protocol.md): the checker's own inliers against the DELIVERED geometry.
+        # Affine vs affine false-alarmed on relief, where no affine is the geometry (4/4 hilly TMC-2 windows).
+        s_in = np.asarray(ms.src_pts, float)[res.inlier_mask]
+        r_in = np.asarray(ms.ref_pts, float)[res.inlier_mask]
+        resid = np.hypot(*(np.asarray(predict(s_in), float) - r_in).T)
+        resid = resid[np.isfinite(resid)]
+        limit = float(_cfg("crosscheck_flag_px", 2.0))
+        med = float(np.median(resid)) if len(resid) else float("inf")
+        detail = {"gap_px": round(med, 3), "flag_px": limit, "statistic": "median residual of the checker's "
+                  "inliers to the delivered geometry", "checker_points": int(len(resid))}
+        gate = (GateResult("independent_crosscheck", True, f"independent method agrees to {med:.2f} px "
+                           f"(median over {len(resid)} of its matches)", detail) if med <= limit else
+                GateResult("independent_crosscheck", False, f"an independent method's matches sit {med:.2f} px "
+                           f"(median) from the delivered geometry (> {limit} px): the primary may be "
+                           f"consistently wrong", detail))
+    rec.update(verdict="agree" if gate.passed else "flag", **gate.detail)
     return gate, rec
 
 
