@@ -125,3 +125,100 @@ def test_geotiff_has_reference_geotransform_crs_tags_and_sidecar(tmp_path):
     assert data["reference"]["product_id"] == "REF"
     assert data["geometry"]["matrix"] == matrix.tolist()
     assert data["provenance"]["git_commit"] == "abc"
+
+
+# ---------------------------------------------------------------------------
+# Audit 2026-09-26 C-07: a window away from the product origin must land where it is.
+# Before: the GeoTIFF was placed at the PRODUCT's top-left (+5000/-6000 px = 57.8 km on
+# a real TC window) and the GCP path was half a pixel off.
+# ---------------------------------------------------------------------------
+from chandralign.geometry.projection import MapModel as _RealMapModel  # noqa: E402
+
+_ORIGIN = (5000, 6000)            # (row, col) of the window in the full product
+_TC = dict(resolution_px_per_deg=4096.0, line_offset=12288.0, sample_offset=-86016.0,
+           center_lat=0.0, center_lon=0.0, lines=12288, samples=12288)
+
+
+def _windowed_bundle(tmp_path):
+    matrix = np.array([[1, 0, 3], [0, 1, -2], [0, 0, 1]], float)
+    bundle = _bundle(TransformModel("affine", matrix=matrix))
+    for role in ("src", "ref"):
+        plane = getattr(bundle, role)
+        plane.meta = SceneMeta(
+            product_id=role.upper(), instrument="TC", mission="SELENE", gsd_m=7.4,
+            n_bands=1, wavelength_nm=None, array_shape=plane.array.shape, dtype="float32",
+            corner_latlon=[], sub_solar_azimuth_deg=None, solar_incidence_deg=None,
+            emission_deg=None, phase_deg=None, acquisition_utc=None,
+            label_path=Path(tmp_path / f"{role}.lbl"), raster_path=Path(tmp_path / f"{role}.img"))
+    bundle.src.tile_origin = (0, 0)
+    bundle.ref.tile_origin = _ORIGIN
+    return bundle
+
+
+def _expected(row, col):
+    lat, lon = _RealMapModel(**_TC).pixel_to_latlon(np.array([row + _ORIGIN[0]]), np.array([col + _ORIGIN[1]]))
+    return float(lat[0]), float(lon[0])
+
+
+def test_geotiff_affine_places_a_window_where_it_is_in_the_product(tmp_path):
+    rasterio = pytest.importorskip("rasterio")
+    bundle = _windowed_bundle(tmp_path)
+    tif, _ = export_bundle(tmp_path / "w.tif", bundle, ref_model=_RealMapModel(**_TC),
+                           crs=rasterio.crs.CRS.from_string("+proj=longlat +R=1737400 +no_defs"))
+    with rasterio.open(tif) as ds:
+        for row, col in [(0, 0), (39, 49), (20, 7)]:
+            lon, lat = ds.transform * (col + 0.5, row + 0.5)       # centre of pixel (row, col)
+            e_lat, e_lon = _expected(row, col)
+            assert lat == pytest.approx(e_lat, abs=1e-9) and lon == pytest.approx(e_lon, abs=1e-9)
+
+
+class _PointOnlyModel:
+    """A ground model with no map projection (like a NAC or CH-2 product): GCP path."""
+    def __init__(self):
+        self._m = _RealMapModel(**_TC)
+
+    def pixel_to_latlon(self, rows, cols, clip: bool = True):
+        return self._m.pixel_to_latlon(rows, cols)
+
+
+def test_geotiff_gcps_place_a_window_with_no_half_pixel_error(tmp_path):
+    rasterio = pytest.importorskip("rasterio")
+    from rasterio.transform import from_gcps
+    bundle = _windowed_bundle(tmp_path)
+    tif, _ = export_bundle(tmp_path / "g.tif", bundle, ref_model=_PointOnlyModel(),
+                           crs=rasterio.crs.CRS.from_string("+proj=longlat +R=1737400 +no_defs"))
+    with rasterio.open(tif) as ds:
+        gcps, _ = ds.gcps
+        t = from_gcps(gcps)
+    res = 1 / _TC["resolution_px_per_deg"]
+    for row, col in [(0, 0), (39, 49), (20, 7)]:
+        lon, lat = t * (col + 0.5, row + 0.5)
+        e_lat, e_lon = _expected(row, col)
+        assert abs(lat - e_lat) < 0.01 * res and abs(lon - e_lon) < 0.01 * res
+
+
+_TC_LABEL = Path(__file__).resolve().parents[1] / "data/raw/selene/tc/TCO_MAP_02_N03E021N00E024SC.lbl"
+
+
+@pytest.mark.skipif(not _TC_LABEL.is_file(), reason="real SELENE TC product not downloaded")
+def test_real_tc_window_geotiff_lands_on_the_labels_own_coordinates(tmp_path):
+    """The audit's exact case: a real TC window at (5000, 6000) was placed 57.8 km away."""
+    rasterio = pytest.importorskip("rasterio")
+    from chandralign.geometry.projection import load_map_model
+    from chandralign.io.pds_label import parse_label
+    from chandralign.io.tiling import Window, read_tile
+    meta = parse_label(_TC_LABEL)
+    plane = read_tile(meta, Window(row=5000, col=6000, height=384, width=384))
+    ident = TransformModel("affine", matrix=np.eye(3))
+    delivered = MatchSet(np.zeros((0, 2)), np.zeros((0, 2)), np.ones(0, np.float32), "t", "same_modal_normal", "delivered")
+    bundle = SimpleNamespace(result=SimpleNamespace(model=ident, metrics=Metrics()), delivered=delivered,
+                             tps=None, parallax=None, src=plane, ref=plane)
+    tif, _ = export_bundle(tmp_path / "tc.tif", bundle)
+    truth = load_map_model(meta)
+    with rasterio.open(tif) as ds:
+        assert np.allclose(ds.read(1), plane.array)
+        for row, col in [(0, 0), (383, 383), (192, 17)]:
+            lon, lat = ds.transform * (col + 0.5, row + 0.5)
+            e_lat, e_lon = truth.pixel_to_latlon(np.array([row + 5000]), np.array([col + 6000]))
+            # < 0.01 TC pixel (1/4096 deg per pixel)
+            assert abs(lat - e_lat[0]) < 0.01 / 4096 and abs(lon - e_lon[0]) < 0.01 / 4096

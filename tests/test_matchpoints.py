@@ -74,3 +74,24 @@ def test_bundle_export_uses_delivered_not_evidence_matches(tmp_path):
     assert np.array_equal(restored.src_pts, delivered.src_pts)
     assert np.array_equal(mask, np.ones(2, bool))
     assert len(json.loads(geojson_path.read_text(encoding="utf-8"))["features"]) == 2
+
+
+def test_match_point_latlon_uses_the_window_origin(tmp_path):
+    """Audit 2026-09-26 C-07: tile-local points were converted with the product model."""
+    import csv
+    from types import SimpleNamespace
+    from chandralign.geometry.projection import MapModel
+    tc = MapModel(resolution_px_per_deg=4096.0, line_offset=12288.0, sample_offset=-86016.0,
+                  center_lat=0.0, center_lon=0.0, lines=12288, samples=12288)
+    pts = np.array([[10.0, 20.0], [300.5, 40.25]])
+    delivered = MatchSet(pts, pts + 1.0, np.ones(2, np.float32), "t", "same_modal_normal", "delivered")
+    plane = lambda origin: SimpleNamespace(array=np.zeros((400, 400), np.float32), meta=None,
+                                           tile_origin=origin)
+    bundle = SimpleNamespace(delivered=delivered, result=SimpleNamespace(matches=delivered),
+                             src=plane((0, 0)), ref=plane((5000, 6000)))
+    csv_path, _ = export_bundle(tmp_path, bundle, src_model=tc, ref_model=tc, grid=2)
+    rows = list(csv.DictReader(open(csv_path, encoding="utf-8")))
+    for row, (x, y) in zip(rows, pts + 1.0):
+        lat, lon = tc.pixel_to_latlon(np.array([y + 5000]), np.array([x + 6000]))
+        assert float(row["ref_lat"]) == pytest.approx(float(lat[0]), abs=1e-9)
+        assert float(row["ref_lon"]) == pytest.approx(float(lon[0]), abs=1e-9)

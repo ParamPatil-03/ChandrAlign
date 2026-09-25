@@ -67,7 +67,11 @@ def _tps_source_map(inverse, shape: tuple[int, int], max_points: int = 262_144):
 
 def export_bundle(path: str | Path, bundle, *, ref_model=None, crs=None,
                   heights_at=None, provenance: dict | None = None) -> tuple[Path, Path]:
-    """Warp a RegistrationBundle and write GeoTIFF plus a JSON sidecar."""
+    """Warp a RegistrationBundle and write GeoTIFF plus a JSON sidecar.
+
+    `ref_model` (default: from the reference's SceneMeta) describes the FULL reference product;
+    the reference plane's `tile_origin` is applied here, so a window lands where it is.
+    """
     try:
         import rasterio
         from rasterio.control import GroundControlPoint
@@ -79,7 +83,8 @@ def export_bundle(path: str | Path, bundle, *, ref_model=None, crs=None,
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     warped, geometry_name = warp_array(bundle, heights_at=heights_at)
-    ref_model = ref_model or _ground_model(bundle.ref)
+    # Models describe the whole product; the warped raster is the reference WINDOW (audit C-07).
+    ref_model = _window(ref_model or _ground_model(bundle.ref), bundle.ref, warped.shape[:2])
     crs = crs or _moon_crs()
     profile = {"driver": "GTiff", "height": warped.shape[0], "width": warped.shape[1],
                "count": 1 if warped.ndim == 2 else warped.shape[2], "dtype": warped.dtype,
@@ -120,6 +125,11 @@ def _ground_model(plane):
     return geolocation_model(plane.meta)
 
 
+def _window(model, plane, shape):
+    from ..geometry.projection import window_model
+    return window_model(model, getattr(plane, "tile_origin", (0, 0)), shape)
+
+
 def _moon_crs():
     from ..geometry.projection import moon_geographic
     return moon_geographic()
@@ -140,7 +150,9 @@ def _gcps_for(model, shape, GCP, grid: int = 5):
     cols = np.linspace(0, w - 1, min(grid, w))
     rr, cc = np.meshgrid(rows, cols, indexing="ij")
     lat, lon = model.pixel_to_latlon(rr.ravel(), cc.ravel())
-    return [GCP(row=float(r), col=float(c), x=float(x), y=float(y))
+    # The models put pixel (r, c)'s CENTRE at integer (r, c); a GCP's row/col use the corner
+    # convention (0, 0 = top-left corner of the top-left pixel), so the centre is at +0.5.
+    return [GCP(row=float(r) + 0.5, col=float(c) + 0.5, x=float(x), y=float(y))
             for r, c, x, y in zip(rr.ravel(), cc.ravel(), lon, lat)]
 
 

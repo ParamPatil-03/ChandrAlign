@@ -25,7 +25,7 @@ either archive -- an unavoidable +/- 0.5 px ambiguity, documented, not hidden.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
@@ -247,6 +247,59 @@ class MapModel(_Model):
 
 
 # ============================================================================= builders
+
+@dataclass
+class WindowModel(_Model):
+    """A product ground model seen through a window whose pixel (0, 0) is product pixel `origin`.
+
+    Ground models describe the FULL product; a window (a tile, a registration window) has its
+    own 0-based pixels. Converting window pixels with the product model places the window at
+    the product's top-left corner -- 57.8 km off for a real TC window at (5000, 6000) (audit
+    2026-09-26 C-07). Use `window_model()` to build one.
+    """
+    base: _Model
+    origin: tuple[int, int]            # (row, col) of window pixel (0, 0) in the product
+    lines: int
+    samples: int
+
+    @property
+    def source(self) -> str:
+        return getattr(self.base, "source", "unknown")
+
+    @property
+    def independent_of_references(self) -> bool:
+        return bool(getattr(self.base, "independent_of_references", False))
+
+    def pixel_to_latlon(self, rows, cols, clip: bool = True):
+        r0, c0 = self.origin
+        rows, cols = np.asarray(rows, float) + r0, np.asarray(cols, float) + c0
+        try:
+            return self.base.pixel_to_latlon(rows, cols, clip=clip)
+        except TypeError:              # a model without the `clip` keyword
+            return self.base.pixel_to_latlon(rows, cols)
+
+    def latlon_to_pixel(self, lat, lon, tol_px: float = 1e-6, max_iter: int = 30):
+        rows, cols = self.base.latlon_to_pixel(lat, lon)
+        return np.asarray(rows, float) - self.origin[0], np.asarray(cols, float) - self.origin[1]
+
+
+def window_model(model, origin=(0, 0), shape=None):
+    """The ground model for a window at `origin` = (row, col) of a product described by `model`.
+
+    A MapModel stays a MapModel (its offsets shift, so a GeoTIFF still gets an exact affine
+    geotransform); any other model is wrapped. `shape` = the window's (lines, samples).
+    """
+    r0, c0 = (int(origin[0]), int(origin[1])) if origin is not None else (0, 0)
+    lines, samples = (shape if shape is not None
+                      else (getattr(model, "lines", 0), getattr(model, "samples", 0)))
+    if (r0, c0) == (0, 0):
+        return model                   # the window IS the product frame: nothing to shift
+    if isinstance(model, MapModel):
+        return replace(model, line_offset=model.line_offset - r0,
+                                   sample_offset=model.sample_offset - c0,
+                                   lines=int(lines), samples=int(samples))
+    return WindowModel(base=model, origin=(r0, c0), lines=int(lines), samples=int(samples))
+
 
 def grid_path(meta: SceneMeta) -> Path:
     """ISRO geometry grid for a CH-2 product: <product>/geometry/calibrated/<date>/<id with _g_grd_>.csv."""

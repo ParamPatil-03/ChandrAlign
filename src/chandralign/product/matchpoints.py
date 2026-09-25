@@ -19,6 +19,8 @@ def export_bundle(out_dir: str | Path, bundle, *, src_model=None, ref_model=None
                   grid: int = 8, crs: Any = "IAU_2015:30100") -> tuple[Path, Path]:
     """Export the final points from ``pipeline.register_bundle()``.
 
+    `src_model` / `ref_model` describe the FULL products; each plane's `tile_origin` is applied.
+
     This deliberately accepts a bundle rather than a ``RegistrationResult`` so
     callers cannot accidentally export the evidence matches. Part 2 documents
     ``bundle.delivered.confidence`` as placeholder ones until selection carries
@@ -27,8 +29,12 @@ def export_bundle(out_dir: str | Path, bundle, *, src_model=None, ref_model=None
     delivered = bundle.delivered
     if delivered.stage != "delivered":
         raise ValueError("bundle.delivered must contain the final delivered points")
-    src_model = src_model or _model_from_plane(bundle.src)
-    ref_model = ref_model or _model_from_plane(bundle.ref)
+    # Models describe the full products; the points are in each WINDOW's pixels (audit C-07).
+    from ..geometry.projection import window_model
+    src_model = window_model(src_model or _model_from_plane(bundle.src),
+                             getattr(bundle.src, "tile_origin", (0, 0)))
+    ref_model = window_model(ref_model or _model_from_plane(bundle.ref),
+                             getattr(bundle.ref, "tile_origin", (0, 0)))
     shape = tuple(np.asarray(bundle.src.array).shape[:2])
     mask = np.ones(len(delivered.src_pts), dtype=bool)
     out_dir = Path(out_dir)
