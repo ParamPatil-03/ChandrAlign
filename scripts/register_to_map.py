@@ -76,7 +76,14 @@ class MapRef:
         return PixelScale(self.name, x, y, (x, x), (y, y), ("map_projection",), True, ("map-projected grid",))
 
 
-def load_ref(kind, source):
+def load_ref(kind, source, tile=None):
+    if kind == "tc":                                   # SELENE TC ortho map tile (docs/tc_reference_protocol.md)
+        meta = parse_label(ROOT / "data/raw/selene/tc" / f"TCO_MAP_02_{tile}.lbl")
+        raw = pds_raster.read_raster(meta).astype(np.float32)
+        ok = raw > 0
+        mm = projection.load_map_model(meta)
+        la, lo = mm.pixel_to_latlon([0, 1], [0, 1])
+        return MapRef(meta.product_id, norm(raw, ok), ok, float(la[0]), float(lo[0]), float(la[0] - la[1]))
     if kind == "wac":
         d = ROOT / "data/raw/lro/wac_mosaic"
         m = json.loads((d / "wac_mosaic_100m_clip.json").read_text(encoding="utf-8"))
@@ -326,12 +333,13 @@ def windows_for(src, ref, n):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--source", required=True, choices=["ohrc", "tmc2", "iirs"])
-    ap.add_argument("--reference", required=True, choices=["wac", "mi"])
+    ap.add_argument("--reference", required=True, choices=["wac", "mi", "tc"])
+    ap.add_argument("--tile", default=None, help="TC tile, e.g. N03E021N00E024SC (with --reference tc)")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     src = Source(args.source)
-    ref = load_ref(args.reference, args.source)
+    ref = load_ref(args.reference, args.source, args.tile)
     stages = stage_flags()
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
     route_opts = dict(routing.choose("IIRS", "WAC").fine_stage_options)
@@ -354,7 +362,7 @@ def main() -> int:
         summary[name] = {"success": ok, "windows": len(wins),
                          "verdict": "solved" if wins and rate >= 0.9 else "degraded" if rate >= 0.6 else "unsolved"}
     print(json.dumps(summary))
-    out = ROOT / (args.out or f"reports/map_{args.source}_{args.reference}.json")
+    out = ROOT / (args.out or f"reports/map_{args.source}_{args.reference}{'_' + args.tile[:3] if args.tile else ''}.json")
     out.write_text(json.dumps({"source": "measured", "protocol": "docs/map_pairings_protocol.md",
                                "pairing": f"{src.meta.product_id} -> {ref.name}", "pipeline_stages": stages,
                                "run": run_record(), "summary": summary, "windows": wins}, indent=2, default=str),
