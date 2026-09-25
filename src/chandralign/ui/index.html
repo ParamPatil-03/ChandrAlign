@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHANDRALIGN | Lunar Mission Control</title>
+  <style>
+    /* ============================================================
+       CHANDRALIGN — MISSION CONTROL UI  (fully self-contained)
+       4-quadrant layout matching the wireframe spec
+       ============================================================ */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #07090f;
+      --bg-panel:  #0c1220;
+      --bg-card:   #0f1929;
+      --bg-input:  #101c2e;
+      --border:    rgba(56,189,248,.18);
+      --border-hi: rgba(56,189,248,.55);
+      --cyan:      #38bdf8;
+      --cyan-dim:  rgba(56,189,248,.12);
+      --cyan-glow: rgba(56,189,248,.35);
+      --gold:      #f59e0b;
+      --gold-dim:  rgba(245,158,11,.15);
+      --emerald:   #10b981;
+      --emerald-dim: rgba(16,185,129,.15);
+      --crimson:   #ef4444;
+      --crimson-dim: rgba(239,68,68,.15);
+      --amber:     #fbbf24;
+      --indigo:    #818cf8;
+      --txt:       #e2e8f0;
+      --txt2:      #94a3b8;
+      --txt3:      #4a5568;
+      --radius:    8px;
+      --radius-lg: 12px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    /* ─── Background grid ─────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 15%, rgba(56,189,248,.06) 0%, transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(245,158,11,.04) 0%, transparent 45%),
+        linear-gradient(rgba(56,189,248,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Root layout ─────────────────────────────────────── */
+    #root {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       HEADER
+       ══════════════════════════════════════════════════════════ */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 52px;
+      background: rgba(7,9,15,.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+
+    .hdr-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hdr-logo {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0369a1 0%, #f59e0b 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 14px rgba(56,189,248,.4);
+      flex-shrink: 0;
+    }
+
+    .hdr-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: #fff;
+    }
+
+    .hdr-sub {
+      font-size: 10px;
+      letter-spacing: .08em;
+      color: var(--txt2);
+      text-transform: uppercase;
+    }
+
+    .hdr-center {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Pipeline stage pills in header */
+    .stage-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      color: var(--txt3);
+      text-transform: uppercase;
+      transition: all .3s;
+    }
+
+    .stage-pill.done {
+      border-color: rgba(16,185,129,.4);
+      background: rgba(16,185,129,.1);
+      color: var(--emerald);
+    }
+    .stage-pill.active {
+      border-color: rgba(56,189,248,.5);
+      background: rgba(56,189,248,.12);
+      color: var(--cyan);
+      box-shadow: 0 0 10px rgba(56,189,248,.2);
+      animation: pill-pulse 1.6s infinite alternate;
+    }
+
+    @keyframes pill-pulse {
+      from { box-shadow: 0 0 6px rgba(56,189,248,.2); }
+      to   { box-shadow: 0 0 18px rgba(56,189,248,.5); }
+    }
+
+    .stage-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .stage-pill.active .stage-dot { animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .stage-connector { color: var(--txt3); font-size: 10px; }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      color: var(--txt2);
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 6px var(--emerald);
+      animation: blink 2.5s infinite;
+    }
+
+    .ver-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 10px;
+      font-family: 'Courier New', monospace;
+      color: var(--txt3);
+      background: var(--bg-card);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       4-QUADRANT BODY
+       ══════════════════════════════════════════════════════════ */
+    .console-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0;
+      min-height: 0;
+      border: 1px solid var(--border);
+      border-top: none;
+      margin: 0;
+    }
+
+    /* shared panel style */
+    .panel {
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,9,15,.6);
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+
+    .panel-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      min-height: 0;
+    }
+
+    .panel-body::-webkit-scrollbar { width: 4px; }
+    .panel-body::-webkit-scrollbar-thumb {
+      background: rgba(56,189,248,.2); border-radius: 4px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       Q1 — TOP LEFT: PAIR SELECTION
+       ══════════════════════════════════════════════════════════ */
+    #q1 { grid-column: 1; grid-row: 1; }
+
+    .tab-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--txt3);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      letter-spacing: .04em;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan-dim);
+      border-color: var(--border-hi);
+      color: var(--cyan);
+      box-shadow: 0 0 8px rgba(56,189,248,.15);
+    }
+
+    .pair-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .pair-item {
+      padding: 9px 11px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .pair-item:hover {
+      border-color: rgba(56,189,248,.35);
+      background: rgba(56,189,248,.07);
+      transform: translateX(2px);
+    }
+
+    .pair-item.selected {
+      border-color: var(--cyan);
+      background: rgba(56,189,248,.1);
+      box-shadow: 0 0 12px rgba(56,189,248,.15);
+    }
+
+    .pair-radio {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+
+    .pair-item.selected .pair-radio {
+      border-color: var(--cyan);
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .pair-item.selected .pair-radio::after {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #07090f;
+    }
+
+    .pair-info { flex: 1; }
+
+    .pair-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--txt);
+      margin-bottom: 2px;
+    }
+
+    .pair-meta { font-size: 10px; color: var(--txt2); line-height: 1.4; }
+
+    .tier-chip {
+      flex-shrink: 0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .tier-gold {
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(245,158,11,.3);
+    }
+    .tier-silver {
+      background: rgba(129,140,248,.15);
+      color: var(--indigo);
+      border: 1px solid rgba(129,140,248,.3);
+    }
+    .tier-hard {
+      background: rgba(251,191,36,.15);
+      color: var(--amber);
+      border: 1px solid rgba(251,191,36,.3);
+    }
+    .tier-rejected {
+      background: var(--crimson-dim);
+      color: var(--crimson);
+      border: 1px solid rgba(239,68,68,.3);
+    }
+
+    /* Run button */
+    #btn-run {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      border: 1px solid rgba(56,189,248,.5);
+      border-radius: var(--radius);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .25s;
+      box-shadow: 0 0 18px rgba(56,189,248,.3);
+    }
+
+    #btn-run:hover:not(:disabled) {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      box-shadow: 0 0 28px rgba(56,189,248,.55);
+      transform: translateY(-1px);
+    }
+
+    #btn-run:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    #btn-run.running {
+      background: linear-gradient(135deg, #0f4c75, #0369a1);
+      animation: run-pulse 1.5s infinite alternate;
+    }
+
+    @keyframes run-pulse {
+      from { box-shadow: 0 0 10px rgba(56,189,248,.3); }
+      to   { box-shadow: 0 0 26px rgba(56,189,248,.6); }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       Q2 — TOP RIGHT: LIVE METRICS & CONFIDENCE
+       ══════════════════════════════════════════════════════════ */
+    #q2 { grid-column: 2; grid-row: 1; }
+
+    /* Confidence tier banner */
+    .confidence-ribbon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      margin-bottom: 12px;
+      transition: all .4s;
+    }
+
+    .ribbon-gold {
+      background: linear-gradient(90deg, rgba(16,185,129,.15), transparent);
+      border-color: rgba(16,185,129,.4);
+      box-shadow: 0 0 18px rgba(16,185,129,.12);
+    }
+    .ribbon-silver {
+      background: linear-gradient(90deg, rgba(129,140,248,.12), transparent);
+      border-color: rgba(129,140,248,.35);
+    }
+    .ribbon-bronze {
+      background: linear-gradient(90deg, rgba(251,191,36,.12), transparent);
+      border-color: rgba(251,191,36,.35);
+    }
+    .ribbon-rejected {
+      background: linear-gradient(90deg, rgba(239,68,68,.2), transparent);
+      border-color: var(--crimson);
+      box-shadow: 0 0 20px rgba(239,68,68,.2);
+    }
+
+    .ribbon-tier {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .ribbon-pair { font-size: 10px; color: var(--txt2); font-family: 'Courier New', monospace; }
+
+    /* Metrics grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 9px 8px;
+      position: relative;
+      transition: all .2s;
+    }
+
+    .metric-card:hover {
+      border-color: rgba(56,189,248,.3);
+      transform: translateY(-2px);
+    }
+
+    .metric-src {
+      position: absolute;
+      top: 5px; right: 5px;
+      font-size: 8px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      color: var(--cyan);
+      background: rgba(56,189,248,.1);
+      border: 1px solid rgba(56,189,248,.2);
+      padding: 1px 4px;
+      border-radius: 3px;
+      letter-spacing: .03em;
+    }
+
+    .metric-lbl {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--txt3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 4px;
+    }
+
+    .metric-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--txt);
+      line-height: 1;
+    }
+
+    .metric-unit {
+      font-size: 10px;
+      color: var(--txt2);
+      font-weight: 500;
+    }
+
+    .metric-sub {
+      font-size: 9px;
+      color: var(--txt3);
+      font-family: 'Courier New', monospace;
+      margin-top: 3px;
+    }
+
+    /* Rejection panel */
+    .rejection-box {
+      display: none;
+      background: rgba(239,68,68,.08);
+      border: 1px solid rgba(239,68,68,.4);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      animation: slide-in .3s ease;
+    }
+
+    .rejection-box.show { display: block; }
+
+    @keyframes slide-in {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .rej-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fca5a5;
+      margin-bottom: 6px;
+    }
+
+    .rej-modes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .rej-pill {
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.35);
+      color: #fecaca;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       Q3 — BOTTOM LEFT: TELEMETRY & LOG STREAM
+       ══════════════════════════════════════════════════════════ */
+    #q3 { grid-column: 1; grid-row: 2; }
+
+    /* Radar + progress combo */
+    .telem-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* Radar ring */
+    .radar-wrap {
+      width: 44px; height: 44px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .radar-ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(56,189,248,.25);
+    }
+
+    .radar-ring-inner {
+      position: absolute;
+      top: 25%; left: 25%; right: 25%; bottom: 25%;
+      border-radius: 50%;
+      border: 1px solid rgba(56,189,248,.15);
+    }
+
+    .radar-sweep {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 75%, rgba(56,189,248,.7) 100%);
+      animation: radar 2.5s linear infinite;
+    }
+
+    @keyframes radar { to { transform: rotate(360deg); } }
+
+    .radar-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    /* Cascade info */
+    .cascade-info { flex: 1; min-width: 0; }
+
+    .cascade-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .cascade-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 6px var(--emerald);
+      flex-shrink: 0;
+    }
+
+    .cascade-label {
+      font-size: 10px;
+      color: var(--txt2);
+      font-family: 'Courier New', monospace;
+    }
+
+    .cascade-value {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Progress bar */
+    .prog-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255,255,255,.07);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .prog-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--emerald));
+      border-radius: 4px;
+      transition: width .4s ease;
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .prog-pct {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: 'Courier New', monospace;
+      margin-top: 2px;
+      text-align: right;
+    }
+
+    /* Terminal log */
+    .terminal {
+      flex: 1;
+      background: #030507;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      min-height: 0;
+    }
+
+    .terminal::-webkit-scrollbar { width: 3px; }
+    .terminal::-webkit-scrollbar-thumb { background: rgba(56,189,248,.2); }
+
+    .log-line { margin-bottom: 3px; line-height: 1.45; word-break: break-all; }
+    .log-ts   { color: var(--txt3); margin-right: 6px; }
+    .log-info { color: var(--cyan); }
+    .log-ok   { color: var(--emerald); }
+    .log-warn { color: var(--amber); }
+    .log-err  { color: var(--crimson); }
+    .log-plain{ color: #64748b; }
+
+    /* Config selects */
+    .cfg-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .cfg-label {
+      font-size: 10px;
+      color: var(--txt2);
+      flex-shrink: 0;
+      width: 80px;
+    }
+
+    select.cfg-select {
+      flex: 1;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--txt);
+      padding: 5px 8px;
+      border-radius: var(--radius);
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select.cfg-select:focus {
+      border-color: var(--border-hi);
+      box-shadow: 0 0 8px rgba(56,189,248,.15);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 11px;
+      color: var(--txt2);
+    }
+
+    .toggle {
+      width: 34px; height: 18px;
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.12);
+      border-radius: 18px;
+      transition: .25s;
+    }
+
+    .toggle-track::before {
+      content: '';
+      position: absolute;
+      width: 13px; height: 13px;
+      left: 2px; top: 2.5px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .25s;
+    }
+
+    .toggle input:checked ~ .toggle-track {
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .toggle input:checked ~ .toggle-track::before {
+      transform: translateX(16px);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       Q4 — BOTTOM RIGHT: INTERACTIVE INSPECTION
+       ══════════════════════════════════════════════════════════ */
+    #q4 { grid-column: 2; grid-row: 2; }
+
+    /* Viz tabs */
+    .viz-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .viz-tab {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--txt3);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .viz-tab.active {
+      background: var(--cyan-dim);
+      border-color: var(--border-hi);
+      color: var(--cyan);
+    }
+
+    .viz-tab:hover:not(.active) {
+      color: var(--txt);
+      border-color: rgba(255,255,255,.15);
+    }
+
+    /* Viewport */
+    .viewport {
+      position: relative;
+      flex: 1;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    #viz-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Swipe divider */
+    #swipe-div {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: rgba(255,255,255,.85);
+      cursor: ew-resize;
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(56,189,248,.7);
+    }
+
+    #swipe-handle {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 32px; height: 32px;
+      background: #0c1220;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 0 12px rgba(0,0,0,.6);
+    }
+
+    .vp-label {
+      position: absolute;
+      bottom: 10px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-family: 'Courier New', monospace;
+      color: #fff;
+      z-index: 5;
+    }
+
+    .vp-label.l { left: 10px; }
+    .vp-label.r { right: 10px; }
+
+    /* Viewport overlay during idle */
+    .vp-idle {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px;
+      background: rgba(7,9,15,.6);
+      z-index: 20;
+    }
+
+    .vp-idle-icon { font-size: 36px; opacity: .5; }
+    .vp-idle-text { font-size: 12px; color: var(--txt3); }
+
+    /* Toolbar below viewport */
+    .viz-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 6px;
+      flex-shrink: 0;
+      font-size: 10px;
+    }
+
+    .toolbar-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--txt2);
+    }
+
+    .toolbar-val { color: var(--cyan); font-family: 'Courier New', monospace; font-weight: 700; }
+
+    .toolbar-btns { display: flex; gap: 6px; }
+
+    .dl-btn {
+      padding: 4px 10px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--txt);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: all .2s;
+    }
+
+    .dl-btn:hover {
+      background: var(--cyan-dim);
+      border-color: var(--border-hi);
+      color: var(--cyan);
+    }
+
+    /* Checker grid range */
+    #checker-range { accent-color: var(--cyan); width: 80px; }
+
+    /* ── Resize handle between left and right (cosmetic) ── */
+    .panel { border-radius: 0; }
+    #q1 { border-right: none; border-bottom: none; }
+    #q2 { border-bottom: none; }
+    #q3 { border-right: none; }
+    #q4 { }
+  </style>
+</head>
+<body>
+<div id="root">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header>
+    <div class="hdr-brand">
+      <div class="hdr-logo">🛰️</div>
+      <div>
+        <div class="hdr-title">CHANDRALIGN</div>
+        <div class="hdr-sub">Multi-Modal Lunar Registration Console</div>
+      </div>
+    </div>
+
+    <div class="hdr-center" id="pipeline-stages">
+      <div class="stage-pill done" id="sp1"><span class="stage-dot"></span>Gating</div>
+      <span class="stage-connector">›</span>
+      <div class="stage-pill done" id="sp2"><span class="stage-dot"></span>Phase Cong.</div>
+      <span class="stage-connector">›</span>
+      <div class="stage-pill active" id="sp3"><span class="stage-dot"></span>Matching</div>
+      <span class="stage-connector">›</span>
+      <div class="stage-pill" id="sp4"><span class="stage-dot"></span>Subpixel</div>
+      <span class="stage-connector">›</span>
+      <div class="stage-pill" id="sp5"><span class="stage-dot"></span>GeoTIFF</div>
+    </div>
+
+    <div class="hdr-right">
+      <div class="status-badge">
+        <div class="status-dot" id="sys-dot"></div>
+        <span id="sys-txt">OFFLINE READY</span>
+      </div>
+      <div class="ver-tag">v1.0-DEMO · ISRO PS-02</div>
+    </div>
+  </header>
+
+  <!-- ══════════ 4-QUADRANT GRID ══════════ -->
+  <div class="console-grid">
+
+    <!-- ┌──────────────────────────────────────────────────────────┐ -->
+    <!-- │  Q1  TOP-LEFT — SELECT PAIR / UPLOAD                     │ -->
+    <!-- └──────────────────────────────────────────────────────────┘ -->
+    <div class="panel" id="q1">
+      <div class="panel-hdr">
+        <div class="panel-title">🛰️ &nbsp;1. SELECT PAIR / UPLOAD</div>
+        <span class="panel-badge" style="background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.3);">4 PAIRS LOADED</span>
+      </div>
+
+      <div class="panel-body">
+        <!-- Source tabs -->
+        <div class="tab-row">
+          <button class="tab-btn active" id="tab-cur" onclick="setTab('cur')">Curated Benchmarks</button>
+          <button class="tab-btn" id="tab-up" onclick="setTab('up')">Custom Upload</button>
+        </div>
+
+        <!-- Curated list -->
+        <div id="panel-cur">
+          <div class="pair-list" id="pair-list"></div>
+        </div>
+
+        <!-- Upload panel -->
+        <div id="panel-up" style="display:none;">
+          <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px;" id="drop-src" onclick="document.getElementById('f-src').click()" onmouseenter="this.style.borderColor='var(--border-hi)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="font-size:22px;margin-bottom:4px;">📂</div>
+            <div style="font-size:11px;font-weight:700;" id="lbl-src">Source (OHRC / TMC-2)</div>
+            <div style="font-size:10px;color:var(--txt3);">PDS3 · GeoTIFF · PNG</div>
+            <input type="file" id="f-src" style="display:none;" onchange="fileSelected('src',event)">
+          </div>
+          <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .2s;" id="drop-ref" onclick="document.getElementById('f-ref').click()" onmouseenter="this.style.borderColor='var(--border-hi)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="font-size:22px;margin-bottom:4px;">📂</div>
+            <div style="font-size:11px;font-weight:700;" id="lbl-ref">Reference (NAC / SELENE)</div>
+            <div style="font-size:10px;color:var(--txt3);">PDS3 · GeoTIFF · PNG</div>
+            <input type="file" id="f-ref" style="display:none;" onchange="fileSelected('ref',event)">
+          </div>
+        </div>
+
+        <!-- Config -->
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+          <div class="cfg-row">
+            <span class="cfg-label">Matcher</span>
+            <select class="cfg-select" id="sel-matcher">
+              <option value="auto">Multi-Modal Cascade (Auto)</option>
+              <option value="sift">SIFT Normal (Baseline)</option>
+              <option value="phase">Phase Congruency Direct</option>
+              <option value="loftr">LoFTR Dense (Shadow)</option>
+            </select>
+          </div>
+          <div class="toggle-row">
+            <span>Sub-Pixel Local Refinement</span>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Offline Demo Mode (Simulated)</span>
+            <label class="toggle"><input type="checkbox" id="tog-mock" checked onchange="onMockToggle()"><span class="toggle-track"></span></label>
+          </div>
+        </div>
+
+        <!-- Run button -->
+        <button id="btn-run" onclick="startRegistration()">
+          <span id="btn-icon">▶</span>
+          <span id="btn-txt">RUN REGISTRATION</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ┌──────────────────────────────────────────────────────────┐ -->
+    <!-- │  Q2  TOP-RIGHT — LIVE METRICS & CONFIDENCE               │ -->
+    <!-- └──────────────────────────────────────────────────────────┘ -->
+    <div class="panel" id="q2">
+      <div class="panel-hdr">
+        <div class="panel-title">📊 &nbsp;3. LIVE METRICS &amp; CONFIDENCE</div>
+        <span id="run-id-lbl" style="font-size:10px;color:var(--txt3);font-family:'Courier New',monospace;">RUN: IDLE</span>
+      </div>
+
+      <div class="panel-body">
+        <!-- Confidence tier ribbon -->
+        <div class="confidence-ribbon ribbon-gold" id="ribbon">
+          <div class="ribbon-tier" id="ribbon-tier">
+            <span id="ribbon-icon">⭐</span>
+            <span id="ribbon-txt">CONFIDENCE TIER: GOLD (SUB-PIXEL VERIFIED)</span>
+          </div>
+          <div class="ribbon-pair" id="ribbon-pair">CH2_OHRC_20200214 ⇄ LRO_NAC_M119283</div>
+        </div>
+
+        <!-- Rejection panel (hidden unless REJECTED) -->
+        <div class="rejection-box" id="rej-box">
+          <div class="rej-title">⚠ REGISTRATION REJECTED — <span id="rej-reason">Insufficient Inlier Count</span></div>
+          <div style="font-size:10px;color:#fca5a5;">Per honesty rule H3, this registration is safely refused rather than returning a degraded result. Triggered failure modes:</div>
+          <div class="rej-modes" id="rej-modes"></div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-grid" id="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-src">MEASURED</div>
+            <div class="metric-lbl">RMSE</div>
+            <div class="metric-val"><span id="m-rmse">0.82</span></div>
+            <div class="metric-unit">px</div>
+            <div class="metric-sub" id="m-rmse-m">≈ 0.41 m</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-src">MEASURED</div>
+            <div class="metric-lbl">Inlier Count</div>
+            <div class="metric-val"><span id="m-inliers">482</span></div>
+            <div class="metric-unit">pts</div>
+            <div class="metric-sub" id="m-ratio">Ratio: 84.6%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-src">MEASURED</div>
+            <div class="metric-lbl">Spatial Cov.</div>
+            <div class="metric-val"><span id="m-cov">87.5</span></div>
+            <div class="metric-unit">%</div>
+            <div class="metric-sub" id="m-cells">56/64 cells</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-src">MEASURED</div>
+            <div class="metric-lbl">Max Gap</div>
+            <div class="metric-val"><span id="m-gap">42.1</span></div>
+            <div class="metric-unit">px</div>
+            <div class="metric-sub">Delaunay</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-src">MEASURED</div>
+            <div class="metric-lbl">Runtime</div>
+            <div class="metric-val"><span id="m-rt">1.48</span></div>
+            <div class="metric-unit">s</div>
+            <div class="metric-sub" id="m-matcher">Phase+SIFT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ┌──────────────────────────────────────────────────────────┐ -->
+    <!-- │  Q3  BOTTOM-LEFT — TELEMETRY & LOG STREAM                │ -->
+    <!-- └──────────────────────────────────────────────────────────┘ -->
+    <div class="panel" id="q3">
+      <div class="panel-hdr">
+        <div class="panel-title">📡 &nbsp;2. TELEMETRY &amp; LOG STREAM</div>
+        <span style="font-size:10px;color:var(--txt3);">LIVE PIPELINE TELEMETRY</span>
+      </div>
+
+      <div class="panel-body" style="gap:0;padding:10px 12px;display:flex;flex-direction:column;">
+        <!-- Radar + cascade bar -->
+        <div class="telem-bar">
+          <div class="radar-wrap">
+            <div class="radar-ring"></div>
+            <div class="radar-ring-inner"></div>
+            <div class="radar-sweep" id="radar-el"></div>
+            <div class="radar-center"></div>
+          </div>
+          <div class="cascade-info">
+            <div class="cascade-row">
+              <div class="cascade-dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan);"></div>
+              <span class="cascade-label">Cascade: </span>
+              <span class="cascade-value" id="t-cascade">Phase Congruency → Feature</span>
+            </div>
+            <div class="cascade-row">
+              <div class="cascade-dot"></div>
+              <span class="cascade-label">Matcher: </span>
+              <span class="cascade-value" id="t-matcher">LoFTR / SIFT-Normal</span>
+            </div>
+            <div class="cascade-row">
+              <div class="cascade-dot" style="background:var(--amber);box-shadow:0 0 6px var(--amber);"></div>
+              <span class="cascade-label">Regime: </span>
+              <span class="cascade-value" id="t-regime">DIFFERENT-MODAL</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+            <div class="prog-pct" id="prog-pct">0%</div>
+          </div>
+        </div>
+
+        <!-- Live terminal -->
+        <div class="terminal" id="terminal" style="flex:1;min-height:0;">
+          <div class="log-line log-plain"><span class="log-ts">[INIT]</span>Chandralign registration client initialized.</div>
+          <div class="log-line log-plain"><span class="log-ts">[INIT]</span>Pre-cached mock pairs loaded. Venue offline mode active.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ┌──────────────────────────────────────────────────────────┐ -->
+    <!-- │  Q4  BOTTOM-RIGHT — INTERACTIVE INSPECTION               │ -->
+    <!-- └──────────────────────────────────────────────────────────┘ -->
+    <div class="panel" id="q4">
+      <div class="panel-hdr">
+        <div class="panel-title">🖼️ &nbsp;4. INTERACTIVE INSPECTION</div>
+        <span style="font-size:10px;color:var(--txt3);">60 FPS CANVAS</span>
+      </div>
+
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px;">
+        <!-- View tabs -->
+        <div class="viz-tabs">
+          <button class="viz-tab active" id="vt-swipe"   onclick="setViz('swipe')">⇆ Swipe Comparison</button>
+          <button class="viz-tab" id="vt-checker" onclick="setViz('checker')">▦ Checkerboard</button>
+          <button class="viz-tab" id="vt-matches" onclick="setViz('matches')">⊹ Match Vectors</button>
+          <button class="viz-tab" id="vt-coverage" onclick="setViz('coverage')">◫ Coverage Heatmap</button>
+          <button class="viz-tab" id="vt-side" onclick="setViz('side')">⧉ Side-by-Side</button>
+        </div>
+
+        <!-- Viewport -->
+        <div class="viewport" id="viewport">
+          <canvas id="viz-canvas"></canvas>
+
+          <!-- swipe divider -->
+          <div id="swipe-div">
+            <div id="swipe-handle">⇆</div>
+          </div>
+
+          <!-- floating labels -->
+          <div class="vp-label l" id="vp-lbl-l">Source (Before Warp)</div>
+          <div class="vp-label r" id="vp-lbl-r">Registered Product</div>
+
+          <!-- idle overlay -->
+          <div class="vp-idle" id="vp-idle">
+            <div class="vp-idle-icon">🌑</div>
+            <div class="vp-idle-text">Select a pair and click RUN REGISTRATION to begin.</div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="viz-toolbar">
+          <div class="toolbar-info">
+            <span>Swipe: <span class="toolbar-val" id="tb-swipe-pct">50%</span></span>
+            <span id="tb-checker-wrap" style="display:none;">
+              Grid: <input type="range" id="checker-range" min="4" max="20" step="2" value="8" oninput="updateChecker(this.value)">
+              <span class="toolbar-val" id="tb-grid">8×8</span>
+            </span>
+            <span id="tb-match-info" style="display:none;">
+              Inliers: <span class="toolbar-val" id="tb-inliers">—</span> &nbsp;
+              Outliers: <span class="toolbar-val" id="tb-outliers">—</span>
+            </span>
+          </div>
+          <div class="toolbar-btns">
+            <button class="dl-btn" onclick="dlAsset('registered.tif')">💾 GeoTIFF</button>
+            <button class="dl-btn" onclick="dlAsset('matches.csv')">📄 Matches CSV</button>
+            <button class="dl-btn" onclick="dlAsset('provenance.json')">🔒 Provenance</button>
+            <button class="dl-btn" onclick="dlAsset('report.html')">📊 HTML Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end console-grid -->
+</div><!-- end #root -->
+
+<script src="app.js"></script>
+</body>
+</html>

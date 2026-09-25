@@ -475,6 +475,35 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
     def health():
         return {"status": "ok", "feature": "UI-02", "task": "P3-T07"}
 
+    # ------------------------------------------------------------------ #
+    # Web UI Static Files & Root  (UI-03 / P3-T08)
+    # index.html served at GET /
+    # style.css, app.js served at GET /style.css, GET /app.js
+    # ------------------------------------------------------------------ #
+    ui_dir = Path(__file__).parent / "ui"
+    if ui_dir.exists():
+        from fastapi.staticfiles import StaticFiles
+
+        # Serve the entire ui/ folder under /static  (for future assets)
+        app.mount("/static", StaticFiles(directory=str(ui_dir)), name="static")
+
+        # Expose the three key files at the root level so index.html can
+        # reference them simply as  src="app.js"  and  href="style.css"
+        @app.get("/style.css", include_in_schema=False)
+        def serve_css():
+            return FileResponse(str(ui_dir / "style.css"),
+                                media_type="text/css")
+
+        @app.get("/app.js", include_in_schema=False)
+        def serve_js():
+            return FileResponse(str(ui_dir / "app.js"),
+                                media_type="application/javascript")
+
+        @app.get("/", include_in_schema=False)
+        def root_ui():
+            return FileResponse(str(ui_dir / "index.html"),
+                                media_type="text/html")
+
     return app
 
 
