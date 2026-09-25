@@ -189,6 +189,11 @@ gates:                       # CHECK-01..06 tolerances
   # disagrees with by more than this. Measured: catches 8/12 consistently-wrong
   # accepted results, 0 false alarms on 64 correct ones (scripts/rift_crosscheck.py).
   crosscheck_flag_px: 2.0
+  # C-04 (audit 2026-09-26): register_bundle runs that cross-check (RIFT2) on every result whose
+  # primary matcher is another family (docs/crosscheck_protocol.md). A flag rejects (mode 12);
+  # a checker with no confident answer of its own is "inconclusive" and caps the tier here.
+  crosscheck: true
+  crosscheck_inconclusive_cap: MEDIUM
 
 paths:
   data_root: data

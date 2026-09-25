@@ -289,6 +289,60 @@ def crosscheck_gate(primary: np.ndarray, checker: Optional[np.ndarray], checker_
     return GateResult(name, True, f"independent method agrees to {gap:.2f} px", detail)
 
 
+CHECKER_FAMILY = {"rift2": "phase-congruency (classical)"}
+
+
+def independent_crosscheck(primary_matrix: np.ndarray, src_plane, ref_plane, primary_matcher: str,
+                           centre: Optional[tuple[float, float]] = None) -> tuple[Optional[GateResult], dict]:
+    """Audit C-04: run a checker from a DIFFERENT family and compare transforms (docs/crosscheck_protocol.md).
+
+    Returns (gate, record). `gate` is None when the checker has no confident answer of its own
+    (record["verdict"] "inconclusive" / "no checker"): the caller caps the tier, it does not pass
+    or fail the result. The checker's own verdict is robust.estimate + quality.assess without
+    control gates -- the rule scripts/rift_crosscheck.py measured (8/12 caught, 0/64 false alarms).
+    """
+    import time
+    from ..estimate import robust
+    from ..refine import uniformity
+    from . import quality
+
+    t0 = time.perf_counter()
+    arr = np.asarray(src_plane.array)
+    h, w = arr.shape[:2]
+    centre = centre or (w / 2.0, h / 2.0)
+    if str(primary_matcher).startswith("rift2"):
+        return None, {"applied": False, "verdict": "no checker",
+                      "reason": "the primary is RIFT2; no checker of another family is wired yet"}
+    checker = "rift2"
+    rec = {"applied": True, "checker": checker, "family": CHECKER_FAMILY[checker]}
+    try:
+        from ..matching import rift
+        ms = rift.match(src_plane, ref_plane)
+    except Exception as exc:                          # a crashed checker has no opinion
+        rec.update(verdict="inconclusive", reason=f"checker failed: {type(exc).__name__}: {exc}"[:200],
+                   seconds=round(time.perf_counter() - t0, 2))
+        return None, rec
+    n = int(len(ms.src_pts))
+    res = robust.estimate(ms.src_pts, ms.ref_pts, centre=centre) if n >= 4 else None
+    accepted, tier = False, "REJECTED"
+    if res is not None and res.model is not None and res.ok:
+        cov = uniformity.coverage_of(ms.src_pts[res.inlier_mask], (h, w), grid=8) if res.inlier_count else 0.0
+        tier = quality.assess(inlier_count=res.inlier_count, inlier_ratio=res.inlier_count / n,
+                              spatial_coverage=cov, model=res.model,
+                              scale_ok=res.scale_status not in ("inconsistent", "degenerate"),
+                              scale_status=res.scale_status).tier
+        accepted = tier != "REJECTED"
+    rec.update(checker_matches=n, checker_inliers=0 if res is None else int(res.inlier_count),
+               checker_tier=tier, seconds=round(time.perf_counter() - t0, 2))
+    matrix = None if not accepted else np.asarray(res.model.matrix, float)
+    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w))
+    if gate is None:
+        rec.update(verdict="inconclusive", reason="the checker found no confident transform of its own")
+    else:
+        rec.update(verdict="agree" if gate.passed else "flag", **gate.detail)
+    return gate, rec
+
+
 # ---------------------------------------------------------------------------
 # The real pipeline, wrapped so the gates can drive it
 # ---------------------------------------------------------------------------

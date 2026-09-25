@@ -309,6 +309,28 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
         },
     ),
+    "crosscheck-wiring": (
+        "src/chandralign/pipeline.py",
+        "tests/test_crosscheck.py",
+        {
+            "the cross-check verdict never reaches the gates (C-04)": (
+                "            gates.results.append(xgate)", "            pass"),
+            "an inconclusive cross-check lets HIGH through (C-04)": (
+                "        if quality.TIER_ORDER.index(q.tier) < quality.TIER_ORDER.index(cap):",
+                "        if False:"),
+        },
+    ),
+    "crosscheck-gate": (
+        "src/chandralign/evaluate/control_gates.py",
+        "tests/test_crosscheck.py",
+        {
+            "the cross-check always passes (C-04)": (
+                "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w))",
+                "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w), flag_px=1e9)"),
+            "a checker with no answer of its own still votes (C-04)": (
+                '    rec.update(checker_matches=n,', '    accepted = accepted or n == 0\n    rec.update(checker_matches=n,'),
+        },
+    ),
     "selection": (
         "src/chandralign/estimate/selection.py",
         "tests/test_pipeline.py",

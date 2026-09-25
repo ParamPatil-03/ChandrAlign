@@ -495,6 +495,15 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
     gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=float(src.gsd_m or 1.0),
                                                               stages=flags, **match_kwargs),
                                   s_img, r_img, src, ref)
+    # C-04: an independent method from a different family must agree (docs/crosscheck_protocol.md)
+    crosscheck = {"applied": False, "reason": "off (gates.crosscheck)"}
+    if not fr.ok:
+        crosscheck = {"applied": False, "reason": "no transform to check"}
+    elif bool(config.get("gates.crosscheck", True)):
+        xgate, crosscheck = control_gates.independent_crosscheck(fr.model.matrix, src, ref, matcher,
+                                                                 centre=(w / 2.0, h / 2.0))
+        if xgate is not None:
+            gates.results.append(xgate)
     scale_ok, scale_status = True, "not checked (no expected scale given)"
     if not fr.ok and fr.first is not None and fr.first.scale_status in ("inconsistent", "degenerate"):
         scale_ok, scale_status = False, fr.first.scale_status     # refused on scale: failure mode 13, not 12
@@ -506,6 +515,12 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                        spatial_coverage=fr.coverage if fr.ok else 0.0,
                        model=fr.model if fr.ok else None, scale_ok=scale_ok, scale_status=scale_status,
                        gates=gates.gates, require_gates=True)
+    if crosscheck.get("verdict") in ("inconclusive", "no checker"):
+        cap = str(config.get("gates.crosscheck_inconclusive_cap", "MEDIUM"))
+        if quality.TIER_ORDER.index(q.tier) < quality.TIER_ORDER.index(cap):
+            q.notes.append(f"independent cross-check {crosscheck['verdict']}: tier capped {q.tier} -> {cap} "
+                           f"(HIGH needs an independent method to agree)")
+            q.tier, q.limiting_signal = cap, "independent_crosscheck"
     n = int(len(ms.src_pts))
     accuracy = _accuracy_record(fr, ref, (w / 2.0, h / 2.0)) if fr.ok else {}
     result = RegistrationResult(
@@ -520,7 +535,7 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=notes + list(fr.notes) + list(q.notes),
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
-                    "accuracy": accuracy, **(provenance or {})})
+                    "accuracy": accuracy, "crosscheck": crosscheck, **(provenance or {})})
     control_gates.require_gates(result)
     cs = np.asarray(fr.control_src if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
     cr = np.asarray(fr.control_ref if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
