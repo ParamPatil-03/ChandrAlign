@@ -327,3 +327,49 @@ def test_api_runs_write_the_failure_log(client):
     record = _wait_for_done(client, run_id)
     assert record["status"] == "DONE", record.get("error")
     assert "failure-log.jsonl" in record["assets"]
+
+
+# ---------------------------------------------------------------------------
+# Audit 2026-09-26 C-01 / C-05: curated pairs are real products with evidence READ from the
+# committed reports; real requests run the validated product path.
+# ---------------------------------------------------------------------------
+def test_pair_evidence_is_read_from_the_committed_report(client):
+    import json as _json
+    pairs = {p["pair_id"]: p for p in client.get("/pairs").json()["pairs"]}
+    root = Path(__file__).resolve().parents[1]
+    ohrc = _json.loads((root / "reports/ohrc_nac_q8_auto_bridge.json").read_text(encoding="utf-8"))
+    for pid, nac in (("ohrc_nac", "M102014464RC"), ("ohrc_nac_75deg_sun", "M1417360906LC")):
+        assert pairs[pid]["evidence"]["accepted"] == ohrc["summary"][nac]["routed"]["success"]
+    tmc = _json.loads((root / "reports/tmc2_tc_registration_height_ref.json").read_text(encoding="utf-8"))
+    assert pairs["tmc2_selene_tc"]["evidence"]["windows"] == len(tmc["rows"])
+    for p in pairs.values():
+        assert "runnable" in p and "Published" not in p.get("note", "")
+
+
+def test_a_pair_with_no_product_workflow_is_refused_for_real_data(client):
+    r = client.post("/register", json={"pair_id": "iirs_wac"})
+    assert r.status_code == 422 and "no product workflow" in r.json()["detail"]
+
+
+def test_real_data_refuses_a_matcher_override(client):
+    r = client.post("/register", json={"src": "a.xml", "ref": "b.xml", "matcher": "sift"})
+    assert r.status_code == 422
+
+
+_TMC2_TC_HELD = next(iter(Path(__file__).resolve().parents[1].glob("data/raw/selene/tc/TCO_MAP_02_N03E021N00E024SC.lbl")), None)
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(_TMC2_TC_HELD is None, reason="real TMC-2 / TC not downloaded")
+def test_the_headline_pair_runs_on_the_validated_path_through_the_api(client):
+    r = client.post("/register", json={"pair_id": "tmc2_selene_tc", "windows": 1})
+    assert r.status_code == 202
+    record = _wait_for_done(client, r.json()["run_id"], timeout=900)
+    assert record["status"] == "DONE", record.get("error")
+    result = record["result"]
+    assert result["pairing"] == "TMC2 -> TC" and result["accepted"] == 1
+    w = result["window_results"][0]
+    assert w["confidence_tier"] in ("HIGH", "MEDIUM") and w["metrics"]["source"] == "measured"
+    assert "window_01/registered.tif" in record["assets"]
+    got = client.get(f"/runs/{record['run_id']}/assets/window_01/result.json")
+    assert got.status_code == 200 and got.json()["confidence_tier"] == w["confidence_tier"]

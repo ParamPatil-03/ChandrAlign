@@ -100,7 +100,9 @@ def write_product_run(out: Path, run, arguments: dict) -> dict:
                                        ref_model=w.ref_model, heights_at=w.bundle.heights_at, extra=extra)
         rows.append({"dir": wdir.name, "confidence_tier": rec["confidence_tier"],
                      "failure_modes": rec["failure_modes"], "status": w.window.get("status"),
-                     "consistent": w.window.get("consistent")})
+                     "consistent": w.window.get("consistent"), "metrics": rec.get("metrics"),
+                     "gates": rec.get("gates"), "geometry_used": rec.get("geometry_used"),
+                     "matcher": rec.get("matcher"), "exports": rec.get("exports")})
     summary = {**run.summary(), "run_arguments": arguments, "window_results": rows}
     (out / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True, default=str) + "\n",
                                       encoding="utf-8")

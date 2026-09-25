@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import asyncio
 import io
+import json
 import os
 import threading
 import time
@@ -112,10 +113,10 @@ class RunRecord:
             }
 
     def _list_assets(self) -> list[str]:
-        """Names of files present in the run directory."""
+        """Files of the run, as paths relative to the run folder (a product run has window_NN/)."""
         if not self.out_dir.exists():
             return []
-        return [f.name for f in self.out_dir.iterdir() if f.is_file()]
+        return sorted(f.relative_to(self.out_dir).as_posix() for f in self.out_dir.rglob("*") if f.is_file())
 
 
 _RUNS: dict[str, RunRecord] = {}
@@ -123,78 +124,142 @@ _RUNS_LOCK = threading.Lock()
 
 
 # ---------------------------------------------------------------------------
-# Curated benchmark pairs (offline-capable; relative paths from repo root)
 # ---------------------------------------------------------------------------
+# Curated pairs: real products with committed evidence (audit 2026-09-26 C-05, C-08)
+# ---------------------------------------------------------------------------
+# Every claim about a pair is READ from the committed report it names (`_evidence`), never typed
+# here: the previous list carried scale ratios, sun angles and "Published: solved" notes that
+# did not match the evidence. `note` states what the evidence does NOT show, from the audit.
 CURATED_PAIRS: list[dict] = [
     {
-        "pair_id":     "ohrc_nac_easy",
-        "label":       "OHRC ↔ LRO NAC (easy — similar sun angle, ~2:1 scale)",
-        "tier":        "easy",
-        "src_product": "ch2_ohr_ncp_20240330T0035085365",
-        "ref_product": "M102000149RC",
-        "src_camera":  "OHRC",
-        "ref_camera":  "NAC",
-        "scale_ratio": 1.8,
-        "sun_delta_deg": 3.0,
-        "note":        "Published: solved. Our credibility check.",
-        "mock_seed":   1,
-    },
-    {
-        "pair_id":     "ohrc_nac_stress",
-        "label":       "OHRC ↔ LRO NAC (stress — sun 75° apart)",
-        "tier":        "hard",
-        "src_product": "ch2_ohr_ncp_20240330T0035085365",
-        "ref_product": "M1417360906LC",
-        "src_camera":  "OHRC",
-        "ref_camera":  "NAC",
-        "scale_ratio": 1.8,
-        "sun_delta_deg": 75.0,
-        "note":        "Illumination stress test on our own products.",
-        "mock_seed":   2,
-    },
-    {
         "pair_id":     "tmc2_selene_tc",
-        "label":       "TMC-2 ↔ SELENE TC (headline — zero prior art, ~1.68:1 scale)",
-        "tier":        "medium",
+        "label":       "TMC-2 -> SELENE TC (headline: no published prior attempt)",
+        "src_camera":  "TMC2", "ref_camera": "TC",
         "src_product": "ch2_tmc_nca_20250207T1102039417",
         "ref_product": "TCO_MAP_02_N03E021N00E024SC",
-        "src_camera":  "TMC2",
-        "ref_camera":  "TC",
-        "scale_ratio": 1.679,
-        "sun_delta_deg": None,
-        "note":        "Our headline contribution: no published attempt prior to this work.",
+        "evidence":    ("tmc2_tc", "reports/tmc2_tc_registration_height_ref.json"),
+        "note":        "Independent accuracy (NCC probes): p50 0.46, p95 1.32 TMC-2 px -- sub-pixel at "
+                       "the median, not at p95 (docs/AUDIT_2026-09-26.md section 7).",
         "mock_seed":   3,
     },
     {
+        "pair_id":     "ohrc_nac",
+        "label":       "OHRC -> LRO NAC M102014464RC (credibility pairing)",
+        "src_camera":  "OHRC", "ref_camera": "NAC",
+        "src_product": "ch2_ohr_ncp_20240330T0035085365",
+        "ref_product": "M102014464RC",
+        "evidence":    ("ohrc_nac", "reports/ohrc_nac_q8_auto_bridge.json"),
+        "note":        "Tier is capped at LOW (NAC pixel size unverified). Accuracy on this coarser NAC: "
+                       "p50 2.1, p95 6.6 OHRC px -- located, not sub-pixel in OHRC pixels.",
+        "mock_seed":   1,
+    },
+    {
+        "pair_id":     "ohrc_nac_opposed_sun",
+        "label":       "OHRC -> LRO NAC M175124932LC (opposed sun, finest NAC)",
+        "src_camera":  "OHRC", "ref_camera": "NAC",
+        "src_product": "ch2_ohr_ncp_20240330T0035085365",
+        "ref_product": "M175124932LC",
+        "evidence":    ("ohrc_nac", "reports/ohrc_nac_q8_auto_bridge.json"),
+        "note":        "Located on all windows, but the matcher-free MI check flags all of them "
+                       "(2.4-2.9 OHRC px): unconfirmed, see audit I-07.",
+        "mock_seed":   5,
+    },
+    {
+        "pair_id":     "ohrc_nac_75deg_sun",
+        "label":       "OHRC -> LRO NAC M1417360906LC (75 deg incidence: a known limit)",
+        "src_camera":  "OHRC", "ref_camera": "NAC",
+        "src_product": "ch2_ohr_ncp_20240330T0035085365",
+        "ref_product": "M1417360906LC",
+        "evidence":    ("ohrc_nac", "reports/ohrc_nac_q8_auto_bridge.json"),
+        "note":        "Expect REJECTED: the documented illumination limit. Shown to demonstrate "
+                       "honest refusal, not success.",
+        "mock_seed":   2,
+    },
+    {
         "pair_id":     "iirs_wac",
-        "label":       "IIRS ↔ LRO WAC (medium — ~1.25:1 scale)",
-        "tier":        "medium",
+        "label":       "IIRS -> LRO WAC global mosaic (research script only)",
+        "src_camera":  "IIRS", "ref_camera": "WAC",
         "src_product": "ch2_iir_nci_20240523T1600301891",
-        "ref_product": "wac_mosaic",
-        "src_camera":  "IIRS",
-        "ref_camera":  "WAC",
-        "scale_ratio": 1.03,
-        "sun_delta_deg": None,
-        "note":        "Published: solved. Reproduced at 5/5 HIGH tier (docs/iirs_wac_results.md).",
+        "ref_product": "WAC_GLOBAL_MOSAIC_100M",
+        "evidence":    ("iirs_wac", "reports/iirs_wac_mosaic.json"),
+        "note":        "Registered by scripts/register_iirs_wac.py; not yet a product workflow, so "
+                       "only its committed evidence is shown here.",
         "mock_seed":   4,
     },
 ]
 
 _PAIR_INDEX: dict[str, dict] = {p["pair_id"]: p for p in CURATED_PAIRS}
+_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _label_for(product_id: str) -> Optional[Path]:
+    """The label of a held product, or None (data/raw is not committed)."""
+    base = _ROOT / "data" / "raw"
+    if not base.exists():
+        return None
+    for pattern in (f"{product_id}_d_img_d18.xml", f"{product_id}.XML", f"{product_id}.xml", f"{product_id}.lbl"):
+        hit = next((p for p in sorted(base.rglob(pattern)) if "_PYR" not in p.name), None)
+        if hit is not None:
+            return hit
+    return None
+
+
+def _evidence(pair: dict) -> dict:
+    """What the committed report says about this pair -- read, not restated."""
+    kind, rel = pair["evidence"]
+    path = _ROOT / rel
+    if not path.is_file():
+        return {"report": rel, "available": False}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if kind == "tmc2_tc":
+        tiers = [r.get("tier") for r in data.get("rows", [])]
+        done = [t for t in tiers if t]
+        return {"report": rel, "available": True, "windows": len(tiers),
+                "accepted": sum(t in ("HIGH", "MEDIUM", "LOW") for t in done),
+                "tiers": {t: done.count(t) for t in sorted(set(done))}}
+    if kind == "ohrc_nac":
+        s = (data.get("summary") or {}).get(pair["ref_product"], {}).get("routed", {})
+        return {"report": rel, "available": True, "windows": s.get("windows"),
+                "accepted": s.get("success"), "verdict": s.get("verdict")}
+    s = (data.get("summary") or {}).get(pair["ref_product"], {}).get("xoftr", {})
+    return {"report": rel, "available": True, "windows": s.get("windows"),
+            "accepted": s.get("success"), "verdict": s.get("verdict"), "matcher": "xoftr"}
+
+
+def pair_catalogue() -> list[dict]:
+    """GET /pairs: each curated pair with its committed evidence and whether it can run here."""
+    from .workflows.products import SUPPORTED
+    out = []
+    for pair in CURATED_PAIRS:
+        entry = {k: v for k, v in pair.items() if k != "evidence"}
+        entry["evidence"] = _evidence(pair)
+        src, ref = _label_for(pair["src_product"]), _label_for(pair["ref_product"])
+        if (pair["src_camera"], pair["ref_camera"]) not in SUPPORTED:
+            entry["runnable"], entry["why_not"] = False, "no product workflow for this pairing yet"
+        elif src is None or ref is None:
+            entry["runnable"], entry["why_not"] = False, "the real products are not in data/raw on this machine"
+        else:
+            entry["runnable"], entry["why_not"] = True, None
+        out.append(entry)
+    return out
 
 
 # ---------------------------------------------------------------------------
 # Worker function (runs in a thread so the event loop is not blocked)
 # ---------------------------------------------------------------------------
 def _run_registration(record: RunRecord) -> None:
-    """Execute registration for *record* in a background thread."""
+    """Execute registration for *record* in a background thread.
+
+    Real products (src/ref labels, or a curated pair_id) go through the SAME path as the CLI:
+    workflows.products.register_products and cli.write_product_run. mock=true runs a synthetic
+    pair, labelled synthetic everywhere (audit C-01, C-08).
+    """
     record.started_at = time.time()
     record.status = JobStatus.RUNNING
     record.log("Job started.")
 
     payload  = record.request_payload
     mock     = bool(payload.get("mock", False))
-    matcher  = payload.get("matcher", "sift")
     pair_id  = record.pair_id
     seed     = payload.get("seed")
     if seed is None:   # the pair's own seed unless the caller set one explicitly
@@ -202,80 +267,60 @@ def _run_registration(record: RunRecord) -> None:
     seed = int(seed)
 
     try:
-
-        record.log(f"Matcher={matcher}  mock={mock}  seed={seed}")
-
         out = record.out_dir
         out.mkdir(parents=True, exist_ok=True)
-
         if mock:
-            from . import synth
-            from .pipeline import register_bundle
-
-            record.log("Generating synthetic pair …")
-            src, ref, _ = synth.make_pair(
-                out_shape=(256, 256),
-                shift=(3.4, -2.2),
-                seed=seed,
-                n_craters=35,
-                shadows=False,
-            )
-            record.log("Running registration pipeline …")
-            bundle = register_bundle(src, ref, matcher=matcher)
+            record.result_summary = _run_mock(record, out, seed, payload.get("matcher") or "sift")
         else:
-            src_label = Path(payload["src"])
-            ref_label = Path(payload["ref"])
-
-            record.log(f"Parsing source label: {src_label.name}")
-            from .io.pds_label import parse_label
-            from .io.tiling import iter_tiles
-
-            src_meta = parse_label(src_label)
-            ref_meta = parse_label(ref_label)
-
-            record.log("Reading first tiles …")
-            tile_size = int(payload.get("tile_size", 1024))
-            src_plane = next(iter_tiles(src_meta, tile=tile_size, overlap=128))
-            ref_plane = next(iter_tiles(ref_meta, tile=tile_size, overlap=128))
-
-            record.log(f"Running registration (matcher={matcher}) …")
-            from .pipeline import register_bundle
-            bundle = register_bundle(src_plane, ref_plane, matcher=matcher)
-
-        # ---- exports: the same run-folder writer as the CLI (audit I-12, I-14) ----
-        from .product import run_export
-        src_model = ref_model = None
-        if mock:
-            # Synthetic pairs have no real files on disk, so we write a
-            # lightweight marker instead of calling provenance.build()
-            # (which requires file checksums). This is not a skip -- it is
-            # the honest record: the inputs are synthetic, not real data.
-            from .cli import _MockGroundModel
-            src_model = ref_model = _MockGroundModel(bundle.src.gsd_m)
-            manifest = {"synthetic": True, "seed": seed, "matcher": matcher,
-                        "note": "Mock run -- no real PDS data; provenance checksums not applicable."}
-        else:
-            from .product import provenance
-            manifest = provenance.build(bundle, config_data={}, ship_mode=True)
-        record.log("Writing the run folder ...")
-        result_record = run_export.write_run(out, bundle, manifest=manifest,
-                                             src_model=src_model, ref_model=ref_model, grid=8)
-        result = bundle.result
-        record.result_summary = result_record
+            record.result_summary = _run_real(record, out, payload)
         record.status = JobStatus.DONE
-        record.log(
-            f"Done — tier={result.confidence_tier}  "
-            f"inliers={result.metrics.inlier_count}  "
-            f"rmse={result.metrics.rmse_px}"
-        )
-
     except Exception as exc:  # noqa: BLE001
         record.error  = f"{type(exc).__name__}: {exc}"
         record.status = JobStatus.FAILED
         record.log(f"ERROR: {record.error}")
-
     finally:
         record.finished_at = time.time()
+
+
+def _run_mock(record: RunRecord, out: Path, seed: int, matcher: str) -> dict:
+    from . import synth
+    from .cli import _MockGroundModel
+    from .pipeline import register_bundle
+    from .product import run_export
+    record.log(f"SYNTHETIC pair (seed={seed}), matcher={matcher} ...")
+    src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=seed, n_craters=35, shadows=False)
+    bundle = register_bundle(src, ref, matcher=matcher)
+    model = _MockGroundModel(bundle.src.gsd_m)
+    # Synthetic pairs have no files on disk, so provenance is an honest marker, not checksums.
+    manifest = {"synthetic": True, "seed": seed, "matcher": matcher,
+                "note": "Mock run -- no real PDS data; provenance checksums not applicable."}
+    result = run_export.write_run(out, bundle, manifest=manifest, src_model=model, ref_model=model, grid=8)
+    record.log(f"Done (synthetic) -- tier={result['confidence_tier']}  "
+               f"inliers={bundle.result.metrics.inlier_count}  rmse={bundle.result.metrics.rmse_px}")
+    return result
+
+
+def _run_real(record: RunRecord, out: Path, payload: dict) -> dict:
+    from .cli import write_product_run
+    from .workflows.products import register_products
+    if record.pair_id:
+        pair = _PAIR_INDEX[record.pair_id]
+        src, ref = _label_for(pair["src_product"]), _label_for(pair["ref_product"])
+        if src is None or ref is None:
+            raise FileNotFoundError(f"{record.pair_id}: the real products are not in data/raw on this machine")
+    else:
+        src, ref = Path(payload["src"]), Path(payload["ref"])
+        for label in (src, ref):
+            if not label.is_file():
+                raise FileNotFoundError(f"label not found: {label}")
+    windows = int(payload.get("windows") or 1)
+    device = "cpu" if payload.get("cpu") else None
+    run = register_products(src, ref, windows=windows, device=device, progress=record.log)
+    arguments = {"command": "api POST /register", "pair_id": record.pair_id, "src": str(src), "ref": str(ref),
+                 "windows": windows, "device": device or "auto"}
+    summary = write_product_run(out, run, arguments)
+    record.log(f"Done -- {summary['accepted']}/{summary['windows']} windows accepted: {summary['tiers']}")
+    return summary
 
 
 # ---------------------------------------------------------------------------
@@ -283,13 +328,13 @@ def _run_registration(record: RunRecord) -> None:
 # ---------------------------------------------------------------------------
 if _FASTAPI_AVAILABLE:
     class RegisterRequest(BaseModel):
-        pair_id:   Optional[str]  = Field(None,    description="ID from GET /pairs (uses mock data)")
+        pair_id:   Optional[str]  = Field(None,    description="ID from GET /pairs: its real products")
         src:       Optional[str]  = Field(None,    description="Path to source PDS label (real data)")
         ref:       Optional[str]  = Field(None,    description="Path to reference PDS label (real data)")
-        matcher:   str            = Field("sift",  description="sift | rift2 | learned")
+        matcher:   Optional[str]  = Field(None,    description="mock only (default sift); real products use routing")
+        windows:   int            = Field(1,       ge=1, le=10, description="windows across the overlap (real data)")
         mock:      bool           = Field(False,   description="Run a SYNTHETIC pair instead of real labels")
         seed:      Optional[int]  = Field(None,    description="RNG seed for a synthetic pair (default: the pair's own)")
-        tile_size: int            = Field(1024,    description="Tile edge length in pixels")
         cpu:       bool           = Field(False,   description="Force CPU (no GPU)")
 
 
@@ -354,6 +399,13 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
                                 detail="give src and ref labels, a pair_id, or mock=true for a synthetic pair")
         if req.pair_id is not None and req.pair_id not in _PAIR_INDEX:
             raise HTTPException(status_code=422, detail=f"unknown pair_id {req.pair_id!r}; see GET /pairs")
+        if req.matcher and not req.mock:
+            raise HTTPException(status_code=422, detail="matcher applies to mock runs only: real products "
+                                                        "use the matcher routing chose, as the evidence did")
+        if req.pair_id is not None and not req.mock:
+            entry = next(p for p in pair_catalogue() if p["pair_id"] == req.pair_id)
+            if not entry["runnable"]:
+                raise HTTPException(status_code=422, detail=f"{req.pair_id} cannot run here: {entry['why_not']}")
         run_id  = str(uuid.uuid4())
         out_dir = _runs_root / run_id
 
@@ -388,7 +440,7 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
     # ------------------------------------------------------------------ #
     # GET /runs/{run_id}/assets/{name}
     # ------------------------------------------------------------------ #
-    @app.get("/runs/{run_id}/assets/{name}",
+    @app.get("/runs/{run_id}/assets/{name:path}",
              summary="Download a file produced by a run")
     def get_asset(run_id: str, name: str):
         """Serve a named asset (PNG, GeoTIFF, CSV, JSON …) from the run directory."""
@@ -413,11 +465,11 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
     # ------------------------------------------------------------------ #
     @app.get("/pairs", summary="List curated benchmark pairs")
     def get_pairs():
-        """Return the list of pre-selected benchmark pairs that can be
-        submitted to ``POST /register`` without supplying real data
-        (``mock=true`` uses synthetic imagery with the pair's recommended seed).
+        """The curated pairs: real products, their committed evidence (read from the report), and
+        whether they can run on this machine. POST /register {pair_id} runs the real products;
+        add mock=true for a synthetic stand-in with the pair's seed (labelled synthetic).
         """
-        return {"pairs": CURATED_PAIRS}
+        return {"pairs": pair_catalogue()}
 
     # ------------------------------------------------------------------ #
     # GET /runs  (convenience — list all jobs in this server session)
