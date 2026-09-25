@@ -33,6 +33,10 @@ def test_mock_register_runs_end_to_end_and_writes_run_folder(tmp_path):
     assert failure_record["schema"] == "chandralign.failure-log.v1"
     assert failure_record["confidence_tier"] == result["confidence_tier"]
     assert json.loads((out / "provenance.json").read_text(encoding="utf-8"))["ship_mode"] is True
+    assert main(["report", "--run", str(out)]) == 0
+    report_html = (out / "report.html").read_text(encoding="utf-8")
+    assert "ChandraAlign evaluation report" in report_html
+    assert "data:image/png;base64," in report_html
 
 
 def test_register_refuses_to_overwrite_a_nonempty_run(tmp_path):

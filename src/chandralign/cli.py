@@ -38,7 +38,8 @@ def build_parser() -> argparse.ArgumentParser:
     ablate.set_defaults(handler=_pending)
     report = sub.add_parser("report", help="render the HTML report for a run")
     report.add_argument("--run", type=Path, required=True, help="run directory")
-    report.set_defaults(handler=_pending)
+    report.add_argument("--out", type=Path, help="output HTML (default: RUN/report.html)")
+    report.set_defaults(handler=_report)
     demo = sub.add_parser("demo", help="run the offline demonstration")
     demo.add_argument("--out", type=Path, default=Path("runs/demo"), help="demo output directory")
     demo.set_defaults(handler=_pending)
@@ -107,6 +108,13 @@ def _pending(args) -> int:
     raise SystemExit(f"'{args.command}' is declared but its planned feature is not implemented yet")
 
 
+def _report(args) -> int:
+    from .product import report
+    path = report.render_run(args.run, args.out)
+    print(path)
+    return 0
+
+
 def _load_config(path: Path) -> dict:
     import yaml
     if not path.is_file():
@@ -144,6 +152,9 @@ def _result_record(bundle) -> dict:
         "gates": result.gates,
         "failure_modes": result.failure_modes,
         "notes": result.notes,
+        "matcher": result.matches.method,
+        "regime": result.matches.regime,
+        "match_stage": result.matches.stage,
         "stages": _jsonable(bundle.stages),
         "geometry_used": "parallax" if bundle.parallax is not None else
                          "tps" if bundle.tps is not None else result.model.kind if result.model else None,
