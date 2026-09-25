@@ -311,6 +311,16 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
         },
     ),
+    "licence": (
+        "src/chandralign/matching/licence.py",
+        "tests/test_licence_gate.py",
+        {
+            "the licence gate is a denylist again (I-06)": (
+                "    if name not in [n.lower() for n in allowlist()]:", "    if False:"),
+            "a known non-commercial model loses its named reason (I-06)": (
+                '    "master": "NAVER MASt3R weights: CC BY-NC-SA 4.0",\n', ""),
+        },
+    ),
     "crosscheck-wiring": (
         "src/chandralign/pipeline.py",
         "tests/test_crosscheck.py",

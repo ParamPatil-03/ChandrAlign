@@ -29,7 +29,38 @@ RESTRICTED_COMPONENTS: dict[str, str] = {
     "superpoint": "Magic Leap licence: non-commercial research only",
     "superglue": "Magic Leap licence: non-commercial research only",
     "r2d2": "CC BY-NC-SA 3.0: non-commercial AND share-alike",
+    # Audit 2026-09-26 (I-06): these passed the old denylist.
+    "master": "NAVER MASt3R weights: CC BY-NC-SA 4.0",
+    "duster": "NAVER DUSt3R weights: CC BY-NC-SA 4.0",
+    "gim-lightglue": "loads Magic Leap superpoint_v1.pth (non-commercial)",
+    "omniglue": "uses SuperPoint sp_v6 (Magic Leap, non-commercial)",
+    "romav2": "DINOv3 backbone under Meta's DINOv3 licence (not OSI); benchmark only",
 }
+
+# Our own methods, not vismatch models: nothing to license beyond this repository.
+OWN_METHODS = ("sift", "akaze", "orb", "brisk", "rift2", "rift2-mim", "mind")
+
+
+def allowlist() -> list[str]:
+    """Audit I-06: the ONLY names ship mode accepts -- models with a passing row in
+    reports/licence_audit.json, configs/regimes.yaml `shippable_matchers`, and our own methods.
+
+    The component denylist above could only refuse what someone had thought to list: on
+    2026-09-26 it passed master, duster (CC BY-NC-SA), gim-lightglue and omniglue (SuperPoint
+    weights). An allowlist refuses by default; adding a model needs its licence audited first.
+    """
+    return sorted(set(_audited_pass()) | {str(n) for n in (config.load("regimes").get("shippable_matchers", []) or [])}
+                  | set(OWN_METHODS))
+
+
+def _audited_pass() -> list[str]:
+    """Models with a `verdict: pass` row in reports/licence_audit.json (artefact-at-a-version audit)."""
+    import json
+    try:
+        d = json.loads((config.ROOT / "reports" / "licence_audit.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return [c["model"] for c in d.get("candidates", []) if isinstance(c, dict) and c.get("verdict") == "pass"]
 
 # WHY eloftr AND matchanything ARE **NOT** ON THAT LIST -- read before adding them.
 #
@@ -71,11 +102,16 @@ class LicenceRestrictedError(RuntimeError):
 
 
 def restriction_reason(model_name: str) -> str | None:
-    """Return why a model is restricted, or None if it is clean."""
+    """Return why a model may not ship, or None if it is audited and clean.
+
+    Restricted components first (a clear reason), then the allowlist (refuse by default)."""
     name = model_name.lower().strip()
     for component, reason in RESTRICTED_COMPONENTS.items():
         if component in name:
             return f"{model_name!r} contains {component!r}: {reason}"
+    if name not in [n.lower() for n in allowlist()]:
+        return (f"{model_name!r} is not on the audited allowlist (configs/regimes.yaml shippable_matchers; "
+                f"or a verdict 'pass' row in reports/licence_audit.json -- audit its licence first)")
     return None
 
 

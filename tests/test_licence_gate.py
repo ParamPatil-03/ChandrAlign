@@ -110,3 +110,28 @@ def test_the_real_install_passes(check, monkeypatch):
     script itself; this keeps a local run honest too.)"""
     monkeypatch.setattr(sys, "argv", ["check_licences.py"])
     assert check.main() == 0
+
+
+# ---------------------------------------------------------------------------
+# Audit I-06: an ALLOWLIST, not a denylist
+# ---------------------------------------------------------------------------
+def test_every_vismatch_model_off_the_allowlist_is_refused_in_ship_mode():
+    import pytest as _pt
+    vismatch = _pt.importorskip("vismatch")
+    from chandralign.matching import licence
+    names = vismatch.available_models
+    names = names() if callable(names) else names
+    allowed = {n.lower() for n in licence.allowlist()}
+    for n in names:
+        if n.lower() in allowed:
+            licence.assert_allowed(n, ship_mode=True)            # audited: must pass
+        else:
+            with _pt.raises(licence.LicenceRestrictedError):
+                licence.assert_allowed(n, ship_mode=True)
+
+
+def test_the_four_models_the_old_denylist_passed_are_refused_with_their_reason():
+    from chandralign.matching import licence
+    for n, word in (("master", "NC-SA"), ("duster", "NC-SA"), ("gim-lightglue", "superpoint"), ("omniglue", "SuperPoint")):
+        assert word.lower() in (licence.restriction_reason(n) or "").lower(), n
+    assert licence.restriction_reason("eloftr") is None and licence.restriction_reason("rift2") is None
