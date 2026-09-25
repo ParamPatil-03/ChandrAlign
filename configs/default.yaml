@@ -123,6 +123,7 @@ subpixel:                    # PREC-01..05
   score_interp: lanczos      # bilinear scoring biased the gate: 14% of moves refused vs 8%
   score_border_px: 3
   lsm_gauss: 1               # ECC gaussFiltSize (3: worst dev p95 0.245; 5: 0.37)
+  representation: intensity  # G-05: intensity | auto (MIND-channel fallback where intensity refused; not yet adopted)
   phase_upsample: 100
   ecc_iterations: 50
   ecc_eps: 1.0e-6

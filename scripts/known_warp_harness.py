@@ -250,9 +250,21 @@ def main():
     ap.add_argument("--only", nargs="*", default=None, help="restrict to these scene names")
     ap.add_argument("--geometry", action="store_true", help="also score the delivered geometry (C-03/I-01)")
     ap.add_argument("--no-legacy", action="store_true")
+    ap.add_argument("--mind-arm", action="store_true", help="add the G-05 MIND-fallback arm")
     args = ap.parse_args()
 
     arms = {"library": lambda s, r, cs, cr, m: subpixel.refine_points(s, r, cs, cr, model=m)}
+    if args.mind_arm:                       # G-05: the same call with the MIND-channel fallback on
+        def _mind(s, r, cs, cr, m):
+            from chandralign import config as _c
+            sub = _c.load("default")["subpixel"]
+            old = sub.get("representation")
+            sub["representation"] = "auto"
+            try:
+                return subpixel.refine_points(s, r, cs, cr, model=m)
+            finally:
+                sub["representation"] = old
+        arms["library_mind"] = _mind
     if not args.no_legacy:
         arms = {"legacy": lambda s, r, cs, cr, m: legacy_refine(s, r, cs, cr), **arms}
     spec = SETS[args.set]

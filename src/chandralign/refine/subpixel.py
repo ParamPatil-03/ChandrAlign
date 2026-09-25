@@ -332,6 +332,28 @@ def _ncc(a: np.ndarray, b: np.ndarray, border: int) -> float:
     return float((a * b).sum() / den) if den > 1e-12 else -1.0
 
 
+def _mind_shift(sp: np.ndarray, r32: np.ndarray, r, size: int, half: int, m: int = 3):
+    """Shift of the (warped) source patch in the reference, on channel-averaged MIND NCC.
+
+    MIND keeps only the RELATIVE pattern of neighbour similarity, so it survives a lighting change that
+    inverts intensity. Returns (d, score at the matcher's position, score at the peak) or (None, ., .)."""
+    from ..preprocess.phase_congruency import mind
+    region = cv2.getRectSubPix(r32, (size + 2 * m, size + 2 * m), (float(r[0]), float(r[1])))
+    nz = lambda a: (a - a.min()) / max(float(a.max() - a.min()), 1e-9)          # noqa: E731
+    ms, mr = mind(nz(sp)).astype(np.float32), mind(nz(region)).astype(np.float32)
+    if float(ms.std()) < 1e-6 or float(mr.std()) < 1e-6:
+        return None, -1.0, -1.0
+    cmap = np.mean([cv2.matchTemplate(mr[..., c], ms[..., c], cv2.TM_CCOEFF_NORMED)
+                    for c in range(ms.shape[-1])], axis=0)                     # (2m+1, 2m+1)
+    v, u = np.unravel_index(int(np.argmax(cmap)), cmap.shape)
+    if u in (0, cmap.shape[1] - 1) or v in (0, cmap.shape[0] - 1):
+        return None, float(cmap[m, m]), float(cmap[v, u])
+    fx = _peak_offset(cmap[v, u - 1], cmap[v, u], cmap[v, u + 1], "gaussian")
+    fy = _peak_offset(cmap[v - 1, u], cmap[v, u], cmap[v + 1, u], "gaussian")
+    # the template's centre sits at region (u + half, v + half), i.e. reference r + (u - m, v - m)
+    return np.array([u + fx - m, v + fy - m], float), float(cmap[m, m]), float(cmap[v, u])
+
+
 def _antialias(src: np.ndarray, matrix: Optional[np.ndarray], at: tuple[float, float]) -> np.ndarray:
     """Low-pass the source before it is resampled more coarsely than its own pixels.
 
@@ -388,6 +410,7 @@ def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
         max_move = float(config.get("subpixel.max_move_px", 0.75)) if matrix is not None else 1.5
     border = int(config.get("subpixel.score_border_px", 3))
     need_gain = bool(config.get("subpixel.require_score_gain", True))
+    use_mind = str(config.get("subpixel.representation", "intensity")) == "auto"
     src_pts = np.asarray(src_pts, float).reshape(-1, 2)
     out = np.asarray(ref_pts, float).reshape(-1, 2).copy()
     moved = np.zeros(len(out), bool)
@@ -435,6 +458,11 @@ def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
             score = _ncc(sp, grab(q), border)
             if (score > base or not need_gain) and (best is None or score > best[1]):
                 best = (q, score, m)
+        if best is None and use_mind:
+            # G-05 (docs/illumination_refinement_protocol.md): intensity refused every move; try MIND channels
+            d, m_base, m_peak = _mind_shift(sp, r32, r, size, half)
+            if d is not None and np.hypot(*d) <= max_move and (m_peak > m_base or not need_gain):
+                best = (r + d, m_peak, "mind")
         if best is not None:
             out[i], after_s[i], used[i] = best[0], best[1], best[2]
             moved[i] = True

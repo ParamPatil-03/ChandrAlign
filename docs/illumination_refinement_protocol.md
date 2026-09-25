@@ -31,3 +31,20 @@ Evidence will be thin: 1-2 inverted cases per set. A pass is reported as "consis
 Rendering the reference under OHRC's sun needs a DTM at OHRC-comparable resolution (LROC NAC DTMs near the
 scenes). None is held (`data/raw/dem`: LOLA and SLDEM2015 at ~60 m; SELENE TC DTM at ~10 m, not over the OHRC
 scenes). It is blocked on data, not attempted.
+
+## Result (2026-09-26): bar 2 met, bar 1 NOT met. Not adopted; ships switchable, default off.
+
+`scripts/known_warp_harness.py --set <set> --no-legacy --mind-arm` -> `reports/known_warp_<set>_g05.json`.
+
+| set | scored cases where MIND fallback p95 is > 10% worse | inverted proxy (registered cases): unrefined / intensity / MIND fallback, p50 / p95 ref px |
+|---|---|---|
+| dev | 0 / 15 | TMC-2 r110k: 0.791 / 2.508, 0.791 / 2.508 (0 moved), **0.341** / 2.508 (10 moved) |
+| held-out | 0 / 15 | TMC-2 r90k: 0.917 / 2.623, 0.917 / 2.623 (0 moved), **0.692** / 2.623 (6 moved) |
+| fresh | 0 / 15 | no inverted case registered |
+
+- The fallback never costs accuracy where intensity works (by construction, and measured).
+- On the opposite-sun proxy it moves only 6-10 points: those where MIND finds a clear peak within the
+  1.5 px cap. The median improves, but the p95 (points 2+ px off) is out of reach of a local refinement, so
+  bar 1 (beat unrefined at p50 AND p95) is not met. The remaining error there belongs to the MATCHER, not the
+  refiner: G-03 (RoMa) is the lever for it.
+- `subpixel.representation` stays `intensity`; `auto` is implemented and tested for anyone who wants it.
