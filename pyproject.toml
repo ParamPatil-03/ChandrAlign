@@ -26,6 +26,9 @@ dependencies = [
     "phasepack",                # Part 1: phase congruency (PREP-02), imported at call time
 ]
 
+[project.scripts]
+chandralign = "chandralign.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1"]
 product = ["rasterio>=1.3"]       # Part 3: georeferenced GeoTIFF output
