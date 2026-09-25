@@ -341,3 +341,66 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         stages["tps"] = {"applied": False, "reason": "off (pipeline.tps)" if not flags["tps"] else "too few points"}
     return FineResult(True, model, first, ms, cs, cr, coverage, _rmse(model, cs, cr),
                       n_matches, stages, [], tps, parallax_model)
+
+
+def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
+             ground_model=None, dem=None, flags: Optional[dict[str, bool]] = None,
+             match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None):
+    """One registration end to end -> RegistrationResult, THE Part 2 -> Part 3 handoff.
+
+    Match, fine stage, all five control gates, quality tier. A bad or impossible pair is a RESULT,
+    not an error: it comes back REJECTED with its failure_modes filled in (CHECK-07), and nothing
+    raises -- a matcher that crashes is recorded in `notes` and treated as finding no matches.
+    `src` / `ref` are ImagePlanes; `expected_scale` (estimate.scale.ExpectedScale) turns on the
+    scale check (CHECK-05).
+    """
+    from .contracts import Metrics, RegistrationResult
+    from .estimate import scale as scale_mod
+    from .evaluate import control_gates, quality
+
+    match_kwargs = dict(match_kwargs or {})
+    s_img, r_img = np.asarray(src.array, np.float32), np.asarray(ref.array, np.float32)
+    notes: list[str] = []
+    try:
+        if matcher in ("sift", "akaze", "orb", "brisk"):
+            from .matching import classical
+            ms = classical.match(src, ref, detector=matcher)
+        elif matcher == "rift2":
+            from .matching import rift
+            ms = rift.match(src, ref)
+        else:
+            from .matching import adapter
+            ms = adapter.match(src, ref, model_name=matcher, device=device, **match_kwargs)
+    except Exception as exc:                                  # a crash is a finding, never a success
+        notes.append(f"matcher {matcher!r} failed: {type(exc).__name__}: {exc}"[:300])
+        ms = MatchSet(src_pts=np.zeros((0, 2)), ref_pts=np.zeros((0, 2)), confidence=np.zeros(0, np.float32),
+                      method=matcher, regime="same_modal_normal", stage="direct")
+    h, w = s_img.shape[:2]
+    fr = fine_stage(ms, s_img, r_img, centre=(w / 2.0, h / 2.0), expected_scale=expected_scale,
+                    ground_model=ground_model, dem=dem, flags=flags)
+    gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=float(src.gsd_m or 1.0),
+                                                              stages=flags, **match_kwargs),
+                                  s_img, r_img, src, ref)
+    scale_ok, scale_status = True, "not checked (no expected scale given)"
+    if fr.ok and isinstance(expected_scale, scale_mod.ExpectedScale):
+        v = scale_mod.check(np.asarray(fr.model.matrix, float), expected_scale, centre=(w / 2.0, h / 2.0))
+        scale_ok, scale_status = v.ok, v.status
+    q = quality.assess(inlier_count=fr.inlier_count if fr.ok else 0,
+                       inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
+                       spatial_coverage=fr.coverage if fr.ok else 0.0,
+                       model=fr.model if fr.ok else None, scale_ok=scale_ok, scale_status=scale_status,
+                       gates=gates.gates, require_gates=True)
+    n = int(len(ms.src_pts))
+    result = RegistrationResult(
+        matches=fr.matches if fr.matches is not None else ms,
+        inlier_mask=fr.first.inlier_mask if fr.first is not None else np.zeros(n, bool),
+        model=fr.model if fr.ok else None,
+        metrics=Metrics(rmse_px=fr.rmse_px if fr.ok else None, inlier_count=fr.inlier_count if fr.ok else 0,
+                        inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
+                        spatial_coverage=fr.coverage if fr.ok else 0.0, source="measured"),
+        confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
+        notes=notes + list(fr.notes) + list(q.notes),
+        provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
+                    **(provenance or {})})
+    control_gates.require_gates(result)
+    return result
