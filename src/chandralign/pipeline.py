@@ -148,7 +148,7 @@ def _dense_refine(model: TransformModel, src_img: np.ndarray, ref_img: np.ndarra
             {"applied": True, "moves_px": moves, "overlap_px": [int(x1 - x0), int(y1 - y0)]})
 
 
-def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5):
+def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5, height_at: str = "ref"):
     """Inliers under ref = A.src + h.p, h = DEM height at the source point (ALIGN-08).
 
     Starts from the robust estimate's inliers, fits A (affine) and p (px per metre) by least
@@ -156,7 +156,8 @@ def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5
     until the set is stable. Matches with no DEM height keep their original status.
     """
     s, r = np.asarray(ms.src_pts, float), np.asarray(ms.ref_pts, float)
-    lat, lon = ground_model.pixel_to_latlon(s[:, 1], s[:, 0])
+    at = r if height_at == "ref" else s         # both are in the one coarse-aligned ground frame
+    lat, lon = ground_model.pixel_to_latlon(at[:, 1], at[:, 0])
     h = np.asarray(dem.sample(lat, lon), float)
     known = np.isfinite(h)
     base = inl0 & known
@@ -175,11 +176,11 @@ def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5
     B = np.linalg.lstsq(X[inl & known], r[inl & known], rcond=None)[0]
     res = np.hypot(*(X @ B - r).T)[inl & known]
     return inl, {"applied": True, "p_px_per_m": [round(float(B[3, 0]), 5), round(float(B[3, 1]), 5)],
-                 "h0_m": round(h0, 1), "rounds": n_rounds,
+                 "h0_m": round(h0, 1), "rounds": n_rounds, "height_at": height_at,
                  "inliers_before": int(inl0.sum()), "inliers_after": int(inl.sum()),
                  "rms_px": round(float(np.sqrt(np.mean(res ** 2))), 4),
                  "affine": [[round(float(v), 6) for v in row] for row in B[:3].T]},         models.ParallaxModel(matrix=np.vstack([B[:3].T, [0.0, 0.0, 1.0]]),
-                             p_px_per_m=(float(B[3, 0]), float(B[3, 1])), h0_m=h0)
+                             p_px_per_m=(float(B[3, 0]), float(B[3, 1])), h0_m=h0, height_at=height_at)
 
 
 def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
@@ -187,7 +188,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                expected_scale=None,
                ground_model=None, dem=None,
                flags: Optional[dict[str, bool]] = None,
-               rematch=None, parallax_dem=None) -> FineResult:
+               rematch=None, parallax_dem=None, parallax_height_at: Optional[str] = None) -> FineResult:
     """Run the fine stage on one matched pair.
 
     `src_img`/`ref_img` are the arrays the matches were found on (the refinement
@@ -245,7 +246,8 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         if p_dem is None or ground_model is None:
             stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
         else:
-            inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ground_model)
+            h_at = parallax_height_at or str(config.get("parallax.height_at", "ref"))
+            inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ground_model, height_at=h_at)
     else:
         stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]

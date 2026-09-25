@@ -89,6 +89,12 @@ def main() -> int:
             h = map_coordinates(z["dem_m"], [pts[:, 1] / st, pts[:, 0] / st], order=1, mode="nearest")
             B, p = np.asarray(par["affine"], float), np.asarray(par["p_px_per_m"], float)
             prl = np.c_[pts, np.ones(len(pts))] @ B.T + (h - float(par["h0_m"]))[:, None] * p - pts
+            if par.get("height_at") == "ref":        # h at the reference point: iterate r = A.s + (h(r) - h0).p
+                r = prl + pts
+                for _ in range(6):
+                    hr = map_coordinates(z["dem_m"], [r[:, 1] / st, r[:, 0] / st], order=1, mode="nearest")
+                    r = np.c_[pts, np.ones(len(pts))] @ B.T + (hr - float(par["h0_m"]))[:, None] * p
+                prl = r - pts
             e_aff, e_prl = np.hypot(*(meas - aff).T), np.hypot(*(meas - prl).T)
             rec.update(probes=int(len(pr)), median_err_affine_px=round(float(np.median(e_aff)), 3),
                        median_err_parallax_px=round(float(np.median(e_prl)), 3),

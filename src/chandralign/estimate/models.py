@@ -49,8 +49,10 @@ class ParallaxModel:
     p_px_per_m: tuple[float, float]
     h0_m: float
     dem: str = ""
+    height_at: str = "ref"              # where h was sampled in the fit: "ref" (ground) point or "src" point
 
     def apply(self, pts: np.ndarray, heights) -> np.ndarray:
+        """The model with GIVEN heights (at the source points for "src", at the reference points for "ref")."""
         if heights is None:
             raise ValueError("a parallax model needs the DEM height (m) of each point")
         pts = np.asarray(pts, np.float64).reshape(-1, 2)
@@ -58,10 +60,22 @@ class ParallaxModel:
         base = np.hstack([pts, np.ones((len(pts), 1))]) @ np.asarray(self.matrix, float)[:2].T
         return base + (h - float(self.h0_m))[:, None] * np.asarray(self.p_px_per_m, float)
 
+    def predict(self, pts: np.ndarray, heights_at, iters: int = 6) -> np.ndarray:
+        """Reference positions of source points, heights looked up by `heights_at(frame px)` in the
+        model's own convention ("ref": fixed point r = A.s + (h(r) - h0).p, from r = A.s)."""
+        pts = np.asarray(pts, np.float64).reshape(-1, 2)
+        if self.height_at != "ref":
+            return self.apply(pts, heights_at(pts))
+        r = self.apply(pts, np.full(len(pts), float(self.h0_m)))
+        for _ in range(iters):
+            h = np.asarray(heights_at(r), np.float64)
+            r = self.apply(pts, np.where(np.isfinite(h), h, self.h0_m))
+        return r
+
     def as_dict(self) -> dict:
         return {"kind": "affine_parallax", "matrix": [[round(float(v), 8) for v in row] for row in self.matrix],
                 "p_px_per_m": [round(float(v), 7) for v in self.p_px_per_m], "h0_m": round(float(self.h0_m), 2),
-                "dem": self.dem}
+                "dem": self.dem, "height_at": self.height_at}
 
 
 def parallax_source_map(model: ParallaxModel, heights_at, shape: tuple[int, int],
@@ -73,7 +87,8 @@ def parallax_source_map(model: ParallaxModel, heights_at, shape: tuple[int, int]
     the point, so each reference pixel r is inverted by fixed-point iteration
     s <- A^-1 (r - (h(s) - h0) p); it converges while |grad h . p| < 1 (slopes under ~60 deg for
     TMC-2's 26 deg view). Solved on a grid every `step` px, bilinear in between.
-    `heights_at(pts)` -> heights (m) of (N, 2) source points; NaN is treated as h0.
+    `heights_at(pts)` -> heights (m) at (N, 2) frame positions; NaN is treated as h0. A model fitted
+    with height_at="ref" needs no iteration: s = A^-1 (r - (h(r) - h0) p) directly (the RPC form).
     """
     from scipy.ndimage import map_coordinates
     H, W = shape
@@ -82,10 +97,14 @@ def parallax_source_map(model: ParallaxModel, heights_at, shape: tuple[int, int]
     Ainv = np.linalg.inv(np.asarray(model.matrix, float))
     p, h0 = np.asarray(model.p_px_per_m, float), float(model.h0_m)
     back = lambda q: (np.c_[q, np.ones(len(q))] @ Ainv.T)[:, :2]  # noqa: E731
-    s = back(r)
-    for _ in range(iters):
-        h = np.asarray(heights_at(s), np.float64)
+    if model.height_at == "ref":
+        h = np.asarray(heights_at(r), np.float64)
         s = back(r - (np.where(np.isfinite(h), h, h0) - h0)[:, None] * p)
+    else:
+        s = back(r)
+        for _ in range(iters):
+            h = np.asarray(heights_at(s), np.float64)
+            s = back(r - (np.where(np.isfinite(h), h, h0) - h0)[:, None] * p)
     gy, gx = np.mgrid[0:H, 0:W].astype(np.float64)
     at = [np.minimum(gy, H - 1).ravel() / step, np.minimum(gx, W - 1).ravel() / step]
     mx = map_coordinates(s[:, 0].reshape(ys.shape), at, order=1).reshape(H, W)

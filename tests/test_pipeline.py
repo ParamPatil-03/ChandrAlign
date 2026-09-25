@@ -288,6 +288,8 @@ def test_parallax_uses_its_own_dem_when_given_one():
 
 
 def _hill_case(seed=5):
+    """A world whose heights are taken at the SOURCE point (the stage's earlier convention); the
+    ground-point world is test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly."""
     rng = np.random.default_rng(seed)
     lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
     rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
@@ -305,11 +307,12 @@ def test_the_parallax_model_is_delivered_and_predicts_the_hill():
     true positions; the affine alone misses them by the parallax."""
     dem, p, src, h, ref = _hill_case()
     fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
-                    ground_model=_Identity(), dem=dem)
+                    ground_model=_Identity(), dem=dem, parallax_height_at="src")   # _hill_case is a src-height world
     m = fr.parallax
     assert m is not None
     hill = h > 100
-    err_p = np.hypot(*(m.apply(src[hill], h[hill]) - ref[hill]).T)
+    heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
+    err_p = np.hypot(*(m.predict(src[hill], heights_at) - ref[hill]).T)
     err_a = np.hypot(*(models.apply(fr.model, src[hill]) - ref[hill]).T)
     assert np.median(err_p) < 0.6 and np.median(err_a) > 5.0
     with pytest.raises(ValueError):
@@ -319,10 +322,35 @@ def test_the_parallax_model_is_delivered_and_predicts_the_hill():
 def test_parallax_source_map_inverts_the_model():
     dem, p, src, h, ref = _hill_case()
     fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
-                    ground_model=_Identity(), dem=dem)
+                    ground_model=_Identity(), dem=dem, parallax_height_at="src")   # _hill_case is a src-height world
     heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
     mx, my = models.parallax_source_map(fr.parallax, heights_at, (400, 400), step=4)
     ys, xs = np.mgrid[20:380:37, 20:380:37]
     s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
-    back = fr.parallax.apply(s, heights_at(s))
+    back = fr.parallax.predict(s, heights_at)                    # in the model's own height convention
     assert np.abs(back - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
+
+
+def test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly():
+    """docs/parallax_height_protocol.md: with h taken at the REFERENCE (ground) point, the stage
+    recovers p, predict() lands on the true positions, and the source map is the direct RPC form."""
+    rng = np.random.default_rng(7)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    hill = 300.0 * np.exp(-((rr - 300) ** 2 + (cc - 300) ** 2) / (2 * 50.0 ** 2))
+    dem = DemPatch(hill, lat, lon, 1000.0, "test", True, ())
+    p = np.array([0.004, -0.07])
+    heights_at = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))  # noqa: E731
+    ref = rng.uniform([20, 20], [380, 380], (1500, 2))                 # ground points (TC is ortho)
+    Ai = np.linalg.inv(A)
+    src = (np.c_[ref - (heights_at(ref) - 0.0)[:, None] * p, np.ones(len(ref))] @ Ai.T)[:, :2]
+    ref_obs = ref + rng.normal(0, 0.2, ref.shape)
+    fr = fine_stage(matchset(src, ref_obs), blank(), blank(), centre=(200, 200), flags={**OFF, "parallax": True},
+                    ground_model=_Identity(), dem=dem, parallax_height_at="ref")
+    m = fr.parallax
+    assert m.height_at == "ref" and np.allclose(m.p_px_per_m, p, atol=0.003)
+    assert np.median(np.hypot(*(m.predict(src, heights_at) - ref).T)) < 0.3
+    mx, my = models.parallax_source_map(m, heights_at, (400, 400), step=4)
+    ys, xs = np.mgrid[40:360:41, 40:360:41]
+    s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
+    assert np.abs(m.predict(s, heights_at) - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
