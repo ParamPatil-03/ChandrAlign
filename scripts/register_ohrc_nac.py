@@ -284,7 +284,9 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
                                     src_ok=cv2.warpAffine(o_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5,
                                     ref_ok=np.ones((hF, wF), bool), inlier_src=fr.matches.src_pts[inl],
                                     inlier_ref=fr.matches.ref_pts[inl], J=Wf[:2, :2], dem_m=hts, dem_step=8,
-                                    frame_px_m=np.array([nac.px_w * bx, nac.px_h * by]))
+                                    frame_px_m=np.array([nac.px_w * bx, nac.px_h * by]),
+                                    T_total=T(o[0], o[1]) @ np.linalg.inv(D) @ np.asarray(fr.model.matrix, float) @ Wf,
+                                    ohrc_col=int(out.get("ohrc_col") or -1))
             T_total = T(o[0], o[1]) @ np.linalg.inv(D) @ np.asarray(fr.model.matrix, float) @ Wf
             fx, fy = (T_total @ [WIN / 2, WIN / 2, 1])[:2]
             la_f, lo_f = geo.pixel_to_latlon([fy], [fx])
@@ -349,6 +351,8 @@ def main() -> int:
                     help="protocol Q8: use the bridge ONLY for windows whose coarse lock fails")
     ap.add_argument("--bridge", action="store_true",
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
+    ap.add_argument("--rows", type=int, nargs="+", default=None,
+                    help="force these OHRC window rows (must lie inside the NAC footprint)")
     ap.add_argument("--dump-points", default=None, help="folder: fine frames + inliers + DEM per window/matcher")
     args = ap.parse_args()
     if args.dump_points:
@@ -358,7 +362,9 @@ def main() -> int:
     ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
     om = projection.load_grid_model(ohrc)
     assert om.independent_of_references
-    lroc = json.loads((ROOT / "data/pairs/tmc2_nac_lroc_meta.json").read_text(encoding="utf-8"))["products"]
+    lroc = {}
+    for f in ("tmc2_nac_lroc_meta.json", "iirs_nac_lroc_meta.json"):      # LROC corner metadata, all NACs held
+        lroc.update(json.loads((ROOT / "data/pairs" / f).read_text(encoding="utf-8"))["products"])
     sun = json.loads((ROOT / "data/pairs/nac_sun_azimuth_computed.json").read_text(encoding="utf-8"))
     WIN = args.win
     BRIDGE = bridge_predictions()
@@ -407,6 +413,8 @@ def main() -> int:
             continue
         picks = np.linspace(inside.min(), inside.max(), N_WIN).astype(int) if len(inside) >= N_WIN else inside
         picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
+        if args.rows:                                         # closure test: force OHRC rows
+            picks = [int(r) for r in args.rows if int(r) in best]
         for rc in picks:
             t = time.perf_counter()
             w = run_window(ohrc, om, nacm, geo, nac, rc, best[rc], args.matchers, args.device, stages, dem_tiles,
