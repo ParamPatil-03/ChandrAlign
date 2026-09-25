@@ -42,3 +42,24 @@ design (RIFT2 caught 8 of 12 wrong-but-accepted synthetic results; the standard 
 3. **Periodic-aliasing trap:** two DIFFERENT real crops of similarly spaced repetitive terrain (not
    `np.roll` of one crop, which is a true correspondence), registered through `register_bundle` with the
    default matcher. Bar: not HIGH or MEDIUM with a wrong transform; REJECTED, or capped by the gate.
+
+## Result 1: synthetic replay end to end (2026-09-26): bar MET
+
+`scripts/crosscheck_replay.py --out reports/crosscheck_replay.json` (commit `76b4453` code): 105 accepted cases
+of `reports/rift_benchmark.json` re-run through `register_bundle`, graded by the exact transform.
+
+| outcome | count |
+|---|---|
+| wrong, flagged by the cross-check (REJECTED) | **8 / 12** (bar >= 8) |
+| wrong, REJECTED by another gate (perturbation) | 2 / 12 |
+| wrong, not rejected | 2 / 12: +90 deg lighting, 2.2 px (LOW) and 2.5 px (MEDIUM); RIFT2 abstained |
+| correct, flagged (false alarm) | **0 / 64** checked |
+| correct, confirmed | 64 (49 HIGH, 11 MEDIUM, 4 LOW) |
+| correct, checker inconclusive (tier capped at MEDIUM) | 29 (+30 deg lighting 15, 2x scale 12, +90 deg 2) |
+
+Before C-04, the product path accepted all 12 wrong results. After it, 10 are REJECTED, and the 2 remaining are
+2.2-2.5 px wrong and neither is HIGH. The cost is the cap: a correct result whose regime RIFT2 cannot handle (+30 deg
+lighting, a 2x scale gap) cannot be HIGH. That is the rule as frozen ("HIGH needs an independent method to
+agree"). A second checker family (e.g. the MIND dense step) would recover them, and is listed as follow-up.
+
+Measurements 2 (real windows) and 3 (periodic trap): below, once run.
