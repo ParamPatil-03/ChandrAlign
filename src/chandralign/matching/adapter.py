@@ -100,7 +100,7 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
           ship_mode: bool | None = None, drop_shadowed: bool = True,
           regime: str = "same_modal_normal", stage: str = "direct",
           precision: str = "fp32", tile_px: int | None = None,
-          tile_margin_px: int = 64) -> MatchSet:
+          tile_margin_px: int = 64, rotation_search: bool | None = None) -> MatchSet:
     """Match two planes with a vismatch model, returning our MatchSet.
 
     precision  "fp32" (default, unchanged behaviour) or "fp16": the model runs
@@ -108,7 +108,19 @@ def match(src: ImagePlane, ref: ImagePlane, *, model_name: str | None = None,
     tile_px    None (default): one call on the whole pair. An int splits a
                PRE-ALIGNED, equal-size pair into tiles no larger than this; see
                matching/pair_tiling.py for what that assumes.
+    rotation_search  MATCH-12: if the 0-deg match is weak, retry with the source rotated in
+               30-deg steps (matching/rotation.py). None -> config matching.rotation_search
+               (false: our registrations take rotation from the label geometry). For pairs
+               WITHOUT a geometric prior; measured in docs/rotation_protocol.md.
     """
+    if rotation_search is None:
+        rotation_search = bool(config.get("matching.rotation_search", False))
+    if rotation_search:
+        from .rotation import rotation_search as _search
+        return _search(src, ref, lambda a, b: match(
+            a, b, model_name=model_name, device=device, max_keypoints=max_keypoints, ship_mode=ship_mode,
+            drop_shadowed=drop_shadowed, regime=regime, stage=stage, precision=precision, tile_px=tile_px,
+            tile_margin_px=tile_margin_px, rotation_search=False))
     if precision not in ("fp32", "fp16"):
         raise ValueError(f"precision must be 'fp32' or 'fp16', not {precision!r}")
     if model_name is None:
