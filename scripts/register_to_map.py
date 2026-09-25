@@ -163,7 +163,29 @@ def fit_to_ref(src, ref, r0, c0, h, w):
     return affine_fit(np.c_[gx.ravel(), gy.ravel()], np.c_[cc, rr])
 
 
-def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, route_opts):
+def dense_checks(S, Rc, f, prior, T_c, centre, ref_name, px):
+    """docs/tc_reference_protocol.md amendment 2: the dense lock's own checks."""
+    def run(r):
+        dg = {}
+        st = cascade.register_step_dense(S, r, f, src="src", ref=ref_name, ref_pixel_m=px, prior=prior, diag=dg)
+        return st, float(dg.get("z") or 0.0)
+    locked = (T_c @ centre)[:2]
+    sh = cv2.warpAffine(Rc, np.float32([[1, 0, 3.5], [0, 1, 4.25]]), Rc.shape[::-1], flags=cv2.INTER_CUBIC,
+                        borderMode=cv2.BORDER_REPLICATE)
+    st_s, z_s = run(sh)
+    moved = None if st_s is None or z_s < MIN_Z else (np.asarray(st_s.model.matrix, float) @ centre)[:2] - locked
+    err = None if moved is None else float(np.hypot(moved[0] - 3.5, moved[1] - 4.25))
+    st_c, z_c = run(np.full_like(Rc, float(Rc.mean())))
+    st_n, z_n = run(np.random.default_rng(0).normal(0, 1, Rc.shape).astype(np.float32))
+    out = {"fractional_shift": {"z": round(z_s, 1), "error_px": None if err is None else round(err, 3),
+                                "pass": err is not None and err <= 0.5},
+           "null_constant": {"z": round(z_c, 1), "pass": st_c is None or z_c < MIN_Z},
+           "null_noise": {"z": round(z_n, 1), "pass": st_n is None or z_n < MIN_Z}}
+    out["all_pass"] = all(v["pass"] for v in out.values())
+    return out
+
+
+def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, route_opts, dense=False):
     out = {"src_row0": int(r0), "src_col0": int(c0), "window": [int(w), int(h)]}
     A = fit_to_ref(src, ref, r0, c0, h, w)
     cor = np.array([[0, 0, 1], [w, 0, 1], [0, h, 1], [w, h, 1]], float) @ A.T
@@ -194,6 +216,24 @@ def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, rout
         if wF < 32 or hF < 32:
             out["status"] = "skipped: fine frame too small"; out["results"] = {}; return out
         Wf = T(-o[0], -o[1]) @ T_c                                      # source px -> frame px
+        if dense:                                                         # amendment 2: the lock is the answer
+            ctr = np.array([w / 2, h / 2, 1.0])
+            chk = dense_checks(S, Rc, f, prior, T_c, ctr, ref.name, max(ref.px_m))
+            fs = warp_affine(S, Wf, (wF, hF))
+            fs_ok = cv2.warpAffine(S_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
+            mi = alignment_check(fs, Rc[o[1]:o[1] + hF, o[0]:o[0] + wF], np.eye(3), src_ok=fs_ok,
+                                 ref_ok=Rc_ok[o[1]:o[1] + hF, o[0]:o[0] + wF])
+            rx, ry = (T(x0, y0) @ T_c @ ctr)[:2]
+            la_r, lo_r = ref.pixel_to_latlon([ry], [rx])
+            la_s, lo_s = src.ground([r0 + h / 2], [c0 + w / 2], corrected=False)
+            ef = enu(float(la_r[0]), float(lo_r[0]), float(la_s[0]), float(lo_s[0]))
+            out["dense"] = {"checks": chk, "mi_check": mi, "precision_ref_px": round(float(st.rmse_px), 4),
+                            "implied_offset_m": {"east": round(float(ef[0]), 1), "north": round(float(ef[1]), 1)},
+                            "known_offset_m": dict(zip(("east", "north"), (round(float(v), 1) for v in src.offset(r0 + h / 2)))),
+                            "pass_checks": bool(chk["all_pass"] and not mi.get("flag")),
+                            "source_px_per_ref_px": round(max(ref.px_m) / min(src.px_m), 1)}
+            out["status"] = "locked"; out["results"] = {}
+            return out
         fsrc = warp_affine(S, Wf, (wF, hF))
         fsrc_ok = cv2.warpAffine(S_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5
         fref = Rc[o[1]:o[1] + hF, o[0]:o[0] + wF].copy()
@@ -319,7 +359,9 @@ def windows_for(src, ref, n):
         A = fit_to_ref(src, ref, r0, c0, h, w)
         cor = np.array([[0, 0, 1], [w, 0, 1], [0, h, 1], [w, h, 1]], float) @ A.T
         if src.kind == "iirs":
-            inside = (np.ptp(np.clip(cor[:, 0], 0, W)) > 64) and (np.ptp(np.clip(cor[:, 1], 0, H)) > 64)
+            # docs/tc_reference_protocol.md amendment 2: the whole latitude span on held data;
+            # east/west clipping allowed (only the covered part is matched)
+            inside = (np.ptp(np.clip(cor[:, 0], 0, W)) > 64) and cor[:, 1].min() >= 0 and cor[:, 1].max() < H
         else:
             inside = (cor[:, 0].min() >= 0 and cor[:, 1].min() >= 0 and cor[:, 0].max() < W and cor[:, 1].max() < H)
         if inside:
@@ -337,6 +379,7 @@ def main() -> int:
     ap.add_argument("--tile", default=None, help="TC tile, e.g. N03E021N00E024SC (with --reference tc)")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--dense", action="store_true", help="amendment 2: the dense lock is the answer (reference-coarser case)")
     args = ap.parse_args()
     src = Source(args.source)
     ref = load_ref(args.reference, args.source, args.tile)
@@ -348,7 +391,8 @@ def main() -> int:
     wins = []
     for r0 in picks:
         t = time.perf_counter()
-        wd = run_window(src, ref, r0, c0, h, w, MATCHERS[args.source], args.device, stages, dem_tiles, route_opts)
+        wd = run_window(src, ref, r0, c0, h, w, MATCHERS[args.source], args.device, stages, dem_tiles, route_opts,
+                        dense=args.dense)
         wd["seconds"] = round(time.perf_counter() - t, 1)
         wins.append(wd)
         print(json.dumps({k: wd.get(k) for k in ("src_row0", "status", "coarse")} |
