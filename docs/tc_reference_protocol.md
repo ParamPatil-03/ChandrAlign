@@ -31,3 +31,11 @@ Replace "within 150 m of the median" by "within 150 m of a robust straight-line 
 offset (east, north) against source line", fitted over the windows passing everything else
 (Theil-Sen per axis; >= 4 needed). Everything else unchanged; computed from the same reports.
 OHRC -> TC stays unsolved (information limit; a dense-lock-only variant is not attempted).
+
+## Amendment 1 result: IIRS -> TC 8/15 -- unsolved (degraded needs 60%); stop
+`reports/tc_reference_verdict.json`. 8 of the 9 windows passing gates/tier/MI sit 0-40 m from a
+linear drift (192 m east, 51 m north per 1000 IIRS lines); the 9th (line 3072, tier LOW) is 1763 m
+off -- a lock only this consistency check catches. The other 6: 2 MI-flagged, 1 REJECTED, 1 fine
+frame too small, 1 no lock, 1 at z 10.4. Second attempt of this protocol: stops here. What is shown:
+where IIRS -> TC locks, it is coherent to tens of metres along 4000 lines and agrees with the WAC
+registration up to a near-constant ~300 m TC - WAC difference. OHRC -> TC: information-limited.

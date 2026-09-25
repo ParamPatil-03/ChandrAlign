@@ -1,0 +1,44 @@
+{
+ "ohrc": {
+  "success": 0,
+  "windows": 10,
+  "passing_all_but_consistency": 0,
+  "verdict": "unsolved",
+  "vs_independent_offset_m_median": null,
+  "known_shift_src_px_median": null,
+  "mi_peak_src_px_median": null
+ },
+ "iirs": {
+  "success": 3,
+  "windows": 15,
+  "passing_all_but_consistency": 9,
+  "verdict": "unsolved",
+  "vs_independent_offset_m_median": [
+   -40,
+   312
+  ],
+  "known_shift_src_px_median": 0.009,
+  "mi_peak_src_px_median": 0.359
+ },
+ "iirs_amendment1": {
+  "success": 8,
+  "windows": 15,
+  "passing_all_but_consistency": 9,
+  "verdict": "unsolved",
+  "drift_m_per_1000_lines": [
+   192.1,
+   51.3
+  ],
+  "residual_m": [
+   11.7,
+   18.4,
+   14.7,
+   40.4,
+   0.0,
+   12.4,
+   12.1,
+   1763.0,
+   13.3
+  ]
+ }
+}
