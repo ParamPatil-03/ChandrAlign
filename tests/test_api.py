@@ -373,3 +373,11 @@ def test_the_headline_pair_runs_on_the_validated_path_through_the_api(client):
     assert "window_01/registered.tif" in record["assets"]
     got = client.get(f"/runs/{record['run_id']}/assets/window_01/result.json")
     assert got.status_code == 200 and got.json()["confidence_tier"] == w["confidence_tier"]
+
+
+def test_failure_modes_are_served_by_name(client):
+    """The UI shows the canonical register, not invented codes like '#01 FEW_INLIERS'."""
+    modes = {m["id"]: m for m in client.get("/failure-modes").json()["failure_modes"]}
+    assert set(modes) == set(range(1, 21))
+    assert modes[12]["name"] == "False correspondences survive robust fitting"
+    assert modes[10]["mitigation"]

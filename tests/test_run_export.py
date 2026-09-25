@@ -105,3 +105,22 @@ def test_the_result_record_lists_what_was_written(tmp_path, accepted):
     written = set(_result(out)["exports"])
     assert {"result.json", "provenance.json", "failure-log.jsonl", "matches.csv"} <= written
     assert written <= {p.name for p in out.iterdir()}
+
+
+def test_a_run_folder_carries_real_quicklooks_and_its_report(tmp_path, accepted):
+    """Audit C-05 / M-12: the web UI's swipe compares REAL reference and registered imagery, and
+    its report download is the run's own report."""
+    import cv2
+    out = tmp_path / "run"
+    rec = write_run(out, accepted, manifest={"synthetic": True}, **_models(accepted))
+    assert {"reference.png", "registered.png", "report.html"} <= set(rec["exports"])
+    ref = cv2.imread(str(out / "reference.png"), cv2.IMREAD_GRAYSCALE)
+    reg = cv2.imread(str(out / "registered.png"), cv2.IMREAD_GRAYSCALE)
+    assert ref.shape == reg.shape == np.asarray(accepted.ref.array).shape
+    assert "Reference / registered" in (out / "report.html").read_text(encoding="utf-8")
+
+
+def test_a_rejected_run_without_geometry_has_no_registered_quicklook(tmp_path, rejected_without_geometry):
+    out = tmp_path / "run"
+    rec = write_run(out, rejected_without_geometry, manifest={"synthetic": True}, **_models(rejected_without_geometry))
+    assert "registered.png" not in rec["exports"] and "registered.png" in rec["exports_skipped"]

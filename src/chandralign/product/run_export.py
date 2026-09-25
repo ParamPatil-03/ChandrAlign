@@ -83,11 +83,13 @@ def write_run(out_dir: str | Path, bundle, *, manifest: dict, src_model=None, re
 
     record = result_record(bundle)
     record.update(extra or {})
-    record["exports"] = sorted(set(written + ["result.json"]))
+    record["exports"] = sorted(set(written + ["result.json", "report.html"]))
     record["exports_skipped"] = skipped
     if why_src:
         record["source_ground_model"] = f"unavailable: {why_src}"
     _write_json(out / "result.json", record)
+    from . import report
+    report.render_run(out)                    # the run's own report, from what was just written
     return record
 
 
@@ -166,15 +168,25 @@ def _figures(out: Path, bundle, has_geometry: bool, grid: int, heights_at, skipp
     match_plot.render(bundle, out / "matches.png")
     coverage_plot.render(bundle, out / "coverage.png", grid=grid)
     names = ["side-by-side.png", "matches.png", "coverage.png"]
-    if not has_geometry:
-        skipped["checkerboard.png"] = "the result carries no geometry to warp with"
-        return names
-    if bundle.parallax is not None and heights_at is None:
-        skipped["checkerboard.png"] = "the parallax geometry needs terrain heights to warp"
+    _quicklook(out / "reference.png", bundle.ref.array)
+    names.append("reference.png")
+    why = ("the result carries no geometry to warp with" if not has_geometry else
+           "the parallax geometry needs terrain heights to warp"
+           if bundle.parallax is not None and heights_at is None else None)
+    if why:
+        skipped["checkerboard.png"] = skipped["registered.png"] = why
         return names
     registered, _ = warp.warp_array(bundle, heights_at=heights_at)
     swipe.render_checkerboard(bundle.ref.array, registered, out / "checkerboard.png")
-    return names + ["checkerboard.png"]
+    _quicklook(out / "registered.png", registered)   # the source warped onto the reference grid
+    return names + ["checkerboard.png", "registered.png"]
+
+
+def _quicklook(path: Path, array) -> None:
+    """8-bit greyscale PNG of a 0..1 plane, pixel for pixel (the UI's swipe compares these)."""
+    import cv2
+    a = np.nan_to_num(np.asarray(array, np.float32), nan=0.0)
+    cv2.imwrite(str(path), np.clip(a * 255.0 + 0.5, 0, 255).astype(np.uint8))
 
 
 def _write_json(path: Path, data: dict) -> None:

@@ -463,6 +463,14 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
     # ------------------------------------------------------------------ #
     # GET /pairs
     # ------------------------------------------------------------------ #
+    @app.get("/failure-modes", summary="The canonical failure-mode register (CHECK-09)")
+    def get_failure_modes():
+        """The 20 failure modes a result's `failure_modes` ids refer to, with detection and
+        mitigation -- so a client shows names, never invented codes."""
+        from .evaluate.failure_log import FAILURE_MODES
+        return {"failure_modes": [{"id": m.id, "name": m.name, "detection": m.detection,
+                                   "mitigation": m.mitigation} for m in FAILURE_MODES.values()]}
+
     @app.get("/pairs", summary="List curated benchmark pairs")
     def get_pairs():
         """The curated pairs: real products, their committed evidence (read from the report), and

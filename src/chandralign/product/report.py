@@ -64,7 +64,7 @@ def render_bundle(bundle: Any, path: str | Path, *, provenance: dict | None = No
         swipe.render_checkerboard(bundle.ref.array, registered, tmp / "checker.png")
         figures = [("Input images", tmp / "side.png"), ("Evidence matches", tmp / "matches.png"),
                    ("Delivered-point coverage", tmp / "coverage.png"),
-                   ("Before / registered checkerboard", tmp / "checker.png")]
+                   ("Reference / registered checkerboard", tmp / "checker.png")]
         context = _bundle_context(bundle, provenance or {}, figures)
         return _write(path, context)
 
@@ -83,7 +83,7 @@ def render_run(run_dir: str | Path, output: str | Path | None = None) -> Path:
     figures = [(label, run_dir / name) for label, name in (
         ("Input images", "side-by-side.png"), ("Evidence matches", "matches.png"),
         ("Delivered-point coverage", "coverage.png"),
-        ("Before / registered checkerboard", "checkerboard.png")) if (run_dir / name).is_file()]
+        ("Reference / registered checkerboard", "checkerboard.png")) if (run_dir / name).is_file()]
     context = _saved_context(result, provenance, figures)
     return _write(Path(output) if output else run_dir / "report.html", context)
 
