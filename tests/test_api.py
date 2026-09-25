@@ -319,3 +319,11 @@ def test_curated_pairs_use_their_own_seed(client):
         assert f"seed={pair['mock_seed']}" in log, log
         seeds.append(pair["mock_seed"])
     assert seeds[0] != seeds[1]
+
+
+def test_api_runs_write_the_failure_log(client):
+    """Audit 2026-09-26 I-14: only the CLI wrote the append-only failure log."""
+    run_id = client.post("/register", json={"mock": True, "seed": 31}).json()["run_id"]
+    record = _wait_for_done(client, run_id)
+    assert record["status"] == "DONE", record.get("error")
+    assert "failure-log.jsonl" in record["assets"]

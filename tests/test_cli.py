@@ -46,3 +46,12 @@ def test_register_refuses_to_overwrite_a_nonempty_run(tmp_path):
     with pytest.raises(SystemExit, match="refusing to overwrite"):
         main(["register", "--mock", "--out", str(out)])
     assert (out / "keep.txt").read_text(encoding="utf-8") == "user data"
+
+
+def test_a_rejected_run_with_no_geometry_still_writes_its_reasons(tmp_path):
+    """Audit 2026-09-26 I-12: `--matcher bogus` raised in the exporters; the reasons were lost."""
+    out = tmp_path / "run"
+    assert main(["register", "--mock", "--cpu", "--matcher", "bogus", "--out", str(out)]) == 0
+    result = json.loads((out / "result.json").read_text(encoding="utf-8"))
+    assert result["confidence_tier"] == "REJECTED" and result["failure_modes"]
+    assert (out / "failure-log.jsonl").exists() and not (out / "registered.tif").exists()

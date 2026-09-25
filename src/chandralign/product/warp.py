@@ -105,14 +105,23 @@ def export_bundle(path: str | Path, bundle, *, ref_model=None, crs=None,
                 dataset.write(np.moveaxis(warped, -1, 0))
             if transform is None:
                 dataset.gcps = (_gcps_for(ref_model, warped.shape[:2], GroundControlPoint), crs)
+            # A registered product must say how far to trust it (rules H3/H4, audit I-12).
+            result = bundle.result
             dataset.update_tags(geometry=geometry_name,
                                 source_product=str(bundle.src.meta.product_id),
-                                reference_product=str(bundle.ref.meta.product_id))
+                                reference_product=str(bundle.ref.meta.product_id),
+                                confidence_tier=str(getattr(result, "confidence_tier", None)),
+                                failure_modes=json.dumps(list(getattr(result, "failure_modes", []) or [])),
+                                gates_passed=json.dumps({k: bool(v) for k, v in
+                                                         (getattr(result, "gates", {}) or {}).items()}))
 
     sidecar = path.with_suffix(".json")
     sidecar.write_text(json.dumps({
         "source": _jsonable(bundle.src.meta), "reference": _jsonable(bundle.ref.meta),
         "geometry": _geometry_record(geometry_name, best_geometry(bundle)[1]),
+        "confidence_tier": getattr(bundle.result, "confidence_tier", None),
+        "failure_modes": list(getattr(bundle.result, "failure_modes", []) or []),
+        "gates": dict(getattr(bundle.result, "gates", {}) or {}),
         "metrics": _jsonable(bundle.result.metrics), "provenance": provenance or {},
     }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return path, sidecar

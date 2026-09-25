@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict, is_dataclass, replace
+from dataclasses import replace
 import json
 from pathlib import Path
 from typing import Sequence
@@ -52,11 +52,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def _register(args) -> int:
-    from . import config
-    from .evaluate import failure_log
     from .pipeline import register_bundle
-    from .product import matchpoints, provenance, warp
-    from .viz import coverage_plot, match_plot, sidebyside, swipe
+    from .product import provenance, run_export
 
     out = args.out.resolve()
     if out.exists() and any(out.iterdir()):
@@ -83,23 +80,8 @@ def _register(args) -> int:
     bundle = register_bundle(src, ref, matcher=args.matcher, device="cpu" if args.cpu else None)
     manifest = provenance.build(bundle, config_data=configuration,
                                 ship_mode=bool(configuration.get("ship_mode", True)))
-    provenance.write(out / "provenance.json", manifest)
-    matchpoints.export_bundle(out, bundle, src_model=src_model, ref_model=ref_model,
-                              grid=int(configuration.get("uniformity", {}).get("grid", 8)))
-    try:
-        warp.export_bundle(out / "registered.tif", bundle, ref_model=ref_model, provenance=manifest)
-    except RuntimeError as exc:
-        if "rasterio" not in str(exc).lower():
-            raise
-    sidebyside.render(bundle, out / "side-by-side.png")
-    match_plot.render(bundle, out / "matches.png")
-    coverage_plot.render(bundle, out / "coverage.png",
+    run_export.write_run(out, bundle, manifest=manifest, src_model=src_model, ref_model=ref_model,
                          grid=int(configuration.get("uniformity", {}).get("grid", 8)))
-    registered, _ = warp.warp_array(bundle)
-    swipe.render_checkerboard(bundle.ref.array, registered, out / "checkerboard.png")
-    (out / "result.json").write_text(json.dumps(_result_record(bundle), indent=2,
-                                                  sort_keys=True) + "\n", encoding="utf-8")
-    failure_log.log_run(out / "failure-log.jsonl", bundle)
     print(f"{bundle.result.confidence_tier}: {out}")
     return 0
 
@@ -142,39 +124,6 @@ class _MockGroundModel:
         return (-80.0 - np.asarray(rows) * self.gsd_m / metres_per_degree,
                 30.0 + np.asarray(cols) * self.gsd_m /
                 (metres_per_degree * np.cos(np.deg2rad(80.0))))
-
-
-def _result_record(bundle) -> dict:
-    result = bundle.result
-    return {
-        "confidence_tier": result.confidence_tier,
-        "metrics": _jsonable(result.metrics),
-        "gates": result.gates,
-        "failure_modes": result.failure_modes,
-        "notes": result.notes,
-        "matcher": result.matches.method,
-        "regime": result.matches.regime,
-        "match_stage": result.matches.stage,
-        "stages": _jsonable(bundle.stages),
-        "geometry_used": "parallax" if bundle.parallax is not None else
-                         "tps" if bundle.tps is not None else result.model.kind if result.model else None,
-    }
-
-
-def _jsonable(value):
-    if is_dataclass(value):
-        value = asdict(value)
-    if isinstance(value, dict):
-        return {str(k): _jsonable(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_jsonable(v) for v in value]
-    if isinstance(value, Path):
-        return str(value)
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
 
 
 if __name__ == "__main__":

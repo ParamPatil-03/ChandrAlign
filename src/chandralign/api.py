@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import asyncio
 import io
-import json
 import os
 import threading
 import time
@@ -243,70 +242,25 @@ def _run_registration(record: RunRecord) -> None:
             from .pipeline import register_bundle
             bundle = register_bundle(src_plane, ref_plane, matcher=matcher)
 
-        # ---- exports -------------------------------------------------------
-        record.log("Exporting match points …")
-        from .product import matchpoints, warp
-        from .viz import coverage_plot, match_plot, sidebyside, swipe
-
+        # ---- exports: the same run-folder writer as the CLI (audit I-12, I-14) ----
+        from .product import run_export
         src_model = ref_model = None
-        if mock:
-            # minimal ground model so exports don't crash on absent raster
-            from .cli import _MockGroundModel
-            src_model = ref_model = _MockGroundModel(src.gsd_m)
-
-        matchpoints.export_bundle(
-            out, bundle,
-            src_model=src_model, ref_model=ref_model,
-            grid=8,
-        )
-
-        record.log("Building provenance …")
         if mock:
             # Synthetic pairs have no real files on disk, so we write a
             # lightweight marker instead of calling provenance.build()
-            # (which requires file checksums). This is not a skip — it is
+            # (which requires file checksums). This is not a skip -- it is
             # the honest record: the inputs are synthetic, not real data.
-            prov_data = {
-                "synthetic": True,
-                "seed": seed,
-                "matcher": matcher,
-                "note": "Mock run — no real PDS data; provenance checksums not applicable.",
-            }
-            (out / "provenance.json").write_text(
-                json.dumps(prov_data, indent=2) + "\n", encoding="utf-8"
-            )
+            from .cli import _MockGroundModel
+            src_model = ref_model = _MockGroundModel(bundle.src.gsd_m)
+            manifest = {"synthetic": True, "seed": seed, "matcher": matcher,
+                        "note": "Mock run -- no real PDS data; provenance checksums not applicable."}
         else:
             from .product import provenance
             manifest = provenance.build(bundle, config_data={}, ship_mode=True)
-            provenance.write(out / "provenance.json", manifest)
-
-        record.log("Rendering figures …")
-        sidebyside.render(bundle, out / "side-by-side.png")
-        match_plot.render(bundle, out / "matches.png")
-        coverage_plot.render(bundle, out / "coverage.png", grid=8)
-        registered_arr, _ = warp.warp_array(bundle)
-        swipe.render_checkerboard(bundle.ref.array, registered_arr,
-                                  out / "checkerboard.png")
-
-        record.log("Writing result.json …")
+        record.log("Writing the run folder ...")
+        result_record = run_export.write_run(out, bundle, manifest=manifest,
+                                             src_model=src_model, ref_model=ref_model, grid=8)
         result = bundle.result
-        metrics_d = asdict(result.metrics) if is_dataclass(result.metrics) \
-                    else result.metrics.__dict__
-
-        result_record = {
-            "confidence_tier": result.confidence_tier,
-            "metrics":         _jsonable(result.metrics),
-            "gates":           result.gates,
-            "failure_modes":   result.failure_modes,
-            "notes":           result.notes,
-            "matcher":         result.matches.method,
-            "regime":          result.matches.regime,
-            "match_stage":     result.matches.stage,
-        }
-        (out / "result.json").write_text(
-            json.dumps(result_record, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
         record.result_summary = result_record
         record.status = JobStatus.DONE
         record.log(
