@@ -311,6 +311,17 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
         },
     ),
+    "tier-accuracy": (
+        "src/chandralign/evaluate/quality.py",
+        "tests/test_quality_uniformity.py",
+        {
+            "the accuracy signal is measured but ignored (I-08)": (
+                '        per_signal["accuracy"], why = accuracy_tier(accuracy)',
+                '        why = accuracy_tier(accuracy)[1]'),
+            "an unmeasured accuracy allows HIGH (I-08)": (
+                '        return "MEDIUM", f"accuracy unmeasured', '        return "HIGH", f"accuracy unmeasured'),
+        },
+    ),
     "routing-fallbacks": (
         "src/chandralign/matching/routing.py",
         "tests/test_routing.py",

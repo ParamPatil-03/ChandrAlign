@@ -228,6 +228,16 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
             # C-04 / C-03: recorded only
             r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name)[1]
             r["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
+            # I-08 / I-11: matcher-free probes vs the DELIVERED geometry (fine-frame px, and IIRS px)
+            from chandralign.estimate import models as _models
+            from chandralign.evaluate.probes import geometry_error
+            from chandralign.pipeline import delivered_geometry
+            _gn, _gm = delivered_geometry(fr)
+            pc = geometry_error(fsrc, fref, fsrc_ok, lambda p: _models.apply(_gm, p))
+            if pc.get("n"):
+                pc["p50_px_src"] = to_source_px(pc["p50_px_ref"], J_src, "exact (Wf)")
+                pc["p95_px_src"] = to_source_px(pc["p95_px_ref"], J_src, "exact (Wf)")
+            r["probe_check"] = {**pc, "geometry": _gn}
         except Exception as exc:                                  # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)

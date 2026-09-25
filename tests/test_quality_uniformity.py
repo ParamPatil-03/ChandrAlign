@@ -294,3 +294,27 @@ def test_an_ungated_rejection_also_names_a_failure_mode():
     v = quality.assess(inlier_count=500, inlier_ratio=0.9, spatial_coverage=0.9, model=good_model(),
                        gates=None, require_gates=True)
     assert v.tier == "REJECTED" and quality.FM_UNVERIFIED_EVALUATION in v.failure_modes
+
+
+# ---------------------------------------------------------------------------
+# Audit I-08: the tier carries an independent accuracy signal (docs/tier_accuracy_protocol.md)
+# ---------------------------------------------------------------------------
+def _strong(**kw):
+    from chandralign.evaluate import quality
+    return quality.assess(inlier_count=5000, inlier_ratio=0.9, spatial_coverage=1.0, **kw)
+
+
+def test_without_an_accuracy_measurement_the_old_grading_is_unchanged():
+    assert _strong().tier == "HIGH"
+
+
+def test_poor_probe_accuracy_caps_a_strong_result_at_low_but_never_rejects():
+    acc = {"n": 300, "p50_px_src": 2.4, "p95_px_src": 9.0}      # e.g. TMC-2 -> WAC: fit RMS 24-34 px
+    v = _strong(accuracy=acc)
+    assert v.tier == "LOW" and v.limiting_signal == "accuracy"
+
+
+def test_sub_pixel_probes_allow_high_and_unmeasured_allows_medium():
+    assert _strong(accuracy={"n": 300, "p50_px_src": 0.3, "p95_px_src": 1.1}).tier == "HIGH"
+    assert _strong(accuracy={"n": 300, "p50_px_src": 0.8, "p95_px_src": 2.5}).tier == "MEDIUM"
+    assert _strong(accuracy={"n": 5}).tier == "MEDIUM"

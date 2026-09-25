@@ -95,13 +95,31 @@ def _tier_for(value: float | None, thresholds: dict[str, float], key: str) -> Ti
     return "REJECTED"
 
 
+def accuracy_tier(acc: dict) -> tuple[Tier, str]:
+    """The tier an independent accuracy measurement allows (audit I-08, docs/tier_accuracy_protocol.md).
+
+    Probe p50/p95 in SOURCE px against PS-derived limits. Unmeasured (too few probes) allows MEDIUM at most:
+    HIGH needs a measured accuracy. A poor measurement caps at LOW and never rejects on its own (probes can
+    be biased by illumination)."""
+    cfg = config.get("tiers.accuracy", {}) or {}
+    n, p50, p95 = acc.get("n") or 0, acc.get("p50_px_src"), acc.get("p95_px_src")
+    if n < int(cfg.get("min_probes", 20)) or p50 is None or p95 is None:
+        return "MEDIUM", f"accuracy unmeasured ({n} probes): at most MEDIUM"
+    for tier in ("high", "medium"):
+        lim = cfg.get(tier, {})
+        if p50 <= float(lim.get("p50_px_src", 0)) and p95 <= float(lim.get("p95_px_src", 0)):
+            return tier.upper(), f"probe accuracy p50 {p50:.2f} / p95 {p95:.2f} src px -> {tier.upper()}"
+    return "LOW", f"probe accuracy p50 {p50:.2f} / p95 {p95:.2f} src px is not sub-pixel -> at most LOW"
+
+
 def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None,
            spatial_coverage: float | None = None,
            model: TransformModel | None = None,
            scale_ok: bool = True,
            scale_status: str | None = None,
            gates: dict[str, bool] | None = None,
-           require_gates: bool = False) -> QualityVerdict:
+           require_gates: bool = False,
+           accuracy: dict | None = None) -> QualityVerdict:
     """Combine independent quality signals into a confidence tier.
 
     `scale_status` is EstimateResult.scale_status. It matters because a scale
@@ -151,6 +169,10 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
         "inlier_ratio": _tier_for(inlier_ratio, thresholds, "min_inlier_ratio"),
         "spatial_coverage": _tier_for(spatial_coverage, thresholds, "min_coverage"),
     }
+    if accuracy is not None:                      # I-08 (docs/tier_accuracy_protocol.md)
+        per_signal["accuracy"], why = accuracy_tier(accuracy)
+        signals["accuracy"] = {k: accuracy.get(k) for k in ("n", "p50_px_src", "p95_px_src")}
+        notes.append(why)
     if scale_status in ("unverified", "abstained"):
         per_signal["scale"] = "LOW"
         notes.append(f"scale {scale_status}: the instruments could not confirm it, "

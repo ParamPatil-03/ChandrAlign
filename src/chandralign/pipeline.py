@@ -518,11 +518,12 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
     if fr.ok and isinstance(expected_scale, scale_mod.ExpectedScale):
         v = scale_mod.check(np.asarray(fr.model.matrix, float), expected_scale, centre=(w / 2.0, h / 2.0))
         scale_ok, scale_status = v.ok, v.status
+    probe_acc = _probe_accuracy(fr, s_img, r_img, src, ground_model, dem, (w / 2.0, h / 2.0)) if fr.ok else None
     q = quality.assess(inlier_count=fr.inlier_count if fr.ok else 0,
                        inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
                        spatial_coverage=fr.coverage if fr.ok else 0.0,
                        model=fr.model if fr.ok else None, scale_ok=scale_ok, scale_status=scale_status,
-                       gates=gates.gates, require_gates=True)
+                       gates=gates.gates, require_gates=True, accuracy=probe_acc)
     if crosscheck.get("verdict") in ("inconclusive", "no checker"):
         cap = str(config.get("gates.crosscheck_inconclusive_cap", "MEDIUM"))
         if quality.TIER_ORDER.index(q.tier) < quality.TIER_ORDER.index(cap):
@@ -531,6 +532,8 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
             q.tier, q.limiting_signal = cap, "independent_crosscheck"
     n = int(len(ms.src_pts))
     accuracy = _accuracy_record(fr, ref, (w / 2.0, h / 2.0)) if fr.ok else {}
+    if probe_acc is not None:
+        accuracy["probes"] = probe_acc
     result = RegistrationResult(
         matches=fr.matches if fr.matches is not None else ms,
         inlier_mask=fr.first.inlier_mask if fr.first is not None else np.zeros(n, bool),
@@ -555,6 +558,27 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                               parallax=fr.parallax if fr.ok else None, stages=fr.stages, src=src, ref=ref,
                               geometry=fr.geometry if fr.ok else None,
                               geometry_model=fr.geometry_model if fr.ok else None)
+
+
+def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre) -> Optional[dict]:
+    """I-08: matcher-free probes against the DELIVERED geometry, in source px (evaluate/probes.py)."""
+    from .evaluate import probes
+    name, geo = delivered_geometry(fr)
+    if name == "parallax":
+        if ground_model is None or dem is None:
+            return {"n": 0, "reason": "parallax geometry but no heights to evaluate it"}
+        def predict(p):
+            return geo.predict(p, lambda q: np.asarray(dem.sample(*ground_model.pixel_to_latlon(q[:, 1], q[:, 0])), float))
+    else:
+        def predict(p):
+            return models.apply(geo, p)
+    k = models.estimated_scale(np.asarray(fr.model.matrix, float), at=centre)
+    ok = np.asarray(getattr(src, "valid_mask", None) if getattr(src, "valid_mask", None) is not None
+                    else np.ones(np.asarray(s_img).shape, bool), bool)
+    try:
+        return probes.geometry_error(s_img, r_img, ok, predict, k)
+    except Exception as exc:                                  # a failed measurement is unmeasured, not a pass
+        return {"n": 0, "reason": f"{type(exc).__name__}: {exc}"[:200]}
 
 
 def _accuracy_record(fr: FineResult, ref, centre) -> dict:
