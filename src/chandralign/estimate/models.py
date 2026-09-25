@@ -13,6 +13,8 @@ rather than random.
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import cv2
 import numpy as np
 
@@ -31,6 +33,64 @@ def apply(model: TransformModel, pts: np.ndarray) -> np.ndarray:
     w = out[:, 2:3]
     w = np.where(np.abs(w) < 1e-12, 1e-12, w)
     return out[:, :2] / w
+
+
+@dataclass
+class ParallaxModel:
+    """ALIGN-08: ref = matrix . src + (h - h0_m) * p_px_per_m, h the DEM height (m) of the point.
+
+    The terrain-aware geometry of an oblique view (TMC-2 fore/aft, 26 deg). It is NOT a
+    contract TransformModel: contracts.py is frozen (PLAN.md section 5), and a new model kind
+    needs all three members to agree. Until then it travels in FineResult.parallax and in
+    RegistrationResult.provenance["terrain_model"].
+    """
+
+    matrix: np.ndarray                  # 3x3 affine part
+    p_px_per_m: tuple[float, float]
+    h0_m: float
+    dem: str = ""
+
+    def apply(self, pts: np.ndarray, heights) -> np.ndarray:
+        if heights is None:
+            raise ValueError("a parallax model needs the DEM height (m) of each point")
+        pts = np.asarray(pts, np.float64).reshape(-1, 2)
+        h = np.asarray(heights, np.float64).reshape(-1)
+        base = np.hstack([pts, np.ones((len(pts), 1))]) @ np.asarray(self.matrix, float)[:2].T
+        return base + (h - float(self.h0_m))[:, None] * np.asarray(self.p_px_per_m, float)
+
+    def as_dict(self) -> dict:
+        return {"kind": "affine_parallax", "matrix": [[round(float(v), 8) for v in row] for row in self.matrix],
+                "p_px_per_m": [round(float(v), 7) for v in self.p_px_per_m], "h0_m": round(float(self.h0_m), 2),
+                "dem": self.dem}
+
+
+def parallax_source_map(model: ParallaxModel, heights_at, shape: tuple[int, int],
+                        step: int = 8, iters: int = 4) -> tuple[np.ndarray, np.ndarray]:
+    """For every REFERENCE pixel, the SOURCE pixel a parallax model sends there.
+
+    Returns (map_x, map_y) for cv2.remap(src, map_x, map_y, ...), i.e. the source warped
+    into the reference frame. The model runs source -> reference and the height depends on
+    the point, so each reference pixel r is inverted by fixed-point iteration
+    s <- A^-1 (r - (h(s) - h0) p); it converges while |grad h . p| < 1 (slopes under ~60 deg for
+    TMC-2's 26 deg view). Solved on a grid every `step` px, bilinear in between.
+    `heights_at(pts)` -> heights (m) of (N, 2) source points; NaN is treated as h0.
+    """
+    from scipy.ndimage import map_coordinates
+    H, W = shape
+    ys, xs = np.mgrid[0:H + step:step, 0:W + step:step].astype(np.float64)
+    r = np.c_[np.minimum(xs.ravel(), W - 1), np.minimum(ys.ravel(), H - 1)]
+    Ainv = np.linalg.inv(np.asarray(model.matrix, float))
+    p, h0 = np.asarray(model.p_px_per_m, float), float(model.h0_m)
+    back = lambda q: (np.c_[q, np.ones(len(q))] @ Ainv.T)[:, :2]  # noqa: E731
+    s = back(r)
+    for _ in range(iters):
+        h = np.asarray(heights_at(s), np.float64)
+        s = back(r - (np.where(np.isfinite(h), h, h0) - h0)[:, None] * p)
+    gy, gx = np.mgrid[0:H, 0:W].astype(np.float64)
+    at = [np.minimum(gy, H - 1).ravel() / step, np.minimum(gx, W - 1).ravel() / step]
+    mx = map_coordinates(s[:, 0].reshape(ys.shape), at, order=1).reshape(H, W)
+    my = map_coordinates(s[:, 1].reshape(ys.shape), at, order=1).reshape(H, W)
+    return mx.astype(np.float32), my.astype(np.float32)
 
 
 def compose(first: TransformModel, second: TransformModel) -> TransformModel:

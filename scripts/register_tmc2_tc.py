@@ -54,6 +54,7 @@ from chandralign.estimate import robust, scale  # noqa: E402
 from chandralign.estimate.scale import PixelScale  # noqa: E402
 from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
+from chandralign.estimate.models import ParallaxModel  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
@@ -362,6 +363,13 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
 
     # The Part 2 -> Part 3 handoff object, built for real and refused if ungated
     # (CHECK-08). Its transform is the COMPOSED TMC-2 window px -> TC px map.
+    # ALIGN-08: the terrain-aware geometry, composed to the same frames as `model`
+    # (TMC-2 window px -> TC px); p and h0 are unchanged by the composition.
+    terrain = None
+    if fr.parallax is not None:
+        terrain = ParallaxModel(matrix=T(o_f[0], o_f[1]) @ np.asarray(fr.parallax.matrix, float) @ Wf,
+                                p_px_per_m=fr.parallax.p_px_per_m, h0_m=fr.parallax.h0_m,
+                                dem=out["parallax_dem"])
     result = RegistrationResult(
         matches=ms, inlier_mask=res.inlier_mask,
         model=TransformModel(kind=fr.model.kind, matrix=T_total,
@@ -375,13 +383,20 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=list(res.notes) + list(q.notes),
         provenance={"matcher": matcher, "device": ms.device, "prior": "TMC-2 SYSTEM corners",
-                    "reference": tc.product_id})
+                    "reference": tc.product_id,
+                    **({"terrain_model": terrain.as_dict()} if terrain is not None else {})})
     control_gates.require_gates(result)
     out["registration_result"] = {
         "confidence_tier": result.confidence_tier, "gates": result.gates,
         "failure_modes": result.failure_modes,
         "metrics": {k: v for k, v in asdict(result.metrics).items() if v is not None},
         "model": {"kind": result.model.kind, "matrix": [[round(float(v), 8) for v in row] for row in T_total]}}
+    if terrain is not None:
+        out["registration_result"]["terrain_model"] = {
+            **terrain.as_dict(),
+            "apply": "TC px = matrix . [x, y, 1] + (h - h0_m) * p_px_per_m; x, y are TMC-2 window px and h is "
+                     "the DEM height (m) at the point's ground position (matrix . [x, y, 1] in TC px is close "
+                     "enough to sample it: the DEM is smooth on that scale)"}
 
     # ---- stage 4: compare with ISRO's refined (SELENE-fitted) solution ----------
     centre = np.array([win / 2.0, win / 2.0, 1.0])

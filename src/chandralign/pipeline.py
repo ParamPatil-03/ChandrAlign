@@ -79,6 +79,10 @@ class FineResult:
     # to cut held-out residual by a median 40% where the affine leaves > 1 px
     # (docs/tps_protocol.md, reports/tps_heldout.json).
     tps: Optional[TransformModel] = None
+    # ALIGN-08: affine + DEM parallax, jointly fitted by the parallax stage (apply it with
+    # each point's DEM height). Where it exists it is the accurate geometry on relief;
+    # `model` stays the first estimate, which the gates certify.
+    parallax: Optional[models.ParallaxModel] = None
 
     @property
     def inlier_count(self) -> int:
@@ -157,7 +161,7 @@ def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5
     known = np.isfinite(h)
     base = inl0 & known
     if base.sum() < 10:
-        return inl0, {"applied": False, "reason": "fewer than 10 inliers with a DEM height"}
+        return inl0, {"applied": False, "reason": "fewer than 10 inliers with a DEM height"}, None
     h0 = float(np.median(h[base]))
     X = np.c_[s, np.ones(len(s)), np.where(known, h - h0, 0.0)]
     thr = float(config.get("estimate.reproj_threshold_px", 3.0))
@@ -174,7 +178,8 @@ def _parallax(ms: MatchSet, inl0: np.ndarray, dem, ground_model, rounds: int = 5
                  "h0_m": round(h0, 1), "rounds": n_rounds,
                  "inliers_before": int(inl0.sum()), "inliers_after": int(inl.sum()),
                  "rms_px": round(float(np.sqrt(np.mean(res ** 2))), 4),
-                 "affine": [[round(float(v), 6) for v in row] for row in B[:3].T]}
+                 "affine": [[round(float(v), 6) for v in row] for row in B[:3].T]},         models.ParallaxModel(matrix=np.vstack([B[:3].T, [0.0, 0.0, 1.0]]),
+                             p_px_per_m=(float(B[3, 0]), float(B[3, 1])), h0_m=h0)
 
 
 def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
@@ -229,6 +234,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         return FineResult(False, None, first, ms, np.zeros((0, 2)), np.zeros((0, 2)), 0.0, None,
                           n_matches, stages, ["no transform from the robust estimate"])
     inl = first.inlier_mask
+    parallax_model = None
 
     # 2a. terrain parallax (ALIGN-08): an oblique view (TMC-2 fore/aft, 26 deg) moves each
     # point along-track in proportion to its height, which a 2-D affine cannot hold, so on
@@ -239,7 +245,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
         if p_dem is None or ground_model is None:
             stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
         else:
-            inl, stages["parallax"] = _parallax(ms, inl, p_dem, ground_model)
+            inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ground_model)
     else:
         stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
@@ -332,4 +338,4 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     else:
         stages["tps"] = {"applied": False, "reason": "off (pipeline.tps)" if not flags["tps"] else "too few points"}
     return FineResult(True, model, first, ms, cs, cr, coverage, _rmse(model, cs, cr),
-                      n_matches, stages, [], tps)
+                      n_matches, stages, [], tps, parallax_model)
