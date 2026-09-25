@@ -68,3 +68,13 @@ parallax could not be tested (no DEM heights in these dumps).
   suns). Unresolved without an independent reference. Candidate: M111443315LC (LROC, 0.52 m,
   incidence 26 deg, overlaps ~8 km of the OHRC strip; 529 MB) -- not downloaded.
 - M109080308LC (2 deg sun): NMI 1.008-1.031, peaks 0.8-4.2 NAC px: too little shared information to judge.
+
+## OHRC coverage on the near-overhead-sun NAC (diagnosed 2026-09-25)
+M109080308LC (incidence 2 deg) left 48-64% of the grid covered. Its empty cells have the SAME
+band-pass texture as occupied ones (0.040 vs 0.041), and re-matching them returns ~39 matches per
+cell that scatter by ~34 px inside the cell (TMC-2's parallax cells scattered ~1 px): random, not
+displaced -- the matcher cannot find true correspondences on a shading-free NAC. Refill (ALIGN-05)
+cannot help (it keeps only matches that agree with the model). Over the SAME OHRC windows, coverage
+follows the reference's sun: M175124932LC (41 deg) 0.92-0.98, M111443315LC (26 deg) 0.69-0.80,
+M109080308LC (2 deg) 0.48-0.64. Fix = choose a well-lit reference (a pair-selection rule), not a
+matching change. (M102014464RC's few empty cells are texture-free: 0.0005 vs 0.041, a data limit.)
