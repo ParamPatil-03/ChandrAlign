@@ -136,3 +136,36 @@ gate refuses moves it cannot justify.
 
 The real-data bar (>= 90% of method-windows lower their residual-to-model) is measured together with C-03
 on the committed real windows; see below.
+
+## Result: C-03 / I-01 / G-02 harness bars (2026-09-26)
+
+Settings chosen on dev (commit `5ce8d20`): Huber-IRLS fits of affine / parallax / TPS on <= 1000
+grid-stratified refined inliers, **stratified** 5-fold CV (spatial-block read 2.2-5.3x the truth on dev,
+stratified 1.2-3.6x), a 5% gain required of a richer model. Confirmed on the fresh set and on the held-out
+set; no geometry choice was made on either. Files: `reports/known_warp_{dev,fresh,heldout}_geometry.json`
+(`--geometry --no-legacy`). "True" = the RMS error of the delivered geometry on a 16 px grid inside the
+inliers' convex hull.
+
+| bar | dev | fresh | held-out | verdict |
+|---|---|---|---|---|
+| I-01: delivered geometry within 10% of the best candidate | 15/15 | 15/15 | 15/15 | **met** |
+| G-02: TPS on all refined inliers, p50 within 0.02-0.09 px (non-rigid cases) | 0.031-0.066 | 0.028-0.065 | 0.030-0.061 | **met** |
+| C-03 bar 1: reported check-point RMSE within 25% of the true RMS | 2/15 | 4/15 | 4/15 | **not met** |
+
+What changed for a user, fresh set:
+- Delivered geometry, rigid cases: the affine is chosen, with a true RMS of **0.003-0.007 px**. The previously
+  shipped TPS (through the 384 points) had 0.040-0.101 px.
+- Delivered geometry, non-rigid cases: TPS, with a true RMS of 0.039-0.096 px (previously 0.039-0.169).
+- Reported "RMSE", previously 0.715-1.133 px against a true 0.04-0.10 px (7-30x). It is now 1.05-2.6x the
+  truth on non-rigid cases. On rigid cases it reads 0.057-0.127 px against a true 0.003-0.007 px: that is
+  the check points' matching noise, which no check-point statistic can get below (the caveat recorded
+  before measuring).
+
+**C-03 bar 1 is not met, and the bar is not changed.** The accuracy record therefore carries two labelled
+figures:
+- `rmse_px_ref`: the check-point RMSE (the audit's definition). It was at or above the truth in 44 of 45
+  cases (0.86x once).
+- `geometry_error_lower_px_ref`: split-half agreement of the chosen model. It was at or below the truth in
+  41 of 45 cases (up to 1.48x, all on rigid cases with a true error under 0.005 px).
+
+These are bounds, not the error itself.

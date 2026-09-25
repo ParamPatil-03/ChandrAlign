@@ -1,0 +1,1541 @@
+{
+ "set": "heldout",
+ "seed": 11,
+ "cases": [
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1015,
+   "status": "ok",
+   "inliers": 1010,
+   "delivered": 382,
+   "points": {
+    "unrefined": {
+     "n": 382,
+     "p50": 0.1298,
+     "p95": 0.351,
+     "rms": 0.1802,
+     "max": 0.5602
+    },
+    "library": {
+     "n": 382,
+     "p50": 0.0476,
+     "p95": 0.1062,
+     "rms": 0.061,
+     "max": 0.1687,
+     "moved": 351,
+     "seconds": 2.81
+    }
+   },
+   "geometry": {
+    "n_grid": 3781,
+    "true_affine": {
+     "n": 3781,
+     "p50": 1.109,
+     "p95": 1.622,
+     "rms": 1.1344,
+     "max": 1.9157
+    },
+    "true_tps": {
+     "n": 3781,
+     "p50": 0.0462,
+     "p95": 0.1124,
+     "rms": 0.0641,
+     "max": 0.4963
+    },
+    "true_tps_384_old": {
+     "n": 3781,
+     "p50": 0.0672,
+     "p95": 0.1907,
+     "rms": 0.1022,
+     "max": 0.5676
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3781,
+     "p50": 0.0462,
+     "p95": 0.1124,
+     "rms": 0.0641,
+     "max": 0.4963
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0727,
+     "fit_residual_px": 1.1062123427495543,
+     "model": "tps",
+     "n_check": 1000
+    },
+    "legacy_reported_rmse_px": 1.1062123427495543,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0727,
+     "n_fit_points": 1000,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.1083,
+       "p50_px": 1.0929,
+       "p95_px": 1.5869,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0727,
+       "p50_px": 0.0436,
+       "p95_px": 0.1385,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 100.0,
+       "split_half_px": 0.0432
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.1083, tps 0.0727 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 18.0,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 1027,
+   "status": "ok",
+   "inliers": 1021,
+   "delivered": 380,
+   "points": {
+    "unrefined": {
+     "n": 380,
+     "p50": 0.1139,
+     "p95": 0.3231,
+     "rms": 0.1887,
+     "max": 1.0926
+    },
+    "library": {
+     "n": 380,
+     "p50": 0.0426,
+     "p95": 0.1021,
+     "rms": 0.0681,
+     "max": 0.6292,
+     "moved": 342,
+     "seconds": 3.03
+    }
+   },
+   "geometry": {
+    "n_grid": 3789,
+    "true_affine": {
+     "n": 3789,
+     "p50": 0.0417,
+     "p95": 0.0466,
+     "rms": 0.0418,
+     "max": 0.0486
+    },
+    "true_tps": {
+     "n": 3789,
+     "p50": 0.0391,
+     "p95": 0.0907,
+     "rms": 0.064,
+     "max": 0.8673
+    },
+    "true_tps_384_old": {
+     "n": 3789,
+     "p50": 0.0304,
+     "p95": 0.0705,
+     "rms": 0.0425,
+     "max": 0.3298
+    },
+    "delivered": "affine",
+    "true_delivered": {
+     "n": 3789,
+     "p50": 0.003,
+     "p95": 0.0044,
+     "rms": 0.0031,
+     "max": 0.0049
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.1159,
+     "fit_residual_px": 0.08027427972644736,
+     "model": "affine",
+     "n_check": 1000
+    },
+    "legacy_reported_rmse_px": 0.08027427972644736,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "affine",
+     "checkpoint_rmse_px_ref": 0.1159,
+     "n_fit_points": 1000,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.1159,
+       "p50_px": 0.0423,
+       "p95_px": 0.1022,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "split_half_px": 0.0046
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.1125,
+       "p50_px": 0.0371,
+       "p95_px": 0.1233,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 10.0
+      }
+     },
+     "notes": [
+      "affine chosen: affine 0.1159, tps 0.1125 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 17.7,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 760,
+   "status": "ok",
+   "inliers": 754,
+   "delivered": 376,
+   "points": {
+    "unrefined": {
+     "n": 376,
+     "p50": 0.1509,
+     "p95": 0.536,
+     "rms": 0.2881,
+     "max": 2.1344
+    },
+    "library": {
+     "n": 376,
+     "p50": 0.0521,
+     "p95": 0.1192,
+     "rms": 0.1605,
+     "max": 2.1344,
+     "moved": 345,
+     "seconds": 3.42
+    }
+   },
+   "geometry": {
+    "n_grid": 3696,
+    "true_affine": {
+     "n": 3696,
+     "p50": 1.1205,
+     "p95": 1.5676,
+     "rms": 1.1322,
+     "max": 1.7738
+    },
+    "true_tps": {
+     "n": 3696,
+     "p50": 0.0557,
+     "p95": 0.1725,
+     "rms": 0.1096,
+     "max": 1.4329
+    },
+    "true_tps_384_old": {
+     "n": 3696,
+     "p50": 0.0702,
+     "p95": 0.2253,
+     "rms": 0.136,
+     "max": 1.2644
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3696,
+     "p50": 0.0557,
+     "p95": 0.1725,
+     "rms": 0.1096,
+     "max": 1.4329
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.1845,
+     "fit_residual_px": 1.125342131813785,
+     "model": "tps",
+     "n_check": 754
+    },
+    "legacy_reported_rmse_px": 1.125342131813785,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.1845,
+     "n_fit_points": 754,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.1345,
+       "p50_px": 1.0967,
+       "p95_px": 1.5922,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.1845,
+       "p50_px": 0.0491,
+       "p95_px": 0.2039,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 10.0,
+       "split_half_px": 0.0907
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.1345, tps 0.1845 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 15.6,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 599,
+   "status": "ok",
+   "inliers": 588,
+   "delivered": 331,
+   "points": {
+    "unrefined": {
+     "n": 331,
+     "p50": 0.1926,
+     "p95": 0.4209,
+     "rms": 0.2437,
+     "max": 1.0056
+    },
+    "library": {
+     "n": 331,
+     "p50": 0.0386,
+     "p95": 0.101,
+     "rms": 0.0591,
+     "max": 0.3366,
+     "moved": 316,
+     "seconds": 2.17
+    }
+   },
+   "geometry": {
+    "n_grid": 3701,
+    "true_affine": {
+     "n": 3701,
+     "p50": 0.7241,
+     "p95": 1.0085,
+     "rms": 0.7288,
+     "max": 1.1081
+    },
+    "true_tps": {
+     "n": 3701,
+     "p50": 0.043,
+     "p95": 0.1207,
+     "rms": 0.0987,
+     "max": 1.6579
+    },
+    "true_tps_384_old": {
+     "n": 3701,
+     "p50": 0.0364,
+     "p95": 0.1023,
+     "rms": 0.0546,
+     "max": 0.3039
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3701,
+     "p50": 0.043,
+     "p95": 0.1207,
+     "rms": 0.0987,
+     "max": 1.6579
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0846,
+     "fit_residual_px": 0.696134933437715,
+     "model": "tps",
+     "n_check": 588
+    },
+    "legacy_reported_rmse_px": 0.696134933437715,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0846,
+     "n_fit_points": 588,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.6798,
+       "p50_px": 0.6605,
+       "p95_px": 0.9875,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0846,
+       "p50_px": 0.031,
+       "p95_px": 0.1194,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 0.1,
+       "split_half_px": 0.053
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.6798, tps 0.0846 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 9.9,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 552,
+   "status": "ok",
+   "inliers": 542,
+   "delivered": 324,
+   "points": {
+    "unrefined": {
+     "n": 324,
+     "p50": 0.2101,
+     "p95": 0.5454,
+     "rms": 0.2914,
+     "max": 1.0842
+    },
+    "library": {
+     "n": 324,
+     "p50": 0.0429,
+     "p95": 0.0987,
+     "rms": 0.0922,
+     "max": 1.2914,
+     "moved": 308,
+     "seconds": 2.64
+    }
+   },
+   "geometry": {
+    "n_grid": 3622,
+    "true_affine": {
+     "n": 3622,
+     "p50": 0.7218,
+     "p95": 0.9952,
+     "rms": 0.7236,
+     "max": 1.0783
+    },
+    "true_tps": {
+     "n": 3622,
+     "p50": 0.0347,
+     "p95": 0.0842,
+     "rms": 0.0618,
+     "max": 1.0039
+    },
+    "true_tps_384_old": {
+     "n": 3622,
+     "p50": 0.0363,
+     "p95": 0.0857,
+     "rms": 0.0635,
+     "max": 1.1237
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3622,
+     "p50": 0.0347,
+     "p95": 0.0842,
+     "rms": 0.0618,
+     "max": 1.0039
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0726,
+     "fit_residual_px": 0.7083427588396305,
+     "model": "tps",
+     "n_check": 542
+    },
+    "legacy_reported_rmse_px": 0.7083427588396305,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0726,
+     "n_fit_points": 542,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.6772,
+       "p50_px": 0.6698,
+       "p95_px": 0.9697,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0726,
+       "p50_px": 0.0349,
+       "p95_px": 0.1149,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0,
+       "split_half_px": 0.0362
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.6772, tps 0.0726 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 10.5,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 21,
+   "status": "no registration",
+   "scored": false
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 771,
+   "status": "ok",
+   "inliers": 766,
+   "delivered": 371,
+   "points": {
+    "unrefined": {
+     "n": 371,
+     "p50": 0.1408,
+     "p95": 0.4699,
+     "rms": 0.2308,
+     "max": 0.9228
+    },
+    "library": {
+     "n": 371,
+     "p50": 0.0567,
+     "p95": 0.1389,
+     "rms": 0.0756,
+     "max": 0.2857,
+     "moved": 335,
+     "seconds": 2.87
+    }
+   },
+   "geometry": {
+    "n_grid": 3678,
+    "true_affine": {
+     "n": 3678,
+     "p50": 1.1171,
+     "p95": 1.5689,
+     "rms": 1.128,
+     "max": 1.7545
+    },
+    "true_tps": {
+     "n": 3678,
+     "p50": 0.0592,
+     "p95": 0.1609,
+     "rms": 0.0934,
+     "max": 0.7476
+    },
+    "true_tps_384_old": {
+     "n": 3678,
+     "p50": 0.0697,
+     "p95": 0.2068,
+     "rms": 0.1152,
+     "max": 0.7561
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3678,
+     "p50": 0.0592,
+     "p95": 0.1609,
+     "rms": 0.0934,
+     "max": 0.7476
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.1504,
+     "fit_residual_px": 1.08654974390606,
+     "model": "tps",
+     "n_check": 766
+    },
+    "legacy_reported_rmse_px": 1.08654974390606,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.1504,
+     "n_fit_points": 766,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.094,
+       "p50_px": 1.0786,
+       "p95_px": 1.5466,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.1504,
+       "p50_px": 0.0524,
+       "p95_px": 0.1865,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 100.0,
+       "split_half_px": 0.0604
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.094, tps 0.1504 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 15.0,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 834,
+   "status": "ok",
+   "inliers": 829,
+   "delivered": 371,
+   "points": {
+    "unrefined": {
+     "n": 371,
+     "p50": 0.1537,
+     "p95": 0.4274,
+     "rms": 0.223,
+     "max": 0.9505
+    },
+    "library": {
+     "n": 371,
+     "p50": 0.0486,
+     "p95": 0.1144,
+     "rms": 0.0781,
+     "max": 0.5743,
+     "moved": 337,
+     "seconds": 2.84
+    }
+   },
+   "geometry": {
+    "n_grid": 3688,
+    "true_affine": {
+     "n": 3688,
+     "p50": 0.0329,
+     "p95": 0.0425,
+     "rms": 0.0335,
+     "max": 0.0457
+    },
+    "true_tps": {
+     "n": 3688,
+     "p50": 0.031,
+     "p95": 0.0718,
+     "rms": 0.0427,
+     "max": 0.3027
+    },
+    "true_tps_384_old": {
+     "n": 3688,
+     "p50": 0.0356,
+     "p95": 0.0837,
+     "rms": 0.0523,
+     "max": 0.4688
+    },
+    "delivered": "affine",
+    "true_delivered": {
+     "n": 3688,
+     "p50": 0.0038,
+     "p95": 0.0083,
+     "rms": 0.0047,
+     "max": 0.0104
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.1182,
+     "fit_residual_px": 0.08136168834105185,
+     "model": "affine",
+     "n_check": 829
+    },
+    "legacy_reported_rmse_px": 0.08136168834105185,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "affine",
+     "checkpoint_rmse_px_ref": 0.1182,
+     "n_fit_points": 829,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.1182,
+       "p50_px": 0.0495,
+       "p95_px": 0.1187,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "split_half_px": 0.004
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.1153,
+       "p50_px": 0.0458,
+       "p95_px": 0.1332,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0
+      }
+     },
+     "notes": [
+      "affine chosen: affine 0.1182, tps 0.1153 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 14.8,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 630,
+   "status": "ok",
+   "inliers": 618,
+   "delivered": 357,
+   "points": {
+    "unrefined": {
+     "n": 357,
+     "p50": 0.1965,
+     "p95": 0.7905,
+     "rms": 0.3709,
+     "max": 1.8694
+    },
+    "library": {
+     "n": 357,
+     "p50": 0.0623,
+     "p95": 0.1541,
+     "rms": 0.1292,
+     "max": 1.8694,
+     "moved": 317,
+     "seconds": 2.94
+    }
+   },
+   "geometry": {
+    "n_grid": 3585,
+    "true_affine": {
+     "n": 3585,
+     "p50": 1.1172,
+     "p95": 1.5763,
+     "rms": 1.1316,
+     "max": 1.8184
+    },
+    "true_tps": {
+     "n": 3585,
+     "p50": 0.0613,
+     "p95": 0.2227,
+     "rms": 0.1172,
+     "max": 0.831
+    },
+    "true_tps_384_old": {
+     "n": 3585,
+     "p50": 0.0723,
+     "p95": 0.2587,
+     "rms": 0.1507,
+     "max": 1.6542
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3585,
+     "p50": 0.0613,
+     "p95": 0.2227,
+     "rms": 0.1172,
+     "max": 0.831
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.2691,
+     "fit_residual_px": 1.111954501099148,
+     "model": "tps",
+     "n_check": 618
+    },
+    "legacy_reported_rmse_px": 1.111954501099148,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.2691,
+     "n_fit_points": 618,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.1268,
+       "p50_px": 1.0861,
+       "p95_px": 1.5658,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.2691,
+       "p50_px": 0.0554,
+       "p95_px": 0.2765,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 100.0,
+       "split_half_px": 0.0954
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.1268, tps 0.2691 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 12.8,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 480,
+   "status": "ok",
+   "inliers": 473,
+   "delivered": 325,
+   "points": {
+    "unrefined": {
+     "n": 325,
+     "p50": 0.212,
+     "p95": 0.4678,
+     "rms": 0.2763,
+     "max": 1.4367
+    },
+    "library": {
+     "n": 325,
+     "p50": 0.0436,
+     "p95": 0.1114,
+     "rms": 0.0691,
+     "max": 0.3887,
+     "moved": 307,
+     "seconds": 2.09
+    }
+   },
+   "geometry": {
+    "n_grid": 3621,
+    "true_affine": {
+     "n": 3621,
+     "p50": 0.7316,
+     "p95": 1.0361,
+     "rms": 0.7418,
+     "max": 1.2409
+    },
+    "true_tps": {
+     "n": 3621,
+     "p50": 0.0374,
+     "p95": 0.1165,
+     "rms": 0.0595,
+     "max": 0.3478
+    },
+    "true_tps_384_old": {
+     "n": 3621,
+     "p50": 0.0386,
+     "p95": 0.1123,
+     "rms": 0.0613,
+     "max": 0.3543
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3621,
+     "p50": 0.0374,
+     "p95": 0.1165,
+     "rms": 0.0595,
+     "max": 0.3478
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0992,
+     "fit_residual_px": 0.7255415650245036,
+     "model": "tps",
+     "n_check": 473
+    },
+    "legacy_reported_rmse_px": 0.7255415650245036,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0992,
+     "n_fit_points": 473,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.7135,
+       "p50_px": 0.6921,
+       "p95_px": 0.9803,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0992,
+       "p50_px": 0.0375,
+       "p95_px": 0.122,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0,
+       "split_half_px": 0.0343
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.7135, tps 0.0992 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 8.5,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 460,
+   "status": "ok",
+   "inliers": 449,
+   "delivered": 325,
+   "points": {
+    "unrefined": {
+     "n": 325,
+     "p50": 0.2341,
+     "p95": 0.7504,
+     "rms": 0.3699,
+     "max": 1.6375
+    },
+    "library": {
+     "n": 325,
+     "p50": 0.0447,
+     "p95": 0.1273,
+     "rms": 0.1494,
+     "max": 1.6375,
+     "moved": 305,
+     "seconds": 2.32
+    }
+   },
+   "geometry": {
+    "n_grid": 3560,
+    "true_affine": {
+     "n": 3560,
+     "p50": 0.7341,
+     "p95": 1.032,
+     "rms": 0.7409,
+     "max": 1.1898
+    },
+    "true_tps": {
+     "n": 3560,
+     "p50": 0.0502,
+     "p95": 0.1925,
+     "rms": 0.1165,
+     "max": 1.1839
+    },
+    "true_tps_384_old": {
+     "n": 3560,
+     "p50": 0.042,
+     "p95": 0.1602,
+     "rms": 0.1122,
+     "max": 1.1873
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3560,
+     "p50": 0.0502,
+     "p95": 0.1925,
+     "rms": 0.1165,
+     "max": 1.1839
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.2197,
+     "fit_residual_px": 0.747112203051032,
+     "model": "tps",
+     "n_check": 449
+    },
+    "legacy_reported_rmse_px": 0.747112203051032,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.2197,
+     "n_fit_points": 449,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.7385,
+       "p50_px": 0.7001,
+       "p95_px": 0.9939,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.2197,
+       "p50_px": 0.0481,
+       "p95_px": 0.2488,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 10.0,
+       "split_half_px": 0.0828
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.7385, tps 0.2197 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 9.0,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 32,
+   "status": "ok",
+   "inliers": 14,
+   "delivered": 14,
+   "points": {
+    "unrefined": {
+     "n": 14,
+     "p50": 0.917,
+     "p95": 2.6231,
+     "rms": 1.5453,
+     "max": 3.2748
+    },
+    "library": {
+     "n": 14,
+     "p50": 0.917,
+     "p95": 2.6231,
+     "rms": 1.5453,
+     "max": 3.2748,
+     "moved": 0,
+     "seconds": 0.09
+    }
+   },
+   "geometry": {
+    "n_grid": 889,
+    "true_affine": {
+     "n": 889,
+     "p50": 1.1472,
+     "p95": 2.0235,
+     "rms": 1.2522,
+     "max": 2.3289
+    },
+    "delivered": "affine",
+    "true_delivered": {
+     "n": 889,
+     "p50": 1.185,
+     "p95": 2.1131,
+     "rms": 1.3381,
+     "max": 2.7365
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 1.8079,
+     "fit_residual_px": 1.44947741253255,
+     "model": "affine",
+     "n_check": 14
+    },
+    "legacy_reported_rmse_px": 1.44947741253255,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "affine",
+     "checkpoint_rmse_px_ref": 1.8079,
+     "n_fit_points": 14,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.8079,
+       "p50_px": 1.5259,
+       "p95_px": 3.1991,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      }
+     },
+     "notes": [
+      "TPS not considered: 14 fit points < 30",
+      "affine chosen: affine 1.8079 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 0.6,
+   "scored": false
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1343,
+   "status": "ok",
+   "inliers": 1341,
+   "delivered": 381,
+   "points": {
+    "unrefined": {
+     "n": 381,
+     "p50": 0.1041,
+     "p95": 0.2597,
+     "rms": 0.1548,
+     "max": 1.0751
+    },
+    "library": {
+     "n": 381,
+     "p50": 0.0389,
+     "p95": 0.1059,
+     "rms": 0.1244,
+     "max": 1.4381,
+     "moved": 344,
+     "seconds": 3.03
+    }
+   },
+   "geometry": {
+    "n_grid": 3768,
+    "true_affine": {
+     "n": 3768,
+     "p50": 1.1163,
+     "p95": 1.5777,
+     "rms": 1.131,
+     "max": 1.7697
+    },
+    "true_tps": {
+     "n": 3768,
+     "p50": 0.043,
+     "p95": 0.1165,
+     "rms": 0.0683,
+     "max": 0.5738
+    },
+    "true_tps_384_old": {
+     "n": 3768,
+     "p50": 0.0636,
+     "p95": 0.2651,
+     "rms": 0.1373,
+     "max": 1.1308
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3768,
+     "p50": 0.043,
+     "p95": 0.1165,
+     "rms": 0.0683,
+     "max": 0.5738
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0997,
+     "fit_residual_px": 1.137760780587562,
+     "model": "tps",
+     "n_check": 1000
+    },
+    "legacy_reported_rmse_px": 1.137760780587562,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0997,
+     "n_fit_points": 1000,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.1204,
+       "p50_px": 1.113,
+       "p95_px": 1.5335,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0997,
+       "p50_px": 0.0439,
+       "p95_px": 0.1367,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 100.0,
+       "split_half_px": 0.0486
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.1204, tps 0.0997 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 18.7,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 1380,
+   "status": "ok",
+   "inliers": 1376,
+   "delivered": 384,
+   "points": {
+    "unrefined": {
+     "n": 384,
+     "p50": 0.0948,
+     "p95": 0.2942,
+     "rms": 0.1431,
+     "max": 0.5787
+    },
+    "library": {
+     "n": 384,
+     "p50": 0.0297,
+     "p95": 0.0613,
+     "rms": 0.1054,
+     "max": 1.4872,
+     "moved": 355,
+     "seconds": 3.09
+    }
+   },
+   "geometry": {
+    "n_grid": 3762,
+    "true_affine": {
+     "n": 3762,
+     "p50": 0.0224,
+     "p95": 0.041,
+     "rms": 0.0255,
+     "max": 0.0482
+    },
+    "true_tps": {
+     "n": 3762,
+     "p50": 0.0188,
+     "p95": 0.0444,
+     "rms": 0.0267,
+     "max": 0.1977
+    },
+    "true_tps_384_old": {
+     "n": 3762,
+     "p50": 0.0212,
+     "p95": 0.0743,
+     "rms": 0.0853,
+     "max": 1.2222
+    },
+    "delivered": "affine",
+    "true_delivered": {
+     "n": 3762,
+     "p50": 0.0008,
+     "p95": 0.0017,
+     "rms": 0.001,
+     "max": 0.002
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0822,
+     "fit_residual_px": 0.10860895053627533,
+     "model": "affine",
+     "n_check": 1000
+    },
+    "legacy_reported_rmse_px": 0.10860895053627533,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "affine",
+     "checkpoint_rmse_px_ref": 0.0822,
+     "n_fit_points": 1000,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.0822,
+       "p50_px": 0.0311,
+       "p95_px": 0.0657,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "split_half_px": 0.0013
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0831,
+       "p50_px": 0.0311,
+       "p95_px": 0.0709,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0
+      }
+     },
+     "notes": [
+      "affine chosen: affine 0.0822, tps 0.0831 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 19.0,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1081,
+   "status": "ok",
+   "inliers": 1071,
+   "delivered": 374,
+   "points": {
+    "unrefined": {
+     "n": 374,
+     "p50": 0.1197,
+     "p95": 0.3986,
+     "rms": 0.2208,
+     "max": 1.6783
+    },
+    "library": {
+     "n": 374,
+     "p50": 0.046,
+     "p95": 0.1267,
+     "rms": 0.1391,
+     "max": 1.6783,
+     "moved": 343,
+     "seconds": 3.2
+    }
+   },
+   "geometry": {
+    "n_grid": 3753,
+    "true_affine": {
+     "n": 3753,
+     "p50": 1.1292,
+     "p95": 1.5744,
+     "rms": 1.1394,
+     "max": 1.7597
+    },
+    "true_tps": {
+     "n": 3753,
+     "p50": 0.0465,
+     "p95": 0.1504,
+     "rms": 0.0777,
+     "max": 0.486
+    },
+    "true_tps_384_old": {
+     "n": 3753,
+     "p50": 0.0618,
+     "p95": 0.2167,
+     "rms": 0.1261,
+     "max": 1.5669
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3753,
+     "p50": 0.0465,
+     "p95": 0.1504,
+     "rms": 0.0777,
+     "max": 0.486
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.1587,
+     "fit_residual_px": 1.1178199042087198,
+     "model": "tps",
+     "n_check": 1000
+    },
+    "legacy_reported_rmse_px": 1.1178199042087198,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.1587,
+     "n_fit_points": 1000,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 1.1141,
+       "p50_px": 1.1014,
+       "p95_px": 1.5156,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.1587,
+       "p50_px": 0.0453,
+       "p95_px": 0.1608,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0,
+       "split_half_px": 0.0509
+      }
+     },
+     "notes": [
+      "tps chosen: affine 1.1141, tps 0.1587 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 19.5,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 563,
+   "status": "ok",
+   "inliers": 552,
+   "delivered": 350,
+   "points": {
+    "unrefined": {
+     "n": 350,
+     "p50": 0.1734,
+     "p95": 0.3682,
+     "rms": 0.2125,
+     "max": 0.726
+    },
+    "library": {
+     "n": 350,
+     "p50": 0.0362,
+     "p95": 0.0934,
+     "rms": 0.0738,
+     "max": 0.726,
+     "moved": 335,
+     "seconds": 2.51
+    }
+   },
+   "geometry": {
+    "n_grid": 3673,
+    "true_affine": {
+     "n": 3673,
+     "p50": 0.7308,
+     "p95": 1.0347,
+     "rms": 0.7453,
+     "max": 1.2033
+    },
+    "true_tps": {
+     "n": 3673,
+     "p50": 0.0298,
+     "p95": 0.0886,
+     "rms": 0.0467,
+     "max": 0.2716
+    },
+    "true_tps_384_old": {
+     "n": 3673,
+     "p50": 0.0342,
+     "p95": 0.1174,
+     "rms": 0.0655,
+     "max": 0.5694
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3673,
+     "p50": 0.0298,
+     "p95": 0.0886,
+     "rms": 0.0467,
+     "max": 0.2716
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0666,
+     "fit_residual_px": 0.7313544114938788,
+     "model": "tps",
+     "n_check": 552
+    },
+    "legacy_reported_rmse_px": 0.7313544114938788,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0666,
+     "n_fit_points": 552,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.7077,
+       "p50_px": 0.6992,
+       "p95_px": 0.9832,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0666,
+       "p50_px": 0.036,
+       "p95_px": 0.0986,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 1000.0,
+       "split_half_px": 0.0282
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.7077, tps 0.0666 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 10.6,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 567,
+   "status": "ok",
+   "inliers": 547,
+   "delivered": 349,
+   "points": {
+    "unrefined": {
+     "n": 349,
+     "p50": 0.1819,
+     "p95": 0.5046,
+     "rms": 0.2761,
+     "max": 1.3691
+    },
+    "library": {
+     "n": 349,
+     "p50": 0.0426,
+     "p95": 0.1043,
+     "rms": 0.0833,
+     "max": 0.8973,
+     "moved": 335,
+     "seconds": 2.77
+    }
+   },
+   "geometry": {
+    "n_grid": 3642,
+    "true_affine": {
+     "n": 3642,
+     "p50": 0.7349,
+     "p95": 1.0425,
+     "rms": 0.7475,
+     "max": 1.1848
+    },
+    "true_tps": {
+     "n": 3642,
+     "p50": 0.0417,
+     "p95": 0.1209,
+     "rms": 0.0816,
+     "max": 0.8907
+    },
+    "true_tps_384_old": {
+     "n": 3642,
+     "p50": 0.0383,
+     "p95": 0.1042,
+     "rms": 0.0587,
+     "max": 0.5329
+    },
+    "delivered": "tps",
+    "true_delivered": {
+     "n": 3642,
+     "p50": 0.0417,
+     "p95": 0.1209,
+     "rms": 0.0816,
+     "max": 0.8907
+    },
+    "reported": {
+     "checkpoint_rmse_px_ref": 0.0853,
+     "fit_residual_px": 0.742088595805004,
+     "model": "tps",
+     "n_check": 547
+    },
+    "legacy_reported_rmse_px": 0.742088595805004,
+    "selection": {
+     "applied": true,
+     "refined_fit_points": true,
+     "delivered": "tps",
+     "checkpoint_rmse_px_ref": 0.0853,
+     "n_fit_points": 547,
+     "candidates": {
+      "affine": {
+       "checkpoint_rmse_px": 0.7165,
+       "p50_px": 0.7088,
+       "p95_px": 0.9925,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits"
+      },
+      "tps": {
+       "checkpoint_rmse_px": 0.0853,
+       "p50_px": 0.0365,
+       "p95_px": 0.1213,
+       "scored_by": "stratified 5-fold CV (8x8 cells), Huber-IRLS fits",
+       "smoothing": 100.0,
+       "split_half_px": 0.0425
+      }
+     },
+     "notes": [
+      "tps chosen: affine 0.7165, tps 0.0853 px (a richer model must win by 5%)"
+     ]
+    }
+   },
+   "seconds": 11.5,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 30,
+   "status": "no registration",
+   "scored": false
+  }
+ ]
+}
