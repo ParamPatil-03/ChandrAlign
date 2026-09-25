@@ -81,3 +81,9 @@ locks, has a fine model, passes all five gates, tier >= LOW, MI check not flagge
 offset is within max(2 reference-pixel diagonals, 150 m) of the MEDIAN implied offset over that
 pairing's windows passing everything else (>= 3 such windows needed; else none succeed) -- the
 guard docs/iirs_wac_protocol.md used. Computed from the same reports; no rerun, no other change.
+
+## Amendment 1 result (`reports/map_pairings_amendment1.json`)
+TMC-2 -> WAC 4/5 **degraded**; IIRS -> MI 3/5 **degraded**; TMC-2 -> MI 0/5 (only 2 windows pass the
+gates+tier, < 3 needed); OHRC -> MI 0/5 (2 pass); OHRC -> WAC 0/5 (no lock). Second attempt of this
+protocol: stops here. Remaining causes are real limits: few matches / low coverage at MI's 15 m
+(TMC-2, OHRC) and OHRC's small footprint at coarse scale.
