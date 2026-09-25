@@ -5,7 +5,7 @@ import pytest
 from chandralign.cli import build_parser, main
 
 
-@pytest.mark.parametrize("command", ["register", "benchmark", "ablate", "report", "demo"])
+@pytest.mark.parametrize("command", ["register", "report", "demo"])
 def test_each_command_has_help(command, capsys):
     with pytest.raises(SystemExit) as exc:
         build_parser().parse_args([command, "--help"])
@@ -20,8 +20,7 @@ def test_register_requires_inputs_without_mock(tmp_path):
 
 def test_mock_register_runs_end_to_end_and_writes_run_folder(tmp_path):
     out = tmp_path / "run"
-    assert main(["register", "--mock", "--cpu", "--out", str(out),
-                 "--config", "configs/default.yaml"]) == 0
+    assert main(["register", "--mock", "--cpu", "--out", str(out)]) == 0
     expected = {"matches.csv", "matches.geojson", "provenance.json", "result.json",
                 "registered.tif", "registered.json", "side-by-side.png", "matches.png",
                 "coverage.png", "checkerboard.png", "failure-log.jsonl"}
@@ -55,3 +54,34 @@ def test_a_rejected_run_with_no_geometry_still_writes_its_reasons(tmp_path):
     result = json.loads((out / "result.json").read_text(encoding="utf-8"))
     assert result["confidence_tier"] == "REJECTED" and result["failure_modes"]
     assert (out / "failure-log.jsonl").exists() and not (out / "registered.tif").exists()
+
+
+
+def test_declared_but_unimplemented_commands_are_gone(capsys):
+    """Audit M-18: benchmark / ablate only said 'not implemented yet'; the research scripts do that work."""
+    for command in ("benchmark", "ablate"):
+        with pytest.raises(SystemExit):
+            build_parser().parse_args([command])
+
+
+def test_the_demo_is_real_and_says_synthetic(tmp_path):
+    out = tmp_path / "demo"
+    assert main(["demo", "--out", str(out)]) == 0
+    result = json.loads((out / "result.json").read_text(encoding="utf-8"))
+    assert result["metrics"]["source"] == "synthetic"
+    assert (out / "report.html").exists()
+
+
+def test_real_products_refuse_a_matcher_override(tmp_path):
+    with pytest.raises(SystemExit, match="--mock only"):
+        main(["register", "--src", "a.xml", "--ref", "b.xml", "--matcher", "sift", "--out", str(tmp_path / "r")])
+
+
+def test_an_unsupported_pairing_is_refused_with_the_reason(tmp_path, monkeypatch):
+    from chandralign.workflows import products
+
+    def refuse(*a, **k):
+        raise products.UnsupportedPairing("no validated product workflow for TMC2 -> MI")
+    monkeypatch.setattr(products, "register_products", refuse)
+    with pytest.raises(SystemExit, match="refused: no validated product workflow"):
+        main(["register", "--src", "a.xml", "--ref", "b.xml", "--out", str(tmp_path / "r")])

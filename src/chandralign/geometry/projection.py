@@ -301,6 +301,43 @@ def window_model(model, origin=(0, 0), shape=None):
     return WindowModel(base=model, origin=(r0, c0), lines=int(lines), samples=int(samples))
 
 
+@dataclass
+class FramedModel(_Model):
+    """A product ground model seen through an affine frame: frame px (x, y) -> product px via
+    `to_product` (3x3). The validated workflows register the source RESAMPLED onto the reference
+    grid; this gives those frame pixels their source-product geolocation (audit C-01)."""
+    base: _Model
+    to_product: np.ndarray             # 3x3, frame (x, y, 1) -> product (x, y, 1)
+    lines: int = 0
+    samples: int = 0
+
+    @property
+    def source(self) -> str:
+        return getattr(self.base, "source", "unknown")
+
+    @property
+    def independent_of_references(self) -> bool:
+        return bool(getattr(self.base, "independent_of_references", False))
+
+    def product_px(self, rows, cols):
+        rows, cols = np.asarray(rows, float), np.asarray(cols, float)
+        M = np.asarray(self.to_product, float)
+        return (M[1, 0] * cols + M[1, 1] * rows + M[1, 2],     # product row
+                M[0, 0] * cols + M[0, 1] * rows + M[0, 2])     # product col
+
+    def pixel_to_latlon(self, rows, cols, clip: bool = True):
+        r, c = self.product_px(rows, cols)
+        try:
+            return self.base.pixel_to_latlon(r, c, clip=clip)
+        except TypeError:              # a model without the `clip` keyword
+            return self.base.pixel_to_latlon(r, c)
+
+
+def framed_model(model, to_product) -> FramedModel:
+    """The ground model for pixels of a frame mapped to the product by `to_product` (3x3)."""
+    return FramedModel(base=model, to_product=np.asarray(to_product, float))
+
+
 def grid_path(meta: SceneMeta) -> Path:
     """ISRO geometry grid for a CH-2 product: <product>/geometry/calibrated/<date>/<id with _g_grd_>.csv."""
     stem = meta.product_id.replace("_d_img_", "_g_grd_")

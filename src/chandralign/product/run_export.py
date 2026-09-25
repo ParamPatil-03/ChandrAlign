@@ -91,6 +91,25 @@ def write_run(out_dir: str | Path, bundle, *, manifest: dict, src_model=None, re
     return record
 
 
+def write_unregistered(out_dir: str | Path, failure: dict, *, extra: Optional[dict] = None) -> dict:
+    """A window that never reached a registration (no overlap, no coarse lock, no transform):
+    result.json and the failure log still say so, with the failure mode (rule H3)."""
+    from types import SimpleNamespace
+    from ..evaluate import failure_log
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    stub = SimpleNamespace(confidence_tier=failure["confidence_tier"], failure_modes=list(failure["failure_modes"]),
+                           notes=[failure.get("status", "")], gates={})
+    failure_log.log_run(out / "failure-log.jsonl", stub)
+    record = {"confidence_tier": failure["confidence_tier"], "failure_modes": list(failure["failure_modes"]),
+              "status": failure.get("status", ""), "gates": {}, "metrics": None,
+              "exports": ["failure-log.jsonl", "result.json"],
+              "exports_skipped": {"*": "the window never reached a registration: " + str(failure.get("status", ""))}}
+    record.update(extra or {})
+    _write_json(out / "result.json", record)
+    return record
+
+
 def result_record(bundle) -> dict:
     """The run summary written as result.json (and returned by the API)."""
     result = bundle.result
@@ -109,6 +128,10 @@ def result_record(bundle) -> dict:
         "stages": _jsonable(getattr(bundle, "stages", {})),
         "geometry_used": geometry,
         "provenance": _jsonable(result.provenance),
+        # How the bundle's frames map to the products (px x, y): lets a user take any exported
+        # point, or the model, back to native source / reference pixels.
+        "frames": {"src_to_product": _jsonable(getattr(bundle, "src_to_product", None)),
+                   "ref_to_product": _jsonable(getattr(bundle, "ref_to_product", None))},
     }
 
 

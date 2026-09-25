@@ -95,3 +95,27 @@ def test_match_point_latlon_uses_the_window_origin(tmp_path):
         lat, lon = tc.pixel_to_latlon(np.array([y + 5000]), np.array([x + 6000]))
         assert float(row["ref_lat"]) == pytest.approx(float(lat[0]), abs=1e-9)
         assert float(row["ref_lon"]) == pytest.approx(float(lon[0]), abs=1e-9)
+
+
+def test_points_registered_in_a_resampled_frame_are_exported_in_source_product_pixels(tmp_path):
+    """Audit C-01: the validated path registers the source RESAMPLED onto the reference grid;
+    users need each match's position in the source PRODUCT, and its geolocation from there."""
+    import csv
+    from types import SimpleNamespace
+    from chandralign.geometry.projection import MapModel
+    product = MapModel(resolution_px_per_deg=100.0, line_offset=0.0, sample_offset=0.0,
+                       center_lat=10.0, center_lon=20.0, lines=1000, samples=1000)
+    frame_to_product = np.array([[2.0, 0.0, 300.0], [0.0, 2.0, 500.0], [0, 0, 1]])   # 2x, offset
+    pts = np.array([[10.0, 20.0], [30.5, 40.25]])
+    delivered = MatchSet(pts, pts, np.ones(2, np.float32), "t", "same_modal_normal", "delivered")
+    plane = SimpleNamespace(array=np.zeros((100, 100), np.float32), meta=None, tile_origin=(0, 0))
+    bundle = SimpleNamespace(delivered=delivered, result=SimpleNamespace(matches=delivered),
+                             src=plane, ref=plane, src_to_product=frame_to_product)
+    csv_path, _ = export_bundle(tmp_path, bundle, src_model=product, ref_model=product, grid=2)
+    rows = list(csv.DictReader(open(csv_path, encoding="utf-8")))
+    for row, (x, y) in zip(rows, pts):
+        px, py = 2 * x + 300, 2 * y + 500
+        assert float(row["src_product_x"]) == pytest.approx(px) and float(row["src_product_y"]) == pytest.approx(py)
+        lat, lon = product.pixel_to_latlon(np.array([py]), np.array([px]))
+        assert float(row["src_lat"]) == pytest.approx(float(lat[0])) and float(row["src_lon"]) == pytest.approx(float(lon[0]))
+    assert read_csv(csv_path)[0].src_pts.shape == (2, 2)     # still readable as a MatchSet

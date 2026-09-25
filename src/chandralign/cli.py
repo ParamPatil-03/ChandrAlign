@@ -14,35 +14,33 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="chandralign", description="Lunar image registration")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    register = sub.add_parser("register", help="register a source image against a reference")
+    register = sub.add_parser(
+        "register", help="register a source product against a reference product",
+        description="Registers two real products on the validated path for their pairing "
+                    "(TMC-2 -> SELENE TC, OHRC -> LRO NAC): windows placed where the products "
+                    "overlap, coarse lock, routed matcher, fine stage, control gates, tier. Any "
+                    "other pairing is refused with the reason. --mock runs a synthetic pair.")
     register.add_argument("--src", type=Path, help="source PDS3/PDS4 label")
     register.add_argument("--ref", type=Path, help="reference PDS3/PDS4 label")
     register.add_argument("--out", type=Path, required=True, help="new run directory")
-    register.add_argument("--config", type=Path, default=Path("configs/default.yaml"),
-                          help="configuration YAML (default: configs/default.yaml)")
-    register.add_argument("--matcher", default="sift", help="sift, akaze, orb, brisk, rift2 or learned model")
+    register.add_argument("--windows", type=int, default=3,
+                          help="windows registered across the overlap (default 3)")
+    register.add_argument("--matcher", default=None,
+                          help="--mock only: the matcher to use (default sift). Real products use "
+                               "the matcher routing chose for the pairing, as the evidence did.")
     register.add_argument("--cpu", action="store_true", help="force CPU execution")
-    register.add_argument("--tile-size", type=int, default=1024, help="first-tile size for large products")
-    register.add_argument("--overlap", type=int, default=128, help="tile overlap in pixels")
-    register.add_argument("--src-band", type=int, help="zero-based source band")
-    register.add_argument("--ref-band", type=int, help="zero-based reference band")
     register.add_argument("--mock", action="store_true", help="run an offline synthetic pair instead of labels")
     register.add_argument("--seed", type=int, default=7, help="synthetic-pair seed with --mock")
     register.set_defaults(handler=_register)
 
-    benchmark = sub.add_parser("benchmark", help="run curated benchmark tiers")
-    benchmark.add_argument("--tiers", default="easy,medium,hard,extreme", help="comma-separated tiers")
-    benchmark.set_defaults(handler=_pending)
-    ablate = sub.add_parser("ablate", help="run the configured stage ablation")
-    ablate.add_argument("--stages", default="all", help="comma-separated stages or 'all'")
-    ablate.set_defaults(handler=_pending)
     report = sub.add_parser("report", help="render the HTML report for a run")
     report.add_argument("--run", type=Path, required=True, help="run directory")
     report.add_argument("--out", type=Path, help="output HTML (default: RUN/report.html)")
     report.set_defaults(handler=_report)
-    demo = sub.add_parser("demo", help="run the offline demonstration")
+    demo = sub.add_parser("demo", help="offline demonstration: a SYNTHETIC registration and its report")
     demo.add_argument("--out", type=Path, default=Path("runs/demo"), help="demo output directory")
-    demo.set_defaults(handler=_pending)
+    demo.add_argument("--seed", type=int, default=7, help="synthetic-pair seed")
+    demo.set_defaults(handler=_demo)
     return parser
 
 
@@ -51,43 +49,101 @@ def main(argv: Sequence[str] | None = None) -> int:
     return int(args.handler(args))
 
 
-def _register(args) -> int:
-    from .pipeline import register_bundle
-    from .product import provenance, run_export
-
-    out = args.out.resolve()
+def _new_run_dir(path: Path) -> Path:
+    out = path.resolve()
     if out.exists() and any(out.iterdir()):
         raise SystemExit(f"refusing to overwrite non-empty run directory: {out}")
     out.mkdir(parents=True, exist_ok=True)
-    configuration = _load_config(args.config)
+    return out
 
+
+def _register(args) -> int:
+    out = _new_run_dir(args.out)
     if args.mock:
-        from . import synth
-        src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=args.seed,
-                                      n_craters=35, shadows=False)
-        _materialize_mock_inputs(src, ref, out)
-        src_model = ref_model = _MockGroundModel(src.gsd_m)
-    else:
-        if args.src is None or args.ref is None:
-            raise SystemExit("--src and --ref are required unless --mock is used")
-        from .io.pds_label import parse_label
-        from .io.tiling import iter_tiles
-        src_meta, ref_meta = parse_label(args.src), parse_label(args.ref)
-        src = next(iter_tiles(src_meta, tile=args.tile_size, overlap=args.overlap, band=args.src_band))
-        ref = next(iter_tiles(ref_meta, tile=args.tile_size, overlap=args.overlap, band=args.ref_band))
-        src_model = ref_model = None
-
-    bundle = register_bundle(src, ref, matcher=args.matcher, device="cpu" if args.cpu else None)
-    manifest = provenance.build(bundle, config_data=configuration,
-                                ship_mode=bool(configuration.get("ship_mode", True)))
-    run_export.write_run(out, bundle, manifest=manifest, src_model=src_model, ref_model=ref_model,
-                         grid=int(configuration.get("uniformity", {}).get("grid", 8)))
-    print(f"{bundle.result.confidence_tier}: {out}")
+        return _register_mock(args, out)
+    if args.src is None or args.ref is None:
+        raise SystemExit("--src and --ref are required unless --mock is used")
+    if args.matcher:
+        raise SystemExit("--matcher applies to --mock only: real products use the matcher routing "
+                         "chose for their pairing, which is what the committed evidence measured")
+    if args.windows < 1:
+        raise SystemExit("--windows must be at least 1")
+    from .workflows.products import UnsupportedPairing, register_products
+    try:
+        run = register_products(args.src, args.ref, windows=args.windows,
+                                device="cpu" if args.cpu else None, progress=print)
+    except UnsupportedPairing as exc:
+        raise SystemExit(f"refused: {exc}")
+    except ValueError as exc:                 # no overlap: failure mode 10, before any matching
+        raise SystemExit(f"refused: {exc}")
+    arguments = {"command": "register", "src": str(args.src), "ref": str(args.ref),
+                 "windows": args.windows, "device": "cpu" if args.cpu else "auto"}
+    summary = write_product_run(out, run, arguments)
+    for w in summary["window_results"]:
+        print(f"  {w['dir']}: {w['confidence_tier']}  {w['status']}")
+    print(f"{summary['accepted']}/{summary['windows']} windows accepted: {out}")
     return 0
 
 
-def _pending(args) -> int:
-    raise SystemExit(f"'{args.command}' is declared but its planned feature is not implemented yet")
+def write_product_run(out: Path, run, arguments: dict) -> dict:
+    """Write every window of a workflows.products.ProductRun, plus summary.json; return the summary."""
+    from .product import provenance, run_export
+    rows = []
+    for k, w in enumerate(run.windows, 1):
+        wdir = out / f"window_{k:02d}"
+        extra = {"window": _window_brief(w.window), "pairing": run.pairing, "workflow": run.workflow}
+        if w.bundle is None:
+            rec = run_export.write_unregistered(wdir, w.failure, extra=extra)
+        else:
+            manifest = provenance.build(w.bundle, run_arguments=arguments)
+            rec = run_export.write_run(wdir, w.bundle, manifest=manifest, src_model=w.src_model,
+                                       ref_model=w.ref_model, heights_at=w.bundle.heights_at, extra=extra)
+        rows.append({"dir": wdir.name, "confidence_tier": rec["confidence_tier"],
+                     "failure_modes": rec["failure_modes"], "status": w.window.get("status"),
+                     "consistent": w.window.get("consistent")})
+    summary = {**run.summary(), "run_arguments": arguments, "window_results": rows}
+    (out / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True, default=str) + "\n",
+                                      encoding="utf-8")
+    return summary
+
+
+def _window_brief(rec: dict) -> dict:
+    """The evidence record without its bulky per-matcher detail (that stays in result.json's stages)."""
+    keep = ("tmc_row", "tmc_col", "ohrc_row", "ohrc_col", "nac", "lat", "lon", "status", "coarse_z",
+            "coarse", "system_offset_m", "scale_status", "tier", "vs_isro_refined_grid_m", "source_px",
+            "mi_check", "consistent", "consistency_rule", "coarse_lock_failed", "tmc_pixel_from_tc_m")
+    out = {k: rec[k] for k in keep if k in rec}
+    routed = (rec.get("results") or {}).get("routed")
+    if routed:
+        out["routed"] = {k: routed.get(k) for k in ("used", "tried", "tier", "known_shift_error_px",
+                                                     "implied_offset_m", "source_px", "mi_check")}
+    return out
+
+
+def _register_mock(args, out: Path) -> int:
+    from . import synth
+    from .pipeline import register_bundle
+    from .product import provenance, run_export
+    src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=args.seed,
+                                  n_craters=35, shadows=False)
+    _materialize_mock_inputs(src, ref, out)
+    model = _MockGroundModel(src.gsd_m)
+    bundle = register_bundle(src, ref, matcher=args.matcher or "sift", device="cpu" if args.cpu else None)
+    manifest = provenance.build(bundle, run_arguments={"command": "register", "mock": True, "seed": args.seed,
+                                                       "matcher": args.matcher or "sift"})
+    run_export.write_run(out, bundle, manifest=manifest, src_model=model, ref_model=model)
+    print(f"{bundle.result.confidence_tier} (synthetic): {out}")
+    return 0
+
+
+def _demo(args) -> int:
+    """Offline: a synthetic registration and its HTML report. Everything in it says SYNTHETIC."""
+    out = _new_run_dir(args.out)
+    args.mock, args.matcher, args.cpu = True, None, True
+    _register_mock(args, out)
+    from .product import report
+    print(report.render_run(out, None))
+    return 0
 
 
 def _report(args) -> int:
@@ -95,14 +151,6 @@ def _report(args) -> int:
     path = report.render_run(args.run, args.out)
     print(path)
     return 0
-
-
-def _load_config(path: Path) -> dict:
-    import yaml
-    if not path.is_file():
-        raise SystemExit(f"configuration not found: {path}")
-    with path.open(encoding="utf-8") as handle:
-        return yaml.safe_load(handle) or {}
 
 
 def _materialize_mock_inputs(src, ref, out: Path) -> None:

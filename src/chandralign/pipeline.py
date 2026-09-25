@@ -367,6 +367,13 @@ class RegistrationBundle:
     stages: dict = field(default_factory=dict)
     src: Any = None                           # the ImagePlanes registered (with meta / geo for georeferencing)
     ref: Any = None
+    # When the source was registered RESAMPLED onto the reference grid (the validated product
+    # workflows), `src` is that frame and this 3x3 maps its px (x, y) to source PRODUCT px.
+    src_to_product: Optional[np.ndarray] = None
+    # Likewise for `ref` (a window, possibly block-averaged): its px (x, y) -> reference PRODUCT px.
+    ref_to_product: Optional[np.ndarray] = None
+    # Terrain heights for warping with `parallax`: heights_at((N, 2) ref-frame px) -> metres.
+    heights_at: Optional[Any] = None
 
 
 def _metric_source(*planes) -> str:
