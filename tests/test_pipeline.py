@@ -354,3 +354,11 @@ def test_parallax_height_at_ref_fits_a_ground_height_world_and_inverts_directly(
     ys, xs = np.mgrid[40:360:41, 40:360:41]
     s = np.c_[mx[ys, xs].ravel(), my[ys, xs].ravel()]
     assert np.abs(m.predict(s, heights_at) - np.c_[xs.ravel(), ys.ravel()]).max() < 0.1
+
+
+def test_a_registration_of_synthetic_planes_is_labelled_synthetic():
+    """Audit 2026-09-26 C-08: register_bundle hard-coded source="measured" (rule H5)."""
+    from chandralign import synth
+    from chandralign.pipeline import register_bundle
+    src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=7, n_craters=35, shadows=False)
+    assert register_bundle(src, ref, matcher="sift").result.metrics.source == "synthetic"

@@ -194,15 +194,15 @@ def _run_registration(record: RunRecord) -> None:
     record.log("Job started.")
 
     payload  = record.request_payload
-    mock     = payload.get("mock", True)
+    mock     = bool(payload.get("mock", False))
     matcher  = payload.get("matcher", "sift")
-    seed     = int(payload.get("seed", 7))
     pair_id  = record.pair_id
+    seed     = payload.get("seed")
+    if seed is None:   # the pair's own seed unless the caller set one explicitly
+        seed = _PAIR_INDEX[pair_id]["mock_seed"] if pair_id in _PAIR_INDEX else 7
+    seed = int(seed)
 
     try:
-        if pair_id and pair_id in _PAIR_INDEX:
-            # Use the pair's preferred seed unless caller overrode it
-            seed = int(payload.get("seed", _PAIR_INDEX[pair_id]["mock_seed"]))
 
         record.log(f"Matcher={matcher}  mock={mock}  seed={seed}")
 
@@ -333,8 +333,8 @@ if _FASTAPI_AVAILABLE:
         src:       Optional[str]  = Field(None,    description="Path to source PDS label (real data)")
         ref:       Optional[str]  = Field(None,    description="Path to reference PDS label (real data)")
         matcher:   str            = Field("sift",  description="sift | rift2 | learned")
-        mock:      bool           = Field(True,    description="Use synthetic pair (no real data needed)")
-        seed:      int            = Field(7,       description="RNG seed for synthetic pair")
+        mock:      bool           = Field(False,   description="Run a SYNTHETIC pair instead of real labels")
+        seed:      Optional[int]  = Field(None,    description="RNG seed for a synthetic pair (default: the pair's own)")
         tile_size: int            = Field(1024,    description="Tile edge length in pixels")
         cpu:       bool           = Field(False,   description="Force CPU (no GPU)")
 
@@ -391,6 +391,15 @@ def create_app(runs_root: Optional[Path] = None) -> "FastAPI":
 
         Poll ``GET /runs/{run_id}`` for status and results.
         """
+        # A request for real data must never be answered with a synthetic run (audit C-08).
+        if req.mock and (req.src or req.ref):
+            raise HTTPException(status_code=422,
+                                detail="src/ref are real labels; they cannot be combined with mock=true")
+        if not req.mock and not (req.src and req.ref) and not req.pair_id:
+            raise HTTPException(status_code=422,
+                                detail="give src and ref labels, a pair_id, or mock=true for a synthetic pair")
+        if req.pair_id is not None and req.pair_id not in _PAIR_INDEX:
+            raise HTTPException(status_code=422, detail=f"unknown pair_id {req.pair_id!r}; see GET /pairs")
         run_id  = str(uuid.uuid4())
         out_dir = _runs_root / run_id
 

@@ -279,3 +279,43 @@ def test_list_runs(client):
     assert "runs" in data
     assert isinstance(data["runs"], list)
     assert len(data["runs"]) > 0, "At least the runs submitted above should appear"
+
+
+# ---------------------------------------------------------------------------
+# Audit 2026-09-26 C-08: synthetic runs are labelled synthetic; real requests never get one
+# ---------------------------------------------------------------------------
+def test_mock_run_is_labelled_synthetic_not_measured(client):
+    run_id = client.post("/register", json={"mock": True, "seed": 21}).json()["run_id"]
+    record = _wait_for_done(client, run_id)
+    assert record["status"] == "DONE", record.get("error")
+    assert record["result"]["metrics"]["source"] == "synthetic"
+
+
+def test_real_labels_with_mock_are_refused(client):
+    r = client.post("/register", json={"src": "a.xml", "ref": "b.xml", "mock": True})
+    assert r.status_code == 422
+
+
+def test_real_labels_are_never_answered_with_a_synthetic_run(client):
+    """Before: mock defaulted to True, so {src, ref} silently ran a synthetic pair."""
+    r = client.post("/register", json={"src": "no/such/src.xml", "ref": "no/such/ref.xml"})
+    assert r.status_code == 202
+    record = _wait_for_done(client, r.json()["run_id"])
+    assert record["status"] == "FAILED"            # the labels do not exist; never a fake DONE
+    assert "src.xml" in (record.get("error") or "")
+
+
+def test_a_request_with_nothing_to_register_is_refused(client):
+    assert client.post("/register", json={}).status_code == 422
+
+
+def test_curated_pairs_use_their_own_seed(client):
+    """Before: the request's default seed=7 shadowed every pair's mock_seed."""
+    seeds = []
+    for pair in CURATED_PAIRS[:2]:
+        run_id = client.post("/register", json={"pair_id": pair["pair_id"], "mock": True}).json()["run_id"]
+        record = _wait_for_done(client, run_id)
+        log = " ".join(record["progress_log"])
+        assert f"seed={pair['mock_seed']}" in log, log
+        seeds.append(pair["mock_seed"])
+    assert seeds[0] != seeds[1]

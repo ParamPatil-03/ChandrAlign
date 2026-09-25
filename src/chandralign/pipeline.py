@@ -369,6 +369,12 @@ class RegistrationBundle:
     ref: Any = None
 
 
+def _metric_source(*planes) -> str:
+    """Rule H5: a number measured on synthetic imagery must never be labelled a measurement."""
+    synthetic = any(getattr(getattr(p, "meta", None), "mission", None) == "SYNTH" for p in planes)
+    return "synthetic" if synthetic else "measured"
+
+
 def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
              ground_model=None, dem=None, flags: Optional[dict[str, bool]] = None,
              match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None):
@@ -434,7 +440,7 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
         metrics=Metrics(rmse_px=fr.rmse_px if fr.ok else None, inlier_count=fr.inlier_count if fr.ok else 0,
                         inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
                         spatial_coverage=fr.coverage if fr.ok else 0.0,
-                        runtime_s=round(time.perf_counter() - t_start, 3), source="measured"),
+                        runtime_s=round(time.perf_counter() - t_start, 3), source=_metric_source(src, ref)),
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=notes + list(fr.notes) + list(q.notes),
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
