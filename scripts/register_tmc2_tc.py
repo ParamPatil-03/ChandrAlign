@@ -300,7 +300,8 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                             inlier_src=fr.matches.src_pts[inl], inlier_ref=fr.matches.ref_pts[inl],
                             model=np.asarray(fr.model.matrix, float), src_ok=src_ok, ref_ok=ref_ok,
                             src_img=src_img.astype(np.float16), ref_img=ref_img.astype(np.float16),
-                            **_dem_grid(p_dem, tcm, o_f, wF, hF), gsd_m=float(tc.gsd_m))
+                            **_dem_grid(p_dem, tcm, o_f, wF, hF), gsd_m=float(tc.gsd_m),
+                            tc_origin_px=np.asarray(o_f, float), tc_product=str(tc.product_id))
 
     R = np.asarray(fr.model.matrix, float)
     T_total = T(o_f[0], o_f[1]) @ R @ Wf                              # window px -> TC px
