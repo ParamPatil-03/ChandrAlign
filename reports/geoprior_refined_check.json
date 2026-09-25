@@ -1,0 +1,260 @@
+{
+ "source": "measured",
+ "protocol": "audit I-17 (leave-one-out)",
+ "summary": {
+  "tmc2": {
+   "system": {
+    "median": 4683.0,
+    "max": 4878.0
+   },
+   "refined_label": {
+    "median": 571.0,
+    "max": 688.0
+   },
+   "measured": {
+    "median": 150.0,
+    "max": 255.0
+   },
+   "windows": 15,
+   "refined_label_source": "ISRO refined corners (SELENE-adjusted label; search prior only, never evaluation)"
+  },
+  "iirs": {
+   "system": {
+    "median": 12900.0,
+    "max": 12960.0
+   },
+   "refined_label": {
+    "median": 1198.0,
+    "max": 1614.0
+   },
+   "measured": {
+    "median": 2.0,
+    "max": 15.0
+   },
+   "windows": 5,
+   "refined_label_source": "ISRO refined corners (SELENE-adjusted label; search prior only, never evaluation)"
+  }
+ },
+ "windows": [
+  {
+   "instrument": "tmc2",
+   "line": 1562,
+   "measured_m": [
+    525,
+    -4509
+   ],
+   "residual_system_m": 4539,
+   "residual_refined_label_m": 596,
+   "residual_measured_m": 150
+  },
+  {
+   "instrument": "tmc2",
+   "line": 3125,
+   "measured_m": [
+    548,
+    -4501
+   ],
+   "residual_system_m": 4534,
+   "residual_refined_label_m": 602,
+   "residual_measured_m": 157
+  },
+  {
+   "instrument": "tmc2",
+   "line": 4687,
+   "measured_m": [
+    622,
+    -4642
+   ],
+   "residual_system_m": 4683,
+   "residual_refined_label_m": 457,
+   "residual_measured_m": 22
+  },
+  {
+   "instrument": "tmc2",
+   "line": 6250,
+   "measured_m": [
+    600,
+    -4634
+   ],
+   "residual_system_m": 4673,
+   "residual_refined_label_m": 468,
+   "residual_measured_m": 58
+  },
+  {
+   "instrument": "tmc2",
+   "line": 16000,
+   "measured_m": [
+    659,
+    -4753
+   ],
+   "residual_system_m": 4798,
+   "residual_refined_label_m": 366,
+   "residual_measured_m": 77
+  },
+  {
+   "instrument": "tmc2",
+   "line": 18750,
+   "measured_m": [
+    673,
+    -4805
+   ],
+   "residual_system_m": 4852,
+   "residual_refined_label_m": 321,
+   "residual_measured_m": 104
+  },
+  {
+   "instrument": "tmc2",
+   "line": 21500,
+   "measured_m": [
+    703,
+    -4827
+   ],
+   "residual_system_m": 4878,
+   "residual_refined_label_m": 312,
+   "residual_measured_m": 101
+  },
+  {
+   "instrument": "tmc2",
+   "line": 52000,
+   "measured_m": [
+    911,
+    -4708
+   ],
+   "residual_system_m": 4795,
+   "residual_refined_label_m": 573,
+   "residual_measured_m": 233
+  },
+  {
+   "instrument": "tmc2",
+   "line": 54750,
+   "measured_m": [
+    925,
+    -4738
+   ],
+   "residual_system_m": 4827,
+   "residual_refined_label_m": 563,
+   "residual_measured_m": 222
+  },
+  {
+   "instrument": "tmc2",
+   "line": 57500,
+   "measured_m": [
+    938,
+    -4745
+   ],
+   "residual_system_m": 4837,
+   "residual_refined_label_m": 571,
+   "residual_measured_m": 233
+  },
+  {
+   "instrument": "tmc2",
+   "line": 1562,
+   "measured_m": [
+    644,
+    -4479
+   ],
+   "residual_system_m": 4525,
+   "residual_refined_label_m": 616,
+   "residual_measured_m": 146
+  },
+  {
+   "instrument": "tmc2",
+   "line": 3125,
+   "measured_m": [
+    644,
+    -4642
+   ],
+   "residual_system_m": 4686,
+   "residual_refined_label_m": 455,
+   "residual_measured_m": 15
+  },
+  {
+   "instrument": "tmc2",
+   "line": 1562,
+   "measured_m": [
+    488,
+    -4494
+   ],
+   "residual_system_m": 4520,
+   "residual_refined_label_m": 618,
+   "residual_measured_m": 186
+  },
+  {
+   "instrument": "tmc2",
+   "line": 3125,
+   "measured_m": [
+    481,
+    -4472
+   ],
+   "residual_system_m": 4498,
+   "residual_refined_label_m": 643,
+   "residual_measured_m": 221
+  },
+  {
+   "instrument": "tmc2",
+   "line": 4687,
+   "measured_m": [
+    518,
+    -4420
+   ],
+   "residual_system_m": 4450,
+   "residual_refined_label_m": 688,
+   "residual_measured_m": 255
+  },
+  {
+   "instrument": "iirs",
+   "line": 2112,
+   "measured_m": [
+    1195,
+    12766
+   ],
+   "residual_system_m": 12821,
+   "residual_refined_label_m": 778,
+   "residual_measured_m": 8
+  },
+  {
+   "instrument": "iirs",
+   "line": 2624,
+   "measured_m": [
+    1263,
+    12801
+   ],
+   "residual_system_m": 12863,
+   "residual_refined_label_m": 988,
+   "residual_measured_m": 1
+  },
+  {
+   "instrument": "iirs",
+   "line": 3136,
+   "measured_m": [
+    1333,
+    12831
+   ],
+   "residual_system_m": 12900,
+   "residual_refined_label_m": 1198,
+   "residual_measured_m": 0
+  },
+  {
+   "instrument": "iirs",
+   "line": 3648,
+   "measured_m": [
+    1406,
+    12860
+   ],
+   "residual_system_m": 12937,
+   "residual_refined_label_m": 1406,
+   "residual_measured_m": 2
+  },
+  {
+   "instrument": "iirs",
+   "line": 4160,
+   "measured_m": [
+    1478,
+    12876
+   ],
+   "residual_system_m": 12960,
+   "residual_refined_label_m": 1614,
+   "residual_measured_m": 15
+  }
+ ]
+}
