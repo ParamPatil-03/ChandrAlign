@@ -89,6 +89,8 @@ similarity:                  # MATCH-07 MI alignment check (docs/mi_protocol.md)
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
   top_k_per_cell: 6
+  within_cell: confidence    # G-07: confidence (top-k) | spread (quality x spacing); docs/uniformity_fps_protocol.md
+  spread_conf_power: 0.5
   refill_empty_cells: true
   refill_ratio_test: 0.90    # looser threshold, local to the empty cell only
   delaunay_gap_warn_px: 120.0

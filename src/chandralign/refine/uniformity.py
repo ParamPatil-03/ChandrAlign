@@ -154,14 +154,22 @@ def enforce(src_pts: np.ndarray, confidence: np.ndarray, shape: tuple[int, int],
         top_k = int(config.get("uniformity.top_k_per_cell", 6))
 
     cy, cx = _cell_index(pts, shape, grid)
-    keep = np.zeros(len(pts), bool)
-    order = np.argsort(-conf, kind="stable")          # best first
-    counts: dict[tuple[int, int], int] = {}
-    for i in order:
-        cell = (int(cy[i]), int(cx[i]))
-        if counts.get(cell, 0) < top_k:
-            counts[cell] = counts.get(cell, 0) + 1
-            keep[i] = True
+    mode = str(config.get("uniformity.within_cell", "confidence"))
+    if mode == "spread":
+        keep = _spread_select(pts, conf, cy * grid + cx, top_k,
+                              float(config.get("uniformity.spread_conf_power", 0.5)),
+                              int(config.get("uniformity.spread_pool", 0)))
+    elif mode == "confidence":
+        keep = np.zeros(len(pts), bool)
+        order = np.argsort(-conf, kind="stable")          # best first
+        counts: dict[tuple[int, int], int] = {}
+        for i in order:
+            cell = (int(cy[i]), int(cx[i]))
+            if counts.get(cell, 0) < top_k:
+                counts[cell] = counts.get(cell, 0) + 1
+                keep[i] = True
+    else:
+        raise ValueError(f"unknown uniformity.within_cell {mode!r}; use 'confidence' or 'spread'")
 
     occ = np.zeros((grid, grid), int)
     if keep.any():
@@ -213,3 +221,50 @@ def merge_refill(base_keep: np.ndarray, refill_src: np.ndarray,
     result.notes.append(f"refill added {len(refill_src)} matches at a looser "
                         f"threshold; coverage now {result.coverage:.2f}")
     return result
+
+
+def _spread_select(pts: np.ndarray, conf: np.ndarray, cell: np.ndarray, top_k: int, power: float,
+                   pool: int = 0) -> np.ndarray:
+    """G-07: quality x spacing selection, up to top_k per cell (docs/uniformity_fps_protocol.md).
+
+    Cells are visited round-robin, one pick per cell per round, so every cell gets its first point
+    before any gets its second. Each pick maximises d_min * (conf / max conf) ** power, d_min being
+    the distance to EVERY point kept so far -- spacing is global, not only inside the cell. Top-k by
+    confidence alone clustered the kept points where the matcher was surest (NN-CV 0.73-0.92)."""
+    keep = np.zeros(len(pts), bool)
+    q = (conf / max(float(conf.max()), 1e-12)) ** power if power else np.ones(len(pts))
+    groups = {}
+    for c in np.unique(cell):
+        idx = np.flatnonzero(cell == c)
+        if pool and len(idx) > pool * top_k:      # spread only among the cell's most confident points
+            idx = idx[np.argsort(-conf[idx], kind="stable")[:pool * top_k]]
+        groups[c] = idx
+    d_min = np.full(len(pts), np.inf)
+    for _ in range(top_k):
+        picked = False
+        for c in sorted(groups):
+            idx = groups[c]
+            cand = idx[~keep[idx]]
+            if len(cand) == 0:
+                continue
+            if not keep.any():
+                j = cand[int(np.argmax(q[cand]))]
+            else:
+                j = cand[int(np.argmax(d_min[cand] * q[cand]))]
+            keep[j] = True
+            picked = True
+            d_min = np.minimum(d_min, np.hypot(*(pts - pts[j]).T))
+        if not picked:
+            break
+    return keep
+
+
+def nn_cv(pts: np.ndarray) -> float | None:
+    """Coefficient of variation of nearest-neighbour distances: ~0.52 uniform random, lower = more regular."""
+    pts = np.asarray(pts, np.float64).reshape(-1, 2)
+    if len(pts) < 3:
+        return None
+    from scipy.spatial import cKDTree
+    d, _ = cKDTree(pts).query(pts, k=2)
+    nn = d[:, 1]
+    return float(nn.std() / nn.mean()) if nn.mean() > 0 else None
