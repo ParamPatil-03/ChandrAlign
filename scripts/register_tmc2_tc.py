@@ -167,6 +167,31 @@ PARALLAX_HEIGHT_AT = None  # --parallax-height-at: None -> configs/default.yaml 
 DUMP_DIR = None   # --dump-points: save each window's control points and inliers (docs/tps_protocol.md)
 
 
+def _probe_check(fr, src_img, ref_img, src_ok, gm, p_dem) -> dict:
+    """Audit I-11 / C-03: matcher-free NCC probes (parallax_probe_eval.probes) against the DELIVERED
+    geometry and against the affine, p50/p95 in fine-frame px (x factor_worst for TMC-2 px)."""
+    from parallax_probe_eval import probes
+    from chandralign.estimate import models as _m
+    from chandralign.pipeline import delivered_geometry
+    pr = probes(np.asarray(src_img, np.float32), np.asarray(ref_img, np.float32), np.asarray(src_ok, bool))
+    if not len(pr):
+        return {"n": 0}
+    pts, meas = pr[:, :2], pr[:, 2:]
+    name, geo = delivered_geometry(fr)
+
+    def heights(p):
+        if p_dem is None:
+            return np.full(len(p), np.nan)
+        lat, lon = gm.pixel_to_latlon(p[:, 1], p[:, 0])
+        return np.asarray(p_dem.sample(lat, lon), float)
+    pred = geo.predict(pts, heights) if name == "parallax" else _m.apply(geo, pts)
+    pct = lambda e: {"p50": round(float(np.median(e)), 3), "p95": round(float(np.percentile(e, 95)), 3),  # noqa: E731
+                     "max": round(float(e.max()), 3)}
+    e = np.hypot(*(meas - (pred - pts)).T)
+    ea = np.hypot(*(meas - (_m.apply(fr.model, pts) - pts)).T)
+    return {"n": int(len(e)), "geometry": name, "delivered_frame_px": pct(e), "affine_frame_px": pct(ea)}
+
+
 def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                margin_km: float, matcher: str, device: str,
                prior_offset_m: tuple[float, float] = (0.0, 0.0),
@@ -356,6 +381,7 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
     out["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), src_plane,
                                                              ref_plane, matcher or "eloftr")[1]
     out["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
+    out["probe_check"] = _probe_check(fr, src_img, ref_img, src_ok, _OffsetModel(tcm, o_f), p_dem)
     out["gate_seconds"] = round(time.perf_counter() - t_g, 1)
     q = quality.assess(inlier_count=res.inlier_count,
                        inlier_ratio=res.inlier_count / n if n else 0.0,
