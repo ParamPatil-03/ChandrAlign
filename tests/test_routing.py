@@ -190,3 +190,28 @@ def test_same_modality_pairs_carry_the_measured_fallback():
 def test_cascade_and_cross_modal_routes_have_no_same_modality_fallback():
     assert routing.choose("OHRC", "IIRS").fallbacks == ()
     assert routing.choose("IIRS", "WAC").fallbacks == ()
+
+
+# ---------------------------------------------------------------------------
+# Audit I-09: one fallback loop, and cross-modality on what is matched
+# ---------------------------------------------------------------------------
+def test_run_candidates_tries_fallbacks_only_after_a_rejection():
+    from chandralign.matching import routing as rt
+    choice = rt.MatcherChoice(route="direct", model_name="a", fallbacks=("b", "c"))
+    seen = []
+    out = rt.run_candidates(choice, lambda m: seen.append(m) or {"ok": m == "b"}, lambda r: r["ok"])
+    assert seen == ["a", "b"] and out["used"] == "b" and out["ok"] and out["tried"] == ["a", "b"]
+    seen.clear()
+    out = rt.run_candidates(choice, lambda m: seen.append(m) or {"ok": True}, lambda r: r["ok"])
+    assert seen == ["a"] and out["used"] == "a"
+    out = rt.run_candidates(choice, lambda m: {"ok": False}, lambda r: r["ok"])
+    assert out["tried"] == ["a", "b", "c"] and not out["ok"]
+    cascade = rt.MatcherChoice(route="cascade", model_name=None)
+    assert rt.run_candidates(cascade, lambda m: {}, lambda r: True)["used"] is None
+
+
+def test_a_single_visible_band_of_a_multiband_reference_is_not_cross_modal():
+    from chandralign import config as cfg
+    assert not cfg.is_cross_modal("TMC2", "WAC") and not cfg.is_cross_modal("TMC2", "MI")
+    assert not cfg.is_cross_modal("OHRC", "WAC")
+    assert cfg.is_cross_modal("IIRS", "WAC") and cfg.is_cross_modal("IIRS", "MI")   # hyperspectral IR vs a visible band

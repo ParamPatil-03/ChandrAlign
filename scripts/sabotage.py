@@ -311,6 +311,23 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
         },
     ),
+    "routing-fallbacks": (
+        "src/chandralign/matching/routing.py",
+        "tests/test_routing.py",
+        {
+            "the fallback loop runs every candidate, accepted or not (I-09)": (
+                "        if ok(results[name]):\n            break", "        if False:\n            break"),
+        },
+    ),
+    "modality": (
+        "src/chandralign/config.py",
+        "tests/test_routing.py",
+        {
+            "cross-modality from the label modality, not the matched band (I-09)": (
+                'return a.get("matched_as", a.get("modality", "unknown")) != b.get("matched_as", b.get("modality", "unknown"))',
+                'return a.get("modality", "unknown") != b.get("modality", "unknown")'),
+        },
+    ),
     "licence": (
         "src/chandralign/matching/licence.py",
         "tests/test_licence_gate.py",

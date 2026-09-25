@@ -326,13 +326,10 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
         if name != "routed":
             evaluate(name)
             continue
-        # The shipped behaviour: routing's matcher, then its fallbacks ONLY if rejected.
-        tried = []
-        for cand in routing.choose("OHRC", "NAC").candidates():
-            tried.append(cand)
-            if ok(evaluate(cand)):
-                break
-        results["routed"] = {**results[tried[-1]], "used": tried[-1], "tried": tried}
+        # The shipped behaviour: routing's matcher, then its fallbacks ONLY if rejected (routing.run_candidates,
+        # the one loop every path uses -- audit I-09).
+        rc = routing.run_candidates(routing.choose("OHRC", "NAC"), evaluate, ok)
+        results["routed"] = {**results[rc["used"]], "used": rc["used"], "tried": rc["tried"]}
     out["results"] = results
     out["status"] = "locked"
     return out

@@ -42,7 +42,7 @@ equal size; `pair_tiling.match_tiled` raises otherwise. Callers pass
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from .. import config
 from ..contracts import SceneMeta
@@ -71,6 +71,23 @@ class MatcherChoice:
                 "regime": self.regime, "expectation": self.expectation,
                 "reason": self.reason, "fallbacks": list(self.fallbacks),
                 "chosen_by": "matching.routing.choose"}
+
+
+def run_candidates(choice: MatcherChoice, evaluate: Callable[[str], dict],
+                   ok: Callable[[dict], bool]) -> dict:
+    """THE fallback loop (audit I-09): the routed matcher, then each fallback ONLY if the previous
+    result is not ok. Every script and the product path use this one loop, so routing's fallbacks are
+    obeyed everywhere or nowhere. Returns {"used", "tried", "results", "ok"}; a cascade route has no
+    direct candidates and returns used=None."""
+    tried: list[str] = []
+    results: dict[str, dict] = {}
+    for name in choice.candidates():
+        tried.append(name)
+        results[name] = evaluate(name)
+        if ok(results[name]):
+            break
+    used = tried[-1] if tried else None
+    return {"used": used, "tried": tried, "results": results, "ok": bool(used) and bool(ok(results[used]))}
 
 
 def choose(src: SceneMeta | str, ref: SceneMeta | str) -> MatcherChoice:
