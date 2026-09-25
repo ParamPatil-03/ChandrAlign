@@ -24,3 +24,16 @@ Rerun `register_to_map.py --source ohrc --reference tc --dense` on the same 10 w
 The success rule of amendment 2 is unchanged except that an ABSTAINING MI check does not fail a window
 (it carries no evidence either way); the fractional known shift, both nulls and the linear-drift
 consistency still decide. Reported as "MI inconclusive" wherever it abstains.
+
+## Result (2026-09-25): NOT adopted -- V2 fails (`reports/mi_abstain_check.json`)
+- V1 known-good: abstained on 2/30 (limit 3) -- pass.
+- V2 known-bad 2 px: flagged 225/240 = 93.8% (need 95%) -- **fail**. All 15 misses are ABSTENTIONS
+  on 3 hilly TMC-2 windows (1562, 3125/c3232, 4687/c3232): there terrain parallax makes the two halves'
+  true local offsets differ, so the halves disagree although MI is informative. Rule R confuses
+  "MI cannot see" with "the image is locally distorted". Without R those biased models were flagged.
+- V3 (reported): on the low-information OHRC -> NAC dumps it abstains on 5/10 and still flags 5/10;
+  where it still flags (e.g. M175124932LC, halves agreeing to 0-0.7 px), MI's disagreement with the
+  model is consistent across the frame -- weak support that the finest-NAC offset is real.
+Rule R stays implemented but OFF (`similarity.abstain: false`). OHRC -> TC is NOT re-evaluated.
+A better abstain test would have to separate flat MI from relief (e.g. require the halves to
+disagree AND the full-frame NMI surface to be flat); that is a new test, not attempted here.
