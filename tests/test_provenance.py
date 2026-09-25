@@ -47,3 +47,57 @@ def test_missing_metadata_is_refused(tmp_path):
         assert "meta" in str(exc)
     else:
         raise AssertionError("missing metadata was silently accepted")
+
+
+# ---------------------------------------------------------------------------
+# Audit 2026-09-26 I-13: provenance did not record the matcher, the run's arguments, the
+# learned-matcher stack or a dirty tree, and hashed only default.yaml although routing reads
+# regimes.yaml. It also re-hashed multi-GB rasters for every window.
+# ---------------------------------------------------------------------------
+def test_manifest_records_the_matcher_and_the_run_arguments(tmp_path):
+    bundle = _bundle(tmp_path)
+    bundle.result = SimpleNamespace(provenance={"matcher": "eloftr"})
+    m = build(bundle, packages=(), repo_root=tmp_path, run_arguments={"windows": 2, "device": "cuda"})
+    assert m["matcher"] == "eloftr"
+    assert m["run_arguments"] == {"windows": 2, "device": "cuda"}
+
+
+def test_default_packages_include_the_learned_matcher_stack():
+    from chandralign.product.provenance import _PACKAGES
+    assert {"torch", "vismatch", "rasterio", "matplotlib", "jinja2"} <= set(_PACKAGES)
+
+
+def test_default_config_hash_covers_the_routing_config(tmp_path):
+    from chandralign import config
+    m = build(_bundle(tmp_path), packages=(), repo_root=tmp_path)
+    effective = {"default": config.load("default"), "regimes": config.load("regimes")}
+    assert m["config_files"] == ["default", "regimes"]
+    assert m["config_sha256"] == canonical_sha256(effective)
+
+
+def test_a_dirty_working_tree_is_recorded():
+    from chandralign import config
+    from chandralign.product.provenance import _git_state
+    state = _git_state(config.ROOT)
+    assert set(state) == {"git_commit", "git_dirty"}
+    assert state["git_dirty"] in (True, False)
+
+
+def test_a_raster_is_hashed_once_per_version(tmp_path, monkeypatch):
+    import os
+    import time
+    from chandralign.product import provenance
+    path = tmp_path / "big.img"
+    path.write_bytes(b"x" * 1000)
+    opened = []
+    real_open = Path.open
+    def counting_open(self, *a, **k):
+        if str(a[0] if a else k.get("mode", "r")).startswith("r"):   # count reads, not the test's writes
+            opened.append(self.name)
+        return real_open(self, *a, **k)
+    monkeypatch.setattr(Path, "open", counting_open)
+    first = provenance.file_sha256(path)
+    assert provenance.file_sha256(path) == first and opened.count("big.img") == 1
+    path.write_bytes(b"y" * 1000)
+    os.utime(path, (time.time() + 5, time.time() + 5))
+    assert provenance.file_sha256(path) != first and opened.count("big.img") == 2
