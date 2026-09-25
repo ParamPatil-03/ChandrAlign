@@ -197,7 +197,8 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                expected_scale=None,
                ground_model=None, dem=None,
                flags: Optional[dict[str, bool]] = None,
-               rematch=None, parallax_dem=None, parallax_height_at: Optional[str] = None) -> FineResult:
+               rematch=None, parallax_dem=None, parallax_height_at: Optional[str] = None,
+               ref_ground_model=None) -> FineResult:
     """Run the fine stage on one matched pair.
 
     `src_img`/`ref_img` are the arrays the matches were found on (the refinement
@@ -207,11 +208,15 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     terrain filter is skipped and says so; it never pretends to have run.
     `parallax_dem`, if given, is the height model for the parallax stage only (a finer DEM
     can suit parallax but not the filter's slope thresholds); otherwise `dem` serves both.
+    `ref_ground_model` (audit I-10): pixel_to_latlon for the REFERENCE points when the two images do
+    NOT share one frame. Without it, `ground_model` serves both, which is only valid after a coarse
+    lock; with it, reference points are never mapped through the source's model.
     """
     from .estimate import geometry_filter
     from .refine import subpixel, uniformity
 
     flags = stage_flags(flags)
+    ref_gm = ref_ground_model if ref_ground_model is not None else ground_model
     stages: dict[str, Any] = {}
     n_matches = int(len(ms.src_pts))
     shape = np.asarray(src_img).shape[:2]
@@ -223,7 +228,7 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
                                          "reason": "no DEM" if dem is None else "no ground model"}
         else:
             filtered, rep = geometry_filter.filter_matches(ms, None, None, dem,
-                                                           src_model=ground_model, ref_model=ground_model)
+                                                           src_model=ground_model, ref_model=ref_gm)
             # dataclasses.replace() drops what the matcher attached at run time
             # (device, tile boxes, precision); callers read those, so carry them over.
             for k, v in vars(ms).items():
@@ -262,7 +267,8 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
             stages["parallax"] = {"applied": False, "reason": "no DEM" if p_dem is None else "no ground model"}
         else:
             h_at = parallax_height_at or str(config.get("parallax.height_at", "ref"))
-            inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ground_model, height_at=h_at)
+            inl, stages["parallax"], parallax_model = _parallax(ms, inl, p_dem, ref_gm if h_at == "ref" else ground_model,
+                                                                height_at=h_at)
     else:
         stages["parallax"] = {"applied": False, "reason": "off (pipeline.parallax)"}
     cs, cr = ms.src_pts[inl], ms.ref_pts[inl]
@@ -351,7 +357,9 @@ def fine_stage(ms: MatchSet, src_img: np.ndarray, ref_img: np.ndarray, *,
     tps, geometry, accuracy, geometry_model = None, "affine", {}, None
     if flags["model_selection"]:
         tps, geometry, accuracy, geometry_model = _select_geometry(ms, inl, model, src_img, ref_img, shape, flags,
-                                                   parallax_model, ground_model,
+                                                   parallax_model,
+                                                   (ref_gm if parallax_model is not None and parallax_model.height_at == "ref"
+                                                    else ground_model),
                                                    parallax_dem if parallax_dem is not None else dem, stages)
     # 5'. (model_selection off) TPS through the delivered points (ALIGN-02, the pre-2026-09-26 path)
     elif flags["tps"] and len(cs) >= 15:
@@ -469,7 +477,7 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
     """
     from .contracts import Metrics, RegistrationResult
     from .estimate import scale as scale_mod
-    from .evaluate import control_gates, quality
+    from .evaluate import control_gates, quality, selftest
 
     t_start = time.perf_counter()                            # metrics.runtime_s: the whole call
     match_kwargs = dict(match_kwargs or {})
@@ -531,11 +539,13 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                         inlier_count=fr.inlier_count if fr.ok else 0,
                         inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
                         spatial_coverage=fr.coverage if fr.ok else 0.0,
+                        max_delaunay_gap_px=(fr.stages.get("uniformity") or {}).get("max_delaunay_gap_px") if fr.ok else None,
+                        subpixel_recovery_err_px=selftest.subpixel_recovery()["value_px"],
                         runtime_s=round(time.perf_counter() - t_start, 3), source="measured"),
         confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
         notes=notes + list(fr.notes) + list(q.notes),
         provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": scale_status,
-                    "accuracy": accuracy, "crosscheck": crosscheck, **(provenance or {})})
+                    "accuracy": accuracy, "crosscheck": crosscheck, "subpixel_selftest": selftest.subpixel_recovery(), **(provenance or {})})
     control_gates.require_gates(result)
     cs = np.asarray(fr.control_src if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)
     cr = np.asarray(fr.control_ref if fr.ok else np.zeros((0, 2)), float).reshape(-1, 2)

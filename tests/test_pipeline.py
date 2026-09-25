@@ -488,3 +488,25 @@ def test_the_delivered_affine_is_not_dragged_by_inliers_a_3px_threshold_let_thro
     g = rng.uniform(0, 500, (200, 2))
     err = np.hypot(*(models.apply(fit, g) - (g @ A[:2, :2].T + A[:2, 2])).T)
     assert np.sqrt(np.mean(err ** 2)) < 0.05
+
+
+class _Shifted(_Identity):
+    """A reference frame 250 columns to the east of the source frame: the same ground is 250 px right."""
+    def pixel_to_latlon(self, rows, cols):
+        return super().pixel_to_latlon(rows, np.asarray(cols, float) - 250.0)
+
+
+def test_reference_points_use_the_reference_ground_model_when_the_frames_differ():
+    """Audit I-10: with one ground model for both, reference points were mapped through the SOURCE
+    model. Here the reference frame is 250 px east of the source: through the source model every
+    reference point lands on the steep east half and is thrown away as 'different terrain'."""
+    rng = np.random.default_rng(1)
+    src = rng.uniform([20, 20], [180, 380], (200, 2))            # flat west half
+    ref = src + [250.4, -0.3]                                     # the same ground, in the shifted frame
+    ms = matchset(src, ref)
+    one = fine_stage(ms, blank(), blank(), centre=(200, 200), flags={**OFF, "geometry_filter": True},
+                     ground_model=_Identity(), dem=_ridge_dem())
+    two = fine_stage(ms, blank(), blank(), centre=(200, 200), flags={**OFF, "geometry_filter": True},
+                     ground_model=_Identity(), ref_ground_model=_Shifted(), dem=_ridge_dem())
+    assert one.stages["geometry_filter"]["n_kept"] < 50               # the old, wrong mapping
+    assert two.stages["geometry_filter"]["n_kept"] == 200             # same ground, all kept

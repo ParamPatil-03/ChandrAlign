@@ -72,5 +72,8 @@ def test_the_bundle_delivers_the_points_its_metrics_describe():
     assert r.metrics.rmse_px == acc["rmse_px_ref"] and r.metrics.rmse_px is not None
     assert acc["model"] == bun.geometry and acc["point_set"] and acc["n_check"] > 0
     assert r.metrics.rmse_m == pytest.approx(r.metrics.rmse_px * 5.0, rel=1e-3)     # gsd_m 5.0
+    # audit I-10: the two metrics the report displays are filled
+    assert r.metrics.max_delaunay_gap_px == bun.stages["uniformity"]["max_delaunay_gap_px"] is not None
+    assert r.metrics.subpixel_recovery_err_px is not None and r.metrics.subpixel_recovery_err_px < 0.25
     assert bun.tps is not None and bun.src is not None
     assert r.metrics.runtime_s is not None and r.metrics.runtime_s > 0     # the whole call, timed

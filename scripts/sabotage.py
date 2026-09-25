@@ -304,6 +304,8 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "refinement ignores the model's Jacobian (C-02)": (
                 "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr, model=model)",
                 "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)"),
+            "reference points go through the source ground model (I-10)": (
+                "src_model=ground_model, ref_model=ref_gm)", "src_model=ground_model, ref_model=ground_model)"),
             "the reported accuracy is the fit residual again (C-03)": (
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.checkpoint_rmse_px,',
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
