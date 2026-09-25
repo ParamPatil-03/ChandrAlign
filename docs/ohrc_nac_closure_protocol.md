@@ -24,3 +24,13 @@ split into A's cross-track (sample) and along-track (line) directions.
 - |median e| < 0.5 m -> the loop closes; the MI peak on A is taken as misled (not a bias).
 - otherwise: inconclusive.
 The MI check is also run on OHRC -> B and A -> B, reported.
+
+## Result (2026-09-25): INVALID -- the NAC -> NAC link failed; no conclusion about the bias
+
+OHRC -> B (M111443315LC, downloaded) registered 3/3 windows, OHRC -> A 5/5 (both fell back to
+minima-loftr on the 3 shared windows). But the direct A -> B link found only 8-10 matches per
+window (eloftr on 800 px A crops, reduced from 1600 px after a CUDA out-of-memory; 41 vs 26 deg
+suns), so its closure errors (66 m, 126 m, 10.4 km) are noise, not a measurement. The script's
+automatic reading ("does not close ... biased") is NOT accepted: the protocol lacked a quality
+requirement for the A -> B link -- a protocol gap, recorded here. Bias on the 0.40 m NAC remains
+unresolved. `reports/ohrc_nac_closure.json`.

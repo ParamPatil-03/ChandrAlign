@@ -1,7 +1,7 @@
 """Closure test: is OHRC -> NAC A biased? (docs/ohrc_nac_closure_protocol.md, frozen before running)
 
     python scripts/register_ohrc_nac.py --products A B --matchers routed --auto-bridge --rows ... --dump-points <dir>
-    python scripts/ohrc_nac_closure.py <dir> A B
+    python scripts/ohrc_nac_closure.py <dir> A B <run.json>
 
 T_A, T_B come from the dumps (OHRC px -> NAC px); T_AB (A px -> B px) is registered here directly.
 Writes reports/ohrc_nac_closure.json.
@@ -26,7 +26,7 @@ from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_ohrc_nac import T, match, norm  # noqa: E402
 from register_tmc2_nac import NULL_BELOW  # noqa: E402
 
-HALF = 800                                   # A crop half-size, A px (~0.64 km at 0.40 m)
+HALF = 400                                   # A crop half-size, A px (~0.32 km); eloftr OOMs past ~1500 px on 6 GB
 
 
 def crop(meta, cx, cy, half):
@@ -44,11 +44,17 @@ def main() -> int:
     for f in ("tmc2_nac_lroc_meta.json", "iirs_nac_lroc_meta.json"):
         lroc.update(json.loads((ROOT / "data/pairs" / f).read_text(encoding="utf-8"))["products"])
     bpx = (float(lroc[B]["scaled_pixel_width"]), float(lroc[B]["scaled_pixel_height"]))
+    run = json.loads(Path(sys.argv[4]).read_text(encoding="utf-8"))
+    used = {(w["nac"], int(w["ohrc_row"])): (w.get("results") or {}).get("routed", {}).get("used")
+            for w in run["windows"]}                                     # the matcher the shipped path used
     rows = []
     for fa in sorted(d.glob(f"{A}_*_eloftr.npz")):
         row = fa.stem.split("_")[1]
-        fb = d / f"{B}_{row}_eloftr.npz"
-        if not fb.exists():
+        ma, mb = used.get((A, int(row))), used.get((B, int(row)))
+        if not ma or not mb:
+            continue
+        fa, fb = d / f"{A}_{row}_{ma}.npz", d / f"{B}_{row}_{mb}.npz"
+        if not (fa.exists() and fb.exists()):
             continue
         za, zb = np.load(fa), np.load(fb)
         TA, TB = np.asarray(za["T_total"], float), np.asarray(zb["T_total"], float)
@@ -70,7 +76,7 @@ def main() -> int:
         u = (TAB[:2, :2] @ np.array([1.0, 0.0])); u /= np.linalg.norm(u)   # A's sample (cross-track) axis in B
         u_m = u * np.array(bpx); u_m /= np.linalg.norm(u_m)
         cross = float(e_m @ u_m); along = float(np.cross(u_m, e_m))
-        rows.append({"row": int(row), "status": "ok", "A_to_B_inliers": int(est.inlier_count),
+        rows.append({"row": int(row), "status": "ok", "used": [ma, mb], "A_to_B_inliers": int(est.inlier_count),
                      "closure_m": round(float(np.hypot(*e_m)), 3), "cross_track_m": round(cross, 3),
                      "along_track_m": round(along, 3)})
         print(json.dumps(rows[-1]), flush=True)

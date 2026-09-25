@@ -1,0 +1,53 @@
+{
+ "source": "measured",
+ "protocol": "docs/ohrc_nac_closure_protocol.md",
+ "run": {
+  "command": "python scripts/ohrc_nac_closure.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/cl M175124932LC M111443315LC C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/dc0ff334-fff8-4f5b-b255-ced66d58b77d/scratchpad/cl.json",
+  "commit": "e1cb9669d665db06c13029951dad39931594217d",
+  "uncommitted_changes": true,
+  "utc": "2026-09-25T04:08:31+00:00"
+ },
+ "A": "M175124932LC",
+ "B": "M111443315LC",
+ "windows": [
+  {
+   "row": 13548,
+   "status": "ok",
+   "used": [
+    "minima-loftr",
+    "minima-loftr"
+   ],
+   "A_to_B_inliers": 10,
+   "closure_m": 10411.723,
+   "cross_track_m": -10405.546,
+   "along_track_m": -358.601
+  },
+  {
+   "row": 2048,
+   "status": "ok",
+   "used": [
+    "minima-loftr",
+    "minima-loftr"
+   ],
+   "A_to_B_inliers": 8,
+   "closure_m": 66.354,
+   "cross_track_m": -38.154,
+   "along_track_m": 54.288
+  },
+  {
+   "row": 7798,
+   "status": "ok",
+   "used": [
+    "minima-loftr",
+    "minima-loftr"
+   ],
+   "A_to_B_inliers": 10,
+   "closure_m": 126.331,
+   "cross_track_m": 113.333,
+   "along_track_m": -55.814
+  }
+ ],
+ "median_closure_m": 126.331,
+ "median_cross_track_m": -38.154,
+ "reading": "does not close cross-track: OHRC -> A taken as biased"
+}
