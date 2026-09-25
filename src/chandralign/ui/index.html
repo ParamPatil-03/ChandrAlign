@@ -375,25 +375,24 @@
       text-transform: uppercase;
     }
 
-    .tier-gold {
-      background: var(--gold-dim);
-      color: var(--gold);
-      border: 1px solid rgba(245,158,11,.3);
+    /* Tiers are contracts.Tier: HIGH / MEDIUM / LOW / REJECTED. LOW is accepted but cautionary. */
+    .tier-high     { background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,.35); }
+    .tier-medium   { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(56,189,248,.35); }
+    .tier-low      { background: rgba(251,191,36,.15); color: var(--amber); border: 1px solid rgba(251,191,36,.35); }
+    .tier-rejected { background: var(--crimson-dim); color: var(--crimson); border: 1px solid rgba(239,68,68,.3); }
+    .tier-none     { background: rgba(148,163,184,.1); color: var(--txt2); border: 1px solid rgba(148,163,184,.25); }
+    .pair-note     { font-size: 9px; color: var(--txt3); line-height: 1.35; margin-top: 2px; }
+    .pair-item.disabled .pair-name { color: var(--txt2); }
+    .cfg-input {
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--txt); font-size: 10px; padding: 5px 7px; width: 100%; font-family: 'Courier New', monospace;
     }
-    .tier-silver {
-      background: rgba(129,140,248,.15);
-      color: var(--indigo);
-      border: 1px solid rgba(129,140,248,.3);
-    }
-    .tier-hard {
-      background: rgba(251,191,36,.15);
-      color: var(--amber);
-      border: 1px solid rgba(251,191,36,.3);
-    }
-    .tier-rejected {
-      background: var(--crimson-dim);
-      color: var(--crimson);
-      border: 1px solid rgba(239,68,68,.3);
+    .metric-src.synthetic { color: var(--amber); }
+    .viz-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    #swipe-top { clip-path: inset(0 50% 0 0); }
+    .viz-missing {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+      text-align: center; padding: 20px; font-size: 11px; color: var(--txt2);
     }
 
     /* Run button */
@@ -458,25 +457,28 @@
       transition: all .4s;
     }
 
-    .ribbon-gold {
+    .ribbon-high {
       background: linear-gradient(90deg, rgba(16,185,129,.15), transparent);
       border-color: rgba(16,185,129,.4);
       box-shadow: 0 0 18px rgba(16,185,129,.12);
     }
-    .ribbon-silver {
-      background: linear-gradient(90deg, rgba(129,140,248,.12), transparent);
-      border-color: rgba(129,140,248,.35);
+    .ribbon-medium {
+      background: linear-gradient(90deg, rgba(56,189,248,.12), transparent);
+      border-color: rgba(56,189,248,.35);
     }
-    .ribbon-bronze {
-      background: linear-gradient(90deg, rgba(251,191,36,.12), transparent);
-      border-color: rgba(251,191,36,.35);
+    .ribbon-low {
+      background: linear-gradient(90deg, rgba(251,191,36,.14), transparent);
+      border-color: rgba(251,191,36,.45);
     }
-    .ribbon-rejected {
+    .ribbon-rejected, .ribbon-failed {
       background: linear-gradient(90deg, rgba(239,68,68,.2), transparent);
       border-color: var(--crimson);
       box-shadow: 0 0 20px rgba(239,68,68,.2);
     }
-
+    .ribbon-none {
+      background: transparent;
+      border-color: var(--border);
+    }
     .ribbon-tier {
       display: flex;
       align-items: center;
@@ -860,12 +862,6 @@
       min-height: 0;
     }
 
-    #viz-canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
     /* Swipe divider */
     #swipe-div {
       position: absolute;
@@ -965,9 +961,6 @@
       color: var(--cyan);
     }
 
-    /* Checker grid range */
-    #checker-range { accent-color: var(--cyan); width: 80px; }
-
     /* ── Resize handle between left and right (cosmetic) ── */
     .panel { border-radius: 0; }
     #q1 { border-right: none; border-bottom: none; }
@@ -990,23 +983,23 @@
     </div>
 
     <div class="hdr-center" id="pipeline-stages">
-      <div class="stage-pill done" id="sp1"><span class="stage-dot"></span>Gating</div>
+      <div class="stage-pill" id="sp1"><span class="stage-dot"></span>Overlap</div>
       <span class="stage-connector">›</span>
-      <div class="stage-pill done" id="sp2"><span class="stage-dot"></span>Phase Cong.</div>
+      <div class="stage-pill" id="sp2"><span class="stage-dot"></span>Coarse lock</div>
       <span class="stage-connector">›</span>
-      <div class="stage-pill active" id="sp3"><span class="stage-dot"></span>Matching</div>
+      <div class="stage-pill" id="sp3"><span class="stage-dot"></span>Matching</div>
       <span class="stage-connector">›</span>
-      <div class="stage-pill" id="sp4"><span class="stage-dot"></span>Subpixel</div>
+      <div class="stage-pill" id="sp4"><span class="stage-dot"></span>Gates &amp; tier</div>
       <span class="stage-connector">›</span>
-      <div class="stage-pill" id="sp5"><span class="stage-dot"></span>GeoTIFF</div>
+      <div class="stage-pill" id="sp5"><span class="stage-dot"></span>Export</div>
     </div>
 
     <div class="hdr-right">
       <div class="status-badge">
         <div class="status-dot" id="sys-dot"></div>
-        <span id="sys-txt">OFFLINE READY</span>
+        <span id="sys-txt">CONNECTING…</span>
       </div>
-      <div class="ver-tag">v1.0-DEMO · ISRO PS-02</div>
+      <div class="ver-tag">SIH26166</div>
     </div>
   </header>
 
@@ -1019,14 +1012,14 @@
     <div class="panel" id="q1">
       <div class="panel-hdr">
         <div class="panel-title">🛰️ &nbsp;1. SELECT PAIR / UPLOAD</div>
-        <span class="panel-badge" style="background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.3);">4 PAIRS LOADED</span>
+        <span class="panel-badge" id="pairs-badge" style="background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.3);">—</span>
       </div>
 
       <div class="panel-body">
         <!-- Source tabs -->
         <div class="tab-row">
           <button class="tab-btn active" id="tab-cur" onclick="setTab('cur')">Curated Benchmarks</button>
-          <button class="tab-btn" id="tab-up" onclick="setTab('up')">Custom Upload</button>
+          <button class="tab-btn" id="tab-up" onclick="setTab('up')">Custom Pair</button>
         </div>
 
         <!-- Curated list -->
@@ -1034,40 +1027,31 @@
           <div class="pair-list" id="pair-list"></div>
         </div>
 
-        <!-- Upload panel -->
+        <!-- Custom pair: labels on the server (the backend reads products from its own disk) -->
         <div id="panel-up" style="display:none;">
-          <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px;" id="drop-src" onclick="document.getElementById('f-src').click()" onmouseenter="this.style.borderColor='var(--border-hi)'" onmouseleave="this.style.borderColor='var(--border)'">
-            <div style="font-size:22px;margin-bottom:4px;">📂</div>
-            <div style="font-size:11px;font-weight:700;" id="lbl-src">Source (OHRC / TMC-2)</div>
-            <div style="font-size:10px;color:var(--txt3);">PDS3 · GeoTIFF · PNG</div>
-            <input type="file" id="f-src" style="display:none;" onchange="fileSelected('src',event)">
+          <div class="cfg-row" style="flex-direction:column;align-items:stretch;gap:4px;">
+            <span class="cfg-label">Source label (server path)</span>
+            <input class="cfg-input" id="in-src" placeholder="data/raw/ch2/tmc2/…/ch2_tmc_…_d_img_d18.xml">
           </div>
-          <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:all .2s;" id="drop-ref" onclick="document.getElementById('f-ref').click()" onmouseenter="this.style.borderColor='var(--border-hi)'" onmouseleave="this.style.borderColor='var(--border)'">
-            <div style="font-size:22px;margin-bottom:4px;">📂</div>
-            <div style="font-size:11px;font-weight:700;" id="lbl-ref">Reference (NAC / SELENE)</div>
-            <div style="font-size:10px;color:var(--txt3);">PDS3 · GeoTIFF · PNG</div>
-            <input type="file" id="f-ref" style="display:none;" onchange="fileSelected('ref',event)">
+          <div class="cfg-row" style="flex-direction:column;align-items:stretch;gap:4px;">
+            <span class="cfg-label">Reference label (server path)</span>
+            <input class="cfg-input" id="in-ref" placeholder="data/raw/selene/tc/TCO_MAP_….lbl">
           </div>
+          <div class="pair-note">Validated product workflows: TMC-2 → SELENE TC and OHRC → LRO NAC. Any other
+            pairing is refused with the reason.</div>
         </div>
 
         <!-- Config -->
         <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
           <div class="cfg-row">
-            <span class="cfg-label">Matcher</span>
-            <select class="cfg-select" id="sel-matcher">
-              <option value="auto">Multi-Modal Cascade (Auto)</option>
-              <option value="sift">SIFT Normal (Baseline)</option>
-              <option value="phase">Phase Congruency Direct</option>
-              <option value="loftr">LoFTR Dense (Shadow)</option>
-            </select>
+            <span class="cfg-label">Windows</span>
+            <input class="cfg-input" id="in-windows" type="number" min="1" max="5" value="1" style="width:60px;">
           </div>
+          <div class="pair-note" style="margin-bottom:6px;">The matcher is chosen by routing for the pairing, as it
+            was for the committed evidence.</div>
           <div class="toggle-row">
-            <span>Sub-Pixel Local Refinement</span>
-            <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
-          </div>
-          <div class="toggle-row">
-            <span>Offline Demo Mode (Simulated)</span>
-            <label class="toggle"><input type="checkbox" id="tog-mock" checked onchange="onMockToggle()"><span class="toggle-track"></span></label>
+            <span>Synthetic stand-in (NOT real data)</span>
+            <label class="toggle"><input type="checkbox" id="tog-mock"><span class="toggle-track"></span></label>
           </div>
         </div>
 
@@ -1091,17 +1075,17 @@
 
       <div class="panel-body">
         <!-- Confidence tier ribbon -->
-        <div class="confidence-ribbon ribbon-gold" id="ribbon">
+        <div class="confidence-ribbon ribbon-none" id="ribbon">
           <div class="ribbon-tier" id="ribbon-tier">
-            <span id="ribbon-icon">⭐</span>
-            <span id="ribbon-txt">CONFIDENCE TIER: GOLD (SUB-PIXEL VERIFIED)</span>
+            <span id="ribbon-icon">○</span>
+            <span id="ribbon-txt">NO RUN YET</span>
           </div>
-          <div class="ribbon-pair" id="ribbon-pair">CH2_OHRC_20200214 ⇄ LRO_NAC_M119283</div>
+          <div class="ribbon-pair" id="ribbon-pair">Select a pair</div>
         </div>
 
         <!-- Rejection panel (hidden unless REJECTED) -->
         <div class="rejection-box" id="rej-box">
-          <div class="rej-title">⚠ REGISTRATION REJECTED — <span id="rej-reason">Insufficient Inlier Count</span></div>
+          <div class="rej-title">⚠ REGISTRATION REJECTED — <span id="rej-reason"></span></div>
           <div style="font-size:10px;color:#fca5a5;">Per honesty rule H3, this registration is safely refused rather than returning a degraded result. Triggered failure modes:</div>
           <div class="rej-modes" id="rej-modes"></div>
         </div>
@@ -1109,39 +1093,39 @@
         <!-- Metrics -->
         <div class="metrics-grid" id="metrics-grid">
           <div class="metric-card">
-            <div class="metric-src">MEASURED</div>
+            <div class="metric-src">—</div>
             <div class="metric-lbl">RMSE</div>
-            <div class="metric-val"><span id="m-rmse">0.82</span></div>
+            <div class="metric-val"><span id="m-rmse">—</span></div>
             <div class="metric-unit">px</div>
-            <div class="metric-sub" id="m-rmse-m">≈ 0.41 m</div>
+            <div class="metric-sub" id="m-rmse-m">fit residual</div>
           </div>
           <div class="metric-card">
-            <div class="metric-src">MEASURED</div>
+            <div class="metric-src">—</div>
             <div class="metric-lbl">Inlier Count</div>
-            <div class="metric-val"><span id="m-inliers">482</span></div>
+            <div class="metric-val"><span id="m-inliers">—</span></div>
             <div class="metric-unit">pts</div>
-            <div class="metric-sub" id="m-ratio">Ratio: 84.6%</div>
+            <div class="metric-sub" id="m-ratio">Ratio: —</div>
           </div>
           <div class="metric-card">
-            <div class="metric-src">MEASURED</div>
+            <div class="metric-src">—</div>
             <div class="metric-lbl">Spatial Cov.</div>
-            <div class="metric-val"><span id="m-cov">87.5</span></div>
+            <div class="metric-val"><span id="m-cov">—</span></div>
             <div class="metric-unit">%</div>
-            <div class="metric-sub" id="m-cells">56/64 cells</div>
+            <div class="metric-sub" id="m-cells">grid cells with points</div>
           </div>
           <div class="metric-card">
-            <div class="metric-src">MEASURED</div>
+            <div class="metric-src">—</div>
             <div class="metric-lbl">Max Gap</div>
-            <div class="metric-val"><span id="m-gap">42.1</span></div>
+            <div class="metric-val"><span id="m-gap">—</span></div>
             <div class="metric-unit">px</div>
             <div class="metric-sub">Delaunay</div>
           </div>
           <div class="metric-card">
-            <div class="metric-src">MEASURED</div>
+            <div class="metric-src">—</div>
             <div class="metric-lbl">Runtime</div>
-            <div class="metric-val"><span id="m-rt">1.48</span></div>
+            <div class="metric-val"><span id="m-rt">—</span></div>
             <div class="metric-unit">s</div>
-            <div class="metric-sub" id="m-matcher">Phase+SIFT</div>
+            <div class="metric-sub" id="m-matcher">—</div>
           </div>
         </div>
       </div>
@@ -1169,18 +1153,18 @@
           <div class="cascade-info">
             <div class="cascade-row">
               <div class="cascade-dot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan);"></div>
-              <span class="cascade-label">Cascade: </span>
-              <span class="cascade-value" id="t-cascade">Phase Congruency → Feature</span>
+              <span class="cascade-label">Workflow: </span>
+              <span class="cascade-value" id="t-cascade">—</span>
             </div>
             <div class="cascade-row">
               <div class="cascade-dot"></div>
               <span class="cascade-label">Matcher: </span>
-              <span class="cascade-value" id="t-matcher">LoFTR / SIFT-Normal</span>
+              <span class="cascade-value" id="t-matcher">—</span>
             </div>
             <div class="cascade-row">
               <div class="cascade-dot" style="background:var(--amber);box-shadow:0 0 6px var(--amber);"></div>
               <span class="cascade-label">Regime: </span>
-              <span class="cascade-value" id="t-regime">DIFFERENT-MODAL</span>
+              <span class="cascade-value" id="t-regime">—</span>
             </div>
             <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
             <div class="prog-pct" id="prog-pct">0%</div>
@@ -1189,8 +1173,7 @@
 
         <!-- Live terminal -->
         <div class="terminal" id="terminal" style="flex:1;min-height:0;">
-          <div class="log-line log-plain"><span class="log-ts">[INIT]</span>Chandralign registration client initialized.</div>
-          <div class="log-line log-plain"><span class="log-ts">[INIT]</span>Pre-cached mock pairs loaded. Venue offline mode active.</div>
+          <div class="log-line log-plain"><span class="log-ts">[INIT]</span>Console ready.</div>
         </div>
       </div>
     </div>
@@ -1202,7 +1185,7 @@
     <div class="panel" id="q4">
       <div class="panel-hdr">
         <div class="panel-title">🖼️ &nbsp;4. INTERACTIVE INSPECTION</div>
-        <span style="font-size:10px;color:var(--txt3);">60 FPS CANVAS</span>
+        <select class="cfg-select" id="sel-window" onchange="selectWindow(this.selectedIndex)" style="font-size:10px;" disabled><option>no run</option></select>
       </div>
 
       <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px;">
@@ -1217,7 +1200,10 @@
 
         <!-- Viewport -->
         <div class="viewport" id="viewport">
-          <canvas id="viz-canvas"></canvas>
+          <img class="viz-img" id="viz-img" alt="">
+          <img class="viz-img" id="swipe-ref" alt="reference">
+          <img class="viz-img" id="swipe-top" alt="registered">
+          <div class="viz-missing" id="viz-missing"></div>
 
           <!-- swipe divider -->
           <div id="swipe-div">
@@ -1225,8 +1211,8 @@
           </div>
 
           <!-- floating labels -->
-          <div class="vp-label l" id="vp-lbl-l">Source (Before Warp)</div>
-          <div class="vp-label r" id="vp-lbl-r">Registered Product</div>
+          <div class="vp-label l" id="vp-lbl-l">Registered (source warped)</div>
+          <div class="vp-label r" id="vp-lbl-r">Reference</div>
 
           <!-- idle overlay -->
           <div class="vp-idle" id="vp-idle">
@@ -1239,13 +1225,10 @@
         <div class="viz-toolbar">
           <div class="toolbar-info">
             <span>Swipe: <span class="toolbar-val" id="tb-swipe-pct">50%</span></span>
-            <span id="tb-checker-wrap" style="display:none;">
-              Grid: <input type="range" id="checker-range" min="4" max="20" step="2" value="8" oninput="updateChecker(this.value)">
-              <span class="toolbar-val" id="tb-grid">8×8</span>
-            </span>
+
             <span id="tb-match-info" style="display:none;">
-              Inliers: <span class="toolbar-val" id="tb-inliers">—</span> &nbsp;
-              Outliers: <span class="toolbar-val" id="tb-outliers">—</span>
+              Evidence matches: <span class="toolbar-val" id="tb-matches">—</span> &nbsp;
+              Inliers: <span class="toolbar-val" id="tb-inliers">—</span>
             </span>
           </div>
           <div class="toolbar-btns">
