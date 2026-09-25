@@ -309,13 +309,19 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
             if mi.get("peak_offset_px") is not None:
                 mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
             r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
+            # C-04 (docs/crosscheck_protocol.md): recorded only; the success rule does not use it
+            r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name)[1]
+            r["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
         except Exception as exc:                                        # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)
         results[name] = r
         return r
 
-    ok = lambda r: r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
+    # I-07 (docs/ohrc_nac_protocol.md amendment 2026-09-26): an MI-flagged result is not ok, so the
+    # routed loop falls back to the next candidate
+    ok = lambda r: (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
+                    and (r.get("mi_check") or {}).get("flag") is not True)
     for name in matchers:
         if name != "routed":
             evaluate(name)
@@ -477,6 +483,7 @@ def main() -> int:
                       and r.get("tier_ok") and r.get("implied_offset_m")]
                 med = (np.median([[r["implied_offset_m"]["east"], r["implied_offset_m"]["north"]] for _, r in gp], axis=0)
                        if len(gp) >= 3 else None)
+            unconfirmed = 0
             for w in ws:
                 r = (w.get("results") or {}).get(name, {})
                 if args.bridge or args.auto_bridge:
@@ -487,10 +494,14 @@ def main() -> int:
                 else:
                     cons = w.get("consistent", False)
                 s = (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok") and cons)
-                r["success"] = bool(s)
-                ok += bool(s)
+                mi_flag = (r.get("mi_check") or {}).get("flag") is True
+                r["success_before_mi"] = bool(s)
+                r["outcome"] = "success" if s and not mi_flag else "unconfirmed" if s else "failed"
+                r["success"] = bool(s and not mi_flag)
+                ok += r["success"]
+                unconfirmed += r["outcome"] == "unconfirmed"
             rate = ok / len(ws) if ws else 0.0
-            summary.setdefault(pid, {})[name] = {"success": ok, "windows": len(ws),
+            summary.setdefault(pid, {})[name] = {"success": ok, "unconfirmed_mi_flagged": unconfirmed, "windows": len(ws),
                                                  "verdict": "solved" if rate >= 0.9 else "degraded" if rate >= 0.6 else "unsolved"}
     print(json.dumps(summary, indent=1))
     out = ROOT / args.out

@@ -352,6 +352,10 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
                                   src_img, ref_img, src_plane, ref_plane, base=base)
     out["gates"] = gates.gates
     out["gate_detail"] = gates.to_dict()
+    # C-04 (docs/crosscheck_protocol.md) and C-03 (docs/refinement_geometry_protocol.md): recorded only
+    out["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), src_plane,
+                                                             ref_plane, matcher or "eloftr")[1]
+    out["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
     out["gate_seconds"] = round(time.perf_counter() - t_g, 1)
     q = quality.assess(inlier_count=res.inlier_count,
                        inlier_ratio=res.inlier_count / n if n else 0.0,
