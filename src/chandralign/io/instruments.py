@@ -188,13 +188,14 @@ def _gsd_of(scene) -> tuple[str, float, str, bool, tuple]:
     if isinstance(scene, str):
         g = float(get_spec(scene).gsd_m)
         return scene, g, "nominal", False, ("nominal",)
-    from chandralign.estimate.scale import pixel_scale
+    from chandralign.estimate.scale import footprint_extent_m, pixel_scale
 
     # Refuse a nonsense size BEFORE any ratio is formed from it; pixel_scale would
     # otherwise divide by it while comparing sources.
     if not scene.gsd_m or float(scene.gsd_m) <= 0:
         raise ValueError(f"a GSD must be positive, got {scene.gsd_m} for {scene.product_id}")
-    ps = pixel_scale(scene)
+    # No corners in the label (LRO NAC): the saved footprint beats the nominal label value.
+    ps = pixel_scale(scene, ground_extent_m=footprint_extent_m(scene))
     effective = (ps.across_m * ps.along_m) ** 0.5
     best = next(s for s in ("measured", "corners", "footprint", "label") if s in ps.sources)
     return str(scene.instrument), float(effective), best, ps.verified, ps.sources

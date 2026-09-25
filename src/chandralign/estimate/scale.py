@@ -194,6 +194,39 @@ def measured_scale(product_id: str) -> Optional[tuple[float, float]]:
     return float(entry["across_m"]), float(entry["along_m"])
 
 
+def footprint_extent_m(meta: SceneMeta) -> Optional[tuple[float, float]]:
+    """(across_m, along_m) ground extent of a product with no corners in its label, or None.
+
+    LRO NAC labels carry no corner coordinates, so without this every NAC pixel size is
+    the label's nominal 0.5 m, while the real footprints imply 0.55-1.27 m (LRO's orbit is
+    eccentric; scripts/audit_gsd.py). The extent is the minimum rotated rectangle of the
+    saved ODE footprint in a local metric projection: its long side is mapped to the
+    product's longer pixel axis. Audit 2026-09-26 I-04.
+    """
+    if _corner_scales(meta) is not None:
+        return None                    # the corners are the better source; use them
+    try:
+        from ..geometry.footprint import FootprintError, footprint_of
+        from ..geometry.projection import scene_crs, to_map
+        from ..io.reference import find_saved_record
+        record = find_saved_record(meta.raster_path.parent)
+        if not record:
+            return None
+        poly = footprint_of(meta, record).polygon
+    except (FootprintError, OSError, ValueError, KeyError):
+        return None
+    c = poly.centroid
+    crs = scene_crs(c.y, c.x)
+    lon, lat = np.asarray(poly.exterior.coords).T
+    x, y = to_map(lat, lon, crs)
+    from shapely.geometry import Polygon
+    box = np.asarray(Polygon(np.c_[x, y]).minimum_rotated_rectangle.exterior.coords)
+    sides = sorted(float(np.hypot(*(box[i + 1] - box[i]))) for i in range(2))
+    short_m, long_m = sides
+    n_lines, n_samples = meta.array_shape
+    return (short_m, long_m) if n_lines >= n_samples else (long_m, short_m)
+
+
 def pixel_scale(scene: SceneMeta | str, *,
                 ground_extent_m: Optional[tuple[float, float]] = None,
                 tolerance: float = AGREEMENT_TOLERANCE,

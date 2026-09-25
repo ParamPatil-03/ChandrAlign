@@ -144,3 +144,26 @@ def test_no_pixels_are_read(monkeypatch):
 
     monkeypatch.setattr(pds_raster, "read_raster", explode)
     assert scale_precheck(meta("OHRC"), meta("IIRS")).extreme is True
+
+
+_NAC = Path(__file__).resolve().parents[1] / "data/raw/lro/nac"
+
+
+def _nac(pid):
+    hits = [p for p in _NAC.glob(f"nac.{pid.lower()}/{pid}.XML")]
+    return hits[0] if hits else None
+
+
+@pytest.mark.skipif(_nac("M102014464RC") is None or _nac("M109080308LC") is None,
+                    reason="real LRO NAC products not downloaded")
+def test_nac_pixel_size_comes_from_its_footprint_not_the_nominal_label():
+    """Audit 2026-09-26 I-04: every NAC label says 0.5 m, so this pair came back 1.00x.
+
+    scripts/audit_gsd.py measures its real ratio at about 2.15x from the footprints; a 2x
+    error near the 4x cascade threshold flips routing, and CHECK-05 would certify it.
+    """
+    from chandralign.io.instruments import scale_precheck
+    from chandralign.io.pds_label import parse_label
+    chk = scale_precheck(parse_label(_nac("M102014464RC")), parse_label(_nac("M109080308LC")))
+    assert chk.ratio == pytest.approx(2.15, rel=0.10)
+    assert "footprint" in chk.source
