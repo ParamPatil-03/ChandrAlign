@@ -49,6 +49,37 @@ The last two are audit/register entries rather than claims that they can always
 be inferred from a `RegistrationResult`. They require benchmark/provenance or
 environment evidence respectively.
 
+## Additional anticipated failure conditions
+
+The following conditions were found in the broader Part 3 audit. They are
+documented here so they cannot be forgotten during later integration and
+full-resolution testing. They are **not additional integer IDs**, and they are
+**not all automatically detected yet**. The status column distinguishes an
+existing partial safeguard from work that still needs a dedicated detector.
+
+| Proposed operational code | Condition and possible effect | Current safeguard/status | Canonical relationship |
+|---|---|---|---|
+| `radiometric_saturation` | Clipped bright or dark regions become flat and produce no trustworthy structure. | Shadow and texture scoring provide partial coverage; a saturation-fraction check is still needed. | #1, #2 |
+| `input_integrity_failure` | A corrupt/truncated raster or label, wrong dimensions, datatype, byte order, or missing lines can yield invalid pixels or metadata. | PDS parsing and `io.pds_raster.verify_raster` cover part of this; complete raster-length and decoded-shape checks are still needed. | #15 |
+| `band_selection_mismatch` | A wrong IIRS band index/order can create a misleading composite or compare incompatible wavelengths. | Band SNR/selection and provenance provide partial coverage; verify selected indices against label wavelengths. | #4, #5 |
+| `pushbroom_jitter` | Spacecraft jitter or line-timing distortion produces row-dependent geometry that one affine/homography cannot model. | TPS can absorb some local residual, but no dedicated row-residual/jitter detector exists yet. | #12 |
+| `dem_quality_insufficient` | A present but coarse, stale, void-filled, or locally incorrect DEM can make parallax correction worse. | Missing DEM is logged; DEM resolution, void fraction, and correction improvement still need explicit checks. | #8, #12 |
+| `terrain_occlusion` | Crater walls or relief visible in one acquisition may be hidden in the other, creating physically impossible correspondences. | Geometry filtering provides partial coverage; an explicit visibility/occlusion test is not yet implemented. | #12 |
+| `control_points_clustered` | Low residuals in one small region may coexist with poor registration elsewhere. | Spatial coverage and maximum Delaunay gap already expose much of this risk; report both values and reject inadequate coverage. | #12, #19 |
+| `warp_extrapolation` | TPS or another nonlinear warp can behave unrealistically outside the convex hull of delivered control points, especially near image edges. | No dedicated boundary-distortion/Jacobian check yet; avoid claiming accuracy outside supported control-point coverage. | #12, #19 |
+| `coordinate_convention_error` | Row/column, x/y, zero/one-based, or pixel-centre/corner confusion can create a consistent offset or transposition. | Round-trip and export tests cover known paths; every new import/export integration needs coordinate-contract tests. | #9, #19 |
+| `projection_boundary_case` | Polar geometry, longitude wrap at +/-180 degrees, lunar-radius choice, or axis-order mistakes can shift otherwise plausible output. | Explicit lunar CRS handling provides partial coverage; add polar and antimeridian round-trip fixtures. | #9 |
+| `nodata_mask_error` | Incorrect nodata metadata can expose black borders, fill values, or invalid pixels to the matcher as features. | Separate valid/shadow masks help; decoded nodata values must also be verified against label metadata. | #1, #12, #19 |
+| `correlated_matcher_consensus` | Several matchers can agree because they share training data, descriptors, preprocessing, or the same systematic bias; agreement is not ground truth. | Independent control gates and perturbation tests reduce the risk; matcher votes must never replace external validation. | #19 |
+| `ground_truth_error` | Incorrect reference coordinates can penalise a correct result or make an incorrect result appear accurate. | Metadata/DEM cross-validation provides partial coverage; retain uncertainty and the provenance of every reference measurement. | #8, #19 |
+| `partial_output_failure` | Registration succeeds but GeoTIFF, CSV/GeoJSON, visualization, or report export fails, leaving an incomplete deliverable. | Individual exporters have tests; the final run manifest/report must verify that every required artifact was produced and readable. | Operational only |
+| `configuration_drift` | Evaluation, CLI, UI, or demo uses different thresholds, matcher settings, or stage switches, making results irreproducible. | Provenance records configuration; add a run-manifest/config fingerprint comparison across all entry points. | #19 |
+
+Until a dedicated detector is implemented, these entries are risk-register
+items rather than automatically emitted observations. When implemented, they
+must use string codes (as above) or map to an existing canonical ID; the frozen
+`RegistrationResult.failure_modes` integer contract remains 1–20.
+
 ## Log format
 
 `failure_log.log_run(path, result_or_bundle)` appends one JSON object per line.
