@@ -111,3 +111,31 @@ def test_the_cli_registers_the_headline_pair(tmp_path):
     prov = json.loads((out / "window_01" / "provenance.json").read_text(encoding="utf-8"))
     assert prov["matcher"] == "eloftr" and prov["run_arguments"]["windows"] == 1
     assert {"registered.tif", "matches.csv", "matches.geojson", "failure-log.jsonl"} <= set(result["exports"])
+
+
+MOSAIC = RAW / "lro" / "wac_mosaic" / "wac_mosaic_100m_clip.json"
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(IIRS is None or not MOSAIC.is_file(), reason="real IIRS / WAC mosaic not downloaded")
+def test_iirs_registers_to_the_wac_mosaic_and_lands_on_its_map(tmp_path):
+    """IIRS is named in the problem statement; its validated pairing (xoftr 5/5 HIGH) is now a product."""
+    rasterio = pytest.importorskip("rasterio")
+    from rasterio.transform import from_gcps
+    from chandralign.product.run_export import write_run
+    from chandralign.workflows import iirs_wac
+    from chandralign.workflows.products import register_products
+    run = register_products(IIRS, MOSAIC, windows=1)
+    w = run.windows[0]
+    assert w.bundle is not None, w.failure
+    assert w.bundle.result.confidence_tier in ("HIGH", "MEDIUM") and w.bundle.result.provenance["matcher"] == "xoftr"
+    out = tmp_path / "w1"
+    write_run(out, w.bundle, manifest={"test": True}, src_model=w.src_model, ref_model=w.ref_model)
+    _, _, _, geo = iirs_wac.load_mosaic()
+    ox, oy = w.bundle.ref_to_product[0, 2], w.bundle.ref_to_product[1, 2]
+    with rasterio.open(out / "registered.tif") as ds:
+        t = from_gcps(ds.gcps[0])
+        for row, col in [(0, 0), (ds.height - 1, ds.width - 1)]:
+            lon, lat = t * (col + 0.5, row + 0.5)
+            e_lat, e_lon = geo.pixel_to_latlon(np.array([row + oy]), np.array([col + ox]))
+            assert abs(lat - e_lat[0]) < 0.01 * geo.dpp and abs(lon - e_lon[0]) < 0.01 * geo.dpp

@@ -29,9 +29,13 @@ import numpy as np
 from .. import config
 from ..contracts import ImagePlane, MatchSet, Metrics, RegistrationResult
 
-SUPPORTED = {("TMC2", "TC"): "tmc2_tc", ("OHRC", "NAC"): "ohrc_nac"}
+SUPPORTED = {("TMC2", "TC"): "tmc2_tc", ("OHRC", "NAC"): "ohrc_nac", ("IIRS", "WAC_MOSAIC"): "iirs_wac"}
+# The IIRS -> WAC evidence is against LROC's map-projected WAC global mosaic (a clip at
+# data/raw/lro/wac_mosaic/, reference "label" = its .json); a raw WAC CDR frame is not validated.
+MOSAIC_JSON = "wac_mosaic_100m_clip.json"
 OTHER_EVIDENCE = {                           # validated, but only as research scripts so far
-    ("IIRS", "WAC"): "scripts/register_iirs_wac.py",
+    ("IIRS", "WAC"): "scripts/register_iirs_wac.py (validated against the WAC global mosaic: pass "
+                     f"data/raw/lro/wac_mosaic/{MOSAIC_JSON} as the reference)",
     ("IIRS", "NAC"): "scripts/register_iirs_nac.py",
     ("TMC2", "NAC"): "scripts/register_tmc2_nac.py",
 }
@@ -81,7 +85,8 @@ def register_products(src_label, ref_label, *, windows: int = 3, device: Optiona
     from ..io.pds_label import parse_label
     root = Path(root or config.ROOT)
     say = progress or (lambda message: None)
-    src, ref = parse_label(src_label), parse_label(ref_label)
+    src = parse_label(src_label)
+    ref = _mosaic_meta(Path(ref_label)) if Path(ref_label).name == MOSAIC_JSON else parse_label(ref_label)
     pair = (str(src.instrument), str(ref.instrument))
     if pair not in SUPPORTED:
         known = ", ".join(f"{a} -> {b}" for a, b in SUPPORTED)
@@ -90,12 +95,12 @@ def register_products(src_label, ref_label, *, windows: int = 3, device: Optiona
                 f"product workflow." if other else "")
         raise UnsupportedPairing(f"no validated product workflow for {pair[0]} -> {pair[1]}; "
                                  f"validated: {known}.{hint}")
-    overlap = _overlap(src, ref, root)
+    overlap = _overlap(src, ref, root) if pair[1] != "WAC_MOSAIC" else _mosaic_overlap(src, ref)
     if not overlap["ok"]:
         raise ValueError(f"failure mode {FM_OVERLAP} (insufficient overlap): {overlap['reason']}")
     device = config.resolve_device(device)
     say(f"{pair[0]} -> {pair[1]}: {overlap['reason']}; device {device}")
-    run = {"tmc2_tc": _tmc2_tc, "ohrc_nac": _ohrc_nac}[SUPPORTED[pair]]
+    run = {"tmc2_tc": _tmc2_tc, "ohrc_nac": _ohrc_nac, "iirs_wac": _iirs_wac}[SUPPORTED[pair]]
     return run(src, ref, windows=windows, device=device, root=root, say=say, overlap=overlap)
 
 
@@ -277,6 +282,90 @@ def _consistency(runs: list[WindowRun], within_m: float = 150.0) -> None:
                                       and math.hypot(o["east"] - med[0], o["north"] - med[1]) <= within_m)
         w.window["consistency_rule"] = ("within 150 m of the median over >= 3 gate-passing windows"
                                         if med is not None else "not evaluable: fewer than 3 gate-passing windows")
+
+
+# ============================================================================= IIRS -> WAC mosaic
+
+def _mosaic_meta(json_path: Path):
+    """SceneMeta for the WAC global mosaic clip (not a PDS product: a map-projected clip whose
+    .json records the projection; provenance hashes the .npy and the .json)."""
+    import json
+    from ..contracts import SceneMeta
+    m = json.loads(json_path.read_text(encoding="utf-8"))
+    return SceneMeta(product_id="WAC_GLOBAL_MOSAIC_100M", instrument="WAC_MOSAIC", mission="LRO", gsd_m=100.0,
+                     n_bands=1, wavelength_nm=(643.0, 643.0), array_shape=tuple(m["shape"]), dtype="float32",
+                     corner_latlon=[], sub_solar_azimuth_deg=None, solar_incidence_deg=None, emission_deg=None,
+                     phase_deg=None, acquisition_utc=None, label_path=json_path,
+                     raster_path=json_path.with_suffix(".npy"))
+
+
+def _mosaic_overlap(iirs, mosaic) -> dict:
+    return {"ok": True, "reason": "IIRS windows are placed inside the mosaic clip (protocol amendment 3); "
+                                  "none fit means no overlap", "overlap_km2": None}
+
+
+def _iirs_wac(iirs, mosaic, *, windows, device, root, say, overlap) -> ProductRun:
+    from ..evaluate import control_gates
+    from ..geometry import projection
+    from ..io.dem import find_tiles
+    from ..matching import routing
+    from ..pipeline import stage_flags
+    from ..preprocess.iirs_composite import product_band_selection
+    from . import iirs_wac as wf
+
+    im = projection.load_corner_model(iirs, corners="system")
+    sel = product_band_selection(iirs)
+    choice = routing.choose("IIRS", "WAC")
+    stages = stage_flags()
+    dem_tiles = find_tiles(root / "data" / "raw" / "dem" / "sldem2015")
+    mmeta, wimg, wok, geo = wf.load_mosaic(root)
+    wac = type("Ref", (), {"product_id": mosaic.product_id})()
+    matcher = choice.model_name
+    run = ProductRun("IIRS -> WAC_MOSAIC", "chandralign.workflows.iirs_wac", choice.as_provenance(), overlap)
+    picks = wf.mosaic_windows(iirs, im, geo, wimg, n_win=windows)
+    if not picks:
+        raise ValueError(f"failure mode {FM_OVERLAP}: no IIRS window lies safely inside the mosaic clip")
+    for k, r0 in enumerate(picks, 1):
+        say(f"window {k}/{len(picks)}: IIRS line {r0} ({matcher})")
+        cap: dict = {}
+        t0 = time.perf_counter()
+        rec = wf.run_window(iirs, im, sel, wac, wimg, wok, [geo], r0, [matcher], device, stages, dem_tiles,
+                            dict(choice.fine_stage_options), capture=cap)
+        r = (rec.get("results") or {}).get(matcher) or {}
+        if matcher not in cap:
+            run.windows.append(WindowRun(rec, failure=_failure(rec, r.get("status") or rec.get("status", ""))))
+            continue
+        c = cap[matcher]
+        bundle = _timed(_iirs_wac_bundle(iirs, mosaic, c, matcher, wimg, wok), time.perf_counter() - t0, None)
+        control_gates.require_gates(bundle.result)
+        run.windows.append(WindowRun(rec, bundle, src_model=im, ref_model=_FrameGround(wf.Offset(geo, *c["origin"]))))
+    return run
+
+
+def _iirs_wac_bundle(iirs, mosaic, c, matcher, wimg, wok):
+    from ..pipeline import RegistrationBundle
+    from . import iirs_wac as wf
+    fr, q, gates = c["fine"], c["quality"], c["gates"]
+    r0, c0 = c["window_origin"]
+    gsd = float(c["gsd"])
+    src = ImagePlane(array=c["src"], valid_mask=c["src_ok"], shadow_mask=np.zeros(c["src"].shape, bool),
+                     gsd_m=gsd, meta=iirs, preprocess_chain=["iirs composite", "resampled onto the WAC mosaic grid"])
+    ref = ImagePlane(array=c["ref"], valid_mask=c["ref_ok"], shadow_mask=np.zeros(c["ref"].shape, bool),
+                     gsd_m=gsd, meta=mosaic, preprocess_chain=[f"mosaic clip from {tuple(c['origin'])}"])
+    to_product = wf.T(c0, r0) @ np.linalg.inv(c["Wf"])
+    product_transform = np.asarray(c["T_total"], float) @ wf.T(-c0, -r0)        # IIRS px -> mosaic clip px
+    result = RegistrationResult(
+        matches=fr.matches, inlier_mask=fr.first.inlier_mask, model=fr.model,
+        metrics=Metrics(rmse_px=fr.rmse_px, inlier_count=fr.inlier_count, inlier_ratio=fr.inlier_ratio,
+                        spatial_coverage=fr.coverage, source="measured"),
+        confidence_tier=q.tier, gates=gates.gates, failure_modes=list(q.failure_modes),
+        notes=list(fr.notes) + list(q.notes),
+        provenance={"matcher": matcher, "limiting_signal": q.limiting_signal, "scale_status": c["scale"].status,
+                    "mi_check": c.get("mi"), "evidence_matches": int(len(fr.matches.src_pts))})
+    return RegistrationBundle(
+        result=_frame_result(result, fr, product_transform, "IIRS product px", "WAC mosaic clip px"),
+        delivered=_delivered(fr), tps=fr.tps, parallax=fr.parallax, stages=fr.stages, src=src, ref=ref,
+        src_to_product=to_product, ref_to_product=wf.T(*c["origin"]))
 
 
 # ============================================================================= shared

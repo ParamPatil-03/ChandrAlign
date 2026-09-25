@@ -346,9 +346,17 @@ def test_pair_evidence_is_read_from_the_committed_report(client):
         assert "runnable" in p and "Published" not in p.get("note", "")
 
 
-def test_a_pair_with_no_product_workflow_is_refused_for_real_data(client):
+def test_a_pair_that_cannot_run_here_is_refused_for_real_data(client, monkeypatch):
+    import chandralign.api as api_mod
+    monkeypatch.setattr(api_mod, "_label_for", lambda product_id: None)     # data not on this machine
     r = client.post("/register", json={"pair_id": "iirs_wac"})
-    assert r.status_code == 422 and "no product workflow" in r.json()["detail"]
+    assert r.status_code == 422 and "not in data/raw" in r.json()["detail"]
+
+
+def test_every_curated_pair_has_a_product_workflow(client):
+    """IIRS -> WAC mosaic joined TMC-2 -> TC and OHRC -> NAC as a product workflow."""
+    for p in client.get("/pairs").json()["pairs"]:
+        assert p["why_not"] != "no product workflow for this pairing yet", p["pair_id"]
 
 
 def test_real_data_refuses_a_matcher_override(client):

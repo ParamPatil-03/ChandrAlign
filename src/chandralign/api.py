@@ -177,13 +177,13 @@ CURATED_PAIRS: list[dict] = [
     },
     {
         "pair_id":     "iirs_wac",
-        "label":       "IIRS -> LRO WAC global mosaic (research script only)",
-        "src_camera":  "IIRS", "ref_camera": "WAC",
+        "label":       "IIRS -> LRO WAC global mosaic (hyperspectral source)",
+        "src_camera":  "IIRS", "ref_camera": "WAC_MOSAIC",
         "src_product": "ch2_iir_nci_20240523T1600301891",
         "ref_product": "WAC_GLOBAL_MOSAIC_100M",
         "evidence":    ("iirs_wac", "reports/iirs_wac_mosaic.json"),
-        "note":        "Registered by scripts/register_iirs_wac.py; not yet a product workflow, so "
-                       "only its committed evidence is shown here.",
+        "note":        "Accuracy by the matcher-free MI check: 0.09-0.30 IIRS px, sub-pixel -- but from one "
+                       "IIRS scene (5 windows).",
         "mock_seed":   4,
     },
 ]
@@ -197,6 +197,9 @@ def _label_for(product_id: str) -> Optional[Path]:
     base = _ROOT / "data" / "raw"
     if not base.exists():
         return None
+    if product_id == "WAC_GLOBAL_MOSAIC_100M":            # the mosaic clip: its .json is the "label"
+        hit = base / "lro" / "wac_mosaic" / "wac_mosaic_100m_clip.json"
+        return hit if hit.is_file() else None
     for pattern in (f"{product_id}_d_img_d18.xml", f"{product_id}.XML", f"{product_id}.xml", f"{product_id}.lbl"):
         hit = next((p for p in sorted(base.rglob(pattern)) if "_PYR" not in p.name), None)
         if hit is not None:
