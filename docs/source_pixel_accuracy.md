@@ -40,3 +40,20 @@ Source pixels (verified): OHRC 0.305 x 0.309 m, TMC-2 4.92 x 5.04 m, IIRS 100.0 
 
 Limits: OHRC and IIRS->WAC conversions use pixel sizes (their runs did not store the transform);
 NAC pixel size is LROC's and not independently verified. Probes are a proxy, not ground truth.
+
+## OHRC -> NAC: why it is not sub-pixel in OHRC pixels (diagnosed 2026-09-25)
+
+`scripts/ohrc_accuracy_diag.py` -> `reports/ohrc_accuracy_diag.json` (the 4 solved products rerun
+with `--dump-points`). The ~3.5 OHRC-px figure is mostly POINT SCATTER; the MODEL is better:
+
+| NAC | frame px = OHRC px x | point scatter | model error (matcher-free NCC probes, median) |
+|---|---|---|---|
+| M102014464RC (5) | 4.3 | 2.8-6.1 OHRC px | 0.41-1.04 NAC px = **1.8-4.5 OHRC px** |
+| M106719774LC (5) | 4.2 | 3.6-4.4 OHRC px | 0.32-0.52 NAC px = **1.3-2.2 OHRC px** |
+| M109080308LC, M175124932LC | 1.8 / 2.4 | 2.8-4.1 OHRC px | 0-3 probes accepted: not measurable |
+
+Conclusion: against a NAC 4x coarser than OHRC, the model is sub-NAC-pixel but 1.3-4.5 OHRC px --
+an information limit of the reference, not a pipeline defect. Sub-OHRC-pixel accuracy needs a NAC
+of ~0.5 m or finer, well lit, AND model error <= ~0.55 NAC px; the finer NACs held are near-overhead
+sun (2 deg) or give almost no probes, so it cannot be demonstrated with the data held. Terrain
+parallax could not be tested (no DEM heights in these dumps).

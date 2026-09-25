@@ -47,6 +47,7 @@ from chandralign.matching.similarity import alignment_check  # noqa: E402
 
 # ---- frozen in docs/ohrc_nac_protocol.md -------------------------------------------
 PRODUCTS = ("M102014464RC", "M106719774LC", "M175124932LC", "M1417360906LC", "M109080308LC")
+DUMP_DIR = None               # --dump-points: fine frames, model, inliers, DEM heights (accuracy study)
 WIN = 2048                    # OHRC native px per window side (~0.61 km); --win overrides
 N_WIN = 5
 MARGIN_M = 4000.0             # position search, each side
@@ -272,6 +273,18 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
             if not fr.ok:
                 results[name] = {**r, "status": "fine stage: no transform", "success": False}
                 return results[name]
+            if DUMP_DIR is not None and name != "routed":
+                gm = Shifted(geo, o[0], o[1], bx, by)
+                ys, xs = np.mgrid[0:hF:8, 0:wF:8].astype(float)
+                hts = (np.asarray(dem.sample(*gm.pixel_to_latlon(ys.ravel(), xs.ravel())), float).reshape(ys.shape)
+                       if dem is not None else np.zeros(0))
+                inl = fr.first.inlier_mask
+                np.savez_compressed(Path(DUMP_DIR) / f"{nac.pid}_{out.get('ohrc_row')}_{name}.npz",
+                                    src_img=src, ref_img=ref, model=np.asarray(fr.model.matrix, float),
+                                    src_ok=cv2.warpAffine(o_ok.astype(np.float32), Wf[:2], (wF, hF), flags=cv2.INTER_NEAREST) > 0.5,
+                                    ref_ok=np.ones((hF, wF), bool), inlier_src=fr.matches.src_pts[inl],
+                                    inlier_ref=fr.matches.ref_pts[inl], J=Wf[:2, :2], dem_m=hts, dem_step=8,
+                                    frame_px_m=np.array([nac.px_w * bx, nac.px_h * by]))
             T_total = T(o[0], o[1]) @ np.linalg.inv(D) @ np.asarray(fr.model.matrix, float) @ Wf
             fx, fy = (T_total @ [WIN / 2, WIN / 2, 1])[:2]
             la_f, lo_f = geo.pixel_to_latlon([fy], [fx])
@@ -318,7 +331,7 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
 
 
 def main() -> int:
-    global WIN
+    global WIN, DUMP_DIR
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--products", nargs="+", default=list(PRODUCTS))
     ap.add_argument("--matchers", nargs="+", default=["eloftr", "minima-loftr", "sift"])
@@ -336,7 +349,11 @@ def main() -> int:
                     help="protocol Q8: use the bridge ONLY for windows whose coarse lock fails")
     ap.add_argument("--bridge", action="store_true",
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
+    ap.add_argument("--dump-points", default=None, help="folder: fine frames + inliers + DEM per window/matcher")
     args = ap.parse_args()
+    if args.dump_points:
+        DUMP_DIR = args.dump_points
+        Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
 
     ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
     om = projection.load_grid_model(ohrc)
