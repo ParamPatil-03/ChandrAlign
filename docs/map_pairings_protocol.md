@@ -74,3 +74,10 @@ new, pre-declared guard (e.g. within-pairing consistency, as docs/iirs_wac_proto
 
 Genuine limits shown: OHRC against coarse references is information-limited (~170 MI px or ~25 WAC
 px per window); IIRS needs the tile to cover the window. TMC-2 -> WAC reaches HIGH on 4/5 windows.
+
+## Amendment 1 (frozen BEFORE recomputing): within-pairing consistency
+Replaces only the cross-reference bound (references disagree by 60-300 m). A window succeeds if it
+locks, has a fine model, passes all five gates, tier >= LOW, MI check not flagged, AND its implied
+offset is within max(2 reference-pixel diagonals, 150 m) of the MEDIAN implied offset over that
+pairing's windows passing everything else (>= 3 such windows needed; else none succeed) -- the
+guard docs/iirs_wac_protocol.md used. Computed from the same reports; no rerun, no other change.
