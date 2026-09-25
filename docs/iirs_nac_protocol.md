@@ -60,3 +60,34 @@ Verdict per NAC: solved 3/3, degraded 2/3, else unsolved. Overall: solved on >= 
 
 One IIRS scene; three NACs; three windows each. The known-shift gate measures precision of the
 lock, not absolute accuracy. NAC corners at 0.01 deg limit the absolute check to ~300 m.
+
+## Run 1 result (2026-09-25): unsolved
+
+`reports/iirs_nac_registration.json`. 0/3 NACs solved; 1 success in 27 window-matcher runs
+(sift, M1415013176LC window 2: LOW, known shift 0.068 px, 149 m from the IIRS -> WAC offset).
+
+- M1415013176LC (5 km wide = ~38 IIRS px): the MIND coarse lock succeeds on 3/3 windows
+  (z 22.7-23.9) and agrees with the IIRS -> WAC prediction to 1.3-2.5 IIRS px. The keypoint fine
+  stage then has a 38 x 134 px frame: 6-16 matches, which fail the perturbation gate or the tier.
+- M172765160RC (~2 km wide = ~22 IIRS px): lock on 1/3 (z 7.5, 7.6, 11.2); the locked one's fine
+  frame is < 32 px wide (skipped).
+- M1417360906LC: its centre line lies at IIRS columns 0-7 (the strip's edge): z 3.8-4.7, no lock.
+
+Prediction 1 (lock on >= 2 NACs) failed: 1 NAC. Prediction 2 (xoftr >= sift): failed (0 vs 1).
+
+## Amendment 1 (frozen BEFORE running it): the dense lock as the registration
+
+At IIRS scale a NAC is too small for keypoints (the cascade's own finding: "a 128x128
+block-averaged patch held 6 SIFT keypoints"); the dense step is the method built for it.
+Same 9 windows, same prior, same lock (z >= 10), same 350 m bound. Per window, the dense
+step's transform is the answer, and it must pass its own checks (the control gates' logic,
+applied to the dense step):
+- **known shift:** the IIRS region shifted by exactly (3, 4) px, the step re-run with the same
+  prior; the locked position must move by (3, 4) within **0.5 IIRS px**;
+- **null, constant:** the IIRS region replaced by its mean: must NOT lock (z < 10 or no answer);
+- **null, noise:** the IIRS region replaced by Gaussian noise (seed 0): must NOT lock.
+Implied offset: NAC crop centre -> IIRS px by the dense transform; NAC ground there minus IIRS
+system ground, vs the IIRS -> WAC offset at that line (<= 350 m). No tier (quality.assess grades
+keypoint sets); the step's own precision (robust spread of its sub-pixel estimates) is reported.
+Verdicts as before (per NAC 3/3 solved; overall solved on >= 2 of 3 NACs). The two narrow/edge
+NACs are NOT excluded; they are expected to fail again for lack of overlap.

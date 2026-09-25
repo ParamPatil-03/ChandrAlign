@@ -1,0 +1,585 @@
+{
+  "source": "measured",
+  "protocol": "docs/iirs_nac_protocol.md",
+  "iirs": "ch2_iir_nci_20240523T1600301891_d_img_d18",
+  "route": {
+    "route": "cascade",
+    "matcher": null,
+    "fine_stage_options": {},
+    "regime": "extreme_scale",
+    "expectation": "unknown",
+    "reason": "scale gap at or above the routing threshold; cascade.plan() decides by footprint how many steps, and each runs register_step_dense. IIRS 80 m vs NAC 0.5 m is 160.00x, at or past the 4x limit: no matcher has documented evaluation at this scale gap, so route to the cascade; at least one pixel size is UNVERIFIED, so treat the ratio as approximate",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "fine_route": {
+    "route": "direct",
+    "matcher": "xoftr",
+    "fine_stage_options": {
+      "tile_px": 640
+    },
+    "regime": "cross_modal",
+    "expectation": "unknown",
+    "reason": "cross-modal pair: xoftr, the only candidate measured at 10/10 on cross-modal, tiled at 640 px in the fine stage",
+    "fallbacks": [],
+    "chosen_by": "matching.routing.choose"
+  },
+  "bridge": {
+    "from": "reports/iirs_wac_mosaic.json (xoftr)",
+    "east_fit": [
+      0.1382421874999999,
+      901.5125000000007
+    ],
+    "north_fit": [
+      0.05466796874999958,
+      12655.141250000006
+    ],
+    "lines": [
+      2112.0,
+      4160.0
+    ]
+  },
+  "pipeline_stages": {
+    "geometry_filter": true,
+    "parallax": false,
+    "dense_refine": false,
+    "uniformity": true,
+    "refill": false,
+    "subpixel": true,
+    "tps": true
+  },
+  "run": {
+    "command": "python scripts/register_iirs_nac.py",
+    "commit": "0efc3c3212a2e1e90089ae21ef51c8df0ea2dba8",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T00:02:03+00:00"
+  },
+  "summary": {
+    "M1415013176LC": {
+      "xoftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "sift": {
+        "success": 1,
+        "windows": 3,
+        "verdict": "unsolved"
+      }
+    },
+    "M172765160RC": {
+      "xoftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "sift": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      }
+    },
+    "M1417360906LC": {
+      "xoftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "minima-loftr": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      },
+      "sift": {
+        "success": 0,
+        "windows": 3,
+        "verdict": "unsolved"
+      }
+    }
+  },
+  "nacs_solved": {
+    "xoftr": 0,
+    "minima-loftr": 0,
+    "sift": 0
+  },
+  "windows": [
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        0,
+        13266
+      ],
+      "iirs_lines": [
+        3352,
+        3609
+      ],
+      "coarse": {
+        "z": 23.0,
+        "factor": 123,
+        "prior_error_iirs_px": 1.32
+      },
+      "fine_frame_px": [
+        38,
+        134
+      ],
+      "nac_valid_in_frame": 0.848,
+      "results": {
+        "xoftr": {
+          "matches": 13,
+          "inliers": 13,
+          "inlier_ratio": 1.0,
+          "coverage": 0.109,
+          "inlier_rmse_px": 0.182,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": 1399.9,
+            "north": 12958.2
+          },
+          "bridge_offset_m": {
+            "east": 1382.9,
+            "north": 12845.5
+          },
+          "vs_bridge_m": 114.0,
+          "success": false,
+          "seconds": 30.7
+        },
+        "minima-loftr": {
+          "matches": 13,
+          "inliers": 3,
+          "inlier_ratio": 0.2308,
+          "coverage": 0.031,
+          "inlier_rmse_px": 2.257,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": false,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": -23820823.6,
+            "north": -25562466.0
+          },
+          "bridge_offset_m": {
+            "east": 1382.9,
+            "north": 12845.5
+          },
+          "vs_bridge_m": 34951310.2,
+          "success": false,
+          "seconds": 1.7
+        },
+        "sift": {
+          "matches": 6,
+          "inliers": 6,
+          "inlier_ratio": 1.0,
+          "coverage": 0.094,
+          "inlier_rmse_px": 0.264,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": 1392.1,
+            "north": 12937.9
+          },
+          "bridge_offset_m": {
+            "east": 1382.9,
+            "north": 12845.5
+          },
+          "vs_bridge_m": 92.9,
+          "success": false,
+          "seconds": 0.1
+        }
+      },
+      "status": "locked",
+      "seconds": 36.6
+    },
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        13266,
+        26533
+      ],
+      "iirs_lines": [
+        3219,
+        3476
+      ],
+      "coarse": {
+        "z": 23.9,
+        "factor": 123,
+        "prior_error_iirs_px": 1.82
+      },
+      "fine_frame_px": [
+        37,
+        133
+      ],
+      "nac_valid_in_frame": 0.875,
+      "results": {
+        "xoftr": {
+          "matches": 13,
+          "inliers": 13,
+          "inlier_ratio": 1.0,
+          "coverage": 0.125,
+          "inlier_rmse_px": 0.249,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 13.713,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": 1355.2,
+            "north": 12988.2
+          },
+          "bridge_offset_m": {
+            "east": 1364.6,
+            "north": 12838.3
+          },
+          "vs_bridge_m": 150.3,
+          "success": false,
+          "seconds": 0.3
+        },
+        "minima-loftr": {
+          "matches": 13,
+          "inliers": 13,
+          "inlier_ratio": 1.0,
+          "coverage": 0.109,
+          "inlier_rmse_px": 0.292,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": false,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": -1434554.2,
+            "north": 4851348.3
+          },
+          "bridge_offset_m": {
+            "east": 1364.6,
+            "north": 12838.3
+          },
+          "vs_bridge_m": 5047082.5,
+          "success": false,
+          "seconds": 0.3
+        },
+        "sift": {
+          "matches": 16,
+          "inliers": 16,
+          "inlier_ratio": 1.0,
+          "coverage": 0.203,
+          "inlier_rmse_px": 0.461,
+          "status": "registered",
+          "tier": "LOW",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 0.068,
+          "gates_pass": true,
+          "tier_ok": true,
+          "implied_offset_m": {
+            "east": 1375.2,
+            "north": 12987.1
+          },
+          "bridge_offset_m": {
+            "east": 1364.6,
+            "north": 12838.3
+          },
+          "vs_bridge_m": 149.2,
+          "success": true,
+          "seconds": 0.1
+        }
+      },
+      "status": "locked",
+      "seconds": 2.5
+    },
+    {
+      "nac": "M1415013176LC",
+      "nac_lines": [
+        26533,
+        39800
+      ],
+      "iirs_lines": [
+        3086,
+        3343
+      ],
+      "coarse": {
+        "z": 22.7,
+        "factor": 123,
+        "prior_error_iirs_px": 2.45
+      },
+      "fine_frame_px": [
+        38,
+        133
+      ],
+      "nac_valid_in_frame": 0.853,
+      "results": {
+        "xoftr": {
+          "matches": 13,
+          "inliers": 12,
+          "inlier_ratio": 1.0,
+          "coverage": 0.125,
+          "inlier_rmse_px": 0.309,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": true,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": 0.517,
+          "gates_pass": true,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": 1305.9,
+            "north": 13026.0
+          },
+          "bridge_offset_m": {
+            "east": 1346.2,
+            "north": 12831.0
+          },
+          "vs_bridge_m": 199.1,
+          "success": false,
+          "seconds": 0.3
+        },
+        "minima-loftr": {
+          "matches": 13,
+          "inliers": 13,
+          "inlier_ratio": 1.0,
+          "coverage": 0.109,
+          "inlier_rmse_px": 0.308,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": false,
+            "masks_independent": true
+          },
+          "scale_status": "inconsistent",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": -249870015.7,
+            "north": 72767031.5
+          },
+          "bridge_offset_m": {
+            "east": 1346.2,
+            "north": 12831.0
+          },
+          "vs_bridge_m": 260247711.2,
+          "success": false,
+          "seconds": 0.3
+        },
+        "sift": {
+          "matches": 12,
+          "inliers": 11,
+          "inlier_ratio": 0.9167,
+          "coverage": 0.156,
+          "inlier_rmse_px": 0.387,
+          "status": "registered",
+          "tier": "REJECTED",
+          "gates": {
+            "null_constant_grey": true,
+            "null_random_noise": true,
+            "perturbation_sensitivity": false,
+            "identity": true,
+            "masks_independent": true
+          },
+          "scale_status": "unverified",
+          "known_shift_error_px": null,
+          "gates_pass": false,
+          "tier_ok": false,
+          "implied_offset_m": {
+            "east": 1318.8,
+            "north": 13025.4
+          },
+          "bridge_offset_m": {
+            "east": 1346.2,
+            "north": 12831.0
+          },
+          "vs_bridge_m": 196.4,
+          "success": false,
+          "seconds": 0.1
+        }
+      },
+      "status": "locked",
+      "seconds": 2.5
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        0,
+        17400
+      ],
+      "iirs_lines": [
+        2805,
+        3048
+      ],
+      "coarse": {
+        "z": 7.5,
+        "factor": 177,
+        "why": "ambiguous match: z 7.5 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 2.0
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        17400,
+        34800
+      ],
+      "iirs_lines": [
+        2926,
+        3168
+      ],
+      "coarse": {
+        "z": 7.6,
+        "factor": 177,
+        "why": "ambiguous match: z 7.6 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 1.8
+    },
+    {
+      "nac": "M172765160RC",
+      "nac_lines": [
+        34800,
+        52200
+      ],
+      "iirs_lines": [
+        3047,
+        3289
+      ],
+      "coarse": {
+        "z": 11.2,
+        "factor": 177,
+        "prior_error_iirs_px": 1.24
+      },
+      "status": "skipped: fine frame too small",
+      "results": {},
+      "seconds": 1.7
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        34800,
+        40600
+      ],
+      "iirs_lines": [
+        3351,
+        3535
+      ],
+      "coarse": {
+        "z": 4.7,
+        "factor": 118,
+        "why": "ambiguous match: z 4.7 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.5
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        40600,
+        46400
+      ],
+      "iirs_lines": [
+        3291,
+        3475
+      ],
+      "coarse": {
+        "z": 4.5,
+        "factor": 118,
+        "why": "ambiguous match: z 4.5 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.6
+    },
+    {
+      "nac": "M1417360906LC",
+      "nac_lines": [
+        46400,
+        52200
+      ],
+      "iirs_lines": [
+        3231,
+        3415
+      ],
+      "coarse": {
+        "z": 3.8,
+        "factor": 118,
+        "why": "ambiguous match: z 3.8 below cascade.min_z"
+      },
+      "status": "no coarse lock",
+      "results": {},
+      "seconds": 0.5
+    }
+  ]
+}

@@ -125,7 +125,29 @@ def nac_pixel_scale(nac: NacCorners) -> PixelScale:
                       ("lroc_scaled_pixel",), False, ("LROC scaled pixel size",))
 
 
-def run_window(iirs, im, sel, bridge, nacm, nac, l0, l1, matchers, device, stages, dem_tiles, route_opts):
+def dense_checks(nimg, ref, f, prior, pid, iirs_px, c_mid, locked):
+    """Amendment 1: the control gates' logic applied to the dense step itself."""
+    def run(r):
+        dg = {}
+        st = cascade.register_step_dense(nimg, r, f, src=pid, ref="IIRS", ref_pixel_m=iirs_px, prior=prior, diag=dg)
+        return st, float(dg.get("z") or 0.0)
+    shifted = cv2.warpAffine(ref, np.float32([[1, 0, 3], [0, 1, 4]]), ref.shape[::-1],
+                             flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_REPLICATE)
+    st_s, z_s = run(shifted)
+    moved = None if st_s is None or z_s < MIN_Z else (np.asarray(st_s.model.matrix, float) @ c_mid)[:2] - locked
+    ks_err = None if moved is None else float(np.hypot(moved[0] - 3.0, moved[1] - 4.0))
+    st_c, z_c = run(np.full_like(ref, float(ref.mean())))
+    st_n, z_n = run(np.random.default_rng(0).normal(0, 1, ref.shape).astype(np.float32))
+    out = {"known_shift": {"z": round(z_s, 1), "moved_px": None if moved is None else [round(float(v), 3) for v in moved],
+                           "error_px": None if ks_err is None else round(ks_err, 3), "pass": ks_err is not None and ks_err <= 0.5},
+           "null_constant": {"z": round(z_c, 1), "pass": st_c is None or z_c < MIN_Z},
+           "null_noise": {"z": round(z_n, 1), "pass": st_n is None or z_n < MIN_Z}}
+    out["all_pass"] = all(v["pass"] for v in out.values())
+    return out
+
+
+def run_window(iirs, im, sel, bridge, nacm, nac, l0, l1, matchers, device, stages, dem_tiles, route_opts,
+               dense: bool = False):
     out = {"nac": nac.pid, "nac_lines": [int(l0), int(l1)]}
     L, S = iirs.array_shape
     Sn = nacm.array_shape[1]
@@ -160,6 +182,20 @@ def run_window(iirs, im, sel, bridge, nacm, nac, l0, l1, matchers, device, stage
     T_c = np.asarray(st.model.matrix, float)                                  # NAC crop px -> region px
     c_mid = np.array([Sn / 2, (l1 - l0) / 2, 1.0])
     out["coarse"]["prior_error_iirs_px"] = round(float(np.hypot(*((T_c - A) @ c_mid)[:2])), 2)
+    if dense:                                              # amendment 1: the dense lock is the answer
+        locked = (T_c @ c_mid)[:2]
+        la_n, lo_n = (float(v) for v in nac.latlon(l0 + (l1 - l0) / 2, Sn / 2))
+        la_s, lo_s = (float(v[0]) for v in im.pixel_to_latlon([r0 + locked[1]], [locked[0]]))
+        ef = enu(la_n, lo_n, la_s, lo_s)
+        be, bn = bridge.at(r0 + locked[1])
+        chk = dense_checks(nimg, ref, f, prior, nac.pid, iirs_px, c_mid, locked)
+        vs = float(np.hypot(ef[0] - be, ef[1] - bn))
+        out["dense"] = {"checks": chk, "precision_iirs_px": round(float(st.rmse_px), 4),
+                        "implied_offset_m": {"east": round(float(ef[0]), 1), "north": round(float(ef[1]), 1)},
+                        "bridge_offset_m": {"east": round(float(be), 1), "north": round(float(bn), 1)},
+                        "vs_bridge_m": round(vs, 1), "success": bool(chk["all_pass"] and vs <= CONSISTENT_M)}
+        out["status"] = "locked"; out["results"] = {}
+        return out
     cor = np.array([[0, 0, 1], [Sn, 0, 1], [0, l1 - l0, 1], [Sn, l1 - l0, 1]], float) @ T_c.T
     o = np.maximum(np.floor(cor[:, :2].min(0)).astype(int) + 2, 0)
     e_ = np.minimum(np.ceil(cor[:, :2].max(0)).astype(int) - 2, [S, r1 - r0])
@@ -240,6 +276,8 @@ def main() -> int:
     ap.add_argument("--matchers", nargs="+", default=["xoftr", "minima-loftr", "sift"])
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default="reports/iirs_nac_registration.json")
+    ap.add_argument("--dense", action="store_true",
+                    help="amendment 1: the dense lock is the registration, with its own gates (no keypoint stage)")
     args = ap.parse_args()
 
     iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
@@ -271,22 +309,24 @@ def main() -> int:
         for l0, l1 in zip(edges[:-1], edges[1:]):
             t = time.perf_counter()
             w = run_window(iirs, im, sel, bridge, nacm, nac, l0, l1, args.matchers, args.device, stages, dem_tiles,
-                           dict(fine_choice.fine_stage_options))
+                           dict(fine_choice.fine_stage_options), dense=args.dense)
             w["seconds"] = round(time.perf_counter() - t, 1)
             windows.append(w)
-            print(json.dumps({k: w.get(k) for k in ("nac", "nac_lines", "iirs_lines", "status", "coarse")} |
+            print(json.dumps({k: w.get(k) for k in ("nac", "nac_lines", "iirs_lines", "status", "coarse", "dense")} |
                              {"ok": {m: (v.get("status", "")[:20], v.get("tier"), v.get("known_shift_error_px"),
                                          v.get("vs_bridge_m"), v.get("success"))
                                      for m, v in (w.get("results") or {}).items()}}), flush=True)
     summary = {}
+    names = ["dense"] if args.dense else args.matchers
     for pid in args.products:
         ws = [w for w in windows if w["nac"] == pid]
-        for name in args.matchers:
-            ok = sum(bool((w.get("results") or {}).get(name, {}).get("success")) for w in ws)
+        for name in names:
+            ok = sum(bool((w.get("dense") or {}).get("success") if name == "dense"
+                          else (w.get("results") or {}).get(name, {}).get("success")) for w in ws)
             summary.setdefault(pid, {})[name] = {"success": ok, "windows": len(ws),
                                                  "verdict": "solved" if ws and ok == len(ws) else
                                                  "degraded" if ws and ok >= len(ws) - 1 and ok >= 2 else "unsolved"}
-    overall = {name: sum(summary[p][name]["verdict"] == "solved" for p in summary) for name in args.matchers}
+    overall = {name: sum(summary[p][name]["verdict"] == "solved" for p in summary) for name in names}
     print(json.dumps({"summary": summary, "nacs_solved": overall}, indent=1))
     (ROOT / args.out).write_text(json.dumps({"source": "measured", "protocol": "docs/iirs_nac_protocol.md",
                                              "iirs": iirs.product_id, "route": route.as_provenance(),
