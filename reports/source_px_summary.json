@@ -1,0 +1,282 @@
+{
+  "source": "derived from committed measured reports",
+  "run": {
+    "command": "python scripts/source_px_summary.py",
+    "commit": "fa4dbaf8f7823d33587100d7a970e18b3cb23ddf",
+    "uncommitted_changes": false,
+    "utc": "2026-09-25T01:53:14+00:00"
+  },
+  "source_pixel_m": {
+    "OHRC": [
+      0.3053057858657844,
+      0.3093588280668666
+    ],
+    "IIRS": [
+      99.9952713623318,
+      79.51548916476037
+    ]
+  },
+  "pairings": [
+    {
+      "pairing": "TMC-2 -> SELENE TC, hilly (N00)",
+      "windows": 9,
+      "metrics": {
+        "known_shift": {
+          "meaning": "recovery of a known (3, 4) px shift (precision of the lock)",
+          "frame_px": {
+            "n": 9,
+            "median": 0.119,
+            "max": 1.292
+          },
+          "source_px_worst": {
+            "n": 9,
+            "median": 0.1786,
+            "max": 1.9268
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": true
+        },
+        "probe_median": {
+          "meaning": "median |NCC-probe offset - model| per window (accuracy proxy, matcher-free)",
+          "frame_px": {
+            "n": 9,
+            "median": 0.352,
+            "max": 0.507
+          },
+          "source_px_worst": {
+            "n": 9,
+            "median": 0.5251,
+            "max": 0.7576
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        },
+        "probe_p90": {
+          "meaning": "90th percentile of the same",
+          "frame_px": {
+            "n": 9,
+            "median": 0.696,
+            "max": 0.953
+          },
+          "source_px_worst": {
+            "n": 9,
+            "median": 1.0385,
+            "max": 1.4265
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": false
+        },
+        "fit_rms": {
+          "meaning": "RMS of the parallax model on its inliers",
+          "frame_px": {
+            "n": 9,
+            "median": 0.5745,
+            "max": 0.7223
+          },
+          "source_px_worst": {
+            "n": 9,
+            "median": 0.8568,
+            "max": 1.0751
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": true
+        }
+      },
+      "source_px_per_frame_px_worst": {
+        "min": 1.488,
+        "max": 1.501
+      },
+      "method": [
+        "exact (stored transform)"
+      ]
+    },
+    {
+      "pairing": "TMC-2 -> SELENE TC, flat (N03/N09)",
+      "windows": 6,
+      "metrics": {
+        "known_shift": {
+          "meaning": "recovery of a known (3, 4) px shift (precision of the lock)",
+          "frame_px": {
+            "n": 6,
+            "median": 0.08,
+            "max": 0.177
+          },
+          "source_px_worst": {
+            "n": 6,
+            "median": 0.1182,
+            "max": 0.2619
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        },
+        "probe_median": {
+          "meaning": "median |NCC-probe offset - model| per window (accuracy proxy, matcher-free)",
+          "frame_px": {
+            "n": 6,
+            "median": 0.256,
+            "max": 0.298
+          },
+          "source_px_worst": {
+            "n": 6,
+            "median": 0.3774,
+            "max": 0.4425
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        },
+        "probe_p90": {
+          "meaning": "90th percentile of the same",
+          "frame_px": {
+            "n": 6,
+            "median": 0.5185,
+            "max": 0.694
+          },
+          "source_px_worst": {
+            "n": 6,
+            "median": 0.7654,
+            "max": 1.0305
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": true
+        },
+        "fit_rms": {
+          "meaning": "RMS of the parallax model on its inliers",
+          "frame_px": {
+            "n": 6,
+            "median": 0.71,
+            "max": 0.8543
+          },
+          "source_px_worst": {
+            "n": 6,
+            "median": 1.0491,
+            "max": 1.2685
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": false
+        }
+      },
+      "source_px_per_frame_px_worst": {
+        "min": 1.474,
+        "max": 1.485
+      },
+      "method": [
+        "exact (stored transform)"
+      ]
+    },
+    {
+      "pairing": "OHRC -> LRO NAC",
+      "windows": 20,
+      "metrics": {
+        "known_shift": {
+          "meaning": "recovery of a known (3, 4) px shift (precision of the lock)",
+          "frame_px": {
+            "n": 20,
+            "median": 0.367,
+            "max": 1.337
+          },
+          "source_px_worst": {
+            "n": 20,
+            "median": 0.9437,
+            "max": 3.5636
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": true
+        },
+        "inlier_rmse": {
+          "meaning": "RMS of the model on its delivered points (fit residual)",
+          "frame_px": {
+            "n": 20,
+            "median": 1.429,
+            "max": 2.024
+          },
+          "source_px_worst": {
+            "n": 20,
+            "median": 3.4947,
+            "max": 6.0802
+          },
+          "sub_pixel_in_source": false,
+          "sub_pixel_median": false
+        }
+      },
+      "source_px_per_frame_px_worst": {
+        "min": 1.746,
+        "max": 4.225
+      },
+      "method": [
+        "pixel sizes (OHRC verified; NAC LROC scaled pixel, unverified)"
+      ]
+    },
+    {
+      "pairing": "IIRS -> LRO WAC (xoftr)",
+      "windows": 5,
+      "metrics": {
+        "known_shift": {
+          "meaning": "recovery of a known (3, 4) px shift",
+          "frame_px": {
+            "n": 5,
+            "median": 0.03,
+            "max": 0.063
+          },
+          "source_px_worst": {
+            "n": 5,
+            "median": 0.0377,
+            "max": 0.0792
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        },
+        "inlier_rmse": {
+          "meaning": "fit residual RMS",
+          "frame_px": {
+            "n": 5,
+            "median": 0.258,
+            "max": 0.485
+          },
+          "source_px_worst": {
+            "n": 5,
+            "median": 0.3245,
+            "max": 0.6099
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        }
+      },
+      "source_px_per_frame_px_worst": {
+        "min": 1.258,
+        "max": 1.258
+      },
+      "method": [
+        "pixel sizes (IIRS verified; mosaic 100 m, cos(lat) ~ 1 at the clip)"
+      ]
+    },
+    {
+      "pairing": "IIRS -> LRO NAC (dense)",
+      "windows": 4,
+      "metrics": {
+        "precision": {
+          "meaning": "robust spread of the dense step's sub-pixel estimates",
+          "frame_px": {
+            "n": 4,
+            "median": 0.1028,
+            "max": 0.1761
+          },
+          "source_px_worst": {
+            "n": 4,
+            "median": 0.1028,
+            "max": 0.1761
+          },
+          "sub_pixel_in_source": true,
+          "sub_pixel_median": true
+        }
+      },
+      "source_px_per_frame_px_worst": {
+        "min": 1.0,
+        "max": 1.0
+      },
+      "method": [
+        "already in IIRS (source) px"
+      ]
+    }
+  ],
+  "note": "IIRS -> NAC fractional known shifts (0.02-0.11 IIRS px, 12/12) are in docs/iirs_nac_protocol.md"
+}

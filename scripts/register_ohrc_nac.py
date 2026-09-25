@@ -42,6 +42,7 @@ from chandralign.matching import adapter, cascade, classical, routing  # noqa: E
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_tmc2_nac import MOON_R_M, NULL_BELOW, Nac, enu  # noqa: E402
+from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
 
 # ---- frozen in docs/ohrc_nac_protocol.md -------------------------------------------
 PRODUCTS = ("M102014464RC", "M106719774LC", "M175124932LC", "M1417360906LC", "M109080308LC")
@@ -283,6 +284,9 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
             r.update(status="registered", tier=q.tier, gates=gates.gates, scale_status=verdict.status,
                      known_shift_error_px=pert.get("error_px"),
                      gates_pass=bool(gates.all_passed), tier_ok=q.tier in ("HIGH", "MEDIUM", "LOW"))
+            J_src = jacobian_from_transform(Wf)                        # OHRC px -> fine-frame (NAC) px
+            r["source_px"] = {"known_shift": to_source_px(pert.get("error_px"), J_src, "exact (Wf)"),
+                              "inlier_rmse": to_source_px(fr.rmse_px, J_src, "exact (Wf)")}
         except Exception as exc:                                        # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)

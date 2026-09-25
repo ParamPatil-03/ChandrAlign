@@ -43,6 +43,7 @@ from chandralign.preprocess.iirs_composite import iirs_composite_plane, product_
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
 from register_ohrc_nac import T, affine_fit, match, norm  # noqa: E402
 from register_tmc2_nac import enu  # noqa: E402
+from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
 
 # ---- frozen in docs/iirs_wac_protocol.md -------------------------------------------
 PRODUCTS = ("M106705467MC", "M106698280MC")
@@ -209,6 +210,9 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
                      known_shift_error_px=gates.to_dict().get("perturbation_sensitivity", {}).get("error_px"),
                      gates_pass=bool(gates.all_passed), tier_ok=q.tier in ("HIGH", "MEDIUM", "LOW"),
                      implied_offset_m={"east": round(float(ef[0]), 1), "north": round(float(ef[1]), 1)})
+            J_src = jacobian_from_transform(Wf)                      # IIRS px -> fine-frame (WAC) px
+            r["source_px"] = {"known_shift": to_source_px(r["known_shift_error_px"], J_src, "exact (Wf)"),
+                              "inlier_rmse": to_source_px(r["inlier_rmse_px"], J_src, "exact (Wf)")}
         except Exception as exc:                                  # recorded, never hidden
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)

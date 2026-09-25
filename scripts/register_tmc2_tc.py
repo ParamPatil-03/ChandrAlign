@@ -55,6 +55,7 @@ from chandralign.estimate.scale import PixelScale  # noqa: E402
 from chandralign.evaluate import control_gates, quality  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.estimate.models import ParallaxModel  # noqa: E402
+from chandralign.evaluate.source_px import jacobian_from_transform, to_source_px  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
@@ -394,6 +395,13 @@ def run_window(tmc, sysm, refm, tc, tcm, row_c: int, *, win: int, coarse: int,
         "failure_modes": result.failure_modes,
         "metrics": {k: v for k, v in asdict(result.metrics).items() if v is not None},
         "model": {"kind": result.model.kind, "matrix": [[round(float(v), 8) for v in row] for row in T_total]}}
+    # The problem statement's unit is the SOURCE pixel; errors above are in fine-frame (TC) px.
+    J_src = jacobian_from_transform(Wf)                              # TMC-2 window px -> frame px
+    out["source_px"] = {
+        "known_shift": to_source_px(out["gate_detail"].get("perturbation_sensitivity", {}).get("error_px"),
+                                    J_src, "exact (Wf)"),
+        "inlier_rmse_affine": to_source_px(rmse_px, J_src, "exact (Wf)"),
+        "parallax_fit_rms": to_source_px((fr.stages.get("parallax") or {}).get("rms_px"), J_src, "exact (Wf)")}
     if terrain is not None:
         out["registration_result"]["terrain_model"] = {
             **terrain.as_dict(),
