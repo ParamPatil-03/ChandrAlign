@@ -48,6 +48,7 @@ jobs:
           - {feature: geotiff, test: tests/test_warp_product.py}
           - {feature: cli, test: tests/test_cli.py}
           - {feature: visualizations, test: tests/test_visualizations.py}
+          - {feature: failure-modes, test: tests/test_failure_log.py}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

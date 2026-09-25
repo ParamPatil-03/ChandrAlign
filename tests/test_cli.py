@@ -24,11 +24,14 @@ def test_mock_register_runs_end_to_end_and_writes_run_folder(tmp_path):
                  "--config", "configs/default.yaml"]) == 0
     expected = {"matches.csv", "matches.geojson", "provenance.json", "result.json",
                 "registered.tif", "registered.json", "side-by-side.png", "matches.png",
-                "coverage.png", "checkerboard.png"}
+                "coverage.png", "checkerboard.png", "failure-log.jsonl"}
     assert expected <= {path.name for path in out.iterdir()}
     result = json.loads((out / "result.json").read_text(encoding="utf-8"))
     assert result["confidence_tier"] in ("HIGH", "MEDIUM", "LOW", "REJECTED")
     assert result["metrics"]["runtime_s"] is not None
+    failure_record = json.loads((out / "failure-log.jsonl").read_text(encoding="utf-8"))
+    assert failure_record["schema"] == "chandralign.failure-log.v1"
+    assert failure_record["confidence_tier"] == result["confidence_tier"]
     assert json.loads((out / "provenance.json").read_text(encoding="utf-8"))["ship_mode"] is True
 
 

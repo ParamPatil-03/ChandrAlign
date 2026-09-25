@@ -52,6 +52,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _register(args) -> int:
     from . import config
+    from .evaluate import failure_log
     from .pipeline import register_bundle
     from .product import matchpoints, provenance, warp
     from .viz import coverage_plot, match_plot, sidebyside, swipe
@@ -97,6 +98,7 @@ def _register(args) -> int:
     swipe.render_checkerboard(bundle.ref.array, registered, out / "checkerboard.png")
     (out / "result.json").write_text(json.dumps(_result_record(bundle), indent=2,
                                                   sort_keys=True) + "\n", encoding="utf-8")
+    failure_log.log_run(out / "failure-log.jsonl", bundle)
     print(f"{bundle.result.confidence_tier}: {out}")
     return 0
 
