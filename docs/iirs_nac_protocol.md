@@ -91,3 +91,31 @@ system ground, vs the IIRS -> WAC offset at that line (<= 350 m). No tier (quali
 keypoint sets); the step's own precision (robust spread of its sub-pixel estimates) is reported.
 Verdicts as before (per NAC 3/3 solved; overall solved on >= 2 of 3 NACs). The two narrow/edge
 NACs are NOT excluded; they are expected to fail again for lack of overlap.
+
+## Amendment 1 result (2026-09-25): solved on 1 NAC of 3 -> overall NOT solved by the frozen rule
+
+`reports/iirs_nac_dense.json`.
+
+| NAC | width at IIRS scale | locks (z) | checks | vs IIRS -> WAC | verdict |
+|---|---|---|---|---|---|
+| M1415013176LC | ~38 px (5 km) | 3/3 (22.7-23.9) | 3/3 pass | 105, 145, 196 m | **solved** |
+| M172765160RC | ~22 px (2 km) | 1/3 (7.5, 7.6, 11.2) | 1/1 pass | 115 m | unsolved |
+| M1417360906LC | at the strip edge | 0/3 (3.8-4.7) | - | - | unsolved |
+
+Every window that locked passed all three checks and the 350 m bound; every window that failed,
+failed to lock (z < 10), i.e. refused rather than guessed. Dense precision (robust spread of
+the step's sub-pixel estimates) 0.09-0.18 IIRS px. The overall rule (solved on >= 2 NACs) is not
+met: 1 of 3. Second failure of this protocol; work stops here and is reported.
+
+**A weakness in the frozen known-shift check, found in the result:** its error was exactly
+0.000 on every window. The dense search is exactly translation-equivariant, so an INTEGER shift
+of the reference reproduces the same answer to the bit: the check proves the lock is not
+anchored to the prior, not that it is precise. Diagnostic run afterwards (NOT part of the
+decision): fractional shifts (3.5, 4.25), (-2.25, 1.75), (0.5, -3.5) by cubic interpolation are
+recovered to **0.02-0.11 IIRS px** on all 4 locked windows (12/12). That is precision on this
+pair, not absolute accuracy. A future protocol for dense steps should use fractional shifts.
+
+What limits it: overlap. At ~97 m/px a NAC strip is 22-38 IIRS px wide; the 5 km one locks
+every time, the 2 km one mostly does not, and one lying on the IIRS strip's edge never does.
+Absolute position agrees with the independent IIRS -> WAC registration to 105-196 m (< 2 IIRS px),
+inside the ~300 m that the NAC corners' 0.01 deg rounding allows.
