@@ -5,7 +5,7 @@ Branch `part2/default-matcher`, 19 commits. **Nothing here is applied.**
 production threshold is unchanged. This document is the evidence and the
 decisions it asks for.
 
-500 tests pass, 49 skipped, 44/44 sabotages caught.
+500 tests passed, 49 skipped, 44/44 sabotages caught when this was written. The sabotage count has grown since: run `scripts/sabotage.py --target all` for the current figure (70/70 on 2026-09-26).
 
 ---
 

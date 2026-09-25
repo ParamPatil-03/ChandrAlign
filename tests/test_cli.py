@@ -26,7 +26,10 @@ def test_mock_register_runs_end_to_end_and_writes_run_folder(tmp_path):
                 "coverage.png", "checkerboard.png", "failure-log.jsonl"}
     assert expected <= {path.name for path in out.iterdir()}
     result = json.loads((out / "result.json").read_text(encoding="utf-8"))
-    assert result["confidence_tier"] in ("HIGH", "MEDIUM", "LOW", "REJECTED")
+    # seed 7 is a well-posed synthetic pair (known shift 3.4, -2.2): it must be accepted, so a
+    # quality regression fails here instead of passing as "some tier" (audit M-14)
+    assert result["confidence_tier"] in ("HIGH", "MEDIUM", "LOW")
+    assert result["metrics"]["source"] == "synthetic"
     assert result["metrics"]["runtime_s"] is not None
     failure_record = json.loads((out / "failure-log.jsonl").read_text(encoding="utf-8"))
     assert failure_record["schema"] == "chandralign.failure-log.v1"

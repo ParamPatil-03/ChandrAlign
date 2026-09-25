@@ -28,15 +28,33 @@ def export_bundle(out_dir: str | Path, bundle, *, src_model=None, ref_model=None
     `src_model` / `ref_model` describe the FULL products; each plane's `tile_origin` is applied.
 
     This deliberately accepts a bundle rather than a ``RegistrationResult`` so
-    callers cannot accidentally export the evidence matches. Part 2 documents
-    ``bundle.delivered.confidence`` as placeholder ones until selection carries
-    the original per-point scores through the fine stage.
+    callers cannot accidentally export the evidence matches as the delivered points (those have
+    their own file, `export_evidence`). Part 2 documents ``bundle.delivered.confidence`` as
+    placeholder ones until selection carries the original per-point scores through the fine stage.
     """
     delivered = bundle.delivered
     if delivered.stage != "delivered":
         raise ValueError("bundle.delivered must contain the final delivered points")
-    # Models describe the full products; the points are in each WINDOW's pixels (audit C-07),
-    # or, for a source registered in a resampled frame, mapped by bundle.src_to_product (C-01).
+    frames = _frames(bundle, src_model, ref_model)
+    mask = np.ones(len(delivered.src_pts), dtype=bool)
+    out_dir = Path(out_dir)
+    csv_path = write_csv(out_dir / "matches.csv", delivered, mask, grid=grid, **frames)
+    geojson_path = write_geojson(out_dir / "matches.geojson", delivered, mask, grid=grid, crs=crs, **frames)
+    return csv_path, geojson_path
+
+
+def export_evidence(out_dir: str | Path, bundle, *, src_model=None, ref_model=None, grid: int = 8) -> Path:
+    """The evidence the tier was graded on: every match the fine stage kept, with the matcher's
+    own confidence and the robust estimate's inlier flag -- outliers included (audit M-11)."""
+    result = bundle.result
+    return write_csv(Path(out_dir) / "evidence_matches.csv", result.matches,
+                     np.asarray(result.inlier_mask, bool), grid=grid, **_frames(bundle, src_model, ref_model))
+
+
+def _frames(bundle, src_model, ref_model) -> dict:
+    """Ground models and product mappings for points in the bundle's frames: models describe
+    the full products; the points are in each WINDOW's pixels (audit C-07), or, for a source
+    registered in a resampled frame, mapped by bundle.src_to_product (C-01)."""
     from ..geometry.projection import framed_model, window_model
     to_product = getattr(bundle, "src_to_product", None)
     src_model = src_model or _model_from_plane(bundle.src)
@@ -44,18 +62,9 @@ def export_bundle(out_dir: str | Path, bundle, *, src_model=None, ref_model=None
                  else window_model(src_model, getattr(bundle.src, "tile_origin", (0, 0))))
     ref_model = window_model(ref_model or _model_from_plane(bundle.ref),
                              getattr(bundle.ref, "tile_origin", (0, 0)))
-    shape = tuple(np.asarray(bundle.src.array).shape[:2])
-    mask = np.ones(len(delivered.src_pts), dtype=bool)
-    out_dir = Path(out_dir)
-    ref_to_product = getattr(bundle, "ref_to_product", None)
-    csv_path = write_csv(out_dir / "matches.csv", delivered, mask, src_model=src_model,
-                         ref_model=ref_model, image_shape=shape, grid=grid, src_to_product=to_product,
-                         ref_to_product=ref_to_product)
-    geojson_path = write_geojson(out_dir / "matches.geojson", delivered, mask,
-                                 src_model=src_model, ref_model=ref_model,
-                                 image_shape=shape, grid=grid, crs=crs, src_to_product=to_product,
-                                 ref_to_product=ref_to_product)
-    return csv_path, geojson_path
+    return {"src_model": src_model, "ref_model": ref_model,
+            "image_shape": tuple(np.asarray(bundle.src.array).shape[:2]),
+            "src_to_product": to_product, "ref_to_product": getattr(bundle, "ref_to_product", None)}
 
 
 def write_csv(path: str | Path, matches: MatchSet, inlier_mask: np.ndarray, *,

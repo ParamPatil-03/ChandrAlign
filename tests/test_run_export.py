@@ -124,3 +124,16 @@ def test_a_rejected_run_without_geometry_has_no_registered_quicklook(tmp_path, r
     out = tmp_path / "run"
     rec = write_run(out, rejected_without_geometry, manifest={"synthetic": True}, **_models(rejected_without_geometry))
     assert "registered.png" not in rec["exports"] and "registered.png" in rec["exports_skipped"]
+
+
+def test_the_evidence_matches_are_exported_with_real_flags_and_confidence(tmp_path, accepted):
+    """Audit M-11: only the delivered points were exported, all is_inlier=True, confidence 1.0."""
+    from chandralign.product.matchpoints import read_csv
+    out = tmp_path / "run"
+    rec = write_run(out, accepted, manifest={"synthetic": True}, **_models(accepted))
+    assert "evidence_matches.csv" in rec["exports"]
+    ms, mask = read_csv(out / "evidence_matches.csv")
+    r = accepted.result
+    assert len(ms.src_pts) == len(r.matches.src_pts)
+    assert np.array_equal(mask, r.inlier_mask) and (~mask).any()          # outliers are there, flagged
+    assert np.allclose(ms.confidence, r.matches.confidence)

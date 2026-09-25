@@ -51,7 +51,8 @@ def write_run(out_dir: str | Path, bundle, *, manifest: dict, src_model=None, re
     # match points: pixel coordinates are exact with or without a ground model
     if ref_model is not None:
         matchpoints.export_bundle(out, bundle, src_model=src_model, ref_model=ref_model, grid=grid)
-        written += ["matches.csv", "matches.geojson"]
+        matchpoints.export_evidence(out, bundle, src_model=src_model, ref_model=ref_model, grid=grid)
+        written += ["matches.csv", "matches.geojson", "evidence_matches.csv"]
     else:
         _pixel_only_csv(out, bundle, src_model, grid)
         written.append("matches.csv")
