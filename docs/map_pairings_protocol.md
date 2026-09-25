@@ -41,3 +41,36 @@ reference pixel is ~330 OHRC pixels, so that pairing can only be located, not su
 ## Predictions (written before running)
 TMC-2 -> MI solved (3x gap, same kind of camera). OHRC -> WAC unsolved (the OHRC strip is ~37 WAC
 px wide, like the 2 km NAC in IIRS -> NAC). No prediction for the other three.
+
+## Result (2026-09-25): by the frozen rule, none solved -- but mostly for a reason the rule did not anticipate
+
+Reports: `reports/map_{tmc2,iirs,ohrc}_mi.json`, `reports/map_{tmc2,ohrc}_wac.json`. Routed matcher:
+
+| Pairing | Locks | Success (rule) | Why the others fail |
+|---|---|---|---|
+| TMC-2 -> SELENE MI | 5/5 (z 24-52) | 0/5 unsolved | all 5 are 210-317 m from the TC-derived offset (bound 150 m); 3 also REJECTED (coverage 0.08-0.25, known-shift gate) |
+| IIRS -> SELENE MI | 3/5 | xoftr 2/5 unsolved (sift 3/5 degraded) | xoftr 154.6 m (bound 150); 2 windows no lock (one at the tile edge) |
+| OHRC -> SELENE MI | 5/5 (z 21-24) | 2/5 unsolved | 3 REJECTED: an 8192 px OHRC window is only ~170 MI px, 41-68 matches, known shift 1.95-2.03 px (tolerance 1.5) |
+| TMC-2 -> LRO WAC | 5/5 (z 13-21) | 1/5 unsolved | 4 are HIGH with no MI flag but 239-369 m from the TC-derived offset (bound 283 m); 1 MI-flagged |
+| OHRC -> LRO WAC | 0/5 (z 5-8) | 0/5 unsolved | as predicted: an OHRC window is ~25 WAC px, no lock |
+
+Predictions: TMC-2 -> MI "solved" was WRONG (by the rule); OHRC -> WAC "unsolved" was right.
+
+**What the evidence says beyond the rule (not a re-decision):** the offsets are SYSTEMATIC, not
+scattered, so they are not false locks -- the reference products disagree with each other:
+
+| Through | new reference minus old reference, per window | spread |
+|---|---|---|
+| TMC-2: MI vs SELENE TC | (+97..+121 E, -194..-265 N) m | 8 / 23 m |
+| TMC-2: WAC vs SELENE TC | (+79..+277 E, -197..-305 N) m | 72 / 42 m |
+| IIRS: MI vs WAC | (+102..+109 E, +106..+110 N) m | 3 / 2 m |
+| OHRC: MI vs NAC | (-50..-60 E, -18..-28 N) m | 4 / 4 m |
+
+The consistency bound assumed the references agree to ~150 m; they differ by 60-300 m here. So
+the "vs known offset" check was the wrong guard for pairs of DIFFERENT references (it guarded
+against false locks, and there were none: every flagged or scattered result was SIFT, and the MI
+check flagged all of SIFT's wild results -- 546 m, 8.8 km, 23.9 km, 227 km). A re-test would need a
+new, pre-declared guard (e.g. within-pairing consistency, as docs/iirs_wac_protocol.md used).
+
+Genuine limits shown: OHRC against coarse references is information-limited (~170 MI px or ~25 WAC
+px per window); IIRS needs the tile to cover the window. TMC-2 -> WAC reaches HIGH on 4/5 windows.
