@@ -40,11 +40,12 @@ from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
 from chandralign.matching import cascade, routing  # noqa: E402
+from chandralign.geometry.nac import (  # noqa: E402,F401
+    LINES, MOON_R_M, NULL_BELOW, PIX_OFFSET, SAMPLES, SCALE, WIN_LINES, Nac, enu)
 
 # ---- frozen in docs/tmc2_nac_protocol.md -------------------------------------------
-LINES, SAMPLES, PIX_OFFSET, SCALE = 52224, 5064, 5064, 3.05185094759972e-05   # PDS3 label
-NULL_BELOW = -32752                                   # label VALID_MINIMUM
-WIN_LINES = 5064                                      # section 4: 5064 x 5064 windows
+# The NAC layout (LINES, SAMPLES, ..., NULL_BELOW, WIN_LINES), enu and Nac moved to
+# chandralign.geometry.nac (audit 2026-09-26 C-01); imported below, names unchanged.
 FRACTIONS = (1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6)       # section 4
 TMC_ACROSS_M, TMC_ALONG_M = 4.92, 5.037               # estimate.scale.pixel_scale, verified
 MARGIN_M = 7000.0                                     # section 4: 7 km search margin
@@ -56,7 +57,6 @@ MIN_Z = float(config.get("cascade.min_z", 10.0))      # the step's own bar (code
 SOLVED, DEGRADED = 0.90, 0.60                         # section 7
 NULL_VOID = 0.10                                      # section 6
 FALSE_LOCK_M = 500.0                                  # section 6
-MOON_R_M = 1737400.0
 
 GROUPS = {
     "same_sun": ["M111443315RC", "M131494509LC"],
@@ -71,66 +71,11 @@ PRIMARY = ("same_sun", "opposed_sun")
 TC_OFFSET = {4687: (622, -4642), 16000: (659, -4753), 18750: (673, -4805), 21500: (703, -4827)}
 
 
-def enu(lat, lon, lat0, lon0):
-    """Local east/north metres about (lat0, lon0)."""
-    k = math.pi / 180 * MOON_R_M
-    return np.array([(lon - lon0) * math.cos(math.radians(lat0)) * k, (lat - lat0) * k])
-
-
 def tc_offset_at(row: float) -> tuple[float, float]:
     rows = sorted(TC_OFFSET)
     e = np.interp(row, rows, [TC_OFFSET[r][0] for r in rows])
     n = np.interp(row, rows, [TC_OFFSET[r][1] for r in rows])
     return float(e), float(n)
-
-
-class Nac:
-    """One NAC CDR: pixels, and its footprint from LROC's corners."""
-
-    def __init__(self, pid: str, meta: dict):
-        self.pid = pid
-        self.m = meta
-        self.path = next((ROOT / "data/raw/lro/nac").rglob(f"{pid}.IMG"))
-        self.px_w = float(meta["scaled_pixel_width"])      # across, sample axis
-        self.px_h = float(meta["scaled_pixel_height"])     # along, line axis
-        c = {k: (meta[f"{k}_latitude"], meta[f"{k}_longitude"])
-             for k in ("upper_left", "upper_right", "lower_left", "lower_right")}
-        self.c = c
-
-    def latlon(self, line: float, samp: float) -> tuple[float, float]:
-        """Bilinear in the corners: UL = (line 0, sample 0), UR = (0, last sample)."""
-        u, v = samp / (SAMPLES - 1), line / (LINES - 1)
-        lat = ((1 - u) * (1 - v) * self.c["upper_left"][0] + u * (1 - v) * self.c["upper_right"][0]
-               + (1 - u) * v * self.c["lower_left"][0] + u * v * self.c["lower_right"][0])
-        lon = ((1 - u) * (1 - v) * self.c["upper_left"][1] + u * (1 - v) * self.c["upper_right"][1]
-               + (1 - u) * v * self.c["lower_left"][1] + u * v * self.c["lower_right"][1])
-        return float(lat), float(lon)
-
-    def axes(self, lat0: float, lon0: float) -> tuple[np.ndarray, np.ndarray, bool]:
-        """Unit ground vectors of the LINE and SAMPLE axes, and whether the image is
-        mirrored. The line axis comes from the 26 km long side (~1 deg from 0.01 deg
-        corners); the sample axis is perpendicular, with its sign from the corners."""
-        P = {k: enu(*v, lat0, lon0) for k, v in self.c.items()}
-        u = (P["lower_left"] + P["lower_right"]) / 2 - (P["upper_left"] + P["upper_right"]) / 2
-        u /= np.linalg.norm(u)
-        across = (P["upper_right"] + P["lower_right"]) / 2 - (P["upper_left"] + P["lower_left"]) / 2
-        v = np.array([-u[1], u[0]])                  # u rotated +90 deg (counter-clockwise)
-        if v @ across < 0:
-            v = -v
-        # an unmirrored image (line axis south, sample axis east) has u x v = +1;
-        # a mirrored one (sample axis west) has -1
-        mirrored = bool(u[0] * v[1] - u[1] * v[0] < 0)
-        return u, v, mirrored
-
-    def window(self, centre_line: int):
-        l0 = int(centre_line - WIN_LINES // 2)
-        arr = np.memmap(self.path, dtype="<i2", mode="r", offset=PIX_OFFSET, shape=(LINES, SAMPLES))
-        raw = np.asarray(arr[l0:l0 + WIN_LINES, :], np.float32)
-        valid = raw > NULL_BELOW
-        img = np.where(valid, raw * SCALE, 0.0).astype(np.float32)
-        if valid.any():
-            img[~valid] = float(np.median(img[valid]))
-        return l0, img, valid
 
 
 def tmc_jacobian(sysm, lat0: float, lon0: float) -> np.ndarray:
