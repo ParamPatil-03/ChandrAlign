@@ -87,13 +87,23 @@ subpixel:                    # PREC-01..05
   # case (max 0.037 px; ecc 0.058) and cannot fail to converge the way ECC can.
   # ecc has the best median (0.016 vs 0.025). The old value, ncc_quadratic, was
   # not the name of any implemented method.
-  method: ncc_gaussian_iter  # ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
-  # refine_points compares a (2*half+1)^2 patch around every match. This key
-  # REPLACES `ncc_window: 11`, which no code read: the real window was a
-  # hard-coded half=16 (33 px), and it still is -- behaviour is unchanged.
-  # NOT YET MEASURED AT THIS SIZE. PREC-06's "< 0.1 px" was measured on whole
-  # 64x64 patches (scripts/verify_subpixel.py), not on 33 px per-point windows.
-  refine_half_px: 16
+  #
+  # PER-POINT REFINEMENT (refine_points), re-chosen 2026-09-26 for audit C-02 on the DEV set
+  # of docs/refinement_geometry_protocol.md (known warp on real TMC-2 / OHRC texture). The
+  # old setting (axis-aligned patches, ncc_gaussian_iter, 33 px, 1.5 px) was worse than NO
+  # refinement in 11/15 cases, p95 up to 1.39 px. Now: the source patch is resampled through
+  # the model's local Jacobian, LSM (ECC affine) is tried and warped NCC after it, and a move
+  # is applied only if it RAISES the Lanczos-scored NCC. Dev: 15/15 cases better than
+  # unrefined at p50 and p95, worst p95 0.172 px. Variants measured (dev): no gate 0.137-0.26,
+  # bilinear-scored gate 0.248 (the gate's own interpolation bias), 33 px patch 0.26-0.35.
+  method: lsm                # lsm|ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
+  fallbacks: [ncc_gaussian_iter]   # also tried per point; the best-scoring accepted move wins
+  refine_half_px: 20         # 41 px patches (33 px: worst dev p95 0.26-0.35)
+  max_move_px: 0.75          # with warped patches (audit C-02 step 3); 1.5 px when no model is given
+  require_score_gain: true   # a move must raise the NCC of the warped source vs the reference patch
+  score_interp: lanczos      # bilinear scoring biased the gate: 14% of moves refused vs 8%
+  score_border_px: 3
+  lsm_gauss: 1               # ECC gaussFiltSize (3: worst dev p95 0.245; 5: 0.37)
   phase_upsample: 100
   ecc_iterations: 50
   ecc_eps: 1.0e-6

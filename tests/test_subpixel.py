@@ -171,7 +171,11 @@ def test_iteration_keeps_the_sign_convention():
 
 
 def test_the_default_method_is_one_that_met_prec06():
-    """configs/default.yaml's subpixel.method must name a real, measured method."""
+    """configs/default.yaml's subpixel.method must name a real, measured method: ncc_gaussian_iter
+    and ecc met PREC-06 on translations; lsm met audit C-02 on a known non-rigid warp
+    (docs/refinement_geometry_protocol.md), which a pure translation cannot test."""
     from chandralign import config
-    assert config.get("subpixel.method") in ("ncc_gaussian_iter", "ecc")
+    assert config.get("subpixel.method") in ("ncc_gaussian_iter", "ecc", "lsm")
+    for m in config.get("subpixel.fallbacks", []):
+        assert m in sp.METHODS
     assert config.get("subpixel.method") in sp.METHODS
