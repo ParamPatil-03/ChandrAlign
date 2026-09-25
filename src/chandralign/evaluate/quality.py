@@ -40,6 +40,7 @@ from ..contracts import Tier, TransformModel
 # Failure-mode IDs from PLAN.md section 15.
 FM_FALSE_CORRESPONDENCE = 12
 FM_SCALE_CONFUSION = 13
+FM_UNVERIFIED_EVALUATION = 19     # a result nobody checked presented as a finding (rule H4)
 
 TIER_ORDER: list[Tier] = ["HIGH", "MEDIUM", "LOW", "REJECTED"]
 
@@ -130,7 +131,7 @@ def assess(*, inlier_count: int | None = None, inlier_ratio: float | None = None
                                   [FM_FALSE_CORRESPONDENCE], notes)
     elif require_gates:
         notes.append("no control gates were run; a result without gates is unverified (rule H4)")
-        return QualityVerdict("REJECTED", signals, "control_gates", [], notes)
+        return QualityVerdict("REJECTED", signals, "control_gates", [FM_UNVERIFIED_EVALUATION], notes)
 
     if not scale_ok or scale_status in ("inconsistent", "degenerate"):
         notes.append("scale disagrees with the instrument GSD ratio")
