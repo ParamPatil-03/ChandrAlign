@@ -85,7 +85,7 @@ def test_wac_loads_and_pairs_with_iirs(refs):
 
     wacs = by_instrument(refs, "WAC")
     assert wacs, "no WAC products"
-    iirs = parse_label(next(RAW.glob("ch2/iirs/products/*/data/calibrated/*/*_d_img_d18.xml")))
+    iirs = parse_label(next(RAW.glob("ch2/iirs/products/ch2_iir_nci_20240523T1600301891*/data/calibrated/*/*_d_img_d18.xml")))  # pinned: 4 more IIRS products were added to data/raw on 2026-09-26; every committed IIRS result uses this one
     overlaps = [check_overlap(iirs, w.meta) for w in wacs]
     assert any(o.ok for o in overlaps), [o.reason for o in overlaps]
     best = max(overlaps, key=lambda o: o.overlap_km2)

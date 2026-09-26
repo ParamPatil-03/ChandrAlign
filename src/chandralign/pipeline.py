@@ -519,7 +519,7 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
     if fr.ok and isinstance(expected_scale, scale_mod.ExpectedScale):
         v = scale_mod.check(np.asarray(fr.model.matrix, float), expected_scale, centre=(w / 2.0, h / 2.0))
         scale_ok, scale_status = v.ok, v.status
-    probe_acc = _probe_accuracy(fr, s_img, r_img, src, ground_model, dem, (w / 2.0, h / 2.0)) if fr.ok else None
+    probe_acc = _probe_accuracy(fr, s_img, r_img, src, ground_model, dem, (w / 2.0, h / 2.0), ref) if fr.ok else None
     q = quality.assess(inlier_count=fr.inlier_count if fr.ok else 0,
                        inlier_ratio=fr.inlier_ratio if fr.ok else 0.0,
                        spatial_coverage=fr.coverage if fr.ok else 0.0,
@@ -573,7 +573,7 @@ def _geometry_predictor(fr: FineResult, ground_model, dem):
     return lambda p: models.apply(geo, p)
 
 
-def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre) -> Optional[dict]:
+def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre, ref=None) -> Optional[dict]:
     """I-08: matcher-free probes against the DELIVERED geometry, in source px (evaluate/probes.py)."""
     from .evaluate import probes
     predict = _geometry_predictor(fr, ground_model, dem)
@@ -583,7 +583,9 @@ def _probe_accuracy(fr: FineResult, s_img, r_img, src, ground_model, dem, centre
     ok = np.asarray(getattr(src, "valid_mask", None) if getattr(src, "valid_mask", None) is not None
                     else np.ones(np.asarray(s_img).shape, bool), bool)
     try:
-        return probes.geometry_error(s_img, r_img, ok, predict, k)
+        # I-08 fix: measured in the geometry's own frame, so a rotated / rescaled pair is measurable too
+        return probes.geometry_error_warped(s_img, r_img, ok, predict,
+                                            ref_ok=getattr(ref, "valid_mask", None), ref_px_per_src_px=k)
     except Exception as exc:                                  # a failed measurement is unmeasured, not a pass
         return {"n": 0, "reason": f"{type(exc).__name__}: {exc}"[:200]}
 

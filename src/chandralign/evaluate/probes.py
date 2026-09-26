@@ -75,3 +75,43 @@ def geometry_error(src_img, ref_img, src_ok, predict: Callable[[np.ndarray], np.
         k = float(ref_px_per_src_px)
         out.update(p50_px_src=round(out["p50_px_ref"] / k, 4), p95_px_src=round(out["p95_px_ref"] / k, 4))
     return out
+
+
+def geometry_error_warped(src_img, ref_img, src_ok, predict: Callable[[np.ndarray], np.ndarray],
+                          ref_ok=None, step: int = 8,
+                          ref_px_per_src_px: Optional[float] = None) -> dict:
+    """Probe error of a geometry, measured in its OWN frame (audit I-08 fix).
+
+    The reference is resampled into the source frame through the geometry (`predict`: source px -> reference
+    px, evaluated every `step` px and interpolated), and the probes then compare the source with that resampled
+    reference. A correct geometry leaves every probe at zero displacement, so each residual IS the geometry's
+    error, in SOURCE px. Unlike geometry_error, this does not need the two images to share a frame: axis-aligned
+    templates across a rotation or a scale gap were almost never accepted, so a raw rotated pair came out
+    "unmeasured" (the synthetic C-04 replay: no result could be HIGH).
+    """
+    from scipy.ndimage import map_coordinates
+    s = np.asarray(src_img, np.float32)
+    r = np.asarray(ref_img, np.float32)
+    H, W = s.shape
+    ys, xs = np.mgrid[0:H + step:step, 0:W + step:step].astype(np.float64)
+    g = np.c_[np.minimum(xs.ravel(), W - 1), np.minimum(ys.ravel(), H - 1)]
+    q = np.asarray(predict(g), np.float64)
+    gy, gx = np.mgrid[0:H, 0:W].astype(np.float64)
+    at = [gy.ravel() / step, gx.ravel() / step]
+    mx = map_coordinates(q[:, 0].reshape(ys.shape), at, order=1).reshape(H, W).astype(np.float32)
+    my = map_coordinates(q[:, 1].reshape(ys.shape), at, order=1).reshape(H, W).astype(np.float32)
+    r_in_s = cv2.remap(r, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    rv = np.ones(r.shape, np.float32) if ref_ok is None else np.asarray(ref_ok, np.float32)
+    inside = cv2.remap(rv, mx, my, cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=0) > 0.5
+    ok = np.asarray(src_ok, bool) & inside & np.isfinite(mx) & np.isfinite(my)
+    pr = probes(s, r_in_s, ok)
+    if not len(pr):
+        return {"n": 0, "frame": "source (reference resampled through the geometry)"}
+    e = np.hypot(pr[:, 2], pr[:, 3])
+    out = {"n": int(len(e)), "frame": "source (reference resampled through the geometry)",
+           "p50_px_src": round(float(np.median(e)), 4), "p95_px_src": round(float(np.percentile(e, 95)), 4),
+           "max_px_src": round(float(e.max()), 4)}
+    if ref_px_per_src_px and np.isfinite(ref_px_per_src_px) and ref_px_per_src_px > 0:
+        k = float(ref_px_per_src_px)
+        out.update(p50_px_ref=round(out["p50_px_src"] * k, 4), p95_px_ref=round(out["p95_px_src"] * k, 4))
+    return out

@@ -108,7 +108,7 @@ class Source:
 
     def __init__(self, kind):
         self.kind = kind
-        self.meta = parse_label(next((ROOT / f"data/raw/ch2/{kind}").rglob("*_d_img_d18.xml")))
+        self.meta = parse_label(next((ROOT / f"data/raw/ch2/{kind}").rglob(("ch2_iir_nci_20240523T1600301891" if kind == "iirs" else "") + "*_d_img_d18.xml")))  # pinned: 4 more IIRS products were added to data/raw on 2026-09-26; every committed IIRS result uses this one
         self.sysm = (projection.load_grid_model(self.meta) if kind == "ohrc"
                      else projection.load_corner_model(self.meta, corners="system"))
         assert self.sysm.independent_of_references

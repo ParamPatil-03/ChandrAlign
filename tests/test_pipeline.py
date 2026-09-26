@@ -528,9 +528,18 @@ def test_parallax_plus_residual_tps_is_delivered_where_the_dem_explains_only_par
         return s @ A[:2, :2].T + A[:2, 2] + hts(s)[:, None] * p + ripple(s)
     src = rng.uniform(10, 440, (2500, 2))
     ref = truth(src) + rng.normal(0, 0.05, src.shape)
-    fr = fine_stage(matchset(src, ref), blank((451, 451)), blank((451, 451)), centre=(225, 225),
-                    flags={**OFF, "parallax": True, "model_selection": True, "tps": True},
-                    ground_model=_Identity(), dem=dem, parallax_height_at="src")
+    # the composite is OFF by default since G-06 (docs/tmc2_tail_protocol.md); its code path is still pinned here
+    # ... and at the 1000-point fit set it was designed under: at the adopted 3000 points a plain TPS fits this
+    # world within 1% of the composite (G-06 step 2), so the composite no longer wins its 5% margin here
+    geo_cfg = config.load("default")["geometry"]
+    saved = dict(geo_cfg)
+    geo_cfg.update(parallax_tps=True, max_fit_points=1000)
+    try:
+        fr = fine_stage(matchset(src, ref), blank((451, 451)), blank((451, 451)), centre=(225, 225),
+                        flags={**OFF, "parallax": True, "model_selection": True, "tps": True},
+                        ground_model=_Identity(), dem=dem, parallax_height_at="src")
+    finally:
+        geo_cfg.clear(); geo_cfg.update(saved)
     sel = fr.stages["model_selection"]
     assert fr.geometry == "parallax_tps", sel["notes"]
     from chandralign.pipeline import delivered_geometry

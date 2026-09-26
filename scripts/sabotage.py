@@ -311,6 +311,14 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
         },
     ),
+    "probes": (
+        "src/chandralign/evaluate/probes.py",
+        "tests/test_probes.py",
+        {
+            "probes skip the resample through the geometry (I-08 fix)": (
+                "    pr = probes(s, r_in_s, ok)", "    pr = probes(s, r, ok)"),
+        },
+    ),
     "tier-accuracy": (
         "src/chandralign/evaluate/quality.py",
         "tests/test_quality_uniformity.py",

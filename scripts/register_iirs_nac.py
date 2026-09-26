@@ -280,7 +280,7 @@ def main() -> int:
                     help="amendment 1: the dense lock is the registration, with its own gates (no keypoint stage)")
     args = ap.parse_args()
 
-    iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
+    iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("ch2_iir_nci_20240523T1600301891*_d_img_d18.xml")))  # pinned: 4 more IIRS products were added to data/raw on 2026-09-26; every committed IIRS result uses this one
     im = projection.load_corner_model(iirs, corners="system")
     assert im.independent_of_references
     sel = product_band_selection(iirs)

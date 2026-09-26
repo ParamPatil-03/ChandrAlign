@@ -142,7 +142,7 @@ def test_composite_preserves_the_terrain():
 
 # ----------------------------------------------------------------------------- real product
 
-REAL = sorted((ROOT / "data" / "raw" / "ch2" / "iirs").glob("products/*/data/calibrated/*/*_d_img_d18.xml"))
+REAL = sorted((ROOT / "data" / "raw" / "ch2" / "iirs").glob("products/ch2_iir_nci_20240523T1600301891*/data/calibrated/*/*_d_img_d18.xml"))  # pinned: 4 more IIRS products were added to data/raw on 2026-09-26; every committed IIRS result uses this one
 needs_real = pytest.mark.skipif(not REAL, reason="real IIRS product not downloaded")
 
 
