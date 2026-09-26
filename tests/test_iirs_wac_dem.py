@@ -29,4 +29,4 @@ def test_a_covered_window_still_gets_its_dem():
     from chandralign.workflows.iirs_wac import window_dem
     out: dict = {}
     dem = window_dem(find_tiles(SLDEM), 10.0, 23.5, out)
-    assert dem is not None and dem.heights_m.size > 0 and out["dem_status"].startswith("SLDEM2015")
+    assert dem is not None and dem.heights_m.size > 0 and out["dem_status"] == "sldem2015_lola_plus_selene_tc"

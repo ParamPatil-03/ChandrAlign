@@ -113,7 +113,7 @@ def window_dem(dem_tiles, lat_c, lon_c, out: dict):
     except DemError as exc:
         out["dem_status"] = f"none: {exc}"
         return None
-    out["dem_status"] = "; ".join(dem.tiles)
+    out["dem_status"] = dem.source
     return dem
 
 

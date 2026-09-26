@@ -77,7 +77,9 @@ result exists:
    -180..180 E, the convention the IIRS corner model already uses. The evidence clip is still
    reproduced byte for byte.
 2. The SLDEM2015 tiles the scenes' windows need (the DEM the evidence used) are fetched with
-   `scripts/fetch_dem.py`: 00n_30n and 30s_00s at 090_135, 60s_30s_180_225, 30n_60n_315_360.
+   `scripts/fetch_dem.py --subtile`: 00n_30n and 30s_00s at 090_135, 60s_30s_180_225,
+   30n_60n_315_360, each cut to the windows' boxes (`io.dem_subtile`; the server gives ~0.3 MB/s,
+   and a sub-tile returns exactly the full tile's heights -- `tests/test_dem_subtile.py`).
 3. SLDEM2015 ends at +/-60 deg and the 20231227 scene's windows lie at 60-66 N. There, a window
    that the DEM does not fully cover registers without the terrain filter
    (`workflows.iirs_wac.window_dem`), and its `dem_status` records this. The scene stays in the
