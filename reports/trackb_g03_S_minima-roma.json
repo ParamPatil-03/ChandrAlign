@@ -1,0 +1,803 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "run": {
+    "command": "python scripts/bench_rift.py --methods minima-roma --benchmark-models --out C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/batch2b/out/g03_S_minima-roma.json",
+    "commit": null,
+    "uncommitted_changes": null,
+    "utc": "2026-09-26T04:56:48+00:00",
+    "ship_mode": false
+  },
+  "rows": [
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 9997,
+      "inliers": 9997,
+      "rmse_px": 0.0865,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 21.21,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902693,
+          -0.13914743,
+          38.1772411
+        ],
+        [
+          0.13915865,
+          0.99026415,
+          -33.18976967
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 9999,
+      "inliers": 9999,
+      "rmse_px": 0.0922,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.03,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028357,
+          -0.13914452,
+          38.17522975
+        ],
+        [
+          0.13917314,
+          0.99027778,
+          -33.20270861
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 9995,
+      "inliers": 9995,
+      "rmse_px": 0.0889,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027909,
+          -0.13917087,
+          38.18244472
+        ],
+        [
+          0.13915912,
+          0.99028381,
+          -33.19674052
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 9994,
+      "inliers": 9994,
+      "rmse_px": 0.1015,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.47,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99022115,
+          -0.13913677,
+          38.0388851
+        ],
+        [
+          0.13929612,
+          0.99050458,
+          -33.26742638
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 9996,
+      "inliers": 9996,
+      "rmse_px": 0.082,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99011607,
+          -0.13936372,
+          38.15869718
+        ],
+        [
+          0.13914393,
+          0.99036366,
+          -33.20550351
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 9999,
+      "inliers": 9999,
+      "rmse_px": 0.1055,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.48,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9900944,
+          -0.1390123,
+          38.03165239
+        ],
+        [
+          0.13915323,
+          0.99049084,
+          -33.20171472
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 9994,
+      "inliers": 9960,
+      "rmse_px": 0.5413,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.43,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98863968,
+          -0.13866789,
+          37.9397571
+        ],
+        [
+          0.13886443,
+          0.9903871,
+          -33.11431361
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 9997,
+      "inliers": 9936,
+      "rmse_px": 0.6455,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98993147,
+          -0.14040197,
+          37.91891812
+        ],
+        [
+          0.13855959,
+          0.99047516,
+          -33.10634116
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 9996,
+      "inliers": 9920,
+      "rmse_px": 1.0651,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.37,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98895173,
+          -0.1428825,
+          38.53851494
+        ],
+        [
+          0.13909158,
+          0.99054304,
+          -33.14441793
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 9990,
+      "inliers": 9963,
+      "rmse_px": 0.1175,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.32,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9903051,
+          -0.13884434,
+          37.95812549
+        ],
+        [
+          0.13882775,
+          0.99008438,
+          -33.05379591
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 9999,
+      "inliers": 9996,
+      "rmse_px": 0.1556,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.74,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99014677,
+          -0.13864633,
+          38.01172116
+        ],
+        [
+          0.1386338,
+          0.99078841,
+          -33.18816131
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 9997,
+      "inliers": 9995,
+      "rmse_px": 0.1955,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.54,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98919187,
+          -0.13912771,
+          38.36789539
+        ],
+        [
+          0.13873604,
+          0.99069898,
+          -33.12717319
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 9994,
+      "inliers": 9990,
+      "rmse_px": 0.0579,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.23,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98998401,
+          -0.1390611,
+          38.14236432
+        ],
+        [
+          0.13922377,
+          0.99039124,
+          -33.19417148
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 9995,
+      "inliers": 9995,
+      "rmse_px": 0.0722,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.92,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99035118,
+          -0.13876859,
+          37.9843898
+        ],
+        [
+          0.1390805,
+          0.99038989,
+          -33.12650206
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 9997,
+      "inliers": 9997,
+      "rmse_px": 0.0735,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.3,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99021095,
+          -0.13918087,
+          38.08615472
+        ],
+        [
+          0.13912404,
+          0.99058499,
+          -33.18871282
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 9998,
+      "inliers": 9998,
+      "rmse_px": 0.1338,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 7.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99036322,
+          -0.13875261,
+          38.00454273
+        ],
+        [
+          0.13896371,
+          0.99015902,
+          -33.16355149
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 9997,
+      "inliers": 9997,
+      "rmse_px": 0.0719,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 9.08,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99033976,
+          -0.13890537,
+          38.03028106
+        ],
+        [
+          0.13920056,
+          0.99016374,
+          -33.17184924
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 9998,
+      "inliers": 9998,
+      "rmse_px": 0.071,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 9.09,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023537,
+          -0.13935481,
+          38.17066077
+        ],
+        [
+          0.13919622,
+          0.99043616,
+          -33.24470568
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 9850,
+      "inliers": 8447,
+      "rmse_px": 0.7444,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98026649,
+          -0.27812811,
+          -180.06880762
+        ],
+        [
+          0.27843423,
+          1.98022535,
+          -322.88430737
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 9904,
+      "inliers": 9009,
+      "rmse_px": 0.7228,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.22,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98032932,
+          -0.2782317,
+          -180.05579057
+        ],
+        [
+          0.27815737,
+          1.98009061,
+          -322.75499609
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 9933,
+      "inliers": 9391,
+      "rmse_px": 0.737,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 7.85,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98033238,
+          -0.27814927,
+          -180.07143139
+        ],
+        [
+          0.27838568,
+          1.98029687,
+          -322.88775321
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 9998,
+      "inliers": 9998,
+      "rmse_px": 0.0864,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 9.81,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026545,
+          -0.13916633,
+          38.18424035
+        ],
+        [
+          0.13915738,
+          0.99028565,
+          -33.19349925
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 9998,
+      "inliers": 9998,
+      "rmse_px": 0.0888,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 9.51,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026735,
+          -0.13915012,
+          38.1806129
+        ],
+        [
+          0.13916429,
+          0.99027099,
+          -33.19409662
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 9999,
+      "inliers": 9999,
+      "rmse_px": 0.0878,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 7.8,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028139,
+          -0.13916538,
+          38.18007151
+        ],
+        [
+          0.13915834,
+          0.99027071,
+          -33.191877
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ]
+}

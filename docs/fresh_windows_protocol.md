@@ -29,3 +29,13 @@ orbit, same illumination, same sensor state), and it is reported as such.
 Current HEAD settings (everything adopted up to the snapshot). Per pairing: the success rate on fresh windows
 next to the committed rate, with the same success rule. For OHRC, the rule of the I-07 amendment (success /
 unconfirmed / failed). No bar: the purpose is to report how far the quoted rates generalise.
+
+## Result (2026-09-26, Track B batch 3, snapshot `13afb81`)
+
+| pairing | committed windows | fresh windows |
+|---|---|---|
+| TMC-2 -> TC | 15/15 registered; probe p95 0.45-1.47 TMC-2 px (batch 1 code) | **5/5 HIGH**, probe p50 0.17-0.23 / p95 **0.45-0.68** TMC-2 px |
+| OHRC -> NAC (routed, I-07 rule) | 12 success / 8 unconfirmed / 5 failed of 25; without M106: 7/19 success (37%) | **5 success / 7 unconfirmed / 3 failed of 15 (33%)**: M102 4/4, M109 1/4 (+3 unconfirmed), M175 0/4 (4 unconfirmed), M1417 0/3 |
+| IIRS -> WAC | 5/5 | no fresh window available (the clip is fully used) |
+
+The quoted rates generalise to ground no choice was tuned on (same products; fresh PRODUCTS are still needed).

@@ -1,0 +1,803 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "run": {
+    "command": "python scripts/bench_rift.py --methods romav2 --benchmark-models --out C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/batch2b/out/g03_S_romav2.json",
+    "commit": null,
+    "uncommitted_changes": null,
+    "utc": "2026-09-26T05:04:50+00:00",
+    "ship_mode": false
+  },
+  "rows": [
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1024,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 46.96,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027099,
+          -0.13916548,
+          38.19665306
+        ],
+        [
+          0.13916552,
+          0.9902725,
+          -33.20039434
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1017,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.09,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026859,
+          -0.13916758,
+          38.19596195
+        ],
+        [
+          0.13917058,
+          0.9902673,
+          -33.20159498
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1025,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.39,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027092,
+          -0.13916479,
+          38.19721266
+        ],
+        [
+          0.13917078,
+          0.99026827,
+          -33.20002001
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.1073,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.23,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99032715,
+          -0.1391178,
+          38.17183751
+        ],
+        [
+          0.13909065,
+          0.99022742,
+          -33.17272948
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1251,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.6,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99032227,
+          -0.13918953,
+          38.19289987
+        ],
+        [
+          0.1390844,
+          0.99033056,
+          -33.22200807
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1366,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.22,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99031245,
+          -0.13906931,
+          38.1769459
+        ],
+        [
+          0.13909496,
+          0.99023737,
+          -33.20470626
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4873,
+      "rmse_px": 0.8289,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.56,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99176446,
+          -0.13470516,
+          36.24023226
+        ],
+        [
+          0.13858236,
+          0.98988283,
+          -32.91811859
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 4999,
+      "inliers": 4633,
+      "rmse_px": 0.2615,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.2,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99025281,
+          -0.13824783,
+          38.08135964
+        ],
+        [
+          0.13867266,
+          0.9906213,
+          -33.11737111
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 4998,
+      "inliers": 4769,
+      "rmse_px": 1.0568,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.52,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99292949,
+          -0.14489821,
+          39.26175519
+        ],
+        [
+          0.13958222,
+          0.99012399,
+          -33.21237081
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4514,
+      "rmse_px": 0.7558,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.51,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99267908,
+          -0.13695005,
+          36.81921659
+        ],
+        [
+          0.14111789,
+          0.99173331,
+          -34.3906762
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 4995,
+      "inliers": 4035,
+      "rmse_px": 0.9326,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.26,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99193577,
+          -0.13546834,
+          36.5116773
+        ],
+        [
+          0.14054109,
+          0.99388656,
+          -34.60668857
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 4969,
+      "inliers": 2458,
+      "rmse_px": 1.7429,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98292579,
+          -0.13835982,
+          39.40578529
+        ],
+        [
+          0.13393329,
+          0.98777009,
+          -30.31438005
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 4998,
+      "inliers": 4716,
+      "rmse_px": 0.7873,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.24,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9905392,
+          -0.13756603,
+          37.03330187
+        ],
+        [
+          0.13963585,
+          0.99180504,
+          -33.99847032
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 4997,
+      "inliers": 4589,
+      "rmse_px": 0.4967,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.61,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99178371,
+          -0.13835863,
+          37.37867444
+        ],
+        [
+          0.14115521,
+          0.9904967,
+          -33.46883103
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 4998,
+      "inliers": 4195,
+      "rmse_px": 0.6992,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.09,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99003357,
+          -0.14022238,
+          38.40199307
+        ],
+        [
+          0.13701833,
+          0.99115978,
+          -32.2448326
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.142,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.17,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99034476,
+          -0.13913902,
+          38.1948904
+        ],
+        [
+          0.13909504,
+          0.99028587,
+          -33.21701574
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1069,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.61,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99016513,
+          -0.13900551,
+          38.18097666
+        ],
+        [
+          0.13923174,
+          0.99022302,
+          -33.20588188
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.1124,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023126,
+          -0.13924072,
+          38.23664718
+        ],
+        [
+          0.13917943,
+          0.99034706,
+          -33.22338588
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.7756,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.54,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.9804913,
+          -0.27823957,
+          -180.15966962
+        ],
+        [
+          0.27837856,
+          1.98047663,
+          -322.94090691
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.7776,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.46,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98045305,
+          -0.27822912,
+          -180.15567757
+        ],
+        [
+          0.27840548,
+          1.98052249,
+          -322.95993921
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.7793,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.38,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98041614,
+          -0.27823398,
+          -180.13307172
+        ],
+        [
+          0.27840677,
+          1.98042841,
+          -322.94451733
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1025,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 3.9,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026736,
+          -0.13917101,
+          38.19895076
+        ],
+        [
+          0.13916805,
+          0.99026727,
+          -33.19992171
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1025,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.1,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026747,
+          -0.13916987,
+          38.19826884
+        ],
+        [
+          0.13916309,
+          0.99027213,
+          -33.2004568
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.102,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 4.42,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026747,
+          -0.13916691,
+          38.19722964
+        ],
+        [
+          0.13916975,
+          0.99026693,
+          -33.20026419
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ]
+}

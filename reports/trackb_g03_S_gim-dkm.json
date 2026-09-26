@@ -1,0 +1,203 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "run": {
+    "command": "python scripts/bench_rift.py --methods gim-dkm --benchmark-models --out C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/batch2b/out/g03_S_gim-dkm.json",
+    "commit": null,
+    "uncommitted_changes": null,
+    "utc": "2026-09-26T05:00:20+00:00",
+    "ship_mode": false
+  },
+  "rows": [
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 7.14 "
+    }
+  ]
+}

@@ -169,3 +169,18 @@ figures:
   41 of 45 cases (up to 1.48x, all on rigid cases with a true error under 0.005 px).
 
 These are bounds, not the error itself.
+
+## Result: the real-data bars (2026-09-26, Track B batches 1, 2 and 4)
+
+**C-02 real bar** (refinement lowers the residual-to-model in >= 90% of method-windows):
+- TMC-2 -> TC: **14/15 (93%): met.**
+- OHRC -> NAC, routed: **14/24 (58%): not met.** eloftr windows 18/20 (90%); minima-loftr windows 5/14. The misses
+  are the cross-illumination NACs (M175, M109, M1417), where intensity refinement has the least to hold on to.
+  As caveated before measuring, residual-to-affine is not accuracy: the independent probes are.
+- **Independent accuracy, TMC-2 -> TC** (matcher-free probes vs the delivered geometry, TMC-2 px): audit baseline
+  pooled p50 0.46 / p95 1.32 (11/15 windows p95 > 1). After C-02 + G-02 + G-06 step 2: p50 0.135-0.267, p95
+  0.369-1.333 per window, 1/15 windows p95 > 1 (`reports/trackb_batch4_g06_step2_summary.json`).
+
+**C-03 bar 2** (check-point RMSE within a factor 1.5 of the probe p50 on TMC-2 -> TC): **not met**, 2/15 (batch 1)
+and 1/15 (batch 2). The ratio is 1.3-2.6: an RMS over a heavy-tailed error distribution against a median. The
+bar compares two different statistics; it is recorded as not met rather than redefined.

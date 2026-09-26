@@ -125,3 +125,12 @@ windows where MI is informative). Switching it on because of this audit would ov
 after the fact, so it stays off.
 
 **Expected, from the audit (not a bar):** 12/25 success + 8 unconfirmed. The fallback may convert some.
+
+### Result of the I-07 amendment (2026-09-26, Track B batch 1, snapshot `db3a350`)
+
+Routed, 25 windows: **12 success / 8 unconfirmed / 5 failed** (exactly the audit's "12/25 + 8" estimate). The
+8 unconfirmed are M175124932LC 5/5 and M109080308LC 3/5 (MI peak 2.2-2.9 OHRC px from the model). The MI
+fallback converted none: those windows were already on the last candidate (minima-loftr). A strict
+reproduction diff against `reports/ohrc_nac_q8_auto_bridge.json` differs on exactly those 8 windows
+(success true -> false) and nowhere else (`reports/trackb_batch1_reproduction_check.json`).
+Fresh windows (I-16, batch 3): routed 5 success / 7 unconfirmed / 3 failed of 15 (M106 has no fresh window).

@@ -1,0 +1,2773 @@
+{
+  "source": "synthetic",
+  "bad_px": 2.0,
+  "regimes": {
+    "same_lighting": {
+      "rot_deg": 8.0
+    },
+    "lighting_+30": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        165,
+        40
+      ]
+    },
+    "lighting_+90": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        225,
+        45
+      ]
+    },
+    "lighting_opposite": {
+      "rot_deg": 8.0,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "cross_modal": {
+      "rot_deg": 8.0,
+      "cross_modal": true
+    },
+    "cross_modal+opposite": {
+      "rot_deg": 8.0,
+      "cross_modal": true,
+      "sun_src": [
+        315,
+        45
+      ]
+    },
+    "resolution_2x": {
+      "rot_deg": 8.0,
+      "scale": 2.0
+    },
+    "low_texture": {
+      "rot_deg": 8.0,
+      "n_craters": 6
+    }
+  },
+  "run": {
+    "command": "python scripts/bench_rift.py --methods minima-roma,roma,matchanything-roma,ufm,gim-dkm,romav2 --benchmark-models --out C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/batch2/out/g03_S_bench.json",
+    "commit": null,
+    "uncommitted_changes": null,
+    "utc": "2026-09-26T02:03:08+00:00",
+    "ship_mode": false
+  },
+  "rows": [
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 9996,
+      "inliers": 9996,
+      "rmse_px": 0.0858,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 20.3,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027476,
+          -0.13915477,
+          38.17774493
+        ],
+        [
+          0.13915797,
+          0.99026503,
+          -33.18883172
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 9999,
+      "inliers": 9999,
+      "rmse_px": 0.0916,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.06,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027521,
+          -0.13915231,
+          38.17946794
+        ],
+        [
+          0.13917371,
+          0.99027537,
+          -33.20140825
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "minima-roma",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 9996,
+      "inliers": 9996,
+      "rmse_px": 0.0883,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 5.47,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028185,
+          -0.13916613,
+          38.18050596
+        ],
+        [
+          0.13915529,
+          0.99028824,
+          -33.19585328
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.0893,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 8.66,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902677,
+          -0.13915718,
+          38.1832995
+        ],
+        [
+          0.13915897,
+          0.99027859,
+          -33.19432222
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.0926,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 2.36,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028307,
+          -0.13915634,
+          38.18018921
+        ],
+        [
+          0.13916367,
+          0.99026365,
+          -33.19547978
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.0917,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 2.44,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027603,
+          -0.13915699,
+          38.18216601
+        ],
+        [
+          0.13915014,
+          0.99029013,
+          -33.19720728
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "same_lighting",
+      "seed": 3,
+      "error": "MatcherUnavailableError: could not construct 'matchanything-roma' on 'cuda': [WinError 10053] An established connection was aborted by the software in your host"
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 4993,
+      "inliers": 4993,
+      "rmse_px": 0.087,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 182.0,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026966,
+          -0.13917318,
+          38.17021933
+        ],
+        [
+          0.13918131,
+          0.99026211,
+          -33.2080797
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 4995,
+      "inliers": 4995,
+      "rmse_px": 0.0778,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 19.94,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027246,
+          -0.13917323,
+          38.17490284
+        ],
+        [
+          0.1391886,
+          0.99026096,
+          -33.19265869
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "same_lighting",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.1714,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 850.72,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99031405,
+          -0.13885934,
+          38.12964972
+        ],
+        [
+          0.13893409,
+          0.99000854,
+          -33.12558636
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "same_lighting",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1797,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 10.45,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99005704,
+          -0.13854642,
+          38.12371777
+        ],
+        [
+          0.13919797,
+          0.99004615,
+          -33.17671104
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "same_lighting",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1903,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 10.83,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99005068,
+          -0.13870317,
+          38.1655006
+        ],
+        [
+          0.13918648,
+          0.9899376,
+          -33.17723586
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 6.60 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 6.60 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "same_lighting",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 6.60 "
+    },
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "same_lighting",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 4997,
+      "inliers": 4997,
+      "rmse_px": 0.0439,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 15.71,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023752,
+          -0.1391185,
+          38.11595121
+        ],
+        [
+          0.13918914,
+          0.99033611,
+          -33.19972188
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 4997,
+      "inliers": 4997,
+      "rmse_px": 0.0634,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 13.59,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99023922,
+          -0.13932573,
+          38.16732353
+        ],
+        [
+          0.13910333,
+          0.99022992,
+          -33.16648801
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 4998,
+      "inliers": 4993,
+      "rmse_px": 0.061,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.79,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99010021,
+          -0.13926673,
+          38.16845075
+        ],
+        [
+          0.13917956,
+          0.99039126,
+          -33.21592849
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 4648,
+      "inliers": 4648,
+      "rmse_px": 0.0888,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.95,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99036237,
+          -0.13915936,
+          38.15517574
+        ],
+        [
+          0.13906525,
+          0.9903393,
+          -33.18468604
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 4874,
+      "inliers": 4874,
+      "rmse_px": 0.1145,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.13,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99029164,
+          -0.1393165,
+          38.16836065
+        ],
+        [
+          0.13916228,
+          0.99037191,
+          -33.27018653
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 4901,
+      "inliers": 4901,
+      "rmse_px": 0.101,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.12,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99015004,
+          -0.13924498,
+          38.22806056
+        ],
+        [
+          0.1392685,
+          0.99037257,
+          -33.26322673
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1918,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.49,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98962089,
+          -0.13842295,
+          38.15566347
+        ],
+        [
+          0.13943984,
+          0.99014156,
+          -33.25382038
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "matches": 4998,
+      "inliers": 4998,
+      "rmse_px": 0.2275,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.83,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98978395,
+          -0.13809566,
+          38.05840756
+        ],
+        [
+          0.139354,
+          0.9900463,
+          -33.21109687
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.158,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.77,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9898533,
+          -0.13896934,
+          38.25237865
+        ],
+        [
+          0.13962126,
+          0.99068353,
+          -33.42314615
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+30",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 4992,
+      "inliers": 4921,
+      "rmse_px": 0.4269,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 14.14,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98909067,
+          -0.14082873,
+          38.56822786
+        ],
+        [
+          0.13888359,
+          0.99033181,
+          -33.12927489
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 4996,
+      "inliers": 4923,
+      "rmse_px": 0.8521,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.78,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99092532,
+          -0.14267878,
+          38.21179233
+        ],
+        [
+          0.13864359,
+          0.99039671,
+          -33.06479283
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 4995,
+      "inliers": 4897,
+      "rmse_px": 1.1065,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.71,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98873057,
+          -0.14407829,
+          39.0093672
+        ],
+        [
+          0.13906709,
+          0.99037213,
+          -33.13912738
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 3785,
+      "inliers": 3562,
+      "rmse_px": 0.4208,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.22,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99017881,
+          -0.13689628,
+          37.34447676
+        ],
+        [
+          0.13918528,
+          0.99017375,
+          -33.07073953
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 4112,
+      "inliers": 3790,
+      "rmse_px": 0.3091,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.65,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99047918,
+          -0.14001292,
+          38.06356319
+        ],
+        [
+          0.13892232,
+          0.99057878,
+          -33.31385727
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 4092,
+      "inliers": 3698,
+      "rmse_px": 0.495,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.68,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98914293,
+          -0.13643044,
+          37.5444616
+        ],
+        [
+          0.13916393,
+          0.99046421,
+          -33.21866647
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.3286,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98844079,
+          -0.13884826,
+          38.58273309
+        ],
+        [
+          0.13923682,
+          0.99108389,
+          -33.37787304
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.4672,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.6,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99166827,
+          -0.1371805,
+          37.09853676
+        ],
+        [
+          0.13793205,
+          0.9901449,
+          -32.88753488
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "matches": 4994,
+      "inliers": 4993,
+      "rmse_px": 0.4003,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.69,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99108113,
+          -0.14020678,
+          38.48007721
+        ],
+        [
+          0.13841953,
+          0.98995075,
+          -32.95647184
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_+90",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 4996,
+      "inliers": 4924,
+      "rmse_px": 0.7777,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 13.63,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98906459,
+          -0.13953065,
+          39.05135223
+        ],
+        [
+          0.13732251,
+          0.98927752,
+          -31.99470292
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 4996,
+      "inliers": 4863,
+      "rmse_px": 0.4127,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.84,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99052802,
+          -0.13918121,
+          38.37623882
+        ],
+        [
+          0.1389526,
+          0.99020865,
+          -32.81158794
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 4999,
+      "inliers": 4931,
+      "rmse_px": 0.6695,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.77,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98909985,
+          -0.13787301,
+          38.51844971
+        ],
+        [
+          0.1385241,
+          0.99176375,
+          -33.00643514
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 3551,
+      "inliers": 3456,
+      "rmse_px": 3.0426,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 12.26,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99017076,
+          -0.13809169,
+          36.19749072
+        ],
+        [
+          0.1395042,
+          0.99075619,
+          -35.88165286
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 4453,
+      "inliers": 4074,
+      "rmse_px": 2.3148,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 11.66,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98994396,
+          -0.14122761,
+          37.48569987
+        ],
+        [
+          0.13930214,
+          0.98823033,
+          -34.54843028
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 4669,
+      "inliers": 4245,
+      "rmse_px": 2.4099,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 11.61,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98928287,
+          -0.14034226,
+          37.34334724
+        ],
+        [
+          0.13745893,
+          0.98866905,
+          -34.25356467
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.7381,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.23,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98994046,
+          -0.13615483,
+          37.50602669
+        ],
+        [
+          0.13973549,
+          0.99356666,
+          -34.31276784
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "matches": 4997,
+      "inliers": 4997,
+      "rmse_px": 0.7488,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.62,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9913054,
+          -0.13685912,
+          37.5644377
+        ],
+        [
+          0.13904573,
+          0.99374257,
+          -33.8763064
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "matches": 4997,
+      "inliers": 4990,
+      "rmse_px": 0.6558,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.7,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98850859,
+          -0.13700056,
+          38.11875124
+        ],
+        [
+          0.137652,
+          0.99249545,
+          -33.53419585
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "lighting_opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 4992,
+      "inliers": 4932,
+      "rmse_px": 0.756,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 13.64,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98963004,
+          -0.1405821,
+          39.18813742
+        ],
+        [
+          0.13873059,
+          0.98901298,
+          -32.28926986
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 4992,
+      "inliers": 4850,
+      "rmse_px": 0.5449,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.62,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99079733,
+          -0.13747942,
+          37.86073083
+        ],
+        [
+          0.13941804,
+          0.99158946,
+          -33.25554297
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 4996,
+      "inliers": 4985,
+      "rmse_px": 0.6572,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.59,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98996902,
+          -0.13863436,
+          38.55348172
+        ],
+        [
+          0.13886606,
+          0.99122116,
+          -32.91114155
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 4871,
+      "inliers": 4839,
+      "rmse_px": 1.8307,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.16,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99016762,
+          -0.139148,
+          37.6283363
+        ],
+        [
+          0.13957246,
+          0.99018262,
+          -34.9740009
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 4743,
+      "inliers": 4700,
+      "rmse_px": 2.1741,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 11.53,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99011859,
+          -0.14004024,
+          37.52599101
+        ],
+        [
+          0.13922465,
+          0.98986824,
+          -35.04170201
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 4620,
+      "inliers": 4517,
+      "rmse_px": 2.1126,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 11.53,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99004184,
+          -0.13991032,
+          37.53049595
+        ],
+        [
+          0.13884448,
+          0.99013428,
+          -34.95466985
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal",
+      "seed": 3,
+      "matches": 4998,
+      "inliers": 4998,
+      "rmse_px": 0.6191,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.12,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99019825,
+          -0.1366404,
+          37.51513093
+        ],
+        [
+          0.1396004,
+          0.99324955,
+          -33.98147059
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal",
+      "seed": 11,
+      "matches": 4995,
+      "inliers": 4995,
+      "rmse_px": 0.7733,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.11,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99196154,
+          -0.13654617,
+          37.08487146
+        ],
+        [
+          0.13903888,
+          0.99376625,
+          -33.77263764
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal",
+      "seed": 29,
+      "matches": 4998,
+      "inliers": 4991,
+      "rmse_px": 0.9096,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.14,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98878328,
+          -0.13754303,
+          38.13640037
+        ],
+        [
+          0.13594485,
+          0.99399583,
+          -33.58829618
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.131,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 13.61,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99031534,
+          -0.13903079,
+          38.1283907
+        ],
+        [
+          0.13901637,
+          0.99028886,
+          -33.2150409
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.0817,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.78,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99021908,
+          -0.13902523,
+          38.12611942
+        ],
+        [
+          0.13920977,
+          0.99019009,
+          -33.19625832
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.0944,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.77,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99022374,
+          -0.13932643,
+          38.20218852
+        ],
+        [
+          0.13908744,
+          0.99042396,
+          -33.23542886
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 4869,
+      "inliers": 4869,
+      "rmse_px": 0.175,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99021722,
+          -0.13915577,
+          38.2844515
+        ],
+        [
+          0.13919789,
+          0.99044402,
+          -33.11493695
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 4957,
+      "inliers": 4957,
+      "rmse_px": 0.0775,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.65,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99021268,
+          -0.13904505,
+          38.16637263
+        ],
+        [
+          0.13924852,
+          0.99033608,
+          -33.20543074
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 4954,
+      "inliers": 4954,
+      "rmse_px": 0.1126,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.65,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9902212,
+          -0.13924909,
+          38.25776176
+        ],
+        [
+          0.13915607,
+          0.99039861,
+          -33.1397793
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "matches": 4998,
+      "inliers": 4998,
+      "rmse_px": 0.15,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.31,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99033677,
+          -0.13876853,
+          38.06139697
+        ],
+        [
+          0.13912944,
+          0.99004165,
+          -33.18250861
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1709,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.53,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99009961,
+          -0.13843547,
+          38.02464699
+        ],
+        [
+          0.139364,
+          0.98996043,
+          -33.20369668
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1968,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.98986519,
+          -0.1386497,
+          38.15260331
+        ],
+        [
+          0.13929048,
+          0.98983383,
+          -33.19351562
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "cross_modal+opposite",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 4966,
+      "inliers": 4446,
+      "rmse_px": 0.7196,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 14.04,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98042308,
+          -0.27822639,
+          -180.10654691
+        ],
+        [
+          0.27835393,
+          1.98036301,
+          -322.86250214
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 4974,
+      "inliers": 4727,
+      "rmse_px": 0.711,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.8,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98038996,
+          -0.27827851,
+          -180.08120428
+        ],
+        [
+          0.27847513,
+          1.98054781,
+          -322.93302747
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 4958,
+      "inliers": 4497,
+      "rmse_px": 0.7107,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.8,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98033712,
+          -0.27817174,
+          -180.10498847
+        ],
+        [
+          0.27847803,
+          1.98036327,
+          -322.87922537
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 47,
+      "inliers": 38,
+      "rmse_px": 7367.6743,
+      "accepted": true,
+      "tier": "REJECTED",
+      "success": false,
+      "false_confidence": false,
+      "seconds": 12.3,
+      "device": "cuda",
+      "matrix": [
+        [
+          -1.16311146,
+          -0.59543714,
+          570.80426462
+        ],
+        [
+          -0.06047684,
+          -0.23189026,
+          61.42829208
+        ],
+        [
+          -0.0019928,
+          -0.00129103,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 4917,
+      "inliers": 4806,
+      "rmse_px": 0.4768,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.75,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98058171,
+          -0.27854362,
+          -180.01149205
+        ],
+        [
+          0.27793148,
+          1.98065392,
+          -322.56929903
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 4247,
+      "inliers": 4100,
+      "rmse_px": 0.5701,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.6,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.98123475,
+          -0.27851912,
+          -180.16528356
+        ],
+        [
+          0.27827075,
+          1.98126944,
+          -322.91706287
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "matches": 4773,
+      "inliers": 2718,
+      "rmse_px": 20.1625,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 6.32,
+      "device": "cuda",
+      "matrix": [
+        [
+          2.12240562,
+          -0.3319138,
+          -190.22805948
+        ],
+        [
+          0.38266424,
+          2.03276123,
+          -353.75846071
+        ],
+        [
+          0.00024205,
+          -8.374e-05,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "matches": 4940,
+      "inliers": 4497,
+      "rmse_px": 3.7145,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 6.68,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.99032084,
+          -0.27659483,
+          -183.47042038
+        ],
+        [
+          0.28021199,
+          1.99745187,
+          -328.97976937
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "matches": 4913,
+      "inliers": 3971,
+      "rmse_px": 4.0732,
+      "accepted": true,
+      "tier": "LOW",
+      "success": false,
+      "false_confidence": true,
+      "seconds": 6.67,
+      "device": "cuda",
+      "matrix": [
+        [
+          1.99667151,
+          -0.28266294,
+          -183.89919562
+        ],
+        [
+          0.29417468,
+          1.98138429,
+          -328.03899743
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "resolution_2x",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "minima-roma",
+      "regime": "low_texture",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 2.98 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 9.62 "
+    },
+    {
+      "method": "roma",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 4998,
+      "inliers": 4998,
+      "rmse_px": 0.0896,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 13.45,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026624,
+          -0.13916525,
+          38.18603908
+        ],
+        [
+          0.13915773,
+          0.990295,
+          -33.1981641
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.091,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.68,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027436,
+          -0.13915339,
+          38.18218757
+        ],
+        [
+          0.13915556,
+          0.99028875,
+          -33.19666643
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "roma",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 4998,
+      "inliers": 4998,
+      "rmse_px": 0.0907,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.57,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99028267,
+          -0.13916318,
+          38.18149423
+        ],
+        [
+          0.13914719,
+          0.99027141,
+          -33.19085022
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 4993,
+      "inliers": 4993,
+      "rmse_px": 0.0819,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 12.15,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026352,
+          -0.13916753,
+          38.17343162
+        ],
+        [
+          0.13918083,
+          0.99026736,
+          -33.20027555
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 4992,
+      "inliers": 4992,
+      "rmse_px": 0.0816,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.53,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99026215,
+          -0.1391713,
+          38.17470298
+        ],
+        [
+          0.1391893,
+          0.9902536,
+          -33.19852353
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "matchanything-roma",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 4997,
+      "inliers": 4997,
+      "rmse_px": 0.0816,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 11.52,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99027107,
+          -0.13917369,
+          38.17310617
+        ],
+        [
+          0.13916881,
+          0.99026313,
+          -33.19569734
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "low_texture",
+      "seed": 3,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1856,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.12,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99045998,
+          -0.13870833,
+          38.07513246
+        ],
+        [
+          0.13901341,
+          0.99021629,
+          -33.19403505
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "low_texture",
+      "seed": 11,
+      "matches": 4999,
+      "inliers": 4999,
+      "rmse_px": 0.2136,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.11,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.9900864,
+          -0.13862929,
+          38.17381333
+        ],
+        [
+          0.13913505,
+          0.990011,
+          -33.18127403
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "ufm",
+      "regime": "low_texture",
+      "seed": 29,
+      "matches": 5000,
+      "inliers": 5000,
+      "rmse_px": 0.1668,
+      "accepted": true,
+      "tier": "LOW",
+      "success": true,
+      "false_confidence": false,
+      "seconds": 6.11,
+      "device": "cuda",
+      "matrix": [
+        [
+          0.99013354,
+          -0.13873255,
+          38.1414997
+        ],
+        [
+          0.1392749,
+          0.98993076,
+          -33.1743222
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "gim-dkm",
+      "regime": "low_texture",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 5.17 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.19 "
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 3,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 11,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    },
+    {
+      "method": "romav2",
+      "regime": "low_texture",
+      "seed": 29,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 3.59 GiB. GPU 0 has a total capacity of 6.00 GiB of which 0 bytes is free. Of the allocated memory 8.00 "
+    }
+  ]
+}

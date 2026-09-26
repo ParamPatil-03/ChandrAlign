@@ -40,3 +40,17 @@ There is no pass/fail bar: this measures what the tier now says. The audit's "re
 windows" is answered by reporting how the real windows distribute under PS-derived thresholds, rather than by
 fitting thresholds to 45 windows that are all believed correct (with no negatives, a fit would be
 circular).
+
+## Result (2026-09-26)
+
+Re-grading with the accuracy signal (Track B batches; `reports/trackb_batch*_summary.json`):
+- **TMC-2 -> TC (15):** 12 HIGH / 3 MEDIUM, unchanged. Every window measured sub-pixel at p50.
+- **OHRC -> NAC (routed):** 20 LOW / 4 REJECTED, unchanged (already LOW). OHRC probes: median p95 2.38 OHRC px
+  (eloftr), so the signal would also have held them at LOW.
+- **IIRS -> WAC (xoftr):** 4 HIGH / 1 MEDIUM; probe p95 ~0.23 IIRS px.
+
+**A limitation found by measurement, and its fix.** In the synthetic C-04 replay (512 px pairs rotated 8 deg,
+through `register_bundle`) NO result reached HIGH: the probes compare axis-aligned patches, almost none is
+accepted on a rotated pair, and "unmeasured" allows at most MEDIUM. Real product runs are resampled into a
+common frame first, so they are unaffected (above), but a raw rotated pair could never be HIGH. Fix: the probes
+first warp the source through the delivered geometry (the lesson of C-02). See the commit that follows.

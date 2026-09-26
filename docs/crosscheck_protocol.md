@@ -84,3 +84,23 @@ contradict, so the catch mechanism is the same. The abstain and inconclusive rul
 **Re-measured, because it changed after results were seen:** measurement 1 (the full synthetic replay, bar
 >= 8/12, false alarms reported) and measurement 2 (every real window, in a second batch). The first batch's
 flags are kept as the record of the old statistic.
+
+## Result after amendment 1 (2026-09-26): both measurements re-run
+
+**Measurement 1, synthetic replay** (batch 2, snapshot `74171b3`; `reports/crosscheck_replay_am1.json`): **8/12**
+wrong-but-accepted results caught by the cross-check (bar >= 8, **met**), 10/12 REJECTED in total, **0/64 false
+alarms**. Identical to the pre-amendment replay: the statistic change cost no catches.
+
+**Measurement 2, real windows** (all rates as measured; there is no bar):
+
+| pairing | statistic | agree | flag | inconclusive | false alarms |
+|---|---|---|---|---|---|
+| TMC-2 -> TC (15) | affine vs affine (batch 1) | 7 | **7** (all hilly; probes say correct) | 1 | 7 |
+| TMC-2 -> TC (15) | **amended** (batch 2) | 14 | **0** | 1 | **0** |
+| OHRC -> NAC (routed, 24) | amended | 5 | 0 | 19 (RIFT2 cannot lock under OHRC lighting) | 0 |
+| IIRS -> WAC (xoftr, 5) | amended | 2 | 0 | 3 | 0 |
+| TMC-2 -> TC fresh (5, I-16) | amended | 5 | 0 | 0 | 0 |
+
+**Measurement 3 (periodic-aliasing trap): not run.** No pair of DIFFERENT real crops with matching repetitive
+spacing was identified in the held products in the time available; it is a follow-up
+(docs/trackb_blocked_items.md).
