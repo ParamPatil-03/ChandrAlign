@@ -60,6 +60,12 @@ def test_the_headline_pair_registers_on_the_validated_path(tmc2_tc_run):
     assert r.metrics.inlier_count > 1000 and r.metrics.spatial_coverage > 0.9
     assert all(r.gates.values())
     assert w.window["scale_status"] == "consistent"          # CHECK-05 ran on the composed transform
+    # Track B on the product path (C-03 / I-11 / C-04): the check-point RMSE of the delivered geometry,
+    # its model, the same figure in TMC-2 product px, and the recorded (ungraded) cross-check
+    acc = r.provenance["accuracy"]
+    assert w.bundle.geometry == acc["model"] and r.metrics.rmse_px == acc["rmse_px_ref"] is not None
+    assert 0 < acc["rmse_px_src_product"]["typical"] < 5
+    assert r.provenance["crosscheck"]["graded"] is False and "verdict" in r.provenance["crosscheck"]
     assert tmc2_tc_run.overlap["overlap_km2"] > 1000
 
 

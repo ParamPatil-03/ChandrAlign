@@ -420,6 +420,77 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "    if False:"),
         },
     ),
+    # ---- Track A (audit 2026-09-26, definition of done item 3: one sabotage per fix) ----
+    "trackA_window_origin": (                          # C-07: GeoTIFFs of a window landed 57.8 km off
+        "src/chandralign/geometry/projection.py",
+        "tests/test_warp_product.py",
+        {
+            "C-07 the window's tile origin is dropped": (
+                "        return replace(model, line_offset=model.line_offset - r0,",
+                "        return replace(model, line_offset=model.line_offset,"),
+        },
+    ),
+    "trackA_api_assets": (                             # C-06: path traversal out of the run folder
+        "src/chandralign/api.py",
+        "tests/test_api.py",
+        {
+            "C-06 an asset path may leave the run folder": (
+                "        if not asset.is_relative_to(root) or not asset.exists() or not asset.is_file():",
+                "        if not asset.exists() or not asset.is_file():"),
+        },
+    ),
+    "trackA_run_export": (                             # I-12 / I-14: one run-folder writer
+        "src/chandralign/product/run_export.py",
+        "tests/test_run_export.py",
+        {
+            "I-12 a REJECTED result still ships a GeoTIFF": (
+                "    if tier == REJECTED:", "    if False:"),
+            "I-14 the failure log is not written": (
+                '    failure_log.log_run(out / "failure-log.jsonl", bundle)',
+                '    (out / "failure-log.jsonl").write_text("", encoding="utf-8")'),
+        },
+    ),
+    "trackA_metric_source": (                          # C-08 / rule H5
+        "src/chandralign/pipeline.py",
+        "tests/test_pipeline.py",
+        {
+            "C-08 synthetic registrations are labelled measured": (
+                '    return "synthetic" if synthetic else "measured"', '    return "measured"'),
+        },
+    ),
+    "trackA_matchpoints": (                            # M-11: real inlier flags in the export
+        "src/chandralign/product/matchpoints.py",
+        "tests/test_run_export.py",
+        {
+            "M-11 every exported match is flagged an inlier": (
+                '"is_inlier": bool(mask[i]),', '"is_inlier": True,'),
+        },
+    ),
+    "trackA_ui": (                                     # C-05: the UI fabricated results
+        "src/chandralign/ui/app.js",
+        "tests/test_ui_honesty.py",
+        {
+            "C-05 the UI shows a made-up RMSE": (
+                '  $("m-rmse").textContent = fmt(m.rmse_px);', '  $("m-rmse").textContent = fmt(Math.random());'),
+        },
+    ),
+    "trackA_nac_pixel_size": (                         # I-04: NAC pixel size from the footprint
+        "src/chandralign/estimate/scale.py",
+        "tests/test_scale_precheck.py",
+        {
+            "I-04 NAC pixel size falls back to the nominal label value": (
+                "    if _corner_scales(meta) is not None:\n        return None",
+                "    if True:\n        return None"),
+        },
+    ),
+    "trackA_g09_routing": (                            # G-09, adopted at the Track A/B merge
+        "configs/regimes.yaml",
+        "tests/test_routing.py",
+        {
+            "G-09 OHRC fallback loses xoftr": (
+                "fallback_matchers: [xoftr, minima-loftr]", "fallback_matchers: [minima-loftr]"),
+        },
+    ),
 }
 
 

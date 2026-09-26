@@ -215,3 +215,9 @@ def test_a_single_visible_band_of_a_multiband_reference_is_not_cross_modal():
     assert not cfg.is_cross_modal("TMC2", "WAC") and not cfg.is_cross_modal("TMC2", "MI")
     assert not cfg.is_cross_modal("OHRC", "WAC")
     assert cfg.is_cross_modal("IIRS", "WAC") and cfg.is_cross_modal("IIRS", "MI")   # hyperspectral IR vs a visible band
+
+
+def test_ohrc_to_nac_routes_eloftr_then_xoftr_then_minima_loftr():
+    """G-09 (Track B, adopted at the merge): xoftr solves the opposed-sun NAC that eloftr and
+    minima-loftr leave MI-unconfirmed (docs/TRACKB_FINAL_REPORT.md section 6)."""
+    assert list(routing.choose("OHRC", "NAC").candidates()) == ["eloftr", "xoftr", "minima-loftr"]
