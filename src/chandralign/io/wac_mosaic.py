@@ -103,14 +103,24 @@ def fetch_clip(lat_max, lat_min, lon_min, lon_max, out_json: str | Path, *, url=
     return out_json
 
 
-def clip_for_iirs(label, out_dir: str | Path, *, lat_margin=1.6, lon_margin=0.8, progress=None) -> Path:
-    """A mosaic clip covering an IIRS scene's footprint, with margins for its ~13 km system error and
-    the window placement rule (workflows.iirs_wac.mosaic_windows keeps windows 1.2 deg inside)."""
+# The evidence clip spans 2425 rows = 8.0 deg of latitude; the IIRS -> WAC success rule (implied
+# offset within 240 m of the scene median) was defined for windows spread inside such a span. IIRS
+# system geolocation drifts smoothly along a ~34 deg strip (~900 m east on the evidence scene), so
+# a whole-strip clip would fail that rule on correct registrations (docs/iirs_fresh_scenes_protocol.md
+# amendment 1).
+EVIDENCE_LAT_SPAN_DEG = 2425 * DEG_PER_PX
+
+
+def clip_for_iirs(label, out_dir: str | Path, *, lat_span=EVIDENCE_LAT_SPAN_DEG, lon_margin=0.8,
+                  progress=None) -> Path:
+    """A mosaic clip for an IIRS scene: the evidence clip's latitude span, centred on the scene, the
+    scene's longitude range plus a margin for its ~13 km system error."""
     from .pds_label import parse_label
     meta = parse_label(label)
     lats = [c[0] for c in meta.corner_latlon]
     lons = np.unwrap(np.radians([c[1] for c in meta.corner_latlon]))
     lon_lo, lon_hi = np.degrees(lons.min()), np.degrees(lons.max())
-    return fetch_clip(min(90.0, max(lats) + lat_margin), max(-90.0, min(lats) - lat_margin),
+    lat_c = (max(lats) + min(lats)) / 2.0
+    return fetch_clip(min(90.0, lat_c + lat_span / 2), max(-90.0, lat_c - lat_span / 2),
                       lon_lo - lon_margin, lon_hi + lon_margin,
                       Path(out_dir) / f"wac_mosaic_clip_{meta.product_id}.json", progress=progress)

@@ -50,3 +50,16 @@ degraded >= 60%, else unsolved.
   failure modes as a limit.
 - Accuracy is reported per scene as the evidence reported it (known-shift error, fit RMS, MI peak
   in IIRS px), p50 and max over windows -- never only the best scene.
+
+## Amendment 1 (2026-09-26, before any fresh scene was registered)
+
+**Why.** The control run on the EVIDENCE scene (not a fresh one) with a clip covering the whole
+34 deg strip registered all 5 windows HIGH (known-shift 0.02-0.27 px) but passed the 240 m
+consistency rule on only 1 of 5: IIRS system geolocation drifts smoothly along the strip
+(implied offset east 946 -> 1822 m from line 0 to 9408). The evidence's windows sat inside its
+8.0 deg clip (lines 1856-3904, drift ~280 m), and the control's line-3136 window (1375 m east) lies
+on the evidence's own trend. The rule was defined for that window spread, not for a whole strip.
+
+**Change.** Each scene's clip spans the evidence clip's latitude extent (2425 rows = 8.0 deg),
+centred on the scene (`io.wac_mosaic.clip_for_iirs`). Nothing else changes. The control is re-run
+under this amendment and must give the evidence verdict (solved) before any fresh scene is run.
