@@ -36,6 +36,7 @@ from chandralign import synth  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import adapter  # noqa: E402
 from chandralign.pipeline import fine_stage  # noqa: E402
 from verify_subpixel import native_noise_ratio  # noqa: E402  (the SAME noise model as PREC-06)
@@ -89,7 +90,7 @@ def main() -> int:
     ap.add_argument("--out", default="reports/point_refinement_verification.json")
     args = ap.parse_args()
 
-    meta = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+    meta = parse_label(evidence_label("TMC2", ROOT))
     L, S = meta.array_shape
     n = COARSE * BLOCK
     col0 = (S - n) // 2

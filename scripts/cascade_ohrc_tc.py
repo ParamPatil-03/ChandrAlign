@@ -42,6 +42,7 @@ from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import cascade as cc  # noqa: E402
 
 TC_TILE = "TCO_MAP_02_N00E021S03E024SC"
@@ -87,8 +88,8 @@ def main() -> int:
     ap.add_argument("--out", default="reports/cascade_ohrc_tc.json")
     args = ap.parse_args()
 
-    ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
-    tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+    ohrc = parse_label(evidence_label("OHRC", ROOT))
+    tmc = parse_label(evidence_label("TMC2", ROOT))
     tc = parse_label(ROOT / "data/raw/selene/tc" / f"{TC_TILE}.lbl")
     om = projection.load_grid_model(ohrc)                        # system-level for OHRC
     assert om.independent_of_references

@@ -37,6 +37,7 @@ from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.dem import dem_patch, find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import cascade, routing  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
 from chandralign.preprocess.iirs_composite import iirs_composite_plane, product_band_selection  # noqa: E402
@@ -280,7 +281,7 @@ def main() -> int:
                     help="amendment 1: the dense lock is the registration, with its own gates (no keypoint stage)")
     args = ap.parse_args()
 
-    iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
+    iirs = parse_label(evidence_label("IIRS", ROOT))
     im = projection.load_corner_model(iirs, corners="system")
     assert im.independent_of_references
     sel = product_band_selection(iirs)

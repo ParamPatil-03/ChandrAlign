@@ -40,6 +40,7 @@ from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import cascade, routing  # noqa: E402
 from chandralign.geometry.nac import (  # noqa: E402,F401
     LINES, MOON_R_M, NULL_BELOW, PIX_OFFSET, SAMPLES, SCALE, WIN_LINES, Nac, enu)
@@ -262,7 +263,7 @@ def main() -> int:
 
     meta = json.loads((ROOT / "data/pairs/tmc2_nac_lroc_meta.json").read_text())["products"]
     cand = json.loads((ROOT / "data/pairs/tmc2_nac_candidates.json").read_text())
-    tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+    tmc = parse_label(evidence_label("TMC2", ROOT))
     sysm = projection.load_corner_model(tmc, corners="system")
     choice = routing.choose("TMC2", "NAC")
 

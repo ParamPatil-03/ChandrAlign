@@ -55,6 +55,7 @@ from chandralign import compute  # noqa: E402
 from chandralign.contracts import Metrics  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.refine import subpixel as sp  # noqa: E402
 
 TARGET = (0.37, -0.62)
@@ -103,7 +104,7 @@ def main() -> int:
     ap.add_argument("--out", default="reports/subpixel_verification.json")
     args = ap.parse_args()
 
-    meta = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
+    meta = parse_label(evidence_label("OHRC", ROOT))
     L, S = meta.array_shape
     span = args.size * args.block
     if span + 400 > S:

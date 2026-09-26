@@ -48,6 +48,7 @@ from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.pipeline import stage_flags  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import routing  # noqa: E402
 
 # The window registration moved VERBATIM to src/chandralign/workflows/tmc2_tc.py (audit 2026-09-26
@@ -108,7 +109,7 @@ def main() -> int:
     if args.tile_px:
         mk["tile_px"] = args.tile_px
 
-    tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+    tmc = parse_label(evidence_label("TMC2", ROOT))
     sysm = projection.load_corner_model(tmc, corners="system")
     # Stage 4 ONLY: ISRO's dense geometry grid, which it fitted against SELENE. It
     # is the actual refined solution; the refined CORNERS are a 4-point bilinear

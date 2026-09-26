@@ -142,7 +142,8 @@ def test_composite_preserves_the_terrain():
 
 # ----------------------------------------------------------------------------- real product
 
-REAL = sorted((ROOT / "data" / "raw" / "ch2" / "iirs").glob("products/*/data/calibrated/*/*_d_img_d18.xml"))
+REAL = sorted((ROOT / "data" / "raw" / "ch2" / "iirs").glob(
+    "products/ch2_iir_nci_20240523T1600301891_d_img_d18/data/calibrated/*/*_d_img_d18.xml"))   # the evidence scene
 needs_real = pytest.mark.skipif(not REAL, reason="real IIRS product not downloaded")
 
 

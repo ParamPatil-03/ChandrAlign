@@ -22,6 +22,7 @@ from chandralign.estimate import scale  # noqa: E402
 from chandralign.evaluate import source_px as sp  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 
 
 def load(p):
@@ -29,7 +30,7 @@ def load(p):
 
 
 def px_of(instrument_dir):
-    ps = scale.pixel_scale(parse_label(next((ROOT / instrument_dir).rglob("*_d_img_d18.xml"))))
+    ps = scale.pixel_scale(parse_label(evidence_label(Path(instrument_dir).name.upper(), ROOT)))
     return (ps.across_m, ps.along_m), ps.verified
 
 

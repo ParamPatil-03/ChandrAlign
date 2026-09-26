@@ -36,6 +36,7 @@ from chandralign.geometry import geoprior, projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.dem import dem_patch, find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import cascade, routing  # noqa: E402
 from chandralign.matching.similarity import alignment_check  # noqa: E402
 from chandralign.pipeline import fine_stage, stage_flags  # noqa: E402
@@ -106,7 +107,7 @@ class Source:
 
     def __init__(self, kind):
         self.kind = kind
-        self.meta = parse_label(next((ROOT / f"data/raw/ch2/{kind}").rglob("*_d_img_d18.xml")))
+        self.meta = parse_label(evidence_label(kind.upper(), ROOT))
         self.sysm = (projection.load_grid_model(self.meta) if kind == "ohrc"
                      else projection.load_corner_model(self.meta, corners="system"))
         assert self.sysm.independent_of_references

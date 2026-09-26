@@ -32,6 +32,7 @@ from chandralign.evaluate.run_record import run_record  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io.dem import find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.pipeline import stage_flags  # noqa: E402
 from register_tmc2_nac import MOON_R_M, Nac  # noqa: E402
 
@@ -73,7 +74,7 @@ def main() -> int:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
 
-    ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
+    ohrc = parse_label(evidence_label("OHRC", ROOT))
     om = projection.load_grid_model(ohrc)
     assert om.independent_of_references
     lroc = {}

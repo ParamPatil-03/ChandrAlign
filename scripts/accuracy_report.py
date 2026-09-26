@@ -43,9 +43,9 @@ RAW = ROOT / "data" / "raw"
 def products() -> dict[str, Path]:
     g = lambda p: sorted(RAW.glob(p))[0]
     return {
-        "OHRC": g("ch2/ohrc/products/*/data/calibrated/*/*_d_img_d18.xml"),
-        "TMC2": g("ch2/tmc2/products/*/data/calibrated/*/*_d_img_d18.xml"),
-        "IIRS": g("ch2/iirs/products/*/data/calibrated/*/*_d_img_d18.xml"),
+        "OHRC": g("ch2/ohrc/products/ch2_ohr_ncp_20240330T0035085365_d_img_d18/data/calibrated/*/*_d_img_d18.xml"),
+        "TMC2": g("ch2/tmc2/products/ch2_tmc_nca_20250207T1102039417_d_img_d18/data/calibrated/*/*_d_img_d18.xml"),
+        "IIRS": g("ch2/iirs/products/ch2_iir_nci_20240523T1600301891_d_img_d18/data/calibrated/*/*_d_img_d18.xml"),
         "NAC_2022": RAW / "lro/nac/nac.m1417360906lc/M1417360906LC.XML",
         "NAC_2009": RAW / "lro/nac/nac.m102000149rc/M102000149RC.XML",
         "TC_N": RAW / "selene/tc/TCO_MAP_02_N03E021N00E024SC.lbl",

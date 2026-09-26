@@ -32,6 +32,7 @@ from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.dem import find_tiles  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.matching import routing  # noqa: E402
 from chandralign.pipeline import stage_flags  # noqa: E402
 from chandralign.preprocess.iirs_composite import product_band_selection  # noqa: E402
@@ -61,7 +62,7 @@ def main() -> int:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
 
-    iirs = parse_label(next((ROOT / "data/raw/ch2/iirs").rglob("*_d_img_d18.xml")))
+    iirs = parse_label(evidence_label("IIRS", ROOT))
     im = projection.load_corner_model(iirs, corners="system")
     assert im.independent_of_references
     sel = product_band_selection(iirs)

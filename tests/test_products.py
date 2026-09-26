@@ -22,7 +22,7 @@ def _one(pattern: str, base: Path):
 
 
 TMC2 = _one("*_d_img_d18.xml", RAW / "ch2" / "tmc2")
-IIRS = _one("*_d_img_d18.xml", RAW / "ch2" / "iirs")
+IIRS = _one("ch2_iir_nci_20240523T1600301891_d_img_d18.xml", RAW / "ch2" / "iirs")   # the evidence scene
 TC = RAW / "selene" / "tc" / "TCO_MAP_02_N03E021N00E024SC.lbl"
 MI = RAW / "selene" / "mi" / "MI_MAP_03_N01E023N00E024SC.lbl"
 WAC = _one("M106698280MC.XML", RAW / "lro" / "wac")

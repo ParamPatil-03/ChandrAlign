@@ -42,6 +42,7 @@ import numpy as np  # noqa: E402
 from chandralign.geometry import projection  # noqa: E402
 from chandralign.io import pds_raster  # noqa: E402
 from chandralign.io.pds_label import parse_label  # noqa: E402
+from chandralign.io.evidence import evidence_label  # noqa: E402
 from chandralign.preprocess.phase_congruency import mind  # noqa: E402
 from chandralign.preprocess.resample import warp_affine  # noqa: E402
 
@@ -67,8 +68,8 @@ def match(region_ch, tpl):
 
 
 def main() -> int:
-    ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
-    tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+    ohrc = parse_label(evidence_label("OHRC", ROOT))
+    tmc = parse_label(evidence_label("TMC2", ROOT))
     go, gt = projection.load_grid_model(ohrc), projection.load_grid_model(tmc)
     L, S = ohrc.array_shape
     TL, TS = tmc.array_shape

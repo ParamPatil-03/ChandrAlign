@@ -51,6 +51,7 @@ import cv2
 import numpy as np
 
 from chandralign.io.pds_label import parse_label
+from chandralign.io.evidence import evidence_label
 from chandralign.io import pds_raster
 from chandralign.geometry import projection
 from chandralign.preprocess.phase_congruency import mind
@@ -63,8 +64,8 @@ SEARCH = 1536
 OHRC_GSD = (0.3052, 0.3093)          # verified: label, corners and dense grid agree
 G = (OHRC_GSD[0] * K, OHRC_GSD[1] * K)
 
-ohrc = parse_label(next((ROOT / "data/raw/ch2/ohrc").rglob("*_d_img_d18.xml")))
-tmc = parse_label(next((ROOT / "data/raw/ch2/tmc2").rglob("*_d_img_d18.xml")))
+ohrc = parse_label(evidence_label("OHRC", ROOT))
+tmc = parse_label(evidence_label("TMC2", ROOT))
 go, gt = projection.load_grid_model(ohrc), projection.load_grid_model(tmc)
 L, S = ohrc.array_shape
 TL, TS = tmc.array_shape
