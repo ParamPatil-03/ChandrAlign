@@ -70,7 +70,16 @@ def strip_layout(session, url=MOSAIC_URL):
 
 def fetch_clip(lat_max, lat_min, lon_min, lon_max, out_json: str | Path, *, url=MOSAIC_URL,
                workers=32, progress=None) -> Path:
-    """Cut the mosaic between the given lat/lon (deg) and write <out>.npy + <out>.json."""
+    """Cut the mosaic between the given lat/lon (deg) and write <out>.npy + <out>.json.
+
+    Longitudes may be in either convention (Chandrayaan-2 labels give 0..360 E); the clip is
+    georeferenced in the mosaic's -180..180 E, the convention projection.load_corner_model gives
+    the IIRS scene in. A box crossing the mosaic's +/-180 edge is refused.
+    """
+    shift = 360.0 * np.floor((lon_min + 180.0) / 360.0)     # 0.0 for a box already in -180..180
+    lon_min, lon_max = lon_min - shift, lon_max - shift
+    if lon_max > 180.0:
+        raise NotImplementedError(f"the box crosses the mosaic's 180 deg edge ({lon_min + shift}..{lon_max + shift})")
     import requests
     s = requests.Session()
     s.mount("https://", requests.adapters.HTTPAdapter(pool_connections=workers, pool_maxsize=workers))

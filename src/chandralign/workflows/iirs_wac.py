@@ -21,7 +21,7 @@ from ..evaluate import control_gates, quality
 from ..evaluate.source_px import jacobian_from_transform, to_source_px
 from ..geometry.nac import enu
 from ..io import pds_raster
-from ..io.dem import dem_patch
+from ..io.dem import DemError, dem_patch
 from ..matching import cascade
 from ..matching.similarity import alignment_check
 from ..pipeline import fine_stage
@@ -104,6 +104,19 @@ def polygon_of(record):
     return pts[:-1] if pts[0] == pts[-1] else pts
 
 
+def window_dem(dem_tiles, lat_c, lon_c, out: dict):
+    """The DEM patch for the terrain filter around a window centre, or None where the tiles do not
+    cover it (SLDEM2015 ends at +/-60 deg): the window then registers without the terrain filter and
+    `out["dem_status"]` says why (docs/iirs_fresh_scenes_protocol.md amendment 2)."""
+    try:
+        dem = dem_patch(dem_tiles, (lat_c - 0.4, lat_c + 0.4, lon_c - 0.4, lon_c + 0.4))
+    except DemError as exc:
+        out["dem_status"] = f"none: {exc}"
+        return None
+    out["dem_status"] = "; ".join(dem.tiles)
+    return dem
+
+
 def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages, dem_tiles, route_opts, *,
                dump_dir=None, capture=None):
     """One IIRS window registered to LRO WAC (the adopted IIRS -> WAC path, docs/iirs_wac_protocol.md).
@@ -153,7 +166,7 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
     out["fine_frame_px"] = [wF, hF]
     dem = None
     if stages["geometry_filter"] and dem_tiles:
-        dem = dem_patch(dem_tiles, (lat_c - 0.4, lat_c + 0.4, lon_c - 0.4, lon_c + 0.4))
+        dem = window_dem(dem_tiles, lat_c, lon_c, out)
     mapped = isinstance(geo, MosaicGeo)                       # a map grid is exact by construction
     exp = scale.expected_scale(scale.pixel_scale(iirs),
                                PixelScale(wac.product_id, geo.px_x, geo.px_y, (geo.px_x,) * 2, (geo.px_y,) * 2,

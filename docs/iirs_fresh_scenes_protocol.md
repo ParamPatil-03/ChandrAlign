@@ -63,3 +63,24 @@ on the evidence's own trend. The rule was defined for that window spread, not fo
 **Change.** Each scene's clip spans the evidence clip's latitude extent (2425 rows = 8.0 deg),
 centred on the scene (`io.wac_mosaic.clip_for_iirs`). Nothing else changes. The control is re-run
 under this amendment and must give the evidence verdict (solved) before any fresh scene is run.
+
+## Amendment 2 (2026-09-26, before any fresh scene was registered)
+
+**Why.** The first fresh run stopped on software errors before any window was matched, so no
+result exists:
+- three scenes: the clip cutter took label longitudes (0..360 E) as the mosaic's (-180..180 E)
+  and computed negative clip widths;
+- the 133 E scene: the terrain filter found no DEM tile (the project held SLDEM2015 for 0-45 E only).
+
+**Changes.**
+1. `io.wac_mosaic.fetch_clip` accepts either longitude convention and georeferences the clip in
+   -180..180 E, the convention the IIRS corner model already uses. The evidence clip is still
+   reproduced byte for byte.
+2. The SLDEM2015 tiles the scenes' windows need (the DEM the evidence used) are fetched with
+   `scripts/fetch_dem.py`: 00n_30n and 30s_00s at 090_135, 60s_30s_180_225, 30n_60n_315_360.
+3. SLDEM2015 ends at +/-60 deg and the 20231227 scene's windows lie at 60-66 N. There, a window
+   that the DEM does not fully cover registers without the terrain filter
+   (`workflows.iirs_wac.window_dem`), and its `dem_status` records this. The scene stays in the
+   test and is scored by the same rule; its result is reported as "no terrain filter".
+
+Nothing else changes: same matcher, gates, tiers, windows, clip span and success rule.
