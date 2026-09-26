@@ -479,7 +479,9 @@ def register(src, ref, *, matcher: str = "sift", device: Optional[str] = None, e
 
 def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = None, expected_scale=None,
                     ground_model=None, dem=None, flags: Optional[dict[str, bool]] = None,
-                    match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None) -> RegistrationBundle:
+                    match_kwargs: Optional[dict] = None, provenance: Optional[dict] = None,
+                    ref_ground_model=None, parallax_dem=None, parallax_height_at: Optional[str] = None,
+                    rematch=None) -> RegistrationBundle:
     """One registration end to end -> RegistrationResult, THE Part 2 -> Part 3 handoff.
 
     Match, fine stage, all five control gates, quality tier. A bad or impossible pair is a RESULT,
@@ -512,7 +514,8 @@ def register_bundle(src, ref, *, matcher: str = "sift", device: Optional[str] = 
                       method=matcher, regime="same_modal_normal", stage="direct")
     h, w = s_img.shape[:2]
     fr = fine_stage(ms, s_img, r_img, centre=(w / 2.0, h / 2.0), expected_scale=expected_scale,
-                    ground_model=ground_model, dem=dem, flags=flags)
+                    ground_model=ground_model, dem=dem, flags=flags, rematch=rematch, parallax_dem=parallax_dem,
+                    parallax_height_at=parallax_height_at, ref_ground_model=ref_ground_model)
     gates = control_gates.run_all(control_gates.pipeline_from(matcher, device=device, gsd_m=float(src.gsd_m or 1.0),
                                                               stages=flags, **match_kwargs),
                                   s_img, r_img, src, ref)

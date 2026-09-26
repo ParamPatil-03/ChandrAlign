@@ -116,9 +116,7 @@ def write_unregistered(out_dir: str | Path, failure: dict, *, extra: Optional[di
 def result_record(bundle) -> dict:
     """The run summary written as result.json (and returned by the API)."""
     result = bundle.result
-    geometry = ("parallax" if bundle.parallax is not None else
-                "tps" if bundle.tps is not None else
-                result.model.kind if result.model is not None else None)
+    geometry = warp.best_geometry(bundle)[0] if result.model is not None or bundle.geometry else None
     return {
         "confidence_tier": result.confidence_tier,
         "metrics": _jsonable(result.metrics),

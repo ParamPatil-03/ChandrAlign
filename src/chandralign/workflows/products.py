@@ -143,7 +143,8 @@ def _tmc2_tc(tmc, tc, *, windows, device, root, say, overlap) -> ProductRun:
         if rec.get("status") != "registered":
             run.windows.append(WindowRun(rec, failure=_failure(rec, rec.get("status", ""))))
             continue
-        bundle = _timed(_tmc2_tc_bundle(tmc, tc, cap), time.perf_counter() - t0, rec.get("match_seconds"))
+        bundle = _with_accuracy(_timed(_tmc2_tc_bundle(tmc, tc, cap), time.perf_counter() - t0,
+                                       rec.get("match_seconds")), cap["fine"], rec)
         run.windows.append(WindowRun(rec, bundle, src_model=sysm, ref_model=tcm))
     return run
 
@@ -222,7 +223,8 @@ def _ohrc_nac(ohrc, nacm, *, windows, device, root, say, overlap) -> ProductRun:
             run.windows.append(WindowRun(rec, failure=_failure(rec, why)))
             continue
         c = cap[used]
-        bundle = _timed(_ohrc_nac_bundle(ohrc, nacm, c, used, geo), time.perf_counter() - t0, None)
+        bundle = _with_accuracy(_timed(_ohrc_nac_bundle(ohrc, nacm, c, used, geo), time.perf_counter() - t0, None),
+                                c["fine"], routed)
         control_gates.require_gates(bundle.result)
         run.windows.append(WindowRun(rec, bundle, src_model=om, ref_model=_FrameGround(c["ref_model"])))
     _consistency(run.windows)
@@ -347,7 +349,8 @@ def _iirs_wac(iirs, mosaic, *, windows, device, root, say, overlap) -> ProductRu
             run.windows.append(WindowRun(rec, failure=_failure(rec, r.get("status") or rec.get("status", ""))))
             continue
         c = cap[matcher]
-        bundle = _timed(_iirs_wac_bundle(iirs, mosaic, c, matcher, wimg, wok), time.perf_counter() - t0, None)
+        bundle = _with_accuracy(_timed(_iirs_wac_bundle(iirs, mosaic, c, matcher, wimg, wok),
+                                       time.perf_counter() - t0, None), c["fine"], r)
         control_gates.require_gates(bundle.result)
         run.windows.append(WindowRun(rec, bundle, src_model=im, ref_model=_FrameGround(wf.Offset(geo, *c["origin"]))))
     return run
@@ -389,6 +392,33 @@ def _frame_result(result, fr, product_transform, frm: str, to: str):
                                  "matrix": [[float(v) for v in row] for row in np.asarray(product_transform)]}
     return replace(result, model=fr.model, matches=fr.matches, inlier_mask=fr.first.inlier_mask,
                    provenance=prov)
+
+
+def _with_accuracy(bundle, fr, record: dict):
+    """Track B's outputs on the product path (docs/TRACKB_INTERFACE_NOTES.md items 1, 4, 5):
+    - the geometry the fine stage CHOSE by check-point error, so product.warp warps with it;
+    - metrics.rmse_px = that geometry's check-point RMSE (ref px, audit C-03), the old affine
+      residual kept as provenance["accuracy"]["fit_residual_px"];
+    - the RMSE in SOURCE PRODUCT px, composed back through the resampling (src_to_product);
+    - the C-04 cross-check and the I-08 probe check, RECORDED as the evidence workflows record
+      them (their protocols do not grade on them, so neither does the product path)."""
+    from ..evaluate.source_px import jacobian_from_transform, to_source_px
+    from ..pipeline import _accuracy_record, delivered_geometry
+    bundle.geometry, bundle.geometry_model = delivered_geometry(fr)
+    h, w = np.asarray(bundle.ref.array).shape[:2]
+    acc = _accuracy_record(fr, bundle.ref, (w / 2.0, h / 2.0))
+    if acc.get("rmse_px_ref") is not None and bundle.src_to_product is not None:
+        # frame px -> source product px: J of the inverse map (source product px -> frame px)
+        J = jacobian_from_transform(np.linalg.inv(np.asarray(bundle.src_to_product, float)))
+        acc["rmse_px_src_product"] = to_source_px(acc["rmse_px_ref"], J, "exact (src_to_product)")
+    r = bundle.result
+    prov = {**(r.provenance or {}), "accuracy": acc,
+            "crosscheck": {**(record.get("crosscheck") or {"applied": False, "reason": "not recorded"}),
+                           "graded": False},
+            "probe_check": record.get("probe_check")}
+    bundle.result = replace(r, provenance=prov,
+                            metrics=replace(r.metrics, rmse_px=acc.get("rmse_px_ref"), rmse_m=acc.get("rmse_m")))
+    return bundle
 
 
 def _timed(bundle, seconds: float, match_seconds):

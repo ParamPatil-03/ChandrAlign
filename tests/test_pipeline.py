@@ -572,3 +572,21 @@ def test_the_parallax_tps_source_map_inverts_the_model():
     s_back = np.c_[mx[r[:, 1].astype(int), r[:, 0].astype(int)], my[r[:, 1].astype(int), r[:, 0].astype(int)]]
     r_int = np.floor(r)
     assert np.percentile(np.hypot(*(model.predict(s_back, hts) - r_int).T), 95) < 0.1
+
+
+def test_register_bundle_forwards_the_fine_stage_geometry_inputs(monkeypatch):
+    """Track B interface note 2: register_bundle passes ref_ground_model / parallax DEM / rematch
+    through to fine_stage (without ref_ground_model the source model serves both frames)."""
+    from chandralign import pipeline, synth
+    seen = {}
+    real = pipeline.fine_stage
+
+    def spy(*a, **k):
+        seen.update(k)
+        return real(*a, **k)
+    monkeypatch.setattr(pipeline, "fine_stage", spy)
+    src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=7, n_craters=35, shadows=False)
+    marker = object()
+    pipeline.register_bundle(src, ref, matcher="sift", ref_ground_model=marker, parallax_dem=None,
+                             parallax_height_at="ref", rematch=None)
+    assert seen["ref_ground_model"] is marker and seen["parallax_height_at"] == "ref"

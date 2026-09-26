@@ -266,8 +266,18 @@ function showDetail(d) {
 
   const fmt = (v, dgt = 2) => (v === null || v === undefined || Number.isNaN(v)) ? "—" : Number(v).toFixed(dgt);
   const gap = d.stages?.uniformity?.max_delaunay_gap_px;
+  // C-03 / I-08: rmse_px is the check-point RMSE of the DELIVERED geometry (ref px) when Track B's
+  // accuracy record is present; older runs only carry the model's fit residual. C-04: the
+  // independent cross-check verdict is shown beside the tier, never instead of it.
+  const acc = d.provenance?.accuracy;
+  const src = acc?.rmse_px_src_product?.typical ?? acc?.rmse_px_src;
   $("m-rmse").textContent = fmt(m.rmse_px);
-  $("m-rmse-m").textContent = "model fit residual";
+  $("m-rmse-m").textContent = acc
+    ? `check-point RMSE, ${acc.model || "geometry"}` + (acc.p95_px_ref != null ? ` · p95 ${fmt(acc.p95_px_ref)}` : "")
+      + (src != null ? ` · ≈${fmt(src)} source px` : "")
+    : "model fit residual";
+  const xc = d.provenance?.crosscheck;
+  if (xc?.verdict) $("ribbon-pair").textContent += ` · cross-check: ${xc.verdict}` + (xc.graded === false ? " (recorded)" : "");
   $("m-inliers").textContent = m.inlier_count ?? "—";
   $("m-ratio").textContent = "Ratio: " + (m.inlier_ratio != null ? fmt(100 * m.inlier_ratio, 1) + "%" : "—");
   $("m-cov").textContent = m.spatial_coverage != null ? fmt(100 * m.spatial_coverage, 1) : "—";

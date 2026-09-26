@@ -12,6 +12,7 @@ from typing import Any
 from jinja2 import Environment, StrictUndefined
 
 from ..evaluate import control_gates, failure_log
+from .warp import best_geometry
 
 _SOURCES = {"measured", "external", "synthetic"}
 _METRICS = (
@@ -152,8 +153,8 @@ def _bundle_context(bundle, provenance: dict, figures) -> dict:
     result, match = bundle.result, bundle.result.matches
     return _context(result.metrics, result.gates, result.failure_modes, result.confidence_tier,
                     _inputs_from_planes(bundle), match.method, match.regime, match.stage,
-                    "parallax" if bundle.parallax is not None else "tps" if bundle.tps is not None
-                    else result.model.kind if result.model else "not measured",
+                    best_geometry(bundle)[0] if (bundle.geometry or bundle.parallax is not None
+                                                 or bundle.tps is not None or result.model) else "not measured",
                     bundle.stages, provenance, figures)
 
 
