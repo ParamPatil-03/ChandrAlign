@@ -77,6 +77,9 @@ instruments:
     mission: LRO
     role: reference
     modality: multiband
+    # I-09 (audit 2026-09-26): what the pipeline MATCHES is one visible band (the 643 nm mosaic),
+    # so a panchromatic source is same-modality against it. is_cross_modal reads matched_as.
+    matched_as: panchromatic
     kind: multiband
     gsd_m: 100.0
     gsd_range_m: null
@@ -105,6 +108,7 @@ instruments:
     mission: SELENE
     role: reference
     modality: multiband
+    matched_as: panchromatic  # I-09: one MI band is matched (register_to_map MI_BAND_NM), not the cube
     kind: multiband imager
     gsd_m: 20.0
     # 14.81 m on the real MI_MAP_03 tile we hold (MAP_SCALE 0.014806323445 km/px);

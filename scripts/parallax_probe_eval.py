@@ -26,39 +26,8 @@ from scipy.ndimage import map_coordinates  # noqa: E402
 from chandralign.estimate import models  # noqa: E402
 from chandralign.evaluate.run_record import run_record  # noqa: E402
 
-STEP, HALF, SEARCH = 48, 15, 32
-MIN_PEAK, MIN_MARGIN, EXCL_R = 0.6, 0.1, 3
-
-
-def _parabola(a: float, b: float, c: float) -> float:
-    d = a - 2 * b + c
-    return 0.0 if d >= 0 else 0.5 * (a - c) / d
-
-
-def probes(si: np.ndarray, ri: np.ndarray, ok: np.ndarray) -> np.ndarray:
-    """(x, y, dx, dy) per accepted probe: the reference sits at (x + dx, y + dy)."""
-    H, W = si.shape
-    out = []
-    yy, xx = np.mgrid[:2 * SEARCH + 1, :2 * SEARCH + 1]
-    b = HALF + SEARCH
-    for y in range(b, H - b, STEP):
-        for x in range(b, W - b, STEP):
-            if not ok[y - HALF:y + HALF + 1, x - HALF:x + HALF + 1].all():
-                continue
-            t = si[y - HALF:y + HALF + 1, x - HALF:x + HALF + 1]
-            if t.std() < 1e-6:
-                continue
-            r = cv2.matchTemplate(ri[y - b:y + b + 1, x - b:x + b + 1], t, cv2.TM_CCOEFF_NORMED)
-            iy, ix = np.unravel_index(int(np.argmax(r)), r.shape)
-            pk = float(r[iy, ix])
-            if pk < MIN_PEAK or iy in (0, r.shape[0] - 1) or ix in (0, r.shape[1] - 1):
-                continue
-            if pk - float(r[(yy - iy) ** 2 + (xx - ix) ** 2 > EXCL_R ** 2].max()) < MIN_MARGIN:
-                continue
-            dy = iy - SEARCH + _parabola(r[iy - 1, ix], pk, r[iy + 1, ix])
-            dx = ix - SEARCH + _parabola(r[iy, ix - 1], pk, r[iy, ix + 1])
-            out.append((x, y, dx, dy))
-    return np.array(out, float).reshape(-1, 4)
+# The probe itself lives in the library now (audit I-08: the product path grades with it too).
+from chandralign.evaluate.probes import EXCL_R, HALF, MIN_MARGIN, MIN_PEAK, SEARCH, STEP, probes  # noqa: E402,F401
 
 
 def main() -> int:

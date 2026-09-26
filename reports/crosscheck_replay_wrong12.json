@@ -1,0 +1,315 @@
+{
+ "source": "synthetic",
+ "protocol": "docs/crosscheck_protocol.md",
+ "totals": {
+  "missed": 2,
+  "caught_by_other": 2,
+  "caught_by_crosscheck": 8
+ },
+ "runs": [
+  {
+   "method": "aliked-lightglue",
+   "regime": "lighting_+90",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 2.2194,
+   "error_px": 2.219,
+   "tier": "LOW",
+   "failed_gates": [],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 12,
+    "checker_inliers": 6,
+    "checker_tier": "REJECTED",
+    "seconds": 3.89,
+    "verdict": "inconclusive",
+    "reason": "the checker found no confident transform of its own"
+   },
+   "outcome": "missed",
+   "seconds": 14.3
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "lighting_+90",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 2.4907,
+   "error_px": 2.491,
+   "tier": "MEDIUM",
+   "failed_gates": [],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 12,
+    "checker_inliers": 6,
+    "checker_tier": "REJECTED",
+    "seconds": 3.95,
+    "verdict": "inconclusive",
+    "reason": "the checker found no confident transform of its own"
+   },
+   "outcome": "missed",
+   "seconds": 15.0
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "lighting_+90",
+   "seed": 29,
+   "bench_wrong": true,
+   "bench_error_px": 2.7591,
+   "error_px": 2.759,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "perturbation_sensitivity"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 6,
+    "checker_inliers": 6,
+    "checker_tier": "REJECTED",
+    "seconds": 3.92,
+    "verdict": "inconclusive",
+    "reason": "the checker found no confident transform of its own"
+   },
+   "outcome": "caught_by_other",
+   "seconds": 10.5
+  },
+  {
+   "method": "minima-loftr",
+   "regime": "lighting_+90",
+   "seed": 3,
+   "bench_wrong": true,
+   "bench_error_px": 2.8187,
+   "error_px": 2.819,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "perturbation_sensitivity"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 16,
+    "checker_inliers": 8,
+    "checker_tier": "REJECTED",
+    "seconds": 3.89,
+    "verdict": "inconclusive",
+    "reason": "the checker found no confident transform of its own"
+   },
+   "outcome": "caught_by_other",
+   "seconds": 9.1
+  },
+  {
+   "method": "aliked-lightglue",
+   "regime": "lighting_opposite",
+   "seed": 3,
+   "bench_wrong": true,
+   "bench_error_px": 5.7091,
+   "error_px": 5.709,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1142,
+    "checker_inliers": 932,
+    "checker_tier": "LOW",
+    "seconds": 3.89,
+    "verdict": "flag",
+    "gap_px": 5.661,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 6.3
+  },
+  {
+   "method": "aliked-lightglue",
+   "regime": "lighting_opposite",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 5.0117,
+   "error_px": 5.012,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1104,
+    "checker_inliers": 918,
+    "checker_tier": "LOW",
+    "seconds": 3.91,
+    "verdict": "flag",
+    "gap_px": 5.146,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 8.1
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "lighting_opposite",
+   "seed": 3,
+   "bench_wrong": true,
+   "bench_error_px": 3.9468,
+   "error_px": 3.947,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1142,
+    "checker_inliers": 932,
+    "checker_tier": "LOW",
+    "seconds": 3.92,
+    "verdict": "flag",
+    "gap_px": 4.048,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 8.8
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "lighting_opposite",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 3.9609,
+   "error_px": 3.961,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1104,
+    "checker_inliers": 918,
+    "checker_tier": "LOW",
+    "seconds": 3.98,
+    "verdict": "flag",
+    "gap_px": 3.938,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 11.9
+  },
+  {
+   "method": "aliked-lightglue",
+   "regime": "cross_modal",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 5.3624,
+   "error_px": 5.362,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1356,
+    "checker_inliers": 1218,
+    "checker_tier": "LOW",
+    "seconds": 3.98,
+    "verdict": "flag",
+    "gap_px": 5.343,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 7.9
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "cross_modal",
+   "seed": 3,
+   "bench_wrong": true,
+   "bench_error_px": 4.226,
+   "error_px": 4.226,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1410,
+    "checker_inliers": 1298,
+    "checker_tier": "LOW",
+    "seconds": 3.93,
+    "verdict": "flag",
+    "gap_px": 4.232,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 8.9
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "cross_modal",
+   "seed": 11,
+   "bench_wrong": true,
+   "bench_error_px": 4.5842,
+   "error_px": 4.584,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1356,
+    "checker_inliers": 1218,
+    "checker_tier": "LOW",
+    "seconds": 3.94,
+    "verdict": "flag",
+    "gap_px": 4.629,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 12.0
+  },
+  {
+   "method": "matchanything-eloftr",
+   "regime": "cross_modal",
+   "seed": 29,
+   "bench_wrong": true,
+   "bench_error_px": 3.7379,
+   "error_px": 3.738,
+   "tier": "REJECTED",
+   "failed_gates": [
+    "independent_crosscheck"
+   ],
+   "crosscheck": {
+    "applied": true,
+    "checker": "rift2",
+    "family": "phase-congruency (classical)",
+    "checker_matches": 1376,
+    "checker_inliers": 1252,
+    "checker_tier": "LOW",
+    "seconds": 3.97,
+    "verdict": "flag",
+    "gap_px": 3.784,
+    "flag_px": 2.0
+   },
+   "outcome": "caught_by_crosscheck",
+   "seconds": 10.7
+  }
+ ]
+}

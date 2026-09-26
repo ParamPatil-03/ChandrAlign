@@ -124,7 +124,7 @@ def test_the_models_the_denylist_missed_are_blocked(name):
         assert_allowed(name, ship_mode=True)
 
 
-@pytest.mark.parametrize("name", ["roma", "minima-roma", "ufm", "romav2", "tiny-roma"])
+@pytest.mark.parametrize("name", ["roma", "minima-roma", "ufm", "tiny-roma"])   # romav2 has a named reason (DINOv3)
 def test_a_model_nobody_audited_is_refused_in_ship_mode(name):
     from chandralign.matching.licence import LicenceRestrictedError, assert_allowed
     with pytest.raises(LicenceRestrictedError, match="allowlist"):
@@ -139,12 +139,48 @@ def test_every_shippable_model_is_allowed():
         assert_allowed(name, ship_mode=True)
 
 
-def test_every_installed_vismatch_model_off_the_allowlist_is_refused():
-    vismatch = pytest.importorskip("vismatch")
-    from chandralign.matching.licence import LicenceRestrictedError, assert_allowed, shippable
-    allowed = set(shippable())
-    for name in vismatch.available_models:
-        if name in allowed:
-            continue
-        with pytest.raises(LicenceRestrictedError):
-            assert_allowed(name, ship_mode=True)
+# (superseded at the Track A/B merge: one allowlist, licence.allowlist(); see the test below)
+# ---------------------------------------------------------------------------
+# Audit I-06: an ALLOWLIST, not a denylist
+# ---------------------------------------------------------------------------
+def test_every_vismatch_model_off_the_allowlist_is_refused_in_ship_mode():
+    import pytest as _pt
+    vismatch = _pt.importorskip("vismatch")
+    from chandralign.matching import licence
+    names = vismatch.available_models
+    names = names() if callable(names) else names
+    allowed = {n.lower() for n in licence.allowlist()}
+    for n in names:
+        if n.lower() in allowed:
+            licence.assert_allowed(n, ship_mode=True)            # audited: must pass
+        else:
+            with _pt.raises(licence.LicenceRestrictedError):
+                licence.assert_allowed(n, ship_mode=True)
+
+
+def test_the_four_models_the_old_denylist_passed_are_refused_with_their_reason():
+    from chandralign.matching import licence
+    for n, word in (("master", "NC-SA"), ("duster", "NC-SA"), ("gim-lightglue", "superpoint"), ("omniglue", "SuperPoint")):
+        assert word.lower() in (licence.restriction_reason(n) or "").lower(), n
+    assert licence.restriction_reason("eloftr") is None and licence.restriction_reason("rift2") is None
+
+
+def test_benchmark_mode_is_explicit_and_recorded(monkeypatch):
+    """G-03: unaudited models run only with an explicit switch, and every report then says ship_mode false."""
+    import pytest as _pt
+    from chandralign import config
+    from chandralign.evaluate.run_record import run_record
+    from chandralign.matching import licence
+    with _pt.raises(licence.LicenceRestrictedError):
+        licence.assert_allowed("minima-roma")
+    monkeypatch.setitem(config.load("default"), "ship_mode", True)
+    with _pt.warns(UserWarning):
+        licence.enable_benchmark_mode()
+    licence.assert_allowed("minima-roma")
+    assert run_record()["ship_mode"] is False
+
+
+def test_dense_models_get_the_larger_sample_budget():
+    from chandralign.matching import adapter
+    assert adapter.is_dense("minima-roma") and adapter.is_dense("gim-dkm") and adapter.is_dense("ufm")
+    assert not adapter.is_dense("eloftr") and not adapter.is_dense("minima-loftr")

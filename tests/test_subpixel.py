@@ -171,7 +171,28 @@ def test_iteration_keeps_the_sign_convention():
 
 
 def test_the_default_method_is_one_that_met_prec06():
-    """configs/default.yaml's subpixel.method must name a real, measured method."""
+    """configs/default.yaml's subpixel.method must name a real, measured method: ncc_gaussian_iter
+    and ecc met PREC-06 on translations; lsm met audit C-02 on a known non-rigid warp
+    (docs/refinement_geometry_protocol.md), which a pure translation cannot test."""
     from chandralign import config
-    assert config.get("subpixel.method") in ("ncc_gaussian_iter", "ecc")
+    assert config.get("subpixel.method") in ("ncc_gaussian_iter", "ecc", "lsm")
+    for m in config.get("subpixel.fallbacks", []):
+        assert m in sp.METHODS
     assert config.get("subpixel.method") in sp.METHODS
+
+
+def test_the_mind_fallback_only_touches_points_intensity_refused(monkeypatch):
+    """G-05: with representation 'auto', a point intensity refined is left exactly as intensity left it."""
+    import cv2
+    from chandralign import config
+    rng = np.random.default_rng(2)
+    a = cv2.GaussianBlur(rng.random((300, 300)).astype(np.float32), (0, 0), 2.0)
+    b = cv2.warpAffine(a, np.float32([[1, 0, 0.4], [0, 1, -0.3]]), (300, 300), flags=cv2.INTER_CUBIC)
+    g = np.arange(60, 250, 30, dtype=float)
+    s = np.stack(np.meshgrid(g, g), -1).reshape(-1, 2)
+    r0 = s.copy()
+    out_i, mv_i, info_i = sp.refine_points(a, b, s, r0, return_info=True)
+    monkeypatch.setitem(config.load("default")["subpixel"], "representation", "auto")
+    out_a, mv_a, info_a = sp.refine_points(a, b, s, r0, return_info=True)
+    assert np.array_equal(out_i[mv_i], out_a[mv_i])
+    assert set(info_a["method"][mv_a & ~mv_i]) <= {"mind"}

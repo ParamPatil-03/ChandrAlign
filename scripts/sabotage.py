@@ -255,7 +255,7 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "corners that were never refined are counted": (
                 "    use = refined & sane", "    use = sane"),
             "a refinement may relocate a match": (
-                "np.hypot(est.dx, est.dy) <= max_move", "True"),
+                "or np.hypot(est.dx, est.dy) > max_move:", "or False:"),
             "iteration adds nothing (first estimate only)": (
                 "        d = d + r.d", "        d = d"),
             "iteration resamples in the wrong direction": (
@@ -292,6 +292,108 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
                 "                                      ransacReprojThreshold=float(thresh),",
                 "    matrix, mask = cv2.findHomography(src, ref, method=flag,\n"
                 "                                      ransacReprojThreshold=25.0,"),
+        },
+    ),
+    "pipeline": (
+        "src/chandralign/pipeline.py",
+        "tests/test_pipeline.py",
+        {
+            "the fine stage ignores the estimator's refusal (I-02)": (
+                "    if not first.ok:\n        return FineResult(False,",
+                "    if False:\n        return FineResult(False,"),
+            "refinement ignores the model's Jacobian (C-02)": (
+                "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr, model=model)",
+                "cr, moved = subpixel.refine_points(src_img, ref_img, cs, cr)"),
+            "reference points go through the source ground model (I-10)": (
+                "src_model=ground_model, ref_model=ref_gm)", "src_model=ground_model, ref_model=ground_model)"),
+            "the reported accuracy is the fit residual again (C-03)": (
+                '    accuracy = {"checkpoint_rmse_px_ref": sel.checkpoint_rmse_px,',
+                '    accuracy = {"checkpoint_rmse_px_ref": sel.candidates["affine"]["checkpoint_rmse_px"],'),
+        },
+    ),
+    "probes": (
+        "src/chandralign/evaluate/probes.py",
+        "tests/test_probes.py",
+        {
+            "probes skip the resample through the geometry (I-08 fix)": (
+                "    pr = probes(s, r_in_s, ok)", "    pr = probes(s, r, ok)"),
+        },
+    ),
+    "tier-accuracy": (
+        "src/chandralign/evaluate/quality.py",
+        "tests/test_quality_uniformity.py",
+        {
+            "the accuracy signal is measured but ignored (I-08)": (
+                '        per_signal["accuracy"], why = accuracy_tier(accuracy)',
+                '        why = accuracy_tier(accuracy)[1]'),
+            "an unmeasured accuracy allows HIGH (I-08)": (
+                '        return "MEDIUM", f"accuracy unmeasured', '        return "HIGH", f"accuracy unmeasured'),
+        },
+    ),
+    "routing-fallbacks": (
+        "src/chandralign/matching/routing.py",
+        "tests/test_routing.py",
+        {
+            "the fallback loop runs every candidate, accepted or not (I-09)": (
+                "        if ok(results[name]):\n            break", "        if False:\n            break"),
+        },
+    ),
+    "modality": (
+        "src/chandralign/config.py",
+        "tests/test_routing.py",
+        {
+            "cross-modality from the label modality, not the matched band (I-09)": (
+                'return a.get("matched_as", a.get("modality", "unknown")) != b.get("matched_as", b.get("modality", "unknown"))',
+                'return a.get("modality", "unknown") != b.get("modality", "unknown")'),
+        },
+    ),
+    "licence": (
+        "src/chandralign/matching/licence.py",
+        "tests/test_licence_gate.py",
+        {
+            "the licence gate is a denylist again (I-06)": (
+                "    if name not in [n.lower() for n in allowlist()]:", "    if False:"),
+            "a known non-commercial model loses its named reason (I-06)": (
+                '    "master": "NAVER MASt3R weights: CC BY-NC-SA 4.0",\n', ""),
+        },
+    ),
+    "crosscheck-wiring": (
+        "src/chandralign/pipeline.py",
+        "tests/test_crosscheck.py",
+        {
+            "the cross-check verdict never reaches the gates (C-04)": (
+                "            gates.results.append(xgate)", "            pass"),
+            "an inconclusive cross-check lets HIGH through (C-04)": (
+                "        if quality.TIER_ORDER.index(q.tier) < quality.TIER_ORDER.index(cap):",
+                "        if False:"),
+        },
+    ),
+    "crosscheck-gate": (
+        "src/chandralign/evaluate/control_gates.py",
+        "tests/test_crosscheck.py",
+        {
+            "the cross-check always passes (C-04)": (
+                "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w))",
+                "    gate = crosscheck_gate(np.asarray(primary_matrix, float), matrix, accepted, (h, w), flag_px=1e9)"),
+            "the cross-check compares affines again, not the delivered geometry (C-04 am. 1)": (
+                "    if predict is not None:\n        # Amendment 1", "    if False:\n        # Amendment 1"),
+            "a checker with no answer of its own still votes (C-04)": (
+                '    rec.update(checker_matches=n,', '    accepted = accepted or n == 0\n    rec.update(checker_matches=n,'),
+        },
+    ),
+    "selection": (
+        "src/chandralign/estimate/selection.py",
+        "tests/test_pipeline.py",
+        {
+            "parallax + residual TPS is never delivered (G-06)": (
+                '            chosen = "parallax_tps"\n', "            pass\n"),
+            "a richer model never displaces the affine (I-01)": (
+                "                chosen = name\n", "                pass\n"),
+            "cross-validation scores models on their own fit points (C-03)": (
+                "        m = fit(tr)\n", "        m = fit(np.ones_like(tr))\n"),
+            "the delivered model is fitted without IRLS reweighting (G-02)": (
+                "        w_new = _huber_weights(np.hypot(*(X @ B - y).T))",
+                "        w_new = w"),
         },
     ),
     "quality": (

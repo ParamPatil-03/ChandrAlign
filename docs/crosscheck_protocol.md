@@ -1,0 +1,106 @@
+# Protocol: the independent cross-check gate in the product path (audit C-04). Frozen before measuring.
+
+## Question
+
+`control_gates.crosscheck_gate` catches consistently wrong answers that the five control gates pass by
+design (RIFT2 caught 8 of 12 wrong-but-accepted synthetic results; the standard gates caught 2 of 12,
+`reports/rift_crosscheck.json`). But nothing called it. Does it keep that catch rate when it runs inside
+`pipeline.register_bundle`, and what does it cost on real, correct windows?
+
+## The rule under test (fixed now)
+
+- **Checker:** RIFT2 (`matching/rift.py`, our own implementation, licence-clear), run on the same
+  ImagePlanes as the primary matcher, whenever the primary is not RIFT2. When the primary IS RIFT2 there
+  is no checker from a different family in the product yet: the gate records "no checker", treated as
+  inconclusive (below).
+- **The checker's own verdict:** `robust.estimate` on its matches, then `quality.assess` (inliers, ratio,
+  coverage, geometry, scale; no control gates). It counts only if the estimator accepted AND the tier is
+  not REJECTED. This is exactly the rule `scripts/rift_crosscheck.py` measured.
+- **Agreement:** `crosscheck_gate`, the RMS transform gap over a 16x16 grid of source pixels, flagged
+  above `gates.crosscheck_flag_px` = 2.0 px (unchanged from the measured value).
+- **Flag:** the gate `independent_crosscheck` fails, and the result is REJECTED with failure mode 12.
+- **Checker cannot lock:** "inconclusive". This is not a pass and not a fail: the tier is capped at
+  `gates.crosscheck_inconclusive_cap` = **MEDIUM**. HIGH requires independent confirmation; LOW and MEDIUM
+  results are unchanged.
+- Config switch `gates.crosscheck`, default **on**.
+
+## Measurements
+
+1. **Synthetic replay (the audit's bar).** Every (method, regime, seed) that `reports/rift_crosscheck.json`
+   counts as accepted is re-run through `register_bundle(matcher=method)` on the same
+   `synth.make_pair` inputs (`scripts/bench_rift.py` REGIMES, seeds 3/11/29, 512 px), with the gate on.
+   Truth grades only. Reported:
+   - **caught:** the 12 wrong-but-accepted cases that come back REJECTED. The ones rejected BY THE
+     CROSS-CHECK are counted separately from those rejected by any other gate.
+   - **false alarms:** correct results (< 2 px) that the cross-check flags.
+   - **Bar:** caught by the cross-check >= **8/12**.
+2. **Real windows (false-alarm and inconclusive rates):** the committed TMC-2 -> TC (15 windows), OHRC -> NAC
+   (25) and IIRS -> WAC (5) windows, with the cross-check computed on each window's fine-stage frame and
+   recorded next to the window's existing result. The success rules of those scripts are NOT changed by this
+   measurement. There is no bar: the rates are reported as measured. A flag on a window the other
+   evidence (probes, MI) calls correct is a false alarm.
+3. **Periodic-aliasing trap:** two DIFFERENT real crops of similarly spaced repetitive terrain (not
+   `np.roll` of one crop, which is a true correspondence), registered through `register_bundle` with the
+   default matcher. Bar: not HIGH or MEDIUM with a wrong transform; REJECTED, or capped by the gate.
+
+## Result 1: synthetic replay end to end (2026-09-26): bar MET
+
+`scripts/crosscheck_replay.py --out reports/crosscheck_replay.json` (commit `76b4453` code): 105 accepted cases
+of `reports/rift_benchmark.json` re-run through `register_bundle`, graded by the exact transform.
+
+| outcome | count |
+|---|---|
+| wrong, flagged by the cross-check (REJECTED) | **8 / 12** (bar >= 8) |
+| wrong, REJECTED by another gate (perturbation) | 2 / 12 |
+| wrong, not rejected | 2 / 12: +90 deg lighting, 2.2 px (LOW) and 2.5 px (MEDIUM); RIFT2 abstained |
+| correct, flagged (false alarm) | **0 / 64** checked |
+| correct, confirmed | 64 (49 HIGH, 11 MEDIUM, 4 LOW) |
+| correct, checker inconclusive (tier capped at MEDIUM) | 29 (+30 deg lighting 15, 2x scale 12, +90 deg 2) |
+
+Before C-04, the product path accepted all 12 wrong results. After it, 10 are REJECTED, and the 2 remaining are
+2.2-2.5 px wrong and neither is HIGH. The cost is the cap: a correct result whose regime RIFT2 cannot handle (+30 deg
+lighting, a 2x scale gap) cannot be HIGH. That is the rule as frozen ("HIGH needs an independent method to
+agree"). A second checker family (e.g. the MIND dense step) would recover them, and is listed as follow-up.
+
+Measurements 2 (real windows) and 3 (periodic trap): below, once run.
+
+## Amendment 1 (2026-09-26): compare the checker with the DELIVERED geometry, not affine with affine
+
+**Observation (measurement 2, first 9 TMC-2 -> TC windows of the Track B batch, snapshot `db3a350`).** The gate
+flagged **all 4 hilly N00 windows** (transform gap 2.7-7.1 px) and agreed on **all 5 flat windows**
+(0.6-1.6 px). On those same hilly windows the matcher-free probes put the delivered TPS at p50 ~0.2 /
+p95 0.70-0.81 fine px, while the primary AFFINE itself is off by p95 7.7-15.7 px. The windows are correct.
+The gate was comparing two affines on terrain where no affine is the geometry (26 deg parallax on relief),
+so correct registrations would be REJECTED in the product. These are false alarms caused by the statistic,
+not by the checker.
+
+**Amended statistic.** When the checker is accepted (the rule is unchanged), its own inlier matches are
+predicted by the DELIVERED geometry (`pipeline.delivered_geometry`: affine, TPS, or parallax with DEM
+heights), and the gate uses the **median residual** in reference px, flagged above
+`gates.crosscheck_flag_px` = 2.0 (unchanged). The affine-vs-affine gap is still recorded, as
+`affine_gap_px`. A consistently wrong primary delivers a wrong geometry, which the checker's correct matches
+contradict, so the catch mechanism is the same. The abstain and inconclusive rules are unchanged.
+
+**Re-measured, because it changed after results were seen:** measurement 1 (the full synthetic replay, bar
+>= 8/12, false alarms reported) and measurement 2 (every real window, in a second batch). The first batch's
+flags are kept as the record of the old statistic.
+
+## Result after amendment 1 (2026-09-26): both measurements re-run
+
+**Measurement 1, synthetic replay** (batch 2, snapshot `74171b3`; `reports/crosscheck_replay_am1.json`): **8/12**
+wrong-but-accepted results caught by the cross-check (bar >= 8, **met**), 10/12 REJECTED in total, **0/64 false
+alarms**. Identical to the pre-amendment replay: the statistic change cost no catches.
+
+**Measurement 2, real windows** (all rates as measured; there is no bar):
+
+| pairing | statistic | agree | flag | inconclusive | false alarms |
+|---|---|---|---|---|---|
+| TMC-2 -> TC (15) | affine vs affine (batch 1) | 7 | **7** (all hilly; probes say correct) | 1 | 7 |
+| TMC-2 -> TC (15) | **amended** (batch 2) | 14 | **0** | 1 | **0** |
+| OHRC -> NAC (routed, 24) | amended | 5 | 0 | 19 (RIFT2 cannot lock under OHRC lighting) | 0 |
+| IIRS -> WAC (xoftr, 5) | amended | 2 | 0 | 3 | 0 |
+| TMC-2 -> TC fresh (5, I-16) | amended | 5 | 0 | 0 | 0 |
+
+**Measurement 3 (periodic-aliasing trap): not run.** No pair of DIFFERENT real crops with matching repetitive
+spacing was identified in the held products in the time available; it is a follow-up
+(docs/trackb_blocked_items.md).

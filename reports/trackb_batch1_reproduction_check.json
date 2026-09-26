@@ -1,0 +1,2993 @@
+{
+ "source": "measured",
+ "run": {
+  "command": "python scripts/verify_reproduction.py C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/batch/out --out C:/Users/524ta/AppData/Local/Temp/claude/c--Users-524ta-OneDrive-Desktop-sih/bfdc500d-8cdd-4769-abf3-54e29021050b/scratchpad/analysis/repro_batch1.json",
+  "commit": null,
+  "uncommitted_changes": null,
+  "utc": "2026-09-26T05:03:15+00:00",
+  "ship_mode": true
+ },
+ "tolerances": {
+  "ks_err_px": 0.001,
+  "offset_m": 0.01,
+  "parallax_rel": 0.0001,
+  "inliers_rel": 0.0,
+  "z": 0.01,
+  "shift_err_px": 0.001,
+  "geo_dis_m": 0.01
+ },
+ "tol_scale": 1.0,
+ "summary": {
+  "tmc2_tc": {
+   "compared": 15,
+   "not_reproduced": 0,
+   "missing": 0
+  },
+  "ohrc_nac": {
+   "compared": 25,
+   "not_reproduced": 8,
+   "missing": 0
+  },
+  "iirs_wac": {
+   "compared": 5,
+   "not_reproduced": 0,
+   "missing": 0
+  },
+  "iirs_nac": {
+   "compared": 9,
+   "not_reproduced": 0,
+   "missing": 0
+  },
+  "tmc2_nac": {
+   "compared": 45,
+   "not_reproduced": 0,
+   "missing": 0
+  }
+ },
+ "details": {
+  "tmc2_tc": {
+   "rows": [
+    {
+     "window": "(1562, 3232)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      7899,
+      7899
+     ],
+     "ks_err": [
+      1.292,
+      1.292
+     ],
+     "parallax_p": [
+      0.06774157143143344,
+      0.06774157143143344
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(1562, 768)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      6654,
+      6654
+     ],
+     "ks_err": [
+      0.144,
+      0.144
+     ],
+     "parallax_p": [
+      0.06791496595007614,
+      0.06791496595007614
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(1562, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      8743,
+      8743
+     ],
+     "ks_err": [
+      0.064,
+      0.064
+     ],
+     "parallax_p": [
+      0.06661288914316808,
+      0.06661288914316808
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(16000, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      13770,
+      13770
+     ],
+     "ks_err": [
+      0.041,
+      0.041
+     ],
+     "parallax_p": [
+      0.05834412138339218,
+      0.05834412138339218
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(18750, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      15145,
+      15145
+     ],
+     "ks_err": [
+      0.079,
+      0.079
+     ],
+     "parallax_p": [
+      0.024133130754214215,
+      0.024133130754214215
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(21500, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      15021,
+      15021
+     ],
+     "ks_err": [
+      0.177,
+      0.177
+     ],
+     "parallax_p": [
+      0.05161760649235879,
+      0.05161760649235879
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(3125, 3232)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      7571,
+      7571
+     ],
+     "ks_err": [
+      0.959,
+      0.959
+     ],
+     "parallax_p": [
+      0.0677311545745383,
+      0.0677311545745383
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(3125, 768)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      7428,
+      7428
+     ],
+     "ks_err": [
+      0.078,
+      0.078
+     ],
+     "parallax_p": [
+      0.0679364188046441,
+      0.0679364188046441
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(3125, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      6941,
+      6941
+     ],
+     "ks_err": [
+      0.119,
+      0.119
+     ],
+     "parallax_p": [
+      0.06774796306901042,
+      0.06774796306901042
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(4687, 3232)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "MEDIUM",
+      "MEDIUM"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      5566,
+      5566
+     ],
+     "ks_err": [
+      0.028,
+      0.028
+     ],
+     "parallax_p": [
+      0.06804926597693761,
+      0.06804926597693761
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(4687, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      7742,
+      7742
+     ],
+     "ks_err": [
+      0.208,
+      0.208
+     ],
+     "parallax_p": [
+      0.06711357910289095,
+      0.06711357910289095
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(52000, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      15810,
+      15810
+     ],
+     "ks_err": [
+      0.081,
+      0.081
+     ],
+     "parallax_p": [
+      0.035539005332169894,
+      0.035539005332169894
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(54750, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      14992,
+      14992
+     ],
+     "ks_err": [
+      0.12,
+      0.12
+     ],
+     "parallax_p": [
+      0.06177257805855281,
+      0.06177257805855281
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(57500, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      15140,
+      15140
+     ],
+     "ks_err": [
+      0.022,
+      0.022
+     ],
+     "parallax_p": [
+      0.05097907413831679,
+      0.05097907413831679
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "(6250, None)",
+     "status": [
+      "registered",
+      "registered"
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "gates": [
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      },
+      {
+       "null_constant_grey": true,
+       "null_random_noise": true,
+       "perturbation_sensitivity": true,
+       "identity": true,
+       "masks_independent": true
+      }
+     ],
+     "inliers": [
+      7684,
+      7684
+     ],
+     "ks_err": [
+      0.078,
+      0.078
+     ],
+     "parallax_p": [
+      0.06714773116047928,
+      0.06714773116047928
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "ohrc_nac": {
+   "rows": [
+    {
+     "window": "('M102014464RC', 2048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      3188,
+      3188
+     ],
+     "ks_err": [
+      0.061,
+      0.061
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 20798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      3162,
+      3162
+     ],
+     "ks_err": [
+      0.045,
+      0.045
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 39798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      3183,
+      3183
+     ],
+     "ks_err": [
+      0.035,
+      0.035
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 58548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      3066,
+      3066
+     ],
+     "ks_err": [
+      0.026,
+      0.026
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 77548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1458,
+      1458
+     ],
+     "ks_err": [
+      0.528,
+      0.528
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 46548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1783,
+      1783
+     ],
+     "ks_err": [
+      0.433,
+      0.433
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 48798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1137,
+      1137
+     ],
+     "ks_err": [
+      0.374,
+      0.374
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 51048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1040,
+      1040
+     ],
+     "ks_err": [
+      0.85,
+      0.85
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 53298)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1950,
+      1950
+     ],
+     "ks_err": [
+      0.313,
+      0.313
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 55548)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "eloftr",
+      "eloftr"
+     ],
+     "inliers": [
+      1686,
+      1686
+     ],
+     "ks_err": [
+      0.596,
+      0.596
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 11048)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      279,
+      279
+     ],
+     "ks_err": [
+      0.36,
+      0.36
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M109080308LC', 15798)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      251,
+      251
+     ],
+     "ks_err": [
+      0.736,
+      0.736
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 20298)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      506,
+      506
+     ],
+     "ks_err": [
+      0.53,
+      0.53
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M109080308LC', 2048)",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      386,
+      386
+     ],
+     "ks_err": [
+      0.246,
+      0.246
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M109080308LC', 6548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      551,
+      551
+     ],
+     "ks_err": [
+      1.337,
+      1.337
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M1417360906LC', 38798)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 48548)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      214,
+      214
+     ],
+     "ks_err": [
+      0.656,
+      0.656
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 58048)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      200,
+      200
+     ],
+     "ks_err": [
+      2.177,
+      2.177
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 67798)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      85,
+      85
+     ],
+     "ks_err": [
+      2.498,
+      2.498
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', 77548)",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      "REJECTED",
+      "REJECTED"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      148,
+      148
+     ],
+     "ks_err": [
+      3.089,
+      3.089
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 13548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      6840,
+      6840
+     ],
+     "ks_err": [
+      0.141,
+      0.141
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 19548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      6407,
+      6407
+     ],
+     "ks_err": [
+      0.076,
+      0.076
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 2048)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      5148,
+      5148
+     ],
+     "ks_err": [
+      0.408,
+      0.408
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 25298)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      4971,
+      4971
+     ],
+     "ks_err": [
+      0.051,
+      0.051
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 7798)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      4437,
+      4437
+     ],
+     "ks_err": [
+      0.675,
+      0.675
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    }
+   ],
+   "not_reproduced": [
+    {
+     "window": "('M109080308LC', 11048)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      279,
+      279
+     ],
+     "ks_err": [
+      0.36,
+      0.36
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M109080308LC', 20298)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      506,
+      506
+     ],
+     "ks_err": [
+      0.53,
+      0.53
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M109080308LC', 6548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      551,
+      551
+     ],
+     "ks_err": [
+      1.337,
+      1.337
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 13548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      6840,
+      6840
+     ],
+     "ks_err": [
+      0.141,
+      0.141
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 19548)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      6407,
+      6407
+     ],
+     "ks_err": [
+      0.076,
+      0.076
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 2048)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      5148,
+      5148
+     ],
+     "ks_err": [
+      0.408,
+      0.408
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 25298)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      4971,
+      4971
+     ],
+     "ks_err": [
+      0.051,
+      0.051
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    },
+    {
+     "window": "('M175124932LC', 7798)",
+     "success": [
+      true,
+      false
+     ],
+     "changed": [
+      "success"
+     ],
+     "tier": [
+      "LOW",
+      "LOW"
+     ],
+     "used": [
+      "minima-loftr",
+      "minima-loftr"
+     ],
+     "inliers": [
+      4437,
+      4437
+     ],
+     "ks_err": [
+      0.675,
+      0.675
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": false
+    }
+   ]
+  },
+  "iirs_wac": {
+   "rows": [
+    {
+     "window": "1856",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      1338,
+      1338
+     ],
+     "ks_err": [
+      0.063,
+      0.063
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "2368",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      1389,
+      1389
+     ],
+     "ks_err": [
+      0.021,
+      0.021
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "2880",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      1326,
+      1326
+     ],
+     "ks_err": [
+      0.033,
+      0.033
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "3392",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      1269,
+      1269
+     ],
+     "ks_err": [
+      0.03,
+      0.03
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "3904",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      "HIGH",
+      "HIGH"
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      1287,
+      1287
+     ],
+     "ks_err": [
+      0.021,
+      0.021
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "iirs_nac": {
+   "rows": [
+    {
+     "window": "('M1415013176LC', (0, 13266))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      0.0,
+      0.0
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1415013176LC', (13266, 26533))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      0.0,
+      0.0
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1415013176LC', (26533, 39800))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      0.0,
+      0.0
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (34800, 40600))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (40600, 46400))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M1417360906LC', (46400, 52200))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (0, 17400))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (17400, 34800))",
+     "success": [
+      false,
+      false
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      null,
+      null
+     ],
+     "offset_diff_m": null,
+     "reproduced": true
+    },
+    {
+     "window": "('M172765160RC', (34800, 52200))",
+     "success": [
+      true,
+      true
+     ],
+     "tier": [
+      null,
+      null
+     ],
+     "used": [
+      null,
+      null
+     ],
+     "inliers": [
+      null,
+      null
+     ],
+     "ks_err": [
+      0.0,
+      0.0
+     ],
+     "offset_diff_m": 0.0,
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  },
+  "tmc2_nac": {
+   "rows": [
+    {
+     "window": "('M102000149LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102000149LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102000149LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102000149LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102000149LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 0.5)",
+     "success": [
+      false,
+      false
+     ],
+     "locked": [
+      false,
+      false
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M102014464RC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M104362199LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M104362199LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M104362199LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M104362199LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M104362199LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M106719774LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M111443315RC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M111443315RC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M111443315RC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M111443315RC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M111443315RC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M117338434LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M117338434LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M117338434LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M117338434LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M117338434LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M122054682LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M122054682LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M122054682LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M122054682LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M122054682LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M131494509LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M131494509LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M131494509LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M131494509LC', 0.6667)",
+     "success": [
+      false,
+      false
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M131494509LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 0.1667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 0.3333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 0.5)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 0.6667)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    },
+    {
+     "window": "('M175124932LC', 0.8333)",
+     "success": [
+      true,
+      true
+     ],
+     "locked": [
+      true,
+      true
+     ],
+     "z": [
+      null,
+      null
+     ],
+     "shift_err": [
+      null,
+      null
+     ],
+     "geo_dis_m": [
+      null,
+      null
+     ],
+     "reproduced": true
+    }
+   ],
+   "not_reproduced": []
+  }
+ }
+}

@@ -362,3 +362,213 @@ def test_a_registration_of_synthetic_planes_is_labelled_synthetic():
     from chandralign.pipeline import register_bundle
     src, ref, _ = synth.make_pair(out_shape=(256, 256), shift=(3.4, -2.2), seed=7, n_craters=35, shadows=False)
     assert register_bundle(src, ref, matcher="sift").result.metrics.source == "synthetic"
+# ---------------------------------------------------------------------------
+# I-02 (audit 2026-09-26): the estimator's refusal must not be overridden
+# ---------------------------------------------------------------------------
+def _thin_pairs(seed=5, n_true=10, n_rand=14):
+    """10 true matches + 14 random ones: an estimate below estimate.min_inliers (12)."""
+    rng = np.random.default_rng(seed)
+    cells = rng.choice(64, n_true, replace=False)            # one per 50 px cell: coverage 10/64 >= LOW's 0.15
+    s_true = np.c_[cells % 8, cells // 8] * 50.0 + rng.uniform(10, 40, (n_true, 2))
+    r_true = s_true @ A[:2, :2].T + A[:2, 2]
+    s_rand, r_rand = rng.uniform(20, 380, (n_rand, 2)), rng.uniform(20, 380, (n_rand, 2))
+    return np.vstack([s_true, s_rand]), np.vstack([r_true, r_rand])
+
+
+def test_a_thin_estimate_the_estimator_refused_is_not_accepted_by_the_fine_stage():
+    src, ref = _thin_pairs()
+    first = robust.estimate(src, ref, centre=(200.0, 200.0))
+    assert first.model is not None and not first.ok, "the case must be one the estimator refuses"
+    fr = fine_stage(matchset(src, ref), blank(), blank(), centre=(200.0, 200.0), flags=OFF)
+    assert not fr.ok
+    assert any("not trustworthy" in n for n in fr.notes + first.notes)
+
+
+def test_a_thin_estimate_the_estimator_refused_is_rejected_end_to_end(monkeypatch):
+    from chandralign import synth
+    from chandralign.matching import classical
+    from chandralign.pipeline import register
+    src, ref = _thin_pairs()
+    monkeypatch.setattr(classical, "match", lambda s, r, detector="sift": matchset(src, ref))
+    # every control gate passes, so the thin estimate is the ONLY thing that can reject it
+    names = ("null_constant_grey", "null_random_noise", "perturbation_sensitivity", "identity", "masks_independent")
+    monkeypatch.setattr(control_gates, "run_all", lambda *a, **k: control_gates.GateReport(
+        [control_gates.GateResult(n, True, "stubbed") for n in names]))
+    img = np.random.default_rng(0).random((400, 400)).astype(np.float32)
+    p = lambda a: synth.ImagePlane(array=a, valid_mask=np.ones(a.shape, bool),       # noqa: E731
+                                   shadow_mask=np.zeros(a.shape, bool), gsd_m=5.0, meta=None, geo=None)
+    r = register(p(img), p(img.copy()), matcher="sift")
+    assert r.confidence_tier == "REJECTED", (r.confidence_tier, r.notes)
+    assert r.failure_modes
+
+
+# ---------------------------------------------------------------------------
+# C-03 / I-01 / G-02 (audit 2026-09-26): the delivered geometry and its reported accuracy
+# ---------------------------------------------------------------------------
+def _field_pairs(nonrigid, seed=2, n=900, shape=(512, 512), noise=0.05):
+    """Matches of a known map (affine, plus a smooth ripple if non-rigid), with point noise."""
+    rng = np.random.default_rng(seed)
+    src = rng.uniform(8, shape[0] - 8, (n, 2))
+
+    def truth(s):
+        r = s @ A[:2, :2].T + A[:2, 2]
+        if nonrigid:
+            r = r + 1.2 * np.c_[np.sin(2 * np.pi * s[:, 1] / 300.0), np.cos(2 * np.pi * s[:, 0] / 390.0)]
+        return r
+    return src, truth(src) + rng.normal(0, noise, (n, 2)), truth
+
+
+def test_a_rigid_pair_is_delivered_as_an_affine_and_a_rippled_one_as_a_tps():
+    for nonrigid, want in ((False, "affine"), (True, "tps")):
+        src, ref, truth = _field_pairs(nonrigid)
+        fr = fine_stage(matchset(src, ref), blank((512, 512)), blank((512, 512)), centre=(256, 256),
+                        flags={**OFF, "model_selection": True, "tps": True})
+        assert fr.geometry == want, (nonrigid, fr.stages["model_selection"])
+        from chandralign.pipeline import delivered_geometry
+        name, m = delivered_geometry(fr)
+        g = np.stack(np.meshgrid(np.arange(40, 470, 20.0), np.arange(40, 470, 20.0)), -1).reshape(-1, 2)
+        err = np.hypot(*(models.apply(m, g) - truth(g)).T)
+        assert np.sqrt(np.mean(err ** 2)) < 0.05, (want, np.sqrt(np.mean(err ** 2)))
+
+
+def test_the_reported_rmse_describes_the_delivered_geometry_not_the_affine_fit():
+    """The old figure (the affine's residual on its own inliers) read ~1 px on a rippled pair whose
+    delivered TPS is ~0.05 px wrong. rmse must now be a check-point bound on the DELIVERED model."""
+    src, ref, truth = _field_pairs(True)
+    fr = fine_stage(matchset(src, ref), blank((512, 512)), blank((512, 512)), centre=(256, 256),
+                    flags={**OFF, "model_selection": True, "tps": True})
+    a = fr.accuracy
+    assert a["model"] == "tps" and a["fit_residual_px"] > 0.5            # the old number, kept as such
+    assert a["checkpoint_rmse_px_ref"] < 0.2                              # the new one
+    assert a["geometry_error_lower_px_ref"] <= a["checkpoint_rmse_px_ref"]
+
+
+def test_the_gates_skip_model_selection_but_keep_every_other_switch(monkeypatch):
+    seen = {}
+    import chandralign.pipeline as pl
+    real = pl.fine_stage
+
+    def spy(*a, **k):
+        seen.update(k.get("flags") or {})
+        return real(*a, **k)
+    monkeypatch.setattr(pl, "fine_stage", spy)
+    src, ref, _ = _field_pairs(False, n=200)
+    img = np.random.default_rng(0).random((256, 256)).astype(np.float32)
+    control_gates.pipeline_from("sift", stages={"uniformity": False})(img, img)
+    assert seen.get("model_selection") is False and seen.get("uniformity") is False
+
+
+def test_refinement_improves_points_on_a_rotated_and_scaled_pair():
+    """Audit C-02: axis-aligned patches cannot refine across rotation + scale (the shipped
+    refinement made points WORSE there); patches warped through the model's Jacobian can."""
+    import cv2
+    rng = np.random.default_rng(4)
+    tex = cv2.GaussianBlur(rng.random((1200, 1200)).astype(np.float32), (0, 0), 2.5)
+    th, k = np.deg2rad(10.0), 0.8
+    M = np.array([[k * np.cos(th), -k * np.sin(th), 60.0], [k * np.sin(th), k * np.cos(th), -40.0]])
+    M[:, 2] += [0.37, -0.62]
+    src = tex[100:700, 100:700].copy()
+    ref = cv2.warpAffine(src, M, (600, 600), flags=cv2.INTER_LANCZOS4)
+    g = np.arange(120, 480, 30, dtype=float)
+    s = np.stack(np.meshgrid(g, g), -1).reshape(-1, 2)
+    true = s @ M[:, :2].T + M[:, 2]
+    keep = (true > 40).all(1) & (true < 560).all(1)
+    s, true = s[keep], true[keep]
+    noisy = true + rng.uniform(-0.4, 0.4, true.shape)            # a matcher's imprecision
+    off = fine_stage(matchset(s, noisy), src, ref, centre=(300, 300), flags=OFF)
+    on = fine_stage(matchset(s, noisy), src, ref, centre=(300, 300), flags={**OFF, "subpixel": True})
+    e_off = np.hypot(*(off.control_ref - true).T)
+    e_on = np.hypot(*(on.control_ref - true).T)
+    assert np.median(e_on) < 0.5 * np.median(e_off) and np.percentile(e_on, 95) < np.percentile(e_off, 95)
+
+
+def test_the_delivered_affine_is_not_dragged_by_inliers_a_3px_threshold_let_through():
+    """G-02: the geometry is fitted with Huber IRLS. 10% of 'inliers' 2.5 px off in one direction
+    (under the 3 px RANSAC threshold) would shift a plain least-squares affine by ~0.25 px."""
+    from chandralign.estimate import selection
+    rng = np.random.default_rng(9)
+    src = rng.uniform(0, 500, (400, 2))
+    ref = src @ A[:2, :2].T + A[:2, 2] + rng.normal(0, 0.05, src.shape)
+    ref[:40] += [2.5, 0.0]
+    fit = selection.fit_affine_robust(src, ref)
+    g = rng.uniform(0, 500, (200, 2))
+    err = np.hypot(*(models.apply(fit, g) - (g @ A[:2, :2].T + A[:2, 2])).T)
+    assert np.sqrt(np.mean(err ** 2)) < 0.05
+
+
+class _Shifted(_Identity):
+    """A reference frame 250 columns to the east of the source frame: the same ground is 250 px right."""
+    def pixel_to_latlon(self, rows, cols):
+        return super().pixel_to_latlon(rows, np.asarray(cols, float) - 250.0)
+
+
+def test_reference_points_use_the_reference_ground_model_when_the_frames_differ():
+    """Audit I-10: with one ground model for both, reference points were mapped through the SOURCE
+    model. Here the reference frame is 250 px east of the source: through the source model every
+    reference point lands on the steep east half and is thrown away as 'different terrain'."""
+    rng = np.random.default_rng(1)
+    src = rng.uniform([20, 20], [180, 380], (200, 2))            # flat west half
+    ref = src + [250.4, -0.3]                                     # the same ground, in the shifted frame
+    ms = matchset(src, ref)
+    one = fine_stage(ms, blank(), blank(), centre=(200, 200), flags={**OFF, "geometry_filter": True},
+                     ground_model=_Identity(), dem=_ridge_dem())
+    two = fine_stage(ms, blank(), blank(), centre=(200, 200), flags={**OFF, "geometry_filter": True},
+                     ground_model=_Identity(), ref_ground_model=_Shifted(), dem=_ridge_dem())
+    assert one.stages["geometry_filter"]["n_kept"] < 50               # the old, wrong mapping
+    assert two.stages["geometry_filter"]["n_kept"] == 200             # same ground, all kept
+
+
+def test_parallax_plus_residual_tps_is_delivered_where_the_dem_explains_only_part_of_the_geometry():
+    """G-06: relief the DEM predicts (a hill, parallax) PLUS a ripple it cannot (DEM error, attitude drift).
+    Neither parent is right; the composite should be chosen and beat both on the truth."""
+    rng = np.random.default_rng(7)
+    lat, lon = np.linspace(0.1, -0.35, 451), np.linspace(23.4, 23.85, 451)
+    rr, cc = np.meshgrid(np.arange(451), np.arange(451), indexing="ij")
+    dem = DemPatch(300.0 * np.exp(-((rr - 250) ** 2 + (cc - 250) ** 2) / (2 * 60.0 ** 2)), lat, lon, 1000.0,
+                   "test", True, ())
+    p = np.array([0.004, -0.07])
+    hts = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))      # noqa: E731
+    ripple = lambda s: 0.8 * np.c_[np.sin(s[:, 1] / 45.0), np.cos(s[:, 0] / 55.0)]   # noqa: E731
+
+    def truth(s):
+        return s @ A[:2, :2].T + A[:2, 2] + hts(s)[:, None] * p + ripple(s)
+    src = rng.uniform(10, 440, (2500, 2))
+    ref = truth(src) + rng.normal(0, 0.05, src.shape)
+    # the composite is OFF by default since G-06 (docs/tmc2_tail_protocol.md); its code path is still pinned here
+    # ... and at the 1000-point fit set it was designed under: at the adopted 3000 points a plain TPS fits this
+    # world within 1% of the composite (G-06 step 2), so the composite no longer wins its 5% margin here
+    geo_cfg = config.load("default")["geometry"]
+    saved = dict(geo_cfg)
+    geo_cfg.update(parallax_tps=True, max_fit_points=1000)
+    try:
+        fr = fine_stage(matchset(src, ref), blank((451, 451)), blank((451, 451)), centre=(225, 225),
+                        flags={**OFF, "parallax": True, "model_selection": True, "tps": True},
+                        ground_model=_Identity(), dem=dem, parallax_height_at="src")
+    finally:
+        geo_cfg.clear(); geo_cfg.update(saved)
+    sel = fr.stages["model_selection"]
+    assert fr.geometry == "parallax_tps", sel["notes"]
+    from chandralign.pipeline import delivered_geometry
+    g = rng.uniform(40, 410, (400, 2))
+    err = lambda pred: float(np.sqrt(np.mean(np.sum((pred - truth(g)) ** 2, axis=1))))   # noqa: E731
+    _, m = delivered_geometry(fr)
+    e_pt = err(m.predict(g, hts))
+    assert e_pt < 0.1, e_pt
+    assert e_pt < 0.5 * sel["candidates"]["parallax"]["checkpoint_rmse_px"]
+
+
+def test_the_parallax_tps_source_map_inverts_the_model():
+    from chandralign.estimate import models as m_
+    from chandralign.estimate.selection import fit_tps_robust
+    rng = np.random.default_rng(3)
+    dem, p, src, h, ref = _hill_case()
+    par = m_.ParallaxModel(matrix=A.copy(), p_px_per_m=tuple(p), h0_m=0.0, height_at="src")
+    s = rng.uniform(0, 400, (400, 2))
+    res = fit_tps_robust(s, 0.6 * np.c_[np.sin(s[:, 1] / 50.0), np.cos(s[:, 0] / 60.0)], 1.0)
+    model = m_.ParallaxTPSModel(par, res, "src")
+    hts = lambda q: dem.sample(*_Identity().pixel_to_latlon(q[:, 1], q[:, 0]))      # noqa: E731
+    mx, my = m_.parallax_tps_source_map(model, hts, (400, 400), step=4)
+    r = np.c_[rng.uniform(60, 340, 200), rng.uniform(60, 340, 200)]
+    s_back = np.c_[mx[r[:, 1].astype(int), r[:, 0].astype(int)], my[r[:, 1].astype(int), r[:, 0].astype(int)]]
+    r_int = np.floor(r)
+    assert np.percentile(np.hypot(*(model.predict(s_back, hts) - r_int).T), 95) < 0.1

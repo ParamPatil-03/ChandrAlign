@@ -50,7 +50,8 @@ N_WIN = 5
 WIN = {"ohrc": 8192, "tmc2": 1536, "iirs": 256}
 WIN_WAC = {"tmc2": 4000}
 MI_BAND_NM = {"ohrc": 749.0, "tmc2": 749.0, "iirs": 1548.0}
-MATCHERS = {"ohrc": ["eloftr", "sift"], "tmc2": ["eloftr", "sift"], "iirs": ["xoftr", "sift"]}
+MATCHERS = {"ohrc": ["eloftr", "sift"], "tmc2": ["eloftr", "sift"], "iirs": ["xoftr", "sift"]}   # the frozen default
+REF_INSTRUMENT = {"wac": "WAC", "mi": "MI", "tc": "TC"}
 MARGIN_M, MARGIN_PX = 3000.0, 30
 MIN_Z = float(config.get("cascade.min_z", 10.0))
 K = np.pi / 180 * MOON_R_M
@@ -59,8 +60,9 @@ K = np.pi / 180 * MOON_R_M
 class MapRef:
     """A lat/lon grid reference: array (normalised), valid mask, pixel <-> lat/lon."""
 
-    def __init__(self, name, arr, ok, lat0, lon0, dpp):
+    def __init__(self, name, arr, ok, lat0, lon0, dpp, kind="", meta=None):
         self.name, self.arr, self.ok, self.lat0, self.lon0, self.dpp = name, arr, ok, lat0, lon0, dpp
+        self.kind, self.meta = kind, meta        # meta: the tile's SceneMeta where a label is held (routing, I-09)
         lat_c = lat0 - arr.shape[0] / 2 * dpp
         self.px_m = (dpp * K * np.cos(np.radians(lat_c)), dpp * K)             # (x, y) metres
 
@@ -82,14 +84,14 @@ def load_ref(kind, source, tile=None):
         ok = raw > 0
         mm = projection.load_map_model(meta)
         la, lo = mm.pixel_to_latlon([0, 1], [0, 1])
-        return MapRef(meta.product_id, norm(raw, ok), ok, float(la[0]), float(lo[0]), float(la[0] - la[1]))
+        return MapRef(meta.product_id, norm(raw, ok), ok, float(la[0]), float(lo[0]), float(la[0] - la[1]), "tc", meta)
     if kind == "wac":
         d = ROOT / "data/raw/lro/wac_mosaic"
         m = json.loads((d / "wac_mosaic_100m_clip.json").read_text(encoding="utf-8"))
         raw = np.load(d / "wac_mosaic_100m_clip.npy").astype(np.float32)
         ok = raw > m["nodata"]
         return MapRef("WAC_GLOBAL_MOSAIC_100M", norm(raw, ok), ok, m["pixel_centre_lat_of_row0"],
-                      m["pixel_centre_lon_of_col0"], m["deg_per_px"])
+                      m["pixel_centre_lon_of_col0"], m["deg_per_px"], "wac")
     lbl = ROOT / "data/raw/selene/mi/MI_MAP_03_N01E023N00E024SC.lbl"
     meta = parse_label(lbl)
     waves = [414.0, 749.0, 901.0, 950.0, 1001.0, 1000.0, 1049.0, 1248.0, 1548.0]   # label CENTER_FILTER_WAVELENGTH
@@ -99,7 +101,7 @@ def load_ref(kind, source, tile=None):
     mm = projection.load_map_model(meta)
     la, lo = mm.pixel_to_latlon([0, 1], [0, 1])
     return MapRef(f"{meta.product_id}_{waves[band]:.0f}nm", norm(raw, ok), ok, float(la[0]), float(lo[0]),
-                  float(la[0] - la[1]))
+                  float(la[0] - la[1]), "mi", meta)
 
 
 class Source:
@@ -287,7 +289,8 @@ def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, rout
         dem = dem_patch(dem_tiles, (lat_c - 0.3, lat_c + 0.3, lon_c - 0.3, lon_c + 0.3))
     exp = scale.expected_scale(scale.pixel_scale(src.meta), ref.pixel_scale())
     results = {}
-    for name in matchers:
+
+    def evaluate(name):
         t0 = time.perf_counter(); r = {}
         opts = route_opts if name == "xoftr" else {}
         try:
@@ -301,12 +304,12 @@ def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, rout
                 ms, pa, pb = match(name, fsrc, fref, device, grid_px)
             n = int(len(ms.src_pts))
             if n < 4:
-                results[name] = {"status": f"only {n} matches", "success": False}; continue
+                results[name] = {"status": f"only {n} matches", "success": False}; return results[name]
             fr = fine_stage(ms, fsrc, fref, centre=(wF / 2, hF / 2), flags=stages, ground_model=frame_ground, dem=dem)
             r.update(matches=n, inliers=fr.inlier_count, inlier_ratio=round(fr.inlier_ratio, 4),
                      coverage=round(fr.coverage, 3), inlier_rmse_px=None if fr.rmse_px is None else round(fr.rmse_px, 3))
             if not fr.ok:
-                results[name] = {**r, "status": "fine stage: no transform", "success": False}; continue
+                results[name] = {**r, "status": "fine stage: no transform", "success": False}; return results[name]
             Tt = to_ref(np.asarray(fr.model.matrix, float))                   # source(-window/region) px -> ref px
             rx, ry = (Tt @ centre_src)[:2]
             la_r, lo_r = ref.pixel_to_latlon([ry], [rx])
@@ -338,6 +341,23 @@ def run_window(src, ref, r0, c0, h, w, matchers, device, stages, dem_tiles, rout
             r.update(status=f"error: {type(exc).__name__}: {exc}"[:300], success=False)
         r["seconds"] = round(time.perf_counter() - t0, 1)
         results[name] = r
+        return r
+
+    # audit I-09: "routed" = routing's matcher, then its fallbacks only if rejected (routing.run_candidates),
+    # routed on the REAL tile's pixel size where a label is held (MI, TC), not the nominal registry value
+    for name in matchers:
+        if name != "routed":
+            evaluate(name)
+            continue
+        choice = routing.choose(src.meta, ref.meta if ref.meta is not None else REF_INSTRUMENT[ref.kind])
+        if choice.route != "direct":
+            results["routed"] = {"status": f"routing chose {choice.route}: {choice.reason}"[:300], "success": False,
+                                 "routing": choice.as_provenance()}
+            continue
+        rc = routing.run_candidates(choice, lambda m: results[m] if m in results else evaluate(m),
+                                    lambda r: bool(r.get("success")))
+        results["routed"] = {**results[rc["used"]], "used": rc["used"], "tried": rc["tried"],
+                             "routing": choice.as_provenance()}
     out["results"] = results
     out["status"] = "locked"
     return out
@@ -375,19 +395,27 @@ def main() -> int:
     ap.add_argument("--tile", default=None, help="TC tile, e.g. N03E021N00E024SC (with --reference tc)")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--matchers", nargs="+", default=None,
+                    help="matchers to run (default: the frozen MATCHERS[source]); 'routed' = routing + fallbacks (I-09)")
     ap.add_argument("--dense", action="store_true", help="amendment 2: the dense lock is the answer (reference-coarser case)")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     src = Source(args.source)
     ref = load_ref(args.reference, args.source, args.tile)
     stages = stage_flags()
     dem_tiles = find_tiles(ROOT / "data" / "raw" / "dem" / "sldem2015")
     route_opts = dict(routing.choose("IIRS", "WAC").fine_stage_options)
+    matchers = args.matchers or MATCHERS[args.source]
     picks, (h, w, c0) = windows_for(src, ref, N_WIN)
     print(f"{args.source} -> {ref.name}: windows at rows {picks} (window {w} x {h} px)", flush=True)
     wins = []
     for r0 in picks:
         t = time.perf_counter()
-        wd = run_window(src, ref, r0, c0, h, w, MATCHERS[args.source], args.device, stages, dem_tiles, route_opts,
+        wd = run_window(src, ref, r0, c0, h, w, matchers, args.device, stages, dem_tiles, route_opts,
                         dense=args.dense)
         wd["seconds"] = round(time.perf_counter() - t, 1)
         wins.append(wd)
@@ -396,7 +424,7 @@ def main() -> int:
                                      (v.get("mi_check") or {}).get("flag"), v.get("success"))
                                  for m, v in (wd.get("results") or {}).items()}}), flush=True)
     summary = {}
-    for name in MATCHERS[args.source]:
+    for name in matchers:
         ok = sum(bool((wd.get("results") or {}).get(name, {}).get("success")) for wd in wins)
         rate = ok / len(wins) if wins else 0.0
         summary[name] = {"success": ok, "windows": len(wins),

@@ -68,8 +68,15 @@ def main() -> int:
                     help="protocol Q5: place windows at the geodetic-bridge prediction, no coarse search")
     ap.add_argument("--rows", type=int, nargs="+", default=None,
                     help="force these OHRC window rows (must lie inside the NAC footprint)")
+    ap.add_argument("--fresh", action="store_true",
+                    help="I-16: windows at the midpoints between the default picks (never overlapping them)")
     ap.add_argument("--dump-points", default=None, help="folder: fine frames + inliers + DEM per window/matcher")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     if args.dump_points:
         DUMP_DIR = args.dump_points
         Path(DUMP_DIR).mkdir(parents=True, exist_ok=True)
@@ -107,6 +114,10 @@ def main() -> int:
             continue
         picks = np.linspace(inside.min(), inside.max(), N_WIN).astype(int) if len(inside) >= N_WIN else inside
         picks = [int(inside[np.argmin(np.abs(inside - p))]) for p in picks]
+        if args.fresh:                                        # I-16: midpoints between the default picks,
+            mids = [(a + b) / 2 for a, b in zip(picks[:-1], picks[1:])]   # snapped to the grid, never
+            picks = sorted({int(inside[np.argmin(np.abs(inside - m))]) for m in mids   # overlapping a default
+                            if min(abs(inside[np.argmin(np.abs(inside - m))] - q) for q in picks) >= WIN})
         if args.rows:                                         # closure test: force OHRC rows
             picks = [int(r) for r in args.rows if int(r) in best]
         for rc in picks:
@@ -172,6 +183,7 @@ def main() -> int:
                       and r.get("tier_ok") and r.get("implied_offset_m")]
                 med = (np.median([[r["implied_offset_m"]["east"], r["implied_offset_m"]["north"]] for _, r in gp], axis=0)
                        if len(gp) >= 3 else None)
+            unconfirmed = 0
             for w in ws:
                 r = (w.get("results") or {}).get(name, {})
                 if args.bridge or args.auto_bridge:
@@ -182,10 +194,14 @@ def main() -> int:
                 else:
                     cons = w.get("consistent", False)
                 s = (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok") and cons)
-                r["success"] = bool(s)
-                ok += bool(s)
+                mi_flag = (r.get("mi_check") or {}).get("flag") is True
+                r["success_before_mi"] = bool(s)
+                r["outcome"] = "success" if s and not mi_flag else "unconfirmed" if s else "failed"
+                r["success"] = bool(s and not mi_flag)
+                ok += r["success"]
+                unconfirmed += r["outcome"] == "unconfirmed"
             rate = ok / len(ws) if ws else 0.0
-            summary.setdefault(pid, {})[name] = {"success": ok, "windows": len(ws),
+            summary.setdefault(pid, {})[name] = {"success": ok, "unconfirmed_mi_flagged": unconfirmed, "windows": len(ws),
                                                  "verdict": "solved" if rate >= 0.9 else "degraded" if rate >= 0.6 else "unsolved"}
     print(json.dumps(summary, indent=1))
     out = ROOT / args.out

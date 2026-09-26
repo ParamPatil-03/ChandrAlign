@@ -134,7 +134,12 @@ def main() -> int:
     ap.add_argument("--methods", default=",".join(METHODS))
     ap.add_argument("--regimes", default=",".join(REGIMES))
     ap.add_argument("--out", default="reports/rift_benchmark.json")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     seeds = [int(s) for s in args.seeds.split(",")]
     methods = [m for m in args.methods.split(",") if m]
     regimes = [r for r in args.regimes.split(",") if r]
@@ -169,7 +174,8 @@ def main() -> int:
         print(f"   ERROR {r['method']}/{r['regime']}/s{r['seed']}: {r['error']}")
 
     out = ROOT / args.out
-    out.write_text(json.dumps({"source": "synthetic", "bad_px": BAD_PX, "regimes": REGIMES,
+    from chandralign.evaluate.run_record import run_record
+    out.write_text(json.dumps({"source": "synthetic", "bad_px": BAD_PX, "regimes": REGIMES, "run": run_record(),
                                "rows": rows}, indent=2, default=str), encoding="utf-8")
     print(f"wrote {out}")
     return 0

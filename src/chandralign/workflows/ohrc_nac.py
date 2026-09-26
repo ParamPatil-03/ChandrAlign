@@ -266,6 +266,21 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
             if mi.get("peak_offset_px") is not None:
                 mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
             r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
+            # C-04 (docs/crosscheck_protocol.md): recorded only; the success rule does not use it
+            from chandralign.pipeline import _geometry_predictor
+            r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name,
+                                                                   predict=_geometry_predictor(fr, None, None))[1]
+            r["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
+            # I-08 / I-11: matcher-free probes vs the DELIVERED geometry (fine-frame px, and OHRC px)
+            from chandralign.estimate import models as _models
+            from chandralign.evaluate.probes import geometry_error
+            from chandralign.pipeline import delivered_geometry
+            _gn, _gm = delivered_geometry(fr)
+            pc = geometry_error(src, ref, src_okf, lambda p: _models.apply(_gm, p))
+            if pc.get("n"):
+                pc["p50_px_src"] = to_source_px(pc["p50_px_ref"], J_src, "exact (Wf)")
+                pc["p95_px_src"] = to_source_px(pc["p95_px_ref"], J_src, "exact (Wf)")
+            r["probe_check"] = {**pc, "geometry": _gn}
             if capture is not None:
                 capture[name] = dict(src=src, ref=ref, src_ok=src_okf, ref_ok=ref_okf, fine=fr, gates=gates,
                                      quality=q, scale=verdict, Wf=Wf, D=D, origin=(int(o[0]), int(o[1])),
@@ -278,18 +293,18 @@ def _fine(out, ohrc, ohrc_n, o_ok, T_c, nacm, geo, nac, lat_c, lon_c, matchers, 
         results[name] = r
         return r
 
-    ok = lambda r: r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
+    # I-07 (docs/ohrc_nac_protocol.md amendment 2026-09-26): an MI-flagged result is not ok, so the
+    # routed loop falls back to the next candidate
+    ok = lambda r: (r.get("status") == "registered" and r.get("gates_pass") and r.get("tier_ok")
+                    and (r.get("mi_check") or {}).get("flag") is not True)
     for name in matchers:
         if name != "routed":
             evaluate(name)
             continue
-        # The shipped behaviour: routing's matcher, then its fallbacks ONLY if rejected.
-        tried = []
-        for cand in routing.choose("OHRC", "NAC").candidates():
-            tried.append(cand)
-            if ok(evaluate(cand)):
-                break
-        results["routed"] = {**results[tried[-1]], "used": tried[-1], "tried": tried}
+        # The shipped behaviour: routing's matcher, then its fallbacks ONLY if rejected (routing.run_candidates,
+        # the one loop every path uses -- audit I-09).
+        rc = routing.run_candidates(routing.choose("OHRC", "NAC"), evaluate, ok)
+        results["routed"] = {**results[rc["used"]], "used": rc["used"], "tried": rc["tried"]}
     out["results"] = results
     out["status"] = "locked"
     return out

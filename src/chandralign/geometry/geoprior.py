@@ -102,13 +102,60 @@ def _ohrc(pid):
     return pts, "LRO NAC (reports/ohrc_nac_q8_auto_bridge.json, successful windows)"
 
 
-def load(product_id: str) -> GeoPrior:
-    """The best-known correction for a product; zero ('system') if none was measured."""
+def _find_label(pid: str) -> Path | None:
+    base = pid.split("_d_img")[0]
+    raw = ROOT / "data" / "raw" / "ch2"
+    if not raw.exists():
+        return None
+    return next(iter(sorted(raw.rglob(f"{base}*_d_img*.xml"))), None)
+
+
+def _label_refined(pid: str, label_path=None):
+    """Audit I-17: ISRO's own refined-minus-system corner offsets, as a SEARCH prior.
+
+    TMC-2 and IIRS labels carry Refined_Corner_Coordinates adjusted by ISRO against the reference
+    named in isda:reference_data_used (SELENE). Refined minus system is ~5.1 km for TMC-2 and
+    ~13.2 km for IIRS, which agrees with our own measured offsets. Because it is tuned against a
+    reference, it NEVER enters evaluation (projection.geolocation_model keeps prefer="independent"),
+    only where the coarse lock starts looking -- the lock then validates the match independently.
+    Corners are placed on the first and last lines; the Theil-Sen fit spans the strip between them.
+    """
+    import re
+    from ..io.pds_label import CORNER_ORDER, parse_label, read_corner_sets
+    path = Path(label_path) if label_path else _find_label(pid)
+    if path is None or not path.exists():
+        return None
+    try:
+        sets = read_corner_sets(path)
+        n_lines = int(parse_label(path).array_shape[0])
+    except Exception:
+        return None
+    if "refined" not in sets:
+        return None
+    m = re.search(r"reference_data_used>\s*([^<\s][^<]*)<", path.read_text(encoding="utf-8", errors="ignore"))
+    used = m.group(1).strip() if m else "unknown"
+    pts = []
+    for name, (la, lo), (lr, lor) in zip(CORNER_ORDER, sets["system"], sets["refined"]):
+        line = 0.0 if name.startswith("upper") else float(n_lines - 1)
+        pts.append((line, (lor - lo) * K * np.cos(np.radians(la)), (lr - la) * K))
+    if max(np.hypot(e, n) for _, e, n in pts) < 1.0:
+        return None                                  # refined == system: the label adds nothing
+    return pts, f"ISRO refined corners ({used}-adjusted label; search prior only, never evaluation)"
+
+
+def load(product_id: str, *, label_path=None, use_measured: bool = True) -> GeoPrior:
+    """The best-known correction for a product: our MEASURED correction if one is held, else ISRO's
+    refined-label correction (I-17), else zero ('system'). `use_measured=False` skips the measured
+    tables -- the position of a product nobody has registered yet (leave-one-out evaluation)."""
     pid = str(product_id)
     reader = _ohrc if "_ohr_" in pid else _tmc2 if "_tmc_" in pid else _iirs if "_iir_" in pid else None
-    got = reader(pid) if reader else None
+    got = reader(pid) if (reader and use_measured) else None
+    notes = []
     if not got or not got[0]:
-        return GeoPrior(pid, np.zeros(0), np.zeros(0), np.zeros(0), "system", ["no measured correction held"])
+        got = _label_refined(pid, label_path)
+        notes = ["no measured correction held" if use_measured else "measured tables skipped (use_measured=False)"]
+    if not got or not got[0]:
+        return GeoPrior(pid, np.zeros(0), np.zeros(0), np.zeros(0), "system", notes + ["no refined label corners"])
     pts, src = got
     a = np.array(pts, float)
-    return GeoPrior(pid, a[:, 0], a[:, 1], a[:, 2], src)
+    return GeoPrior(pid, a[:, 0], a[:, 1], a[:, 2], src, notes)

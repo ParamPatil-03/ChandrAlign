@@ -10,6 +10,10 @@ device: auto            # auto | cpu | cuda
 
 matching:
   max_num_keypoints: 2048
+  # G-03 / audit M-06 (docs/roma_benchmark_protocol.md): dense models (roma family, dkm, ufm) sample matches
+  # from a certainty map. Give them 5000 samples, and drop samples under RoMa's own default threshold 0.05.
+  dense_max_num_keypoints: 5000
+  dense_min_certainty: 0.05
   ratio_test: 0.80           # Lowe ratio; tightened adaptively on repetitive terrain
   ratio_test_repetitive: 0.70
   mutual_nn: true
@@ -64,6 +68,20 @@ pipeline:                    # P2-T16: optional fine-stage steps (src/chandralig
   dense_refine: false        # Q6 (docs/illumination_fix_protocol.md): illumination-robust refinement of the model
   uniformity: true           # ALIGN-04: top-k per grid cell of the inliers (PS mandate). ON by v3: 9/9 windows
   subpixel: true             # PREC-01: per-point refinement of delivered points (PS mandate). ON by v3: 9/9, median 0.32 -> 0.07 px
+  model_selection: true      # C-03 / I-01 (audit 2026-09-26): choose affine / parallax / TPS by check-point error on a
+                             # refined, grid-stratified fit set, and REPORT that error (docs/refinement_geometry_protocol.md)
+
+geometry:                    # the model_selection stage (estimate/selection.py)
+  max_fit_points: 3000       # G-06 step 2 (docs/tmc2_tail_protocol.md): TMC-2 windows with probe p95 > 1 px 8 -> 1;
+                             # every window's p50 improved. Was 1000. ~2.3x slower fine stage on TMC-2 -> TC.
+  cv_scheme: stratified      # each cell's points dealt into the folds. spatial_block (whole cells held out) read
+                             # 2.2-5.3x the true error on the dev harness vs 1.2-3.6x (non-rigid); chosen on dev
+  cv_folds: 5                # spatial-block CV for the TPS: whole grid cells per fold
+  min_gain: 0.05             # a richer model must beat a simpler one's check-point RMS by this fraction
+  irls_rounds: 2             # Huber reweighting rounds of the TPS fit
+  tps_smoothing_grid: [0.1, 1.0, 10.0, 100.0, 1000.0]
+  min_tps_points: 30
+  parallax_tps: false        # G-06 step 1 (parallax + residual TPS) broke its p50 guard on 2/4 windows it was chosen on
 
 parallax:                    # ALIGN-08 stage options
   height_at: ref             # where h is sampled: the match's ground (reference) point; ref by docs/parallax_height_protocol.md
@@ -77,6 +95,8 @@ similarity:                  # MATCH-07 MI alignment check (docs/mi_protocol.md)
 uniformity:                  # ALIGN-04..07, the PS uniform-distribution mandate
   grid: 8                    # N x N cells
   top_k_per_cell: 6
+  within_cell: confidence    # G-07: confidence (top-k) | spread (quality x spacing); docs/uniformity_fps_protocol.md
+  spread_conf_power: 0.5
   refill_empty_cells: true
   refill_ratio_test: 0.90    # looser threshold, local to the empty cell only
   delaunay_gap_warn_px: 120.0
@@ -87,13 +107,25 @@ subpixel:                    # PREC-01..05
   # case (max 0.037 px; ecc 0.058) and cannot fail to converge the way ECC can.
   # ecc has the best median (0.016 vs 0.025). The old value, ncc_quadratic, was
   # not the name of any implemented method.
-  method: ncc_gaussian_iter  # ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
-  # refine_points compares a (2*half+1)^2 patch around every match. This key
-  # REPLACES `ncc_window: 11`, which no code read: the real window was a
-  # hard-coded half=16 (33 px), and it still is -- behaviour is unchanged.
-  # NOT YET MEASURED AT THIS SIZE. PREC-06's "< 0.1 px" was measured on whole
-  # 64x64 patches (scripts/verify_subpixel.py), not on 33 px per-point windows.
-  refine_half_px: 16
+  #
+  # PER-POINT REFINEMENT (refine_points), re-chosen 2026-09-26 for audit C-02 on the DEV set
+  # of docs/refinement_geometry_protocol.md (known warp on real TMC-2 / OHRC texture). The
+  # old setting (axis-aligned patches, ncc_gaussian_iter, 33 px, 1.5 px) was worse than NO
+  # refinement in 11/15 cases, p95 up to 1.39 px. Now: the source patch is resampled through
+  # the model's local Jacobian, LSM (ECC affine) is tried and warped NCC after it, and a move
+  # is applied only if it RAISES the Lanczos-scored NCC. Dev: 15/15 cases better than
+  # unrefined at p50 and p95, worst p95 0.172 px (cap 0.75; 0.145 at cap 1.5). Variants measured (dev): no gate 0.137-0.26,
+  # bilinear-scored gate 0.248 (the gate's own interpolation bias), 33 px patch 0.26-0.35.
+  method: lsm                # lsm|ncc_parabola|ncc_gaussian|ncc_gaussian_iter|phase|phase_iter|corner|ecc
+  fallbacks: [ncc_gaussian_iter]   # also tried per point; the best-scoring accepted move wins
+  refine_half_px: 20         # 41 px patches (33 px: worst dev p95 0.26-0.35)
+  max_move_px: 1.5           # warped patches. Was 0.75 (audit's advice): it froze 20/25 points with 0.6-1.9 px
+                             # matcher error on the held-out set (p95 0.79). Protocol amendment 1; the gate protects.
+  require_score_gain: true   # a move must raise the NCC of the warped source vs the reference patch
+  score_interp: lanczos      # bilinear scoring biased the gate: 14% of moves refused vs 8%
+  score_border_px: 3
+  lsm_gauss: 1               # ECC gaussFiltSize (3: worst dev p95 0.245; 5: 0.37)
+  representation: intensity  # G-05: intensity | auto (MIND-channel fallback where intensity refused; not yet adopted)
   phase_upsample: 100
   ecc_iterations: 50
   ecc_eps: 1.0e-6
@@ -124,6 +156,12 @@ tiers:                       # CHECK-07 confidence tiers
   # evidence for a starting point, not proof of a robust threshold. Coverage in
   # particular has only a 0.031-wide feasible window (0.1406 < c <= 0.1719) and
   # is the first value to re-derive on real Chandrayaan-2/LRO NAC pairs.
+  # I-08 (docs/tier_accuracy_protocol.md): matcher-free probe error of the DELIVERED geometry, source px.
+  # PS-derived (sub-pixel), NOT fitted. Unmeasured allows at most MEDIUM; this signal never rejects alone.
+  accuracy:
+    min_probes: 20
+    high:   {p50_px_src: 0.5, p95_px_src: 1.5}
+    medium: {p50_px_src: 1.0, p95_px_src: 3.0}
   high:   {min_inliers: 100, min_inlier_ratio: 0.50,  min_coverage: 0.60}
   medium: {min_inliers: 40,  min_inlier_ratio: 0.325, min_coverage: 0.35}
   low:    {min_inliers: 8,   min_inlier_ratio: 0.325, min_coverage: 0.15}
@@ -166,6 +204,11 @@ gates:                       # CHECK-01..06 tolerances
   # disagrees with by more than this. Measured: catches 8/12 consistently-wrong
   # accepted results, 0 false alarms on 64 correct ones (scripts/rift_crosscheck.py).
   crosscheck_flag_px: 2.0
+  # C-04 (audit 2026-09-26): register_bundle runs that cross-check (RIFT2) on every result whose
+  # primary matcher is another family (docs/crosscheck_protocol.md). A flag rejects (mode 12);
+  # a checker with no confident answer of its own is "inconclusive" and caps the tier here.
+  crosscheck: true
+  crosscheck_inconclusive_cap: MEDIUM
 
 paths:
   data_root: data

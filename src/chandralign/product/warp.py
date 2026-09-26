@@ -12,7 +12,17 @@ from ..estimate import models
 
 
 def best_geometry(bundle):
-    """Return ``(name, model)`` using the agreed Part 2 -> Part 3 priority."""
+    """Return ``(name, model)``: the geometry the fine stage chose by check-point error
+    (``bundle.geometry``, audit C-03 / I-01); for bundles without that choice, the old priority."""
+    chosen = getattr(bundle, "geometry", None)
+    if chosen is not None and getattr(bundle, "geometry_model", None) is not None:
+        return chosen, bundle.geometry_model
+    if chosen == "parallax" and bundle.parallax is not None:
+        return "parallax", bundle.parallax
+    if chosen == "tps" and bundle.tps is not None:
+        return "tps", bundle.tps
+    if chosen is not None and bundle.result.model is not None:
+        return bundle.result.model.kind, bundle.result.model
     if bundle.parallax is not None:
         return "parallax", bundle.parallax
     if bundle.tps is not None:
@@ -30,17 +40,21 @@ def warp_array(bundle, *, heights_at=None, interpolation: int | None = None) -> 
     name, model = best_geometry(bundle)
     interp = cv2.INTER_CUBIC if interpolation is None else interpolation
 
-    if name == "parallax":
+    if name in ("parallax", "parallax_tps"):
         if heights_at is None:
-            raise ValueError("heights_at is required to warp with the parallax model")
-        map_x, map_y = models.parallax_source_map(model, heights_at, (h, w))
+            raise ValueError(f"heights_at is required to warp with the {name} model")
+        source_map = models.parallax_tps_source_map if name == "parallax_tps" else models.parallax_source_map
+        map_x, map_y = source_map(model, heights_at, (h, w))
         warped = cv2.remap(src, map_x, map_y, interp, borderMode=cv2.BORDER_CONSTANT)
     elif name == "tps":
         delivered = bundle.delivered
         if len(delivered.src_pts) < 3:
             raise ValueError("at least three delivered points are required to invert TPS")
-        smoothing = float((model.tps_params or {}).get("smoothing", 0.0))
-        inverse = models.fit_tps(delivered.ref_pts, delivered.src_pts, smoothing=smoothing)
+        # the inverse fitted by the fine stage on the SAME points and weights as the forward TPS
+        inverse = (model.tps_params or {}).get("inverse")
+        if inverse is None:
+            smoothing = float((model.tps_params or {}).get("smoothing", 0.0))
+            inverse = models.fit_tps(delivered.ref_pts, delivered.src_pts, smoothing=smoothing)
         map_x, map_y = _tps_source_map(inverse, (h, w))
         warped = cv2.remap(src, map_x, map_y, interp, borderMode=cv2.BORDER_CONSTANT)
     else:

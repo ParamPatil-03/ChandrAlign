@@ -90,8 +90,13 @@ def main() -> int:
     ap.add_argument("--stage", action="append", default=[], metavar="NAME=on|off",
                     help="override a pipeline stage (geometry_filter, uniformity, subpixel); "
                          "the default comes from configs/default.yaml pipeline.*")
+    ap.add_argument("--benchmark-models", action="store_true",
+                    help="allow unaudited / benchmark-only matchers (G-03); recorded as ship_mode false")
     ap.add_argument("--out", default="reports/tmc2_tc_registration.json")
     args = ap.parse_args()
+    if args.benchmark_models:
+        from chandralign.matching import licence as _licence
+        _licence.enable_benchmark_mode()
     opts = Options(dem=args.dem, parallax_dem=args.parallax_dem, parallax_height_at=args.parallax_height_at,
                    dump_dir=args.dump_points, root=ROOT)
     if args.dump_points:

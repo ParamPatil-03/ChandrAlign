@@ -225,6 +225,21 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
             if mi.get("peak_offset_px") is not None:
                 mi["peak_offset_src_px"] = to_source_px(float(np.hypot(*mi["peak_offset_px"])), J_src, "exact (Wf)")
             r["mi_check"] = mi                                     # MATCH-07 (docs/mi_protocol.md)
+            # C-04 / C-03: recorded only
+            from chandralign.pipeline import _geometry_predictor
+            r["crosscheck"] = control_gates.independent_crosscheck(np.asarray(fr.model.matrix, float), pa, pb, name,
+                                                                   predict=_geometry_predictor(fr, None, None))[1]
+            r["accuracy_fine_frame"] = {**fr.accuracy, "geometry": fr.geometry}
+            # I-08 / I-11: matcher-free probes vs the DELIVERED geometry (fine-frame px, and IIRS px)
+            from chandralign.estimate import models as _models
+            from chandralign.evaluate.probes import geometry_error
+            from chandralign.pipeline import delivered_geometry
+            _gn, _gm = delivered_geometry(fr)
+            pc = geometry_error(fsrc, fref, fsrc_ok, lambda p: _models.apply(_gm, p))
+            if pc.get("n"):
+                pc["p50_px_src"] = to_source_px(pc["p50_px_ref"], J_src, "exact (Wf)")
+                pc["p95_px_src"] = to_source_px(pc["p95_px_ref"], J_src, "exact (Wf)")
+            r["probe_check"] = {**pc, "geometry": _gn}
             if capture is not None:
                 capture[name] = dict(src=fsrc, ref=fref, src_ok=fsrc_ok, ref_ok=fref_ok, fine=fr, gates=gates,
                                      quality=q, scale=verdict, Wf=Wf, origin=(int(o[0]), int(o[1])), T_total=Tt,

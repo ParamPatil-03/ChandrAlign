@@ -1,0 +1,356 @@
+{
+ "batch_dir": "C:\\Users\\524ta\\AppData\\Local\\Temp\\claude\\c--Users-524ta-OneDrive-Desktop-sih\\bfdc500d-8cdd-4769-abf3-54e29021050b\\scratchpad\\batch4\\out",
+ "tmc2_tc": {
+  "windows": [
+   {
+    "window": [
+     1562,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.231,
+    "probe_p95_tmc_px": 0.663,
+    "checkpoint_rmse_fine_px": 0.2682,
+    "ckpt_over_probe_p50": 1.74,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.834,
+    "crosscheck_affine_gap_px": 2.867,
+    "coarse_z": 81.6,
+    "seconds": 128.1
+   },
+   {
+    "window": [
+     3125,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "MEDIUM",
+    "tier": "MEDIUM",
+    "tier_with_accuracy": "MEDIUM",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.249,
+    "probe_p95_tmc_px": 0.931,
+    "checkpoint_rmse_fine_px": 0.3157,
+    "ckpt_over_probe_p50": 1.9,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.971,
+    "crosscheck_affine_gap_px": 7.105,
+    "coarse_z": 77.2,
+    "seconds": 106.1
+   },
+   {
+    "window": [
+     4687,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.221,
+    "probe_p95_tmc_px": 0.83,
+    "checkpoint_rmse_fine_px": 0.2612,
+    "ckpt_over_probe_p50": 1.78,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.833,
+    "crosscheck_affine_gap_px": 2.748,
+    "coarse_z": 71.7,
+    "seconds": 107.6
+   },
+   {
+    "window": [
+     6250,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.212,
+    "probe_p95_tmc_px": 0.687,
+    "checkpoint_rmse_fine_px": 0.3165,
+    "ckpt_over_probe_p50": 2.24,
+    "c02_refinement_lowered_residual": false,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.953,
+    "crosscheck_affine_gap_px": 3.457,
+    "coarse_z": 77.4,
+    "seconds": 103.6
+   },
+   {
+    "window": [
+     16000,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.156,
+    "probe_p95_tmc_px": 0.407,
+    "checkpoint_rmse_fine_px": 0.2637,
+    "ckpt_over_probe_p50": 2.54,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 1.386,
+    "crosscheck_affine_gap_px": 1.368,
+    "coarse_z": 121.6,
+    "seconds": 112.9
+   },
+   {
+    "window": [
+     18750,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.161,
+    "probe_p95_tmc_px": 0.423,
+    "checkpoint_rmse_fine_px": 0.28,
+    "ckpt_over_probe_p50": 2.62,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.893,
+    "crosscheck_affine_gap_px": 1.571,
+    "coarse_z": 145.1,
+    "seconds": 107.2
+   },
+   {
+    "window": [
+     21500,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.159,
+    "probe_p95_tmc_px": 0.432,
+    "checkpoint_rmse_fine_px": 0.2681,
+    "ckpt_over_probe_p50": 2.53,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 1.285,
+    "crosscheck_affine_gap_px": 0.696,
+    "coarse_z": 165.4,
+    "seconds": 142.2
+   },
+   {
+    "window": [
+     52000,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.135,
+    "probe_p95_tmc_px": 0.369,
+    "checkpoint_rmse_fine_px": 0.2336,
+    "ckpt_over_probe_p50": 2.6,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 1.251,
+    "crosscheck_affine_gap_px": 1.373,
+    "coarse_z": 197.1,
+    "seconds": 113.7
+   },
+   {
+    "window": [
+     54750,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.156,
+    "probe_p95_tmc_px": 0.414,
+    "checkpoint_rmse_fine_px": 0.2071,
+    "ckpt_over_probe_p50": 1.99,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 1.181,
+    "crosscheck_affine_gap_px": 0.609,
+    "coarse_z": 149.8,
+    "seconds": 106.1
+   },
+   {
+    "window": [
+     57500,
+     null
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.161,
+    "probe_p95_tmc_px": 0.455,
+    "checkpoint_rmse_fine_px": 0.23,
+    "ckpt_over_probe_p50": 2.15,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 1.135,
+    "crosscheck_affine_gap_px": 2.665,
+    "coarse_z": 151.4,
+    "seconds": 109.8
+   },
+   {
+    "window": [
+     1562,
+     768
+    ],
+    "status": "registered",
+    "tier_old": "MEDIUM",
+    "tier": "MEDIUM",
+    "tier_with_accuracy": "MEDIUM",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.257,
+    "probe_p95_tmc_px": 0.913,
+    "checkpoint_rmse_fine_px": 0.314,
+    "ckpt_over_probe_p50": 1.84,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.691,
+    "crosscheck_affine_gap_px": 2.192,
+    "coarse_z": 68.4,
+    "seconds": 128.4
+   },
+   {
+    "window": [
+     3125,
+     768
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.219,
+    "probe_p95_tmc_px": 0.875,
+    "checkpoint_rmse_fine_px": 0.2716,
+    "ckpt_over_probe_p50": 1.86,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.907,
+    "crosscheck_affine_gap_px": 0.989,
+    "coarse_z": 51.5,
+    "seconds": 101.8
+   },
+   {
+    "window": [
+     1562,
+     3232
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.219,
+    "probe_p95_tmc_px": 0.773,
+    "checkpoint_rmse_fine_px": 0.2825,
+    "ckpt_over_probe_p50": 1.93,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.727,
+    "crosscheck_affine_gap_px": 1.639,
+    "coarse_z": 81.6,
+    "seconds": 116.5
+   },
+   {
+    "window": [
+     3125,
+     3232
+    ],
+    "status": "registered",
+    "tier_old": "HIGH",
+    "tier": "HIGH",
+    "tier_with_accuracy": "HIGH",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.215,
+    "probe_p95_tmc_px": 0.689,
+    "checkpoint_rmse_fine_px": 0.2458,
+    "ckpt_over_probe_p50": 1.72,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "agree",
+    "crosscheck_gap_px": 0.712,
+    "crosscheck_affine_gap_px": 2.866,
+    "coarse_z": 92.1,
+    "seconds": 101.3
+   },
+   {
+    "window": [
+     4687,
+     3232
+    ],
+    "status": "registered",
+    "tier_old": "MEDIUM",
+    "tier": "MEDIUM",
+    "tier_with_accuracy": "MEDIUM",
+    "geometry": "tps",
+    "probe_p50_tmc_px": 0.267,
+    "probe_p95_tmc_px": 1.333,
+    "checkpoint_rmse_fine_px": 0.3791,
+    "ckpt_over_probe_p50": 2.13,
+    "c02_refinement_lowered_residual": true,
+    "crosscheck": "inconclusive",
+    "crosscheck_gap_px": null,
+    "crosscheck_affine_gap_px": null,
+    "coarse_z": 72.4,
+    "seconds": 99.9
+   }
+  ],
+  "summary": {
+   "windows": 15,
+   "registered": 15,
+   "tiers_changed": [],
+   "probe_p95_over_1_tmc_px": 1,
+   "probe_p50_tmc_px_range": [
+    0.135,
+    0.267
+   ],
+   "probe_p95_tmc_px_range": [
+    0.369,
+    1.333
+   ],
+   "c02_lowered": 14,
+   "c03_within_1_5x": 0,
+   "crosscheck": {
+    "agree": 14,
+    "flag": 0,
+    "inconclusive": 1,
+    "null": 0
+   },
+   "tier_with_accuracy": {
+    "HIGH": 12,
+    "MEDIUM": 3,
+    "LOW": 0,
+    "REJECTED": 0
+   }
+  }
+ },
+ "ohrc_nac": {
+  "missing": true
+ },
+ "iirs_wac": {
+  "missing": true
+ }
+}

@@ -1,0 +1,666 @@
+{
+ "set": "heldout",
+ "seed": 11,
+ "cases": [
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1015,
+   "status": "ok",
+   "inliers": 1010,
+   "delivered": 382,
+   "points": {
+    "unrefined": {
+     "n": 382,
+     "p50": 0.1298,
+     "p95": 0.351,
+     "rms": 0.1802,
+     "max": 0.5602
+    },
+    "legacy": {
+     "n": 382,
+     "p50": 0.1457,
+     "p95": 0.3259,
+     "rms": 0.1895,
+     "max": 0.6546,
+     "moved": 382,
+     "seconds": 0.28
+    },
+    "library": {
+     "n": 382,
+     "p50": 0.0476,
+     "p95": 0.1062,
+     "rms": 0.061,
+     "max": 0.1687,
+     "moved": 351,
+     "seconds": 2.99
+    }
+   },
+   "seconds": 3.6,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 1027,
+   "status": "ok",
+   "inliers": 1021,
+   "delivered": 380,
+   "points": {
+    "unrefined": {
+     "n": 380,
+     "p50": 0.1139,
+     "p95": 0.3231,
+     "rms": 0.1887,
+     "max": 1.0926
+    },
+    "legacy": {
+     "n": 380,
+     "p50": 0.149,
+     "p95": 0.3495,
+     "rms": 0.2097,
+     "max": 1.198,
+     "moved": 379,
+     "seconds": 0.36
+    },
+    "library": {
+     "n": 380,
+     "p50": 0.0432,
+     "p95": 0.1029,
+     "rms": 0.098,
+     "max": 1.0926,
+     "moved": 340,
+     "seconds": 3.38
+    }
+   },
+   "seconds": 4.1,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 760,
+   "status": "ok",
+   "inliers": 754,
+   "delivered": 376,
+   "points": {
+    "unrefined": {
+     "n": 376,
+     "p50": 0.1509,
+     "p95": 0.536,
+     "rms": 0.2881,
+     "max": 2.1344
+    },
+    "legacy": {
+     "n": 376,
+     "p50": 0.138,
+     "p95": 0.3323,
+     "rms": 0.2476,
+     "max": 2.1344,
+     "moved": 373,
+     "seconds": 0.4
+    },
+    "library": {
+     "n": 376,
+     "p50": 0.0524,
+     "p95": 0.1293,
+     "rms": 0.2003,
+     "max": 2.1344,
+     "moved": 339,
+     "seconds": 3.51
+    }
+   },
+   "seconds": 4.3,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 599,
+   "status": "ok",
+   "inliers": 588,
+   "delivered": 331,
+   "points": {
+    "unrefined": {
+     "n": 331,
+     "p50": 0.1926,
+     "p95": 0.4209,
+     "rms": 0.2437,
+     "max": 1.0056
+    },
+    "legacy": {
+     "n": 331,
+     "p50": 0.2538,
+     "p95": 1.3713,
+     "rms": 0.5962,
+     "max": 2.2955,
+     "moved": 119,
+     "seconds": 0.14
+    },
+    "library": {
+     "n": 331,
+     "p50": 0.0387,
+     "p95": 0.1097,
+     "rms": 0.0938,
+     "max": 1.0056,
+     "moved": 314,
+     "seconds": 2.59
+    }
+   },
+   "seconds": 3.0,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 552,
+   "status": "ok",
+   "inliers": 542,
+   "delivered": 324,
+   "points": {
+    "unrefined": {
+     "n": 324,
+     "p50": 0.2101,
+     "p95": 0.5454,
+     "rms": 0.2914,
+     "max": 1.0842
+    },
+    "legacy": {
+     "n": 324,
+     "p50": 0.2657,
+     "p95": 1.3892,
+     "rms": 0.5841,
+     "max": 1.7328,
+     "moved": 94,
+     "seconds": 0.13
+    },
+    "library": {
+     "n": 324,
+     "p50": 0.0435,
+     "p95": 0.1228,
+     "rms": 0.1464,
+     "max": 1.0842,
+     "moved": 302,
+     "seconds": 3.07
+    }
+   },
+   "seconds": 3.5,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r30000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 21,
+   "status": "no registration",
+   "scored": false
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 771,
+   "status": "ok",
+   "inliers": 766,
+   "delivered": 371,
+   "points": {
+    "unrefined": {
+     "n": 371,
+     "p50": 0.1408,
+     "p95": 0.4699,
+     "rms": 0.2308,
+     "max": 0.9228
+    },
+    "legacy": {
+     "n": 371,
+     "p50": 0.1422,
+     "p95": 0.3565,
+     "rms": 0.2028,
+     "max": 0.8981,
+     "moved": 370,
+     "seconds": 0.39
+    },
+    "library": {
+     "n": 371,
+     "p50": 0.0575,
+     "p95": 0.1485,
+     "rms": 0.1037,
+     "max": 0.9228,
+     "moved": 332,
+     "seconds": 3.66
+    }
+   },
+   "seconds": 4.4,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 834,
+   "status": "ok",
+   "inliers": 829,
+   "delivered": 371,
+   "points": {
+    "unrefined": {
+     "n": 371,
+     "p50": 0.1537,
+     "p95": 0.4274,
+     "rms": 0.223,
+     "max": 0.9505
+    },
+    "legacy": {
+     "n": 371,
+     "p50": 0.1393,
+     "p95": 0.3423,
+     "rms": 0.1892,
+     "max": 0.7693,
+     "moved": 371,
+     "seconds": 0.3
+    },
+    "library": {
+     "n": 371,
+     "p50": 0.0486,
+     "p95": 0.1154,
+     "rms": 0.0923,
+     "max": 0.9505,
+     "moved": 336,
+     "seconds": 3.58
+    }
+   },
+   "seconds": 4.2,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 630,
+   "status": "ok",
+   "inliers": 618,
+   "delivered": 357,
+   "points": {
+    "unrefined": {
+     "n": 357,
+     "p50": 0.1965,
+     "p95": 0.7905,
+     "rms": 0.3709,
+     "max": 1.8694
+    },
+    "legacy": {
+     "n": 357,
+     "p50": 0.1395,
+     "p95": 0.3668,
+     "rms": 0.2251,
+     "max": 1.8694,
+     "moved": 355,
+     "seconds": 0.46
+    },
+    "library": {
+     "n": 357,
+     "p50": 0.066,
+     "p95": 0.7905,
+     "rms": 0.2866,
+     "max": 1.8694,
+     "moved": 298,
+     "seconds": 5.32
+    }
+   },
+   "seconds": 7.2,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 480,
+   "status": "ok",
+   "inliers": 473,
+   "delivered": 325,
+   "points": {
+    "unrefined": {
+     "n": 325,
+     "p50": 0.212,
+     "p95": 0.4678,
+     "rms": 0.2763,
+     "max": 1.4367
+    },
+    "legacy": {
+     "n": 325,
+     "p50": 0.2989,
+     "p95": 1.326,
+     "rms": 0.5957,
+     "max": 1.6143,
+     "moved": 124,
+     "seconds": 0.13
+    },
+    "library": {
+     "n": 325,
+     "p50": 0.0436,
+     "p95": 0.1442,
+     "rms": 0.1265,
+     "max": 1.4367,
+     "moved": 304,
+     "seconds": 2.16
+    }
+   },
+   "seconds": 2.6,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 460,
+   "status": "ok",
+   "inliers": 449,
+   "delivered": 325,
+   "points": {
+    "unrefined": {
+     "n": 325,
+     "p50": 0.2341,
+     "p95": 0.7504,
+     "rms": 0.3699,
+     "max": 1.6375
+    },
+    "legacy": {
+     "n": 325,
+     "p50": 0.406,
+     "p95": 1.4721,
+     "rms": 0.693,
+     "max": 2.1106,
+     "moved": 140,
+     "seconds": 0.12
+    },
+    "library": {
+     "n": 325,
+     "p50": 0.0466,
+     "p95": 0.2384,
+     "rms": 0.245,
+     "max": 1.6375,
+     "moved": 294,
+     "seconds": 2.67
+    }
+   },
+   "seconds": 3.1,
+   "scored": true
+  },
+  {
+   "scene": "tmc2_r90000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 32,
+   "status": "ok",
+   "inliers": 14,
+   "delivered": 14,
+   "points": {
+    "unrefined": {
+     "n": 14,
+     "p50": 0.917,
+     "p95": 2.6231,
+     "rms": 1.5453,
+     "max": 3.2748
+    },
+    "legacy": {
+     "n": 14,
+     "p50": 0.917,
+     "p95": 2.6231,
+     "rms": 1.5453,
+     "max": 3.2748,
+     "moved": 0,
+     "seconds": 0.0
+    },
+    "library": {
+     "n": 14,
+     "p50": 0.917,
+     "p95": 2.6231,
+     "rms": 1.5453,
+     "max": 3.2748,
+     "moved": 0,
+     "seconds": 0.11
+    }
+   },
+   "seconds": 0.5,
+   "scored": false
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1343,
+   "status": "ok",
+   "inliers": 1341,
+   "delivered": 381,
+   "points": {
+    "unrefined": {
+     "n": 381,
+     "p50": 0.1041,
+     "p95": 0.2597,
+     "rms": 0.1548,
+     "max": 1.0751
+    },
+    "legacy": {
+     "n": 381,
+     "p50": 0.1749,
+     "p95": 0.3993,
+     "rms": 0.2321,
+     "max": 1.1901,
+     "moved": 376,
+     "seconds": 0.3
+    },
+    "library": {
+     "n": 381,
+     "p50": 0.0389,
+     "p95": 0.1045,
+     "rms": 0.0825,
+     "max": 1.0751,
+     "moved": 343,
+     "seconds": 5.19
+    }
+   },
+   "seconds": 5.9,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "same",
+   "nonrigid": false,
+   "seed": 11,
+   "matches": 1380,
+   "status": "ok",
+   "inliers": 1376,
+   "delivered": 384,
+   "points": {
+    "unrefined": {
+     "n": 384,
+     "p50": 0.0948,
+     "p95": 0.2942,
+     "rms": 0.1431,
+     "max": 0.5787
+    },
+    "legacy": {
+     "n": 384,
+     "p50": 0.1749,
+     "p95": 0.3809,
+     "rms": 0.2165,
+     "max": 0.7357,
+     "moved": 379,
+     "seconds": 0.32
+    },
+    "library": {
+     "n": 384,
+     "p50": 0.0297,
+     "p95": 0.0601,
+     "rms": 0.0422,
+     "max": 0.3191,
+     "moved": 355,
+     "seconds": 3.82
+    }
+   },
+   "seconds": 4.5,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 1081,
+   "status": "ok",
+   "inliers": 1071,
+   "delivered": 374,
+   "points": {
+    "unrefined": {
+     "n": 374,
+     "p50": 0.1197,
+     "p95": 0.3986,
+     "rms": 0.2208,
+     "max": 1.6783
+    },
+    "legacy": {
+     "n": 374,
+     "p50": 0.1697,
+     "p95": 0.3779,
+     "rms": 0.237,
+     "max": 1.6783,
+     "moved": 371,
+     "seconds": 0.34
+    },
+    "library": {
+     "n": 374,
+     "p50": 0.0457,
+     "p95": 0.1292,
+     "rms": 0.135,
+     "max": 1.6783,
+     "moved": 339,
+     "seconds": 3.94
+    }
+   },
+   "seconds": 4.6,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "large",
+   "cond": "same",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 563,
+   "status": "ok",
+   "inliers": 552,
+   "delivered": 350,
+   "points": {
+    "unrefined": {
+     "n": 350,
+     "p50": 0.1734,
+     "p95": 0.3682,
+     "rms": 0.2125,
+     "max": 0.726
+    },
+    "legacy": {
+     "n": 350,
+     "p50": 0.1793,
+     "p95": 1.0874,
+     "rms": 0.4083,
+     "max": 1.8159,
+     "moved": 41,
+     "seconds": 0.1
+    },
+    "library": {
+     "n": 350,
+     "p50": 0.0362,
+     "p95": 0.0934,
+     "rms": 0.0738,
+     "max": 0.726,
+     "moved": 335,
+     "seconds": 2.82
+    }
+   },
+   "seconds": 3.2,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "large",
+   "cond": "mild",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 567,
+   "status": "ok",
+   "inliers": 547,
+   "delivered": 349,
+   "points": {
+    "unrefined": {
+     "n": 349,
+     "p50": 0.1819,
+     "p95": 0.5046,
+     "rms": 0.2761,
+     "max": 1.3691
+    },
+    "legacy": {
+     "n": 349,
+     "p50": 0.2026,
+     "p95": 1.317,
+     "rms": 0.4973,
+     "max": 1.974,
+     "moved": 45,
+     "seconds": 0.13
+    },
+    "library": {
+     "n": 349,
+     "p50": 0.0435,
+     "p95": 0.1249,
+     "rms": 0.1546,
+     "max": 1.3691,
+     "moved": 329,
+     "seconds": 4.18
+    }
+   },
+   "seconds": 4.7,
+   "scored": true
+  },
+  {
+   "scene": "ohrc_r50000",
+   "warp": "small",
+   "cond": "inverted",
+   "nonrigid": true,
+   "seed": 11,
+   "matches": 30,
+   "status": "no registration",
+   "scored": false
+  }
+ ]
+}

@@ -106,7 +106,10 @@ def is_cross_modal(src_instrument: str, ref_instrument: str) -> bool:
 
     Panchromatic vs hyperspectral is the case RIFT/MIND-family descriptors
     exist for; panchromatic vs panchromatic is not.
+
+    Decided on the representation actually MATCHED (audit I-09): a multiband reference matched on one
+    visible band (`matched_as` in configs/instruments.yaml) is panchromatic to the matcher, so TMC-2 -> WAC
+    is not cross-modal; IIRS (hyperspectral, near/short-wave IR) against that band still is.
     """
-    a = instrument(src_instrument).get("modality", "unknown")
-    b = instrument(ref_instrument).get("modality", "unknown")
-    return a != b
+    a, b = instrument(src_instrument), instrument(ref_instrument)
+    return a.get("matched_as", a.get("modality", "unknown")) != b.get("matched_as", b.get("modality", "unknown"))

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import pytest
 
 from chandralign import synth
 from chandralign.pipeline import register
@@ -63,7 +64,16 @@ def test_the_bundle_delivers_the_points_its_metrics_describe():
     assert r.confidence_tier in ("HIGH", "MEDIUM", "LOW") and d.stage == "delivered"
     assert 0 < len(d.src_pts) <= int(r.inlier_mask.sum())              # thinned from the inliers
     assert np.isclose(uniformity.coverage_of(d.src_pts, a.shape, 8), r.metrics.spatial_coverage)
+    # audit C-03: the affine's residual on the delivered points is only the FIT residual ...
+    acc = r.provenance["accuracy"]
     res = np.hypot(*(models.apply(r.model, d.src_pts) - d.ref_pts).T)
-    assert np.isclose(np.sqrt(np.mean(res ** 2)), r.metrics.rmse_px, atol=1e-6)
+    assert np.isclose(np.sqrt(np.mean(res ** 2)), acc["fit_residual_px"], atol=1e-6)
+    # ... and rmse_px is the CHECK-POINT error of the geometry the product warps with, named
+    assert r.metrics.rmse_px == acc["rmse_px_ref"] and r.metrics.rmse_px is not None
+    assert acc["model"] == bun.geometry and acc["point_set"] and acc["n_check"] > 0
+    assert r.metrics.rmse_m == pytest.approx(r.metrics.rmse_px * 5.0, rel=1e-3)     # gsd_m 5.0
+    # audit I-10: the two metrics the report displays are filled
+    assert r.metrics.max_delaunay_gap_px == bun.stages["uniformity"]["max_delaunay_gap_px"] is not None
+    assert r.metrics.subpixel_recovery_err_px is not None and r.metrics.subpixel_recovery_err_px < 0.25
     assert bun.tps is not None and bun.src is not None
     assert r.metrics.runtime_s is not None and r.metrics.runtime_s > 0     # the whole call, timed

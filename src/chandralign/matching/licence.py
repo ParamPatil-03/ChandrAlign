@@ -29,18 +29,38 @@ RESTRICTED_COMPONENTS: dict[str, str] = {
     "superpoint": "Magic Leap licence: non-commercial research only",
     "superglue": "Magic Leap licence: non-commercial research only",
     "r2d2": "CC BY-NC-SA 3.0: non-commercial AND share-alike",
-    # Found by the 2026-09-26 audit (I-06): these passed the three entries above.
-    "master": "NAVER MASt3R weights, CC BY-NC-SA 4.0: non-commercial AND share-alike",
-    "duster": "NAVER DUSt3R weights, CC BY-NC-SA 4.0: non-commercial AND share-alike",
-    "gim-lightglue": "loads Magic Leap superpoint_v1.pth: non-commercial research only",
-    "omniglue": "loads SuperPoint sp_v6 weights: non-commercial research only",
+    # Audit 2026-09-26 (I-06): these passed the old denylist.
+    "master": "NAVER MASt3R weights: CC BY-NC-SA 4.0",
+    "duster": "NAVER DUSt3R weights: CC BY-NC-SA 4.0",
+    "gim-lightglue": "loads Magic Leap superpoint_v1.pth (non-commercial)",
+    "omniglue": "uses SuperPoint sp_v6 (Magic Leap, non-commercial)",
+    "romav2": "DINOv3 backbone under Meta's DINOv3 licence (not OSI); benchmark only",
 }
 
-# THE DENYLIST ALONE IS NOT THE GATE. vismatch ships ~70 models and a denylist only knows the
-# ones someone thought of: four non-redistributable models passed the three entries above
-# until 2026-09-26. So in ship mode a model must ALSO be on the audited allowlist,
-# configs/regimes.yaml `shippable_matchers`, each entry with its licence chain in
-# reports/licence_audit.json. A new model (roma, ufm, ...) is refused until someone audits it.
+# Our own methods, not vismatch models: nothing to license beyond this repository.
+OWN_METHODS = ("sift", "akaze", "orb", "brisk", "rift2", "rift2-mim", "mind")
+
+
+def allowlist() -> list[str]:
+    """Audit I-06: the ONLY names ship mode accepts -- models with a passing row in
+    reports/licence_audit.json, configs/regimes.yaml `shippable_matchers`, and our own methods.
+
+    The component denylist above could only refuse what someone had thought to list: on
+    2026-09-26 it passed master, duster (CC BY-NC-SA), gim-lightglue and omniglue (SuperPoint
+    weights). An allowlist refuses by default; adding a model needs its licence audited first.
+    """
+    return sorted(set(_audited_pass()) | {str(n) for n in (config.load("regimes").get("shippable_matchers", []) or [])}
+                  | set(OWN_METHODS))
+
+
+def _audited_pass() -> list[str]:
+    """Models with a `verdict: pass` row in reports/licence_audit.json (artefact-at-a-version audit)."""
+    import json
+    try:
+        d = json.loads((config.ROOT / "reports" / "licence_audit.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return [c["model"] for c in d.get("candidates", []) if isinstance(c, dict) and c.get("verdict") == "pass"]
 
 # WHY eloftr AND matchanything ARE **NOT** ON THAT LIST -- read before adding them.
 #
@@ -82,11 +102,16 @@ class LicenceRestrictedError(RuntimeError):
 
 
 def restriction_reason(model_name: str) -> str | None:
-    """Return why a model is restricted, or None if it is clean."""
+    """Return why a model may not ship, or None if it is audited and clean.
+
+    Restricted components first (a clear reason), then the allowlist (refuse by default)."""
     name = model_name.lower().strip()
     for component, reason in RESTRICTED_COMPONENTS.items():
         if component in name:
             return f"{model_name!r} contains {component!r}: {reason}"
+    if name not in [n.lower() for n in allowlist()]:
+        return (f"{model_name!r} is not on the audited allowlist (configs/regimes.yaml shippable_matchers; "
+                f"or a verdict 'pass' row in reports/licence_audit.json -- audit its licence first)")
     return None
 
 
@@ -98,7 +123,7 @@ def assert_allowed(model_name: str, ship_mode: bool | None = None) -> None:
     """Gate a model name. Raises LicenceRestrictedError when ship_mode blocks it.
 
     ship_mode=None reads configs/default.yaml. In ship mode a model must be on the
-    audited allowlist (shippable_matchers) AND clear of the restricted components.
+    audited allowlist (licence.allowlist()) AND clear of the restricted components.
     Only benchmarking code that compares candidates (scripts/select_default_matcher.py,
     scripts/bench_rift.py) passes ship_mode=False; nothing it runs is shipped.
     """
@@ -106,17 +131,22 @@ def assert_allowed(model_name: str, ship_mode: bool | None = None) -> None:
         ship_mode = bool(config.get("ship_mode", True))
     if not ship_mode:
         return
-    reason = restriction_reason(model_name)
-    if reason is None and model_name.lower().strip() not in shippable():
-        reason = (f"{model_name!r} is not on the audited allowlist (configs/regimes.yaml "
-                  f"shippable_matchers); audit its code AND weight licences into "
-                  f"reports/licence_audit.json before adding it")
+    reason = restriction_reason(model_name)            # components, then the one allowlist (I-06)
     if reason is not None:
         raise LicenceRestrictedError(
             f"{reason}. It may be used only for internal benchmarking with "
             f"ship_mode=false (scripts/bench_external.py), never in the shipped "
             f"pipeline. Permissive alternatives: {', '.join(shippable())}."
         )
+
+
+def enable_benchmark_mode(reason: str = "--benchmark-models") -> None:
+    """Allow benchmark-only / unaudited models for THIS process (G-03 benchmarks). Every report records
+    it (run_record()["ship_mode"] is False), so such a result can never pass as shippable."""
+    import warnings
+    config.load("default")["ship_mode"] = False
+    warnings.warn(f"ship_mode OFF ({reason}): benchmark-only models allowed; results are not shippable",
+                  stacklevel=2)
 
 
 def shippable() -> list[str]:

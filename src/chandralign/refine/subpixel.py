@@ -283,31 +283,189 @@ def estimate(ref: np.ndarray, mov: np.ndarray, method: str = "phase") -> ShiftEs
         return _failed(method, f"{type(exc).__name__}: {exc}")
 
 
+def lsm(ref: np.ndarray, mov: np.ndarray, motion: str = "affine", gauss: Optional[int] = None,
+        iterations: int = 100, eps: float = 1e-6) -> ShiftEstimate:
+    """G-01. Least-squares matching: ECC with an AFFINE (default) warp between two patches.
+
+    ECC maximises the zero-mean normalised correlation, so it is invariant to a
+    radiometric gain and offset; the affine warp absorbs what is left of the local
+    geometry after the patches were brought into one frame. The shift reported is
+    where the patch CENTRE of `ref` lands in `mov` (the module's convention),
+    W c - c. Seeded at identity: the caller has already warped the patches, so the
+    residual is small. Failure to converge is ok=False, never a zero shift.
+    """
+    ref, mov = _as_float(ref), _as_float(mov)
+    if ref.shape != mov.shape:
+        return _failed("lsm", "unequal patch shapes")
+    if float(ref.std()) < 1e-6 or float(mov.std()) < 1e-6:
+        return _failed("lsm", "no texture")
+    gauss = int(gauss if gauss is not None else config.get("subpixel.lsm_gauss", 1))
+    mode = {"affine": cv2.MOTION_AFFINE, "translation": cv2.MOTION_TRANSLATION}[motion]
+    # ECC is a local optimiser: from more than ~1 px it can diverge (measured: a 1.25 px
+    # truth went to 17 px). Seed with the integer NCC peak, and refuse a result that ran
+    # away from its seed rather than report it as a shift.
+    seed = ncc_peak(ref, mov, max_shift=3)
+    s0 = np.round(seed.d) if seed.ok and np.all(np.isfinite(seed.d)) else np.zeros(2)
+    w = np.float32([[1, 0, s0[0]], [0, 1, s0[1]]])
+    crit = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, iterations, eps)
+    try:
+        cc, w = cv2.findTransformECC(ref, mov, w, mode, crit, None, gauss)
+    except cv2.error as exc:
+        return _failed("lsm", f"did not converge: {str(exc).splitlines()[-1][:80]}")
+    c = np.array([(ref.shape[1] - 1) / 2.0, (ref.shape[0] - 1) / 2.0])
+    d = w[:, :2].astype(float) @ c + w[:, 2] - c
+    if not np.all(np.isfinite(d)) or np.hypot(*(d - s0)) > 1.5:
+        return _failed("lsm", f"diverged: {np.round(d, 2).tolist()} from seed {s0.tolist()}")
+    return ShiftEstimate(float(d[0]), float(d[1]), "lsm", quality=float(cc))
+
+
+METHODS["lsm"] = lsm
+
+
+def _ncc(a: np.ndarray, b: np.ndarray, border: int) -> float:
+    """Zero-mean normalised correlation of the central parts of two equal patches."""
+    if border:
+        a, b = a[border:-border, border:-border], b[border:-border, border:-border]
+    a = a - a.mean()
+    b = b - b.mean()
+    den = float(np.sqrt((a * a).sum() * (b * b).sum()))
+    return float((a * b).sum() / den) if den > 1e-12 else -1.0
+
+
+def _mind_shift(sp: np.ndarray, r32: np.ndarray, r, size: int, half: int, m: int = 3):
+    """Shift of the (warped) source patch in the reference, on channel-averaged MIND NCC.
+
+    MIND keeps only the RELATIVE pattern of neighbour similarity, so it survives a lighting change that
+    inverts intensity. Returns (d, score at the matcher's position, score at the peak) or (None, ., .)."""
+    from ..preprocess.phase_congruency import mind
+    region = cv2.getRectSubPix(r32, (size + 2 * m, size + 2 * m), (float(r[0]), float(r[1])))
+    nz = lambda a: (a - a.min()) / max(float(a.max() - a.min()), 1e-9)          # noqa: E731
+    ms, mr = mind(nz(sp)).astype(np.float32), mind(nz(region)).astype(np.float32)
+    if float(ms.std()) < 1e-6 or float(mr.std()) < 1e-6:
+        return None, -1.0, -1.0
+    cmap = np.mean([cv2.matchTemplate(mr[..., c], ms[..., c], cv2.TM_CCOEFF_NORMED)
+                    for c in range(ms.shape[-1])], axis=0)                     # (2m+1, 2m+1)
+    v, u = np.unravel_index(int(np.argmax(cmap)), cmap.shape)
+    if u in (0, cmap.shape[1] - 1) or v in (0, cmap.shape[0] - 1):
+        return None, float(cmap[m, m]), float(cmap[v, u])
+    fx = _peak_offset(cmap[v, u - 1], cmap[v, u], cmap[v, u + 1], "gaussian")
+    fy = _peak_offset(cmap[v - 1, u], cmap[v, u], cmap[v + 1, u], "gaussian")
+    # the template's centre sits at region (u + half, v + half), i.e. reference r + (u - m, v - m)
+    return np.array([u + fx - m, v + fy - m], float), float(cmap[m, m]), float(cmap[v, u])
+
+
+def _antialias(src: np.ndarray, matrix: Optional[np.ndarray], at: tuple[float, float]) -> np.ndarray:
+    """Low-pass the source before it is resampled more coarsely than its own pixels.
+
+    Sampling the source at the reference's spacing is a decimation by 1/scale when the
+    reference is coarser (scale < 1); without a pre-filter the patch aliases and the
+    residual estimate inherits it. Gaussian sigma 0.5*sqrt(f^2 - 1), f = 1/scale.
+    """
+    from ..estimate import models
+    if matrix is None:
+        return src
+    k = models.estimated_scale(matrix, at=at)
+    if not np.isfinite(k) or k >= 0.95:
+        return src
+    sigma = 0.5 * float(np.sqrt(max((1.0 / k) ** 2 - 1.0, 0.0)))
+    return cv2.GaussianBlur(src, (0, 0), sigma) if sigma > 0.2 else src
+
+
 def refine_points(src_img: np.ndarray, ref_img: np.ndarray, src_pts: np.ndarray,
                   ref_pts: np.ndarray, method: Optional[str] = None, half: Optional[int] = None,
-                  max_move: float = 1.5) -> tuple[np.ndarray, np.ndarray]:
+                  max_move: Optional[float] = None, model=None,
+                  return_info: bool = False):
     """Refine each match's position in `ref_img` to sub-pixel precision.
 
-    For each match, a (2*half+1)^2 patch around the source point is compared with
-    one around the current reference point; the estimated residual shift moves
-    the reference point. Returns (refined_ref_pts, moved_mask). A refinement that
-    fails, or wants to move a point further than `max_move` px, is not applied:
-    a sub-pixel step should correct a matcher's rounding, not relocate a match.
+    THE GEOMETRY (audit 2026-09-26, C-02). Two images that differ in rotation or scale
+    do not show the same ground in the same shape inside two axis-aligned patches, so a
+    translation estimated between such patches is biased -- measured on a known warp,
+    the old axis-aligned refinement was WORSE than no refinement in 11 of 15 cases, with
+    p95 up to 1.39 px. So, given `model` (the source -> reference TransformModel), the
+    source patch is resampled through the model's local Jacobian at the point, into the
+    reference patch's geometry, before the residual is estimated. Without a model the
+    patches are compared axis-aligned (correct only when the images already share a frame).
+
+    THE ESTIMATE. `method` (default `subpixel.method`) is tried first and each name in
+    `subpixel.fallbacks` after it; each candidate move is scored by the NCC of the
+    warped source patch against the reference patch AT THE MOVED POSITION.
+
+    THE ACCEPTANCE RULE. A move is applied only if it RAISES that score above the score
+    at the matcher's position, and is no larger than `max_move` (`subpixel.max_move_px`
+    for warped patches, 1.5 px for axis-aligned ones): a sub-pixel step should correct
+    a matcher's rounding, never relocate a match, and never make the fit worse.
+
+    Returns (refined_ref_pts, moved_mask), plus a per-point info dict with
+    `return_info=True` (`score_before`, `score_after`, `method` used per point).
     """
-    method = method or str(config.get("subpixel.method", "ncc_gaussian_iter"))
+    from ..estimate import models
+
+    method = method or str(config.get("subpixel.method", "lsm"))
+    fallbacks = [m for m in (config.get("subpixel.fallbacks", ["ncc_gaussian_iter"]) or []) if m != method]
     half = int(half if half is not None else config.get("subpixel.refine_half_px", 16))
+    matrix = None
+    if model is not None and getattr(model, "matrix", None) is not None:
+        matrix = np.asarray(model.matrix, float)
+    if max_move is None:
+        max_move = float(config.get("subpixel.max_move_px", 0.75)) if matrix is not None else 1.5
+    border = int(config.get("subpixel.score_border_px", 3))
+    need_gain = bool(config.get("subpixel.require_score_gain", True))
+    use_mind = str(config.get("subpixel.representation", "intensity")) == "auto"
     src_pts = np.asarray(src_pts, float).reshape(-1, 2)
     out = np.asarray(ref_pts, float).reshape(-1, 2).copy()
     moved = np.zeros(len(out), bool)
     size = 2 * half + 1
-    for i, (s, r) in enumerate(zip(src_pts, out)):
-        sp = cv2.getRectSubPix(np.asarray(src_img, np.float32), (size, size), (float(s[0]), float(s[1])))
-        rp = cv2.getRectSubPix(np.asarray(ref_img, np.float32), (size, size), (float(r[0]), float(r[1])))
-        est = estimate(sp, rp, method)
-        if est.ok and np.all(np.isfinite(est.d)) and np.hypot(est.dx, est.dy) <= max_move:
-            # rp is the ref neighbourhood placed where we THINK the match is; a
-            # feature at the patch centre of sp appears at centre + d in rp, so
-            # the true match is d away from the current estimate.
-            out[i] = r + est.d
+    c = np.array([half, half], float)
+    s32 = np.asarray(src_img, np.float32)
+    r32 = np.asarray(ref_img, np.float32)
+    h, w = s32.shape[:2]
+    s32 = _antialias(s32, matrix, (w / 2.0, h / 2.0))
+    lanczos = str(config.get("subpixel.score_interp", "lanczos")) == "lanczos"
+
+    def grab(q):
+        """The reference patch centred at q, for SCORING. Lanczos, not getRectSubPix's bilinear:
+        bilinear smooths by an amount that depends on the fractional offset, which biases a
+        comparison of two positions at exactly the 0.1 px scale being judged."""
+        if not lanczos:
+            return cv2.getRectSubPix(r32, (size, size), (float(q[0]), float(q[1])))
+        m = np.float32([[1, 0, q[0] - half], [0, 1, q[1] - half]])
+        return cv2.warpAffine(r32, m, (size, size), flags=cv2.INTER_LANCZOS4 | cv2.WARP_INVERSE_MAP,
+                              borderMode=cv2.BORDER_REFLECT)
+
+    before_s = np.full(len(out), np.nan)
+    after_s = np.full(len(out), np.nan)
+    used = np.array([""] * len(out), dtype=object)
+    for i, (s, r) in enumerate(zip(src_pts, out.copy())):
+        J = None if matrix is None else models.local_jacobian(matrix, (float(s[0]), float(s[1])))
+        if J is not None and abs(np.linalg.det(J)) > 1e-9:
+            Ji = np.linalg.inv(J)
+            # patch pixel u <- source s + J^-1 (u - c): the source seen in the reference's geometry
+            sp = cv2.warpAffine(s32, np.c_[Ji, s - Ji @ c].astype(np.float32), (size, size),
+                                flags=cv2.INTER_LANCZOS4 | cv2.WARP_INVERSE_MAP, borderMode=cv2.BORDER_REFLECT)
+        else:
+            sp = cv2.getRectSubPix(s32, (size, size), (float(s[0]), float(s[1])))
+        rp = cv2.getRectSubPix(r32, (size, size), (float(r[0]), float(r[1])))
+        base = _ncc(sp, grab(r), border)
+        before_s[i] = base
+        best = None
+        for m in [method] + fallbacks:
+            est = estimate(sp, rp, m)
+            if not (est.ok and np.all(np.isfinite(est.d))) or np.hypot(est.dx, est.dy) > max_move:
+                continue
+            # rp is the ref neighbourhood placed where we THINK the match is; a feature at the
+            # patch centre of sp appears at centre + d in rp, so the match is d away.
+            q = r + est.d
+            score = _ncc(sp, grab(q), border)
+            if (score > base or not need_gain) and (best is None or score > best[1]):
+                best = (q, score, m)
+        if best is None and use_mind:
+            # G-05 (docs/illumination_refinement_protocol.md): intensity refused every move; try MIND channels
+            d, m_base, m_peak = _mind_shift(sp, r32, r, size, half)
+            if d is not None and np.hypot(*d) <= max_move and (m_peak > m_base or not need_gain):
+                best = (r + d, m_peak, "mind")
+        if best is not None:
+            out[i], after_s[i], used[i] = best[0], best[1], best[2]
             moved[i] = True
+    if return_info:
+        return out, moved, {"score_before": before_s, "score_after": after_s, "method": used}
     return out, moved
