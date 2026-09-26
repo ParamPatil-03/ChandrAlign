@@ -39,3 +39,20 @@ same run.
 2. Why fresh scenes tier LOW (inlier count, coverage or ratio) when the evidence scene tiers HIGH.
 3. `null_random_noise` on mare: whether a texture-aware window placement avoids windows where the
    null test cannot separate signal from chance (a placement rule, not a looser gate).
+
+## Follow-up (2026-09-26, exploratory, no new registrations)
+
+Checked against prior work (M3 control to the WAC mosaic and terrain model, Gaddis et al. LPSC 2016;
+IIRS -> WAC on 2 scenes with fit-residual RMSE only, arXiv 2509.04775). Two cheap fixes were tried
+on the measured results above; neither is adopted:
+
+1. **Along-track drift model instead of the scene median** (M3's approach to smooth pointing drift):
+   leave-one-out linear fit of the implied offset against IIRS line, 240 m rule. Control 5/5,
+   20240605 2/5 (was 3/5), 20260217 4/5, others unchanged. Offsets on 20240605 jump rather than
+   drift, so the model does not help. Rule unchanged.
+2. **No coarse lock at 60-66 N:** the MIND coarse-lock z is 6.7-8.5 there (threshold 10; fresh
+   scenes elsewhere 12-30; evidence 40-57). The true location is inside the clip (the locked window
+   sits 2.9 km E, 8.8 km N of its prior), so this is weak evidence, not a search-range bug. Lowering
+   the threshold without a null study would admit wrong locks. A real fix would be an
+   illumination-robust coarse step (e.g. a learned matcher, or a DEM-shaded reference at the IIRS sun
+   angle) with its own protocol and new scenes -- not done.
