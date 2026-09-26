@@ -72,7 +72,8 @@ pipeline:                    # P2-T16: optional fine-stage steps (src/chandralig
                              # refined, grid-stratified fit set, and REPORT that error (docs/refinement_geometry_protocol.md)
 
 geometry:                    # the model_selection stage (estimate/selection.py)
-  max_fit_points: 1000       # inliers sampled evenly over the grid, refined, used to fit and score the geometry
+  max_fit_points: 3000       # G-06 step 2 (docs/tmc2_tail_protocol.md): TMC-2 windows with probe p95 > 1 px 8 -> 1;
+                             # every window's p50 improved. Was 1000. ~2.3x slower fine stage on TMC-2 -> TC.
   cv_scheme: stratified      # each cell's points dealt into the folds. spatial_block (whole cells held out) read
                              # 2.2-5.3x the true error on the dev harness vs 1.2-3.6x (non-rigid); chosen on dev
   cv_folds: 5                # spatial-block CV for the TPS: whole grid cells per fold
@@ -80,6 +81,7 @@ geometry:                    # the model_selection stage (estimate/selection.py)
   irls_rounds: 2             # Huber reweighting rounds of the TPS fit
   tps_smoothing_grid: [0.1, 1.0, 10.0, 100.0, 1000.0]
   min_tps_points: 30
+  parallax_tps: false        # G-06 step 1 (parallax + residual TPS) broke its p50 guard on 2/4 windows it was chosen on
 
 parallax:                    # ALIGN-08 stage options
   height_at: ref             # where h is sampled: the match's ground (reference) point; ref by docs/parallax_height_protocol.md

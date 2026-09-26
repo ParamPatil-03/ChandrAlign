@@ -30,3 +30,39 @@ that no window's p50 gets worse by more than 10%; tiers unchanged.
 
 Disclosure: the probes are also the diagnostic that motivated this change (batch 1). The bar is the audit's,
 fixed before this protocol. The change is judged on a new run, not on batch 1's numbers.
+
+## Result (2026-09-26)
+
+Probe p50 / p95 of the delivered geometry, TMC-2 px (fine px x 1.501), the 15 committed windows. Runs: batch 1
+(before G-06, snapshot `db3a350`), step 1 (batch 2, `74171b3`, parallax_tps on), step 2 (batch 4 = batch 2 code
+with `geometry.max_fit_points` 3000 and `geometry.parallax_tps` false).
+
+| window | before G-06 | step 1 | **step 2** |
+|---|---|---|---|
+| 1562 | 0.306 / 1.048 | 0.356 / 1.124 (parallax_tps) | **0.231 / 0.663** |
+| 3125 | 0.323 / 1.214 | 0.323 / 1.214 | **0.249 / 0.931** |
+| 4687 | 0.294 / 1.162 | 0.294 / 1.162 | **0.221 / 0.830** |
+| 6250 | 0.290 / 1.069 | 0.410 / 1.160 (parallax_tps) | **0.212 / 0.687** |
+| 16000 | 0.204 / 0.623 | same | **0.156 / 0.407** |
+| 18750 | 0.212 / 0.503 | same | **0.161 / 0.423** |
+| 21500 | 0.203 / 0.633 | same | **0.159 / 0.432** |
+| 52000 | 0.176 / 0.452 | same | **0.135 / 0.369** |
+| 54750 | 0.206 / 0.549 | same | **0.156 / 0.414** |
+| 57500 | 0.207 / 0.638 | same | **0.161 / 0.455** |
+| 1562 c768 | 0.525 / 1.400 | 0.393 / 1.142 (parallax_tps) | **0.257 / 0.913** |
+| 3125 c768 | 0.267 / 1.022 | same | **0.219 / 0.875** |
+| 1562 c3232 | 0.482 / 1.249 | 0.366 / 1.169 (parallax_tps) | **0.219 / 0.773** |
+| 3125 c3232 | 0.264 / 0.938 | same | **0.215 / 0.689** |
+| 4687 c3232 | 0.354 / 1.474 | same | **0.267 / 1.333** |
+| **windows with p95 > 1** | 8 | 8 | **1** |
+
+- **Step 1: not adopted.** It was chosen on 4 windows. It improved 2 of them (c768, c3232) and made 2 worse at p50
+  (6250 +41%, 1562 +16%), which breaks the 10% guard, and it moved no window below p95 1 px. The check-point CV
+  preferred it where the independent probes disagree. `geometry.parallax_tps` is off; the code stays, tested.
+- **Step 2: adopted.** p50 improves on every window (0.135-0.267 TMC-2 px), and p95 drops below 1 px on 14/15.
+  Tiers are unchanged, and there are 0 cross-check flags. Cost: the TMC-2 -> TC run takes 1141 s instead of 487 s
+  for 10 windows (the TPS on 3000 points).
+- **The bar (p95 < 1 TMC-2 px on EVERY window) is NOT met: 14/15.** 4687 c3232 (hilly N00, column offset +1232) is
+  at 1.333. The next step in this protocol is the dense residual field, which it deliberately postpones
+  (it would share the probes' intensity signal); it stays a follow-up.
+- Fresh windows (I-16, batch 3, step-1 code): 5/5 below p95 1 px (0.45-0.68), before step 2.
