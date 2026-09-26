@@ -31,7 +31,7 @@ Work order: `docs/AUDIT_2026-09-26.md`, section 2 (Track B: C-02, C-03, C-04, th
 | Consistently wrong answers passing every gate (synthetic, 12 cases) | 12/12 accepted | **10/12 rejected**, 2 remaining are 2.2-2.5 px and not HIGH; **0/64 false alarms** |
 | Cross-check false alarms on real hilly TMC-2 windows | (gate not wired) -> first version: 7/15 | **0/15** after amendment 1 |
 | OHRC -> NAC "success" | 20/25, 8 of them MI-flagged | **12 success + 8 unconfirmed** (honest) |
-| OHRC opposed-sun NAC M175124932LC | 0 solved (5 MI-flagged) | `xoftr`: **5/5 solved, MI clean** (G-09 finding, section 6) |
+| OHRC opposed-sun NAC M175124932LC | 0 solved (5 MI-flagged) | `xoftr`: **5/5 solved, MI clean; confirmed 4/4 on fresh windows** (G-09, section 6) |
 
 ---
 
@@ -99,7 +99,7 @@ reached, and it says so. **NOT ADOPTED** = implemented and measured, but kept of
 | **G-05** illumination-invariant refinement | part 1 **NOT ADOPTED**; part 2 **BLOCKED** | MIND fallback: never worse (0/45), opposite-sun p50 0.79 -> 0.34, but p95 unchanged -> bar not met. Rendered references need a NAC DTM |
 | **G-06** TMC-2 tail | **step 2 ADOPTED / bar not met (14/15)** | windows p95 > 1 TMC-2 px: **8 -> 1**; p50 better on every window. Step 1 (parallax + residual TPS) broke its guard: off. Cost: the TMC-2 fine stage is ~2.3x slower |
 | **G-07** uniformity inside cells | **NOT ADOPTED** (switchable) | NN-CV 0.865 -> 0.42, but a small real p95 cost (+~0.005 px); frozen rule said no |
-| **G-09** default matcher with the cross-check live | **DONE**: recommendation in section 6 | keep `eloftr` for TMC-2 -> TC; **add `xoftr` to OHRC -> NAC routing** (fresh-window confirmation: section 6) |
+| **G-09** default matcher with the cross-check live | **DONE** (confirmed on fresh windows) | keep `eloftr` for TMC-2 -> TC; **OHRC -> NAC routing `eloftr` -> `xoftr` -> `minima-loftr`**: fresh windows 9 success + 3 unconfirmed vs 5 + 7 today (section 6); ready to adopt at merge |
 | **G-10** sensor model + bundle adjustment | **BLOCKED** (scope: weeks) | stepwise plan in `docs/trackb_blocked_items.md` |
 
 ---
@@ -189,9 +189,28 @@ are rejected by the gates, not because they are inaccurate).
 1. **TMC-2 -> TC: keep `eloftr` as the default.** With the cross-check live its false confidence is gone
    (synthetic, 0/24), it is the most reliable on real windows, and it is 2.7x faster than `xoftr` per window.
 2. **OHRC -> NAC: route `eloftr` -> `xoftr` -> `minima-loftr`.** On the committed windows this gives about 17
-   success + 3 unconfirmed instead of 12 + 8, and solves the opposed-sun NAC for the first time. It was chosen on
-   the same windows, so it is confirmed on the rule-based FRESH windows before adopting: *batch 7, in progress*.
-3. `configs/regimes.yaml` is **not** changed on this branch until (2) is confirmed.
+   success + 3 unconfirmed instead of 12 + 8, and solves the opposed-sun NAC for the first time. Because it was
+   chosen on those same windows, it was **confirmed on the rule-based FRESH windows** (I-16's `--fresh` windows,
+   batch 7b, one window per process, scored with the script's own consistency and MI rules;
+   `reports/trackb_g09_fresh_confirmation.json`):
+
+   | fresh NAC (4 windows each) | `xoftr` success / unconfirmed | routed today |
+   |---|---|---|
+   | M102014464RC | 4 / 0 | 4 / 0 |
+   | **M175124932LC (opposed sun)** | **4 / 0** (known shift 0.006-0.048 px, MI clean) | 0 / 4 |
+   | M109080308LC (overhead sun) | 0 / 0 (gates fail) | 1 / 3 |
+   | M1417360906LC (75 deg) | 0 / 0 | 0 / 0 |
+   | **total** | **8 / 0** | 5 / 7 |
+
+   **Confirmed:** `xoftr` solves the opposed-sun NAC on ground no choice was tuned on (5/5 committed, 4/4 fresh).
+   It is weak on M109, where `minima-loftr` is better, so the order `eloftr` -> `xoftr` -> `minima-loftr` keeps
+   both strengths. On the fresh windows that gives **9 success + 3 unconfirmed** against today's 5 + 7.
+3. **Ready to adopt, and left to the merge:** it is a routing change on the product path
+   (`configs/regimes.yaml`; OHRC -> NAC needs `xoftr` placed before `minima-loftr` in its fallbacks, while
+   TMC-2 -> TC keeps `eloftr` -> `minima-loftr` because `minima-loftr` is poor there: 7/15). It is not applied
+   on this branch, so that Track A decides it together with its moved routing code. Note: the first batch-7 run
+   was invalid (a foreign process filled the GPU, and one CUDA out-of-memory error poisoned 13/16 windows),
+   and a re-run lost its files to a line-ending bug. Only the clean third run (16/16 result files) is used.
 
 ---
 
@@ -246,7 +265,7 @@ are rejected by the gates, not because they are inaccurate).
 
 ## 10. Recommended next steps (ranked)
 
-1. Confirm and adopt the OHRC routing `eloftr -> xoftr -> minima-loftr` (section 6; batch 7).
+1. Adopt the OHRC routing `eloftr -> xoftr -> minima-loftr` at the merge (confirmed on fresh windows; section 6).
 2. RoMa as a second stage inside a null-gate-passing lock, or its raw certainty as an abstain signal. It is the
    most precise matcher measured on OHRC.
 3. G-04: independent check points (LROC NAC DTM / ortho), the only way to turn every figure here from
