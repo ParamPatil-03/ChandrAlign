@@ -163,7 +163,7 @@ are medians over windows of the matcher-free probe p50 / p95, in SOURCE px. `rep
 | `matchanything-roma` | 13/15 | 11 H / 2 M / 2 R | 0.285 / 1.016 | 80 |
 | `minima-roma` | 11/15 | 7 H / 4 M / 4 R | 0.294 / 1.075 | 68 |
 | `minima-loftr` | 7/15 | 6 H / 1 M / 8 R | **2.394 / 6.145** (6 cross-check flags: real catches) | 56 |
-| `roma` | 0/15 | 15 R (null gates) | 0.273 / 0.988 | 86 |
+| `roma` | 0/15 | 15 R (null gates) | 0.273 / 0.988 (accurate, but hallucinates on nulls) | 86 |
 | `ufm` | 0/15 | 15 R | 0.763 / 5.795 | 41 |
 
 **OHRC -> LRO NAC (25 windows, I-07 rule)**
@@ -174,11 +174,14 @@ are medians over windows of the matcher-free probe p50 / p95, in SOURCE px. `rep
 | routed today (`eloftr` -> `minima-loftr`) | 12 | 8 | - |
 | `eloftr` alone | 10 | 0 | 0.81 / 2.38 |
 | `minima-roma` | 5 (M109 5/5) | 5 | 0.84 / 1.67 |
+| `matchanything-roma` | 12 | 3 | 0.85 / 1.84 (but 5 synthetic false confidences: excluded by rule 1) |
 | `roma` | 0 (null gates; see section 5) | 0 | 0.88 / 1.88 |
-| `matchanything-roma`, `ufm` | *batch 6, in progress* | | |
+| `ufm` | 0 (22 rejected) | 0 | 1.25 / 5.60 |
+| `minima-loftr` | not scored alone: it ran only as the routed fallback; its successes are inside the routed 12 | | |
 
 **IIRS -> LRO WAC (5 windows):** `eloftr`, `minima-loftr`, `xoftr`, `matchanything-roma`: 5/5 HIGH, probe p95
-0.195-0.245 IIRS px. `roma`, `minima-roma`, `ufm`: 0/5 (null gates).
+0.195-0.245 IIRS px. `roma`, `minima-roma`, `ufm`: 0/5 REJECTED (their probe p95 is similar, 0.21-0.25, so they
+are rejected by the gates, not because they are inaccurate).
 
 **TMC-2 -> SELENE MI (5 windows):** 0/5 for every matcher: genuinely unsolved.
 
