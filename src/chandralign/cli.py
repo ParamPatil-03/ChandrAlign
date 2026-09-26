@@ -33,6 +33,13 @@ def build_parser() -> argparse.ArgumentParser:
     register.add_argument("--seed", type=int, default=7, help="synthetic-pair seed with --mock")
     register.set_defaults(handler=_register)
 
+    clip = sub.add_parser("fetch-wac-clip", help="cut the LROC WAC global-mosaic reference for an IIRS scene",
+                          description="Downloads only the needed part of the public LROC WAC global 100 m mosaic "
+                                      "(USGS) around an IIRS scene, for use as --ref in register.")
+    clip.add_argument("--iirs", type=Path, required=True, help="the IIRS PDS4 label (.xml)")
+    clip.add_argument("--out-dir", type=Path, default=Path("data/raw/lro/wac_mosaic"), help="where to write the clip")
+    clip.set_defaults(handler=_fetch_wac_clip)
+
     report = sub.add_parser("report", help="render the HTML report for a run")
     report.add_argument("--run", type=Path, required=True, help="run directory")
     report.add_argument("--out", type=Path, help="output HTML (default: RUN/report.html)")
@@ -145,6 +152,13 @@ def _demo(args) -> int:
     _register_mock(args, out)
     from .product import report
     print(report.render_run(out, None))
+    return 0
+
+
+def _fetch_wac_clip(args) -> int:
+    from .io.wac_mosaic import clip_for_iirs
+    path = clip_for_iirs(args.iirs, args.out_dir, progress=print)
+    print(f"reference clip: {path}  (use it as --ref)")
     return 0
 
 

@@ -5,7 +5,7 @@ import pytest
 from chandralign.cli import build_parser, main
 
 
-@pytest.mark.parametrize("command", ["register", "report", "demo"])
+@pytest.mark.parametrize("command", ["register", "report", "demo", "fetch-wac-clip"])
 def test_each_command_has_help(command, capsys):
     with pytest.raises(SystemExit) as exc:
         build_parser().parse_args([command, "--help"])

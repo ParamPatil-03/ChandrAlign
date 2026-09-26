@@ -34,8 +34,8 @@ SUPPORTED = {("TMC2", "TC"): "tmc2_tc", ("OHRC", "NAC"): "ohrc_nac", ("IIRS", "W
 # data/raw/lro/wac_mosaic/, reference "label" = its .json); a raw WAC CDR frame is not validated.
 MOSAIC_JSON = "wac_mosaic_100m_clip.json"
 OTHER_EVIDENCE = {                           # validated, but only as research scripts so far
-    ("IIRS", "WAC"): "scripts/register_iirs_wac.py (validated against the WAC global mosaic: pass "
-                     f"data/raw/lro/wac_mosaic/{MOSAIC_JSON} as the reference)",
+    ("IIRS", "WAC"): "scripts/register_iirs_wac.py -- validated against the WAC global MOSAIC, not raw WAC "
+                     "frames: cut a mosaic clip with `chandralign fetch-wac-clip --iirs <label>` and pass it as --ref",
     ("IIRS", "NAC"): "scripts/register_iirs_nac.py",
     ("TMC2", "NAC"): "scripts/register_tmc2_nac.py",
 }
@@ -86,7 +86,7 @@ def register_products(src_label, ref_label, *, windows: int = 3, device: Optiona
     root = Path(root or config.ROOT)
     say = progress or (lambda message: None)
     src = parse_label(src_label)
-    ref = _mosaic_meta(Path(ref_label)) if Path(ref_label).name == MOSAIC_JSON else parse_label(ref_label)
+    ref = _mosaic_meta(Path(ref_label)) if _is_mosaic_clip(Path(ref_label)) else parse_label(ref_label)
     pair = (str(src.instrument), str(ref.instrument))
     if pair not in SUPPORTED:
         known = ", ".join(f"{a} -> {b}" for a, b in SUPPORTED)
@@ -286,6 +286,17 @@ def _consistency(runs: list[WindowRun], within_m: float = 150.0) -> None:
 
 # ============================================================================= IIRS -> WAC mosaic
 
+def _is_mosaic_clip(path: Path) -> bool:
+    """A WAC mosaic clip's .json (io.wac_mosaic format), not a PDS label."""
+    if path.suffix.lower() != ".json" or not path.is_file():
+        return False
+    import json
+    try:
+        return "deg_per_px" in json.loads(path.read_text(encoding="utf-8"))
+    except ValueError:
+        return False
+
+
 def _mosaic_meta(json_path: Path):
     """SceneMeta for the WAC global mosaic clip (not a PDS product: a map-projected clip whose
     .json records the projection; provenance hashes the .npy and the .json)."""
@@ -318,7 +329,7 @@ def _iirs_wac(iirs, mosaic, *, windows, device, root, say, overlap) -> ProductRu
     choice = routing.choose("IIRS", "WAC")
     stages = stage_flags()
     dem_tiles = find_tiles(root / "data" / "raw" / "dem" / "sldem2015")
-    mmeta, wimg, wok, geo = wf.load_mosaic(root)
+    mmeta, wimg, wok, geo = wf.load_mosaic(root, json_path=mosaic.label_path)
     wac = type("Ref", (), {"product_id": mosaic.product_id})()
     matcher = choice.model_name
     run = ProductRun("IIRS -> WAC_MOSAIC", "chandralign.workflows.iirs_wac", choice.as_provenance(), overlap)

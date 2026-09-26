@@ -227,11 +227,14 @@ def run_window(iirs, im, sel, wac, wimg, wok, geos, r0, matchers, device, stages
 
 
 
-def load_mosaic(root=None):
-    """The map-projected WAC mosaic clip (amendment 1): (meta, image 0..1, valid mask, MosaicGeo)."""
-    mdir = Path(root or config.ROOT) / "data/raw/lro/wac_mosaic"
-    mmeta = json.loads((mdir / "wac_mosaic_100m_clip.json").read_text(encoding="utf-8"))
-    raw = np.load(mdir / "wac_mosaic_100m_clip.npy").astype(np.float32)
+def load_mosaic(root=None, json_path=None):
+    """A map-projected WAC mosaic clip (amendment 1): (meta, image 0..1, valid mask, MosaicGeo).
+
+    Default: the clip the committed evidence used. `json_path`: any clip cut by
+    io.wac_mosaic.fetch_clip / clip_for_iirs (same format), e.g. for another IIRS scene."""
+    jp = Path(json_path) if json_path else Path(root or config.ROOT) / "data/raw/lro/wac_mosaic/wac_mosaic_100m_clip.json"
+    mmeta = json.loads(jp.read_text(encoding="utf-8"))
+    raw = np.load(jp.with_suffix(".npy")).astype(np.float32)
     wok = raw > mmeta["nodata"]
     wimg = norm(raw, wok)
     return mmeta, wimg, wok, MosaicGeo(mmeta)
