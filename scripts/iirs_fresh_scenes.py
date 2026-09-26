@@ -57,7 +57,8 @@ def score(windows: list[dict], matcher: str) -> tuple[list[dict], dict]:
                      "mi_peak_offset_src_px": ((r.get("mi_check") or {}).get("peak_offset_src_px") or {}).get("value")
                      if isinstance((r.get("mi_check") or {}).get("peak_offset_src_px"), dict)
                      else (r.get("mi_check") or {}).get("peak_offset_src_px"),
-                     "coarse": w.get("coarse"), "dem_status": w.get("dem_status")})
+                     "coarse": w.get("coarse"), "dem_status": w.get("dem_status"),
+                     "gates": r.get("gates")})
     gp = [x for x in rows if x["status"] == "registered" and x["gates_pass"] and x["tier_ok"] and x["implied_offset_m"]]
     med = (np.median([[x["implied_offset_m"]["east"], x["implied_offset_m"]["north"]] for x in gp], axis=0)
            if len(gp) >= 3 else None)
