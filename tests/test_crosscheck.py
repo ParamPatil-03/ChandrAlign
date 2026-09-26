@@ -62,6 +62,9 @@ def test_a_checker_with_no_answer_caps_the_tier_and_neither_passes_nor_fails(pai
     monkeypatch.setattr(classical, "match", lambda s, r, detector="sift": _consistent_matches(H, (0.0, 0.0)))
     empty = MatchSet(np.zeros((0, 2)), np.zeros((0, 2)), np.zeros(0, np.float32), "rift2", "x", "direct")
     monkeypatch.setattr(rift, "match", lambda *a, **k: empty)
+    # the I-08 accuracy signal would also allow HIGH here, so only the cross-check cap can hold it at MEDIUM
+    import chandralign.pipeline as pl
+    monkeypatch.setattr(pl, "_probe_accuracy", lambda *a, **k: {"n": 300, "p50_px_src": 0.1, "p95_px_src": 0.3})
     b = register_bundle(src, ref, matcher="sift")
     assert b.result.provenance["crosscheck"]["verdict"] == "inconclusive"
     assert "independent_crosscheck" not in b.result.gates

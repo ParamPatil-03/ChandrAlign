@@ -255,7 +255,7 @@ TARGETS: dict[str, tuple[str, str, dict[str, tuple[str, str]]]] = {
             "corners that were never refined are counted": (
                 "    use = refined & sane", "    use = sane"),
             "a refinement may relocate a match": (
-                "np.hypot(est.dx, est.dy) <= max_move", "True"),
+                "or np.hypot(est.dx, est.dy) > max_move:", "or False:"),
             "iteration adds nothing (first estimate only)": (
                 "        d = d + r.d", "        d = d"),
             "iteration resamples in the wrong direction": (
